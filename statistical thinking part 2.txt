@@ -675,6 +675,8 @@ print(empirical_diff_means)
 # Compute and print p-value: p
 p = np.sum(bs_replicates >= empirical_diff_means) / len(bs_replicates)
 
+print('p-value =', p)
+
 
 
 

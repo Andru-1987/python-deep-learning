@@ -1,0 +1,366 @@
+>>Non-negative matrix factorization (NMF)
+1. Dimension reduction technique
+2. NMF models are interpretable unlike PCA
+3. All the sample features must be non-ngeative >=0
+4. The desired number of components must always be specified
+5. Works with numpy arrays and with csr_matrix (sparse arrays)
+
+sample>>>
+
+1. word frequency array, 4 words, many documents
+2. measure presence of words in each document using tf-idf where tf=frequency of word in document.  the measurement is percentage of words in the document.
+
+tf=frequency of word in document
+idf=reduces influence of frequent words
+
+3. The dimension of components is equal to the number of dimensions in the samples
+4. nmf feature values are non-negative
+5. the features and the components can be combined to get the original data sample.
+
+
+from sklearn.decomposition import NMF
+model= NMF(n_components=2)
+
+model.fit(samples)
+
+nmf_features=model.transform(samples)
+
+if we multiple the nmf_features by the model.components_ we reconstruct the sample and adding up
+
+The matrix factorization of NMF is the reconstruction of the original sample
+
+images encoded as arrays
+audio spectrograms
+purchase histories on e-commerce sites
+
+
+>>>>>sample
+
+from sklearn.decomposition import NMF
+
+# Create an NMF instance: model
+model = NMF(n_components=6)
+
+# Fit the model to articles
+model.fit(articles)
+
+# Transform the articles: nmf_features
+nmf_features = model.transform(articles)
+
+
+# Print the NMF features
+print(nmf_features)
+
+
+# Import pandas
+import pandas as pd
+
+# Create a pandas DataFrame: df
+df = pd.DataFrame(nmf_features, index=titles)
+
+# Print the row for 'Anne Hathaway'
+print(df.loc['Anne Hathaway'])
+
+# Print the row for 'Denzel Washington'
+print(df.loc['Denzel Washington'])
+
+
+>>NMF interpretable parts
+
+1. NMF represent patterns
+
+word-frequency array articles(tf-idf)
+a. 20,000 articles (rows)
+b. 800 words columns
+
+from sklearn.decomposition import NMF
+nmf= NMF(n_components=10)
+nmf.fit(articles)
+
+#shape is 10 rows with 800 columns in 2d numpy array
+
+1. nmf components represent topics
+2. nmf features combine topics into documents
+
+for images, nmf components are parts of the image
+8x8 is an array with values of 0 to 1
+
+collection of images of the same size
+a. encode as 2D array
+b. each row corresponds to an image
+c. each column corresponds to a pixel
+
+bitmap = sample.reshape((2,3))
+print(bitmap)
+
+from matplotlib import pyplot as plt
+
+plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+plt.show()
+
+
+>>>Sample
+
+# Import pandas
+import pandas as pd
+
+# Create a DataFrame: components_df
+components_df = pd.DataFrame(model.components_,columns=words)
+
+# Print the shape of the DataFrame
+print(components_df.shape)
+
+# Select row 3: component
+component = components_df.iloc[3]
+
+# Print result of nlargest
+print(component.nlargest())
+
+
+>>sample digit
+
+# Import pyplot
+from matplotlib import pyplot as pltim
+
+# Select the 0th row: digit
+digit = samples[0,:]
+
+# Print digit
+print(digit)
+
+# Reshape digit to a 13x8 array: bitmap
+bitmap = digit.reshape(13,8)
+
+# Print bitmap
+print(bitmap)
+
+# Use plt.imshow to display bitmap
+plt.imshow(bitmap, cmap='gray', interpolation='nearest')
+plt.colorbar()
+plt.show()
+
+
+# Import NMF
+from sklearn.decomposition import NMF
+
+# Create an NMF model: model
+model = NMF(n_components=7)
+
+# Apply fit_transform to samples: features
+features = model.fit_transform(samples)
+
+# Call show_as_image on each component
+for component in model.components_:
+    show_as_image(component)
+
+# Assign the 0th row of features: digit_features
+digit_features = features[7,:]
+
+# Print digit_features
+print(digit_features)
+
+>>>Sample import using PCA
+
+# Import PCA
+from sklearn.decomposition import PCA
+
+# Create a PCA instance: model
+model = PCA(n_components=7)
+
+# Apply fit_transform to samples: features
+features = model.fit_transform(samples)
+
+# Call show_as_image on each component
+for component in model.components_:
+    show_as_image(component)
+
+>>Building recommender systems using nmf
+
+1. recommend articles with similar articles
+2. apply nmf to the word frequency array
+3. compare two articles with the NMF feature values
+
+
+
+from sklearn.decomposition import NMF
+nmf=NMF(n_components=6)
+nmf_features = nmf.fit_transform(articles)
+
+versions of articles
+1. similar articels have similar topics
+
+compare the cosine similarity
+1. use the angle between the lines
+2. higher values indicate a higher similarity
+
+from sklearn.preprocessing import normalize
+
+norm_features = normalize(nmf_features)
+
+current_article = norm_features[23,:]
+
+similarities=norm_features.dot(current_article)
+
+print(similarities)
+
+df = pd.DataFrame(norm_features, index=titles)
+
+current_article= df.loc['Dog bites man']
+
+simiarities = df.dot(current_article)
+
+print(similarities.nlargest())
+
+
+>>>Sample
+
+# Perform the necessary imports
+import pandas as pd
+from sklearn.preprocessing import normalize
+
+# Normalize the NMF features: norm_features
+norm_features = normalize(nmf_features)
+
+# Create a DataFrame: df
+df = pd.DataFrame(norm_features,index=titles)
+
+# Select the row corresponding to 'Cristiano Ronaldo': article
+article = df.loc['Cristiano Ronaldo']
+
+# Compute the dot products: similarities
+similarities = df.dot(article)
+
+# Display those with the largest cosine similarity
+print(similarities.nlargest())
+
+
+>>Sample
+
+In this exercise and the next, you'll use what you've learned about NMF to recommend popular music artists! You are given a sparse array artists whose rows correspond to artists and whose columns correspond to users. The entries give the number of times each artist was listened to by each user.
+
+
+artists
+
+(0, 2)	105.0
+  (0, 15)	165.0
+  (0, 20)	91.0
+  (0, 21)	98.0
+  (0, 29)	120.0
+  (0, 48)	236.0
+  (0, 70)	67.0
+
+# Perform the necessary imports
+from sklearn.decomposition import NMF
+from sklearn.preprocessing import Normalizer, MaxAbsScaler
+from sklearn.pipeline import make_pipeline
+
+# Create a MaxAbsScaler: scaler
+scaler = MaxAbsScaler()
+
+# Create an NMF model: nmf
+nmf = NMF(n_components=20)
+
+# Create a Normalizer: normalizer
+normalizer = Normalizer()
+
+# Create a pipeline: pipeline
+pipeline = make_pipeline(scaler,nmf,normalizer)
+
+# Apply fit_transform to artists: norm_features
+norm_features = pipeline.fit_transform(artists)
+
+print(artists)
+
+>>>Sample
+
+uppose you were a big fan of Bruce Springsteen - which other musicial artists might you like? Use your NMF features from the previous exercise and the cosine similarity to find similar musical artists. A solution to the previous exercise has been run, so norm_features is an array containing the normalized NMF features as rows. The names of the musical artists are available as the list artist_names.
+
+
+# Import pandas
+import pandas as pd
+
+# Create a DataFrame: df
+df = pd.DataFrame(norm_features,index=artist_names)
+
+# Select row of 'Bruce Springsteen': artist
+artist = df.loc['Bruce Springsteen']
+
+# Compute cosine similarities: similarities
+similarities = df.dot(artist)
+
+# Display those with highest cosine similarity
+print(similarities.nlargest())
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

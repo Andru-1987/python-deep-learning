@@ -1,0 +1,68 @@
+print(df1.columns)
+
+df1 = pd.get_dummies(df1, columns=['feature 5'])
+
+
+>>>Basic feature extraction
+
+1. Number of characters
+
+
+text="I don't know"
+num_char=len(text)
+print(num_char)
+
+
+df['num_chars'] = df['review'].apply(len)
+
+>>>Computing the number of words
+
+text="Mary had a little lamb"
+
+words= text.split()
+
+print(words)
+
+print(len(words))
+
+
+def word_count(string) :
+	words= string.split()
+	return len(words)
+
+
+df['num_words']=df['review'].apply(word_count)
+
+def avg_word_length(x):
+	words=x.split()
+	word_lengths= [len(word) for word in words]
+	
+	avg_word_length= sum(word_lengths)/len(words)
+	return(avg_word_length)
+
+df['avg_word_length']=df['review'].apply(avg_word_length)
+
+
+define hashtag_count(string):
+	words= string.split()
+	hashtags=[word for words if word.startswith('#')]
+	return len(hashtags)
+
+
+other features:
+1. number of sentences
+2. number of paragraphs
+3. words starting with an uppercase
+4. All capital words
+5. numeric quantities
+
+
+
+
+
+	
+
+
+
+
+
