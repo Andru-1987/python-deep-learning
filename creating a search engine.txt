@@ -57,6 +57,443 @@ other features:
 5. numeric quantities
 
 
+>>>Sample
+
+# Create a feature char_count
+tweets['char_count'] = tweets['content'].apply(len)
+
+# Print the average character count
+print(tweets['char_count'].mean())
+
+>>>Sample
+
+def count_words(string):
+	# Split the string into words
+    words = string.split()
+    
+    # Return the number of words
+    return len(words)
+
+# Create a new feature word_count
+ted['word_count'] = ted['transcript'].apply(count_words)
+
+# Print the average word count of the talks
+print(ted['word_count'].mean())
+
+
+>>>Sample
+
+
+# Function that returns numner of hashtags in a string
+def count_hashtags(string):
+	# Split the string into words
+    words = string.split()
+    
+    # Create a list of words that are hashtags
+    hashtags = [word for word in words if word.startswith('@')]
+    
+    
+    
+    # Return number of hashtags
+    return(len(hashtags))
+
+# Create a feature hashtag_count and display distribution
+tweets['hashtag_count'] = tweets['content'].apply(count_hashtags)
+tweets['hashtag_count'].hist()
+plt.title('Hashtag count distribution')
+plt.show()
+
+>>>Overview of readability test
+
+1. determine readability of an english passage
+2. scale ranging from primary school up to college graduate level
+3. a mathematical formula utilizing word, syllable and sentence count
+
+flesch
+gunning
+smog
+dale-chall score
+
+
+flesch
+1. one of the oldest and most widely used tests
+2. dependant on two factors
+a. The greater the average sentence length, the harder the text is to read
+b. The greater the average number of syllables in a word, the harder the text is to read
+
+90-100 grade 5
+50-60 grade 10-12
+30-50 grade college
+0-30 grade college graduate
+
+fog
+1. dependent on average sentence length
+2. greater the percentage of complex words, the harder the text is to read (3 or more syllables)
+
+fog index 
+17 college graduate
+16 college senior
+15 college junior
+14 college sophmore
+13 college freshman
+12 high school senior
+11 high school junior
+10 high school sophmore
+
+6 sixth grade
+
+from textatistic import Textatistic
+
+readability_scores = Textatistic(text).scores
+
+print(readability_scores['flesch_score'])
+print(readability_scores['gunningfog_score'])
+
+
+>>Sample
+
+# Import Textatistic
+from textatistic import Textatistic
+
+# Compute the readability scores 
+readability_scores = Textatistic(sisyphus_essay).scores
+
+# Print the flesch reading ease score
+flesch = readability_scores['flesch_score']
+print("The Flesch Reading Ease is %.2f" % (flesch))
+
+>>Sample college level
+
+# Import Textatistic
+from textatistic import Textatistic
+
+# List of excerpts
+excerpts = [forbes, harvard_law, r_digest, time_kids]
+
+# Loop through excerpts and compute gunning fog index
+gunning_fog_scores = []
+for excerpt in excerpts:
+  readability_scores = Textatistic(excerpt).scores
+  gunning_fog = readability_scores['gunningfog_score']
+  gunning_fog_scores.append(gunning_fog)
+
+# Print the gunning fog indices
+print(gunning_fog_scores)
+
+
+>>>Tokenization and Lemmatization
+1. converting words into lowercase
+2. removing leading and trailing whitespace
+3. removing punctuation
+4. removing stopwords
+5. expanding contractions
+6. removing special characters
+
+
+corpus = nltk.sent_tokenize(paragraph)    
+
+
+for i in range(len(corpus )):
+    corpus [i] = corpus [i].lower()
+    corpus [i] = re.sub(r'\W',' ',corpus [i])
+    corpus [i] = re.sub(r'\s+',' ',corpus [i])
+
+pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz
+
+#to handle the error to create the symlinks
+
+python -m spacy link en_core_web_sm en_core_web_sm
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+doc=nlp(paragraph)
+tokens=[token.text for token in doc]
+print(tokens)
+
+lemmatization is converting a word into its base form
+
+lemmas =[token.lemma_ for token in doc]
+print(lemmas)
+
+reducing or reduces or reduced or reduction -> reduce
+am or are or is -> be
+
+n't -> not
+'ve -> have
+
+every pronoun is converted into -PRON-
+
+>>>>Sample
+
+import spacy
+
+# Load the en_core_web_sm model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc object
+doc=nlp(gettysburg)
+
+# Generate the tokens
+tokens=[token.text for token in doc]
+print(tokens)
+
+>>>Sample
+
+import spacy
+
+# Load the en_core_web_sm model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc object
+doc = nlp(gettysburg)
+
+# Generate lemmas
+lemmas =[token.lemma_ for token in doc]
+
+print(lemmas)
+
+>>Text Cleaning
+1. remove extra whitespace and escape sequences
+2. punctuations
+3. special characters
+4. stopwords
+
+isalpha
+use regex
+
+lemmas =[token.lemma_ for token in doc]
+lemmas =[lemma for lemma in lemmas
+        if lemma.isalpha() or lemma == '-PRON-'
+        ]
+
+stopwords
+1. words that occur extremely commonly
+2. articles, be verbs, pronouns
+
+stopwords=spacy.lang.en.stop_words.STOP_WORDS
+
+other text preprocessing techniques
+1. removing html/xml tags
+2. replacing accented characters
+3. correcting spelling errors
+
+
+>>Sample
+
+# Load model and create Doc object
+nlp = spacy.load('en_core_web_sm')
+doc = nlp(blog)
+
+# Generate lemmatized tokens
+lemmas = [token.lemma_ for token in doc]
+
+# Remove stopwords and non-alphabetic tokens
+a_lemmas = [lemma for lemma in lemmas 
+            if lemma.isalpha and lemma not in stopwords]
+
+# Print string after text cleaning
+print(' '.join(a_lemmas))
+
+>>>Sample
+
+# Function to preprocess text
+def preprocess(text):
+  	# Create Doc object
+    doc = nlp(text, disable=['ner', 'parser'])
+    # Generate lemmas
+    lemmas = [token.lemma_ for token in doc]
+    # Remove stopwords and non-alphabetic characters
+    a_lemmas = [lemma for lemma in lemmas 
+            if lemma.isalpha() and lemma not in stopwords]
+    
+    return ' '.join(a_lemmas)
+  
+# Apply preprocess to ted['transcript']
+ted['transcript'] = ted['transcript'].apply(preprocess)
+print(ted['transcript'])
+
+
+>>>>Parts of speech
+1. word-sense diambiguation
+
+the bear is a majestic animal  (noun)
+please bear with me (verb)
+
+POS tagging
+1. assigning every word, to its corresponding part of speech
+
+"Jane is an amazing guiatarist"
+
+Jane -> noun
+Is ->verb
+an ->determinate
+amazing ->adjective
+guitarist ->noun
+
+20 parts of speech
+
+>>Sample
+
+# Load the en_core_web_sm model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc object
+doc = nlp(lotf)
+
+# Generate tokens and pos tags
+pos = [(token.text, token.pos_) for token in doc]
+print(pos)
+
+
+>>>Sample
+
+nlp = spacy.load('en_core_web_sm')
+
+# Returns number of proper nouns
+def proper_nouns(text, model=nlp):
+  	# Create doc object
+    doc = model(text)
+    # Generate list of POS tags
+    pos = [token.pos_ for token in doc]
+    
+    # Return number of proper nouns
+    return pos.count('PROPN')
+
+print(proper_nouns("Abdul, Bill and Cathy went to the market to buy apples.", nlp))
+
+>>>sample
+
+headlines['num_propn'] = headlines['title'].apply(proper_nouns)
+headlines['num_noun'] = headlines['title'].apply(nouns)
+
+# Compute mean of proper nouns
+real_propn = headlines[headlines['label'] == 'REAL']['num_propn'].mean()
+fake_propn = headlines[headlines['label'] == 'FAKE']['num_propn'].mean()
+
+# Compute mean of other nouns
+real_noun = headlines[headlines['label'] == 'REAL']['num_noun'].mean()
+fake_noun = headlines[headlines['label'] == 'FAKE']['num_noun'].mean()
+
+# Print results
+print("Mean no. of proper nouns in real and fake headlines are %.2f and %.2f respectively"%(real_propn, fake_propn))
+print("Mean no. of other nouns in real and fake headlines are %.2f and %.2f respectively"%(real_noun, fake_noun))
+
+>>Named entity recognition
+1. efficient search algorithm
+2. question answering
+3. news article classification
+4. customer service
+
+named entity recognition is anything with a proper noun or name or noun
+
+organized into person, organization, or country
+
+"john doe is a software engineer working at google. he lives in france."
+m
+joe doe-> person
+google->organization
+france -> country
+
+named_entity=[(entity.text,entity.label_) for entity in doc.ents]
+print(named_entity)
+
+space can identify more than 15 categories of named entities
+
+person : people, including fictional
+norp: nationalities or religious or political groups
+fac : buildings, airports, highways, bridgees
+org: companies, agencies, institutions
+gpe: countries, cities, states
+
+
+>>>>sample
+
+# Load the required model
+nlp = spacy.load('en_core_web_sm')
+
+# Create a Doc instance 
+text = 'Sundar Pichai is the CEO of Google. Its headquarters is in Mountain View.'
+doc = nlp(text)
+
+# Print all named entities and their labels
+for ent in doc.ents:
+    print(ent.text, ent.label_)
+
+
+def find_persons(text):
+  # Create Doc object
+  doc = nlp(text)
+  
+  # Identify the persons
+  persons = [ent.text for ent in doc.ents if ent.label_ == 'PERSON']
+  
+  # Return persons
+  return persons
+
+>>>Vectorization and building a bag of words model
+
+1. Converting text into vectors
+2. bag of words model is extracting word tokens
+a. computing the frequency of word tokens
+b. computing a word vector out of these frequencies and volculabory of corpus
+
+corpus
+"the lion is the king of the jungle"
+
+"Lions have a lifespan of a decade"
+
+"The Lion is an endangered species"
+
+a bag of words builts a vocabulary
+
+the second dimension is the frequency the word occurs
+
+No punctuations
+no stopwords
+
+from sklearn.feature_extraction.text import CountVectorizer
+
+vectorizer= CountVectorizer()
+
+bow_matrix= vectorizer.fit_transform(corpus)
+
+#sparse array
+print(box_matrix.toarray())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
