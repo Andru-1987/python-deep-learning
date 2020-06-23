@@ -458,7 +458,614 @@ vectorizer= CountVectorizer()
 bow_matrix= vectorizer.fit_transform(corpus)
 
 #sparse array
-print(box_matrix.toarray())
+print(bow_matrix.toarray())
+
+print(bow_lem_matrix.shape)
+
+
+
+
+
+# Convert bow_matrix into a DataFrame
+bow_df = pd.DataFrame(bow_matrix.toarray())
+
+# Map the column names to vocabulary 
+bow_df.columns = vectorizer.get_feature_names()
+
+# Print bow_df
+print(bow_df)
+
+>>>Using Count Vectorizer
+
+lowercase True
+strip_accents
+stop_words: english, list, none
+token_pattern:regex
+tokenizer: function
+
+
+countVector converts a corpus into a matrix of numeric vectors
+
+from sklearn.feature_extraction.text import CountVectorizer
+
+vectorizer=CountVectorizer(strip_accents='ascii', stop_words='english, lowercase=False)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test= train_test_split(df['message'],df['label'],test_size=0.25)
+
+X_train_bow=vectorizer.fit_transform(X_train)
+
+#Generate test Bow vectors
+
+X_test_box= vectorizer.transform(X_test)
+
+from sklearn.naive_bayes import MultinomialNB
+
+clf=MultinomialNB()
+
+clf.fit(X_train_bow, y_train)
+
+accuracy = clf.score(X_test_bow,y_test)
+
+>>>>Sample
+
+# Import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Create a CountVectorizer object
+vectorizer=CountVectorizer(strip_accents='ascii', stop_words='english', lowercase=False)
+
+# Fit and transform X_train
+X_train_bow = vectorizer.fit_transform(X_train)
+
+# Transform X_test
+X_test_bow = vectorizer.transform(X_test)
+
+# Print shape of X_train_bow and X_test_bow
+print(X_train_bow.shape)
+print(X_test_bow.shape)
+
+# Create a MultinomialNB object
+clf=MultinomialNB()
+
+clf.fit(X_train_bow, y_train)
+
+# Measure the accuracy
+accuracy = clf.score(X_test_bow,y_test)
+print("The accuracy of the classifier on the test set is %.3f" % accuracy)
+
+# Predict the sentiment of a negative review
+review = "The movie was terrible. The music was underwhelming and the acting mediocre."
+prediction = clf.predict(vectorizer.transform([review]))[0]
+print("The sentiment predicted by the classifier is %i" % (prediction))
+
+>>>Building n-gram models
+
+in the bag of words the context of the words is lost
+
+n-grams is a contigous sequence of n elements(or words) in a given document
+
+the ngrams can be used to account for context
+
+n-grams are used for
+1. sentence completion
+2. spelling correction
+3. machine translation correction
+
+ngrams= CountVectorizer(ngram=range(1,3))
+
+shortcomings
+1. curse of dimensionality
+2. keep n-grams small
+
+>>Sample
+
+# Generate n-grams upto n=1
+vectorizer_ng1 = CountVectorizer(ngram_range=(1,1))
+ng1 = vectorizer_ng1.fit_transform(corpus)
+
+# Generate n-grams upto n=2
+vectorizer_ng2 = CountVectorizer(ngram_range=(1,2))
+ng2 = vectorizer_ng2.fit_transform(corpus)
+
+# Generate n-grams upto n=3
+vectorizer_ng3 = CountVectorizer(ngram_range=(1,3))
+ng3 = vectorizer_ng3.fit_transform(corpus)
+
+# Print the number of features for each model
+print("ng1, ng2 and ng3 have %i, %i and %i features respectively" % (ng1.shape[1], ng2.shape[1], ng3.shape[1]))
+
+# Define an instance of MultinomialNB 
+clf_ng = MultinomialNB()
+
+>>Sample 2
+
+start_time = time.time()
+# Splitting the data into training and test sets
+train_X, test_X, train_y, test_y = train_test_split(df['review'], df['sentiment'], test_size=0.5, random_state=42, stratify=df['sentiment'])
+
+# Generating ngrams
+vectorizer = CountVectorizer()
+train_X = vectorizer.fit_transform(train_X)
+test_X = vectorizer.transform(test_X)
+
+# Fit classifier
+clf = MultinomialNB()
+clf.fit(train_X, train_y)
+
+# Print accuracy, time and number of dimensions
+print("The program took %.3f seconds to complete. The accuracy on the test set is %.2f. The ngram representation had %i features." % (time.time() - start_time, clf.score(test_X, test_y), train_X.shape[1]))
+
+# Fit the classifier
+clf_ng.fit(X_train_ng, y_train)
+
+# Measure the accuracy
+accuracy = clf_ng.score(X_test_ng, y_test)
+print("The accuracy of the classifier on the test set is %.3f" % accuracy)
+
+# Predict the sentiment of a negative review
+review = "The movie was not good. The plot had several holes and the acting lacked panache."
+prediction = clf_ng.predict(ng_vectorizer.transform([review]))[0]
+print("The sentiment predicted by the classifier is %i" % (prediction))
+
+>>>Sample 3
+
+start_time = time.time()
+# Splitting the data into training and test sets
+train_X, test_X, train_y, test_y = train_test_split(df['review'], df['sentiment'], test_size=0.5, random_state=42, stratify=df['sentiment'])
+
+# Generating ngrams
+vectorizer = CountVectorizer(ngram_range=(1,3))
+train_X = vectorizer.fit_transform(train_X)
+test_X = vectorizer.transform(test_X)
+
+# Fit classifier
+clf = MultinomialNB()
+clf.fit(train_X, train_y)
+
+# Print accuracy, time and number of dimensions
+print("The program took %.3f seconds to complete. The accuracy on the test set is %.2f. The ngram representation had %i features." % (time.time() - start_time, clf.score(test_X, test_y), train_X.shape[1]))
+
+
+>>>>> building tf-idf document vectors
+
+1. a document containing the word human in five places has a dimension of 5
+2. some words occur commonly across all documents in the corpus
+a. suppose one document has jupiter and universe occurring 20 times each where jupiter rarely occurs in the other documents and universe is common.
+b. Jupiter should be given a larger weight on account of its exclusivity.
+
+
+automatically detect stopwords instead of depending on a generated list.
+
+search based on a ranking of pages
+
+recommender system
+
+better performance during predictive predicting
+
+>>term frequency inverse document frequency
+
+1. proportional to term frequency
+2. inverse function of the number of documents in which it occurs
+
+5* log(20/8) = 2   where the word library occurs 5 times in 20 documents in corpus and library occurs in 8 of them.
+
+A high tf-idf weight the more important the word is in classifying the document. the word is exclusive to that document.
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+vectorizer = TfidfVectorizer() 
+
+tfidf_matrix=vectorizer.fit_transform(corpus)
+print(tfidf_matrix.toarray())
+
+>>>Sample
+
+# Import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Create TfidfVectorizer object
+vectorizer = TfidfVectorizer() 
+
+# Generate matrix of word vectors
+tfidf_matrix = vectorizer.fit_transform(ted)
+
+# Print the shape of tfidf_matrix
+print(tfidf_matrix.shape)
+
+
+>>how similarity two documents are
+
+sim(A,B) = cos(theta) = a.b / ||A|| * ||B|| (magnitude)
+
+dot product
+v . W = v1*w1+v2*w2+v3*w3
+
+A=(4,7,1) B=(5,2,3)
+A.B = (4x5)+(7*2)+(1*3) =37
+
+Magnitude of a vector
+1 length of the vector
+2. d= sqrt( (4-5)**2 + (7-2)**2+ (1-3)**2)
+
+||A||= sqrt(4**2+7**2+1**2)
+||B|| = sqrt(5**2+2**2+3**2)
+
+cos=37/sqrt(66) * sqrt(38)
+.738
+
+bound between -1 and 1
+
+NLP
+0 means no similarity
+1 means the documents are identical
+
+
+from sklearn.metrics.pairwise import cosine_similarity
+
+#takes in 2d arrays as arguments
+
+A=(4,7,1)
+B=(5,2,3)
+score cosine_similarity([A],[B])
+
+print(score)
+
+>>>Sample
+
+# Initialize numpy vectors
+A = np.array([1,3])
+B = np.array([-2,2])
+
+# Compute dot product
+dot_prod = np.dot(A, B)
+
+# Print dot product
+print(dot_prod)
+
+
+>>Sample
+# Initialize an instance of tf-idf Vectorizer
+tfidf_vectorizer = TfidfVectorizer() 
+
+# Generate the tf-idf vectors for the corpus
+tfidf_matrix = tfidf_vectorizer.fit_transform(corpus)
+
+# Compute and print the cosine similarity matrix
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+print(cosine_sim)
+
+>>Movie recommender
+
+title, overview
+
+fnc= take in a title and output movies with similar overviews
+
+1. Text preprocessing
+2. generate tf-idf vectors
+3. generate cosine similarity matrix
+
+
+The recommender function
+1. takes a movie title, cosine similarity matrix, and indices series as arguments
+
+2. Extract pairwise cosine similarity scors for the movie
+
+3. Sorts the scores in descending order
+
+4. Output titles corresponding to the highest scores
+
+5. Ignore the highest similarity score of 1
+
+
+tfidf_vectorizer = TfidfVectorizer() 
+
+# Generate the tf-idf vectors for the corpus
+tfidf_matrix = tfidf_vectorizer.fit_transform(movie_plots)
+
+cosine_sim=cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+>>>Linear kernel
+
+from sklearn.metrics.pairwise import linear_kernel
+
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+
+
+>>Sample
+
+# Record start time
+start = time.time()
+
+# Compute cosine similarity matrix
+cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+# Print cosine similarity matrix
+print(cosine_sim)
+
+# Print time taken
+print("Time taken: %s seconds" %(time.time() - start))
+
+>>movie plots
+
+0       Following the death of District Attorney Harve...
+1       The Dark Knight of Gotham City confronts a das...
+2       The Dark Knight of Gotham City begins his war ...
+3       Having defeated the Joker, Batman now faces th...
+4       Along with crime-fighting partner Robin and ne...
+5       An old flame of Bruce Wayne's strolls into tow...
+6       The Dynamic Duo faces four super-villains who ...
+7       Driven by tragedy, billionaire Bruce Wayne ded...
+8       Batman faces his ultimate challenge as the mys...
+9       Two men come to Gotham City: Bruce Wayne after...
+10      Batman has not been seen for ten years. A new ...
+11      Batman has stopped the reign of terror that Th...
+12      Fearing the actions of a god-like Super Hero l...
+13      Led by Woody, Andy's toys live happily in his ...
+14      When siblings Judy and Peter discover an encha...
+15      A family wedding reignites the ancient feud be...
+16      Cheated on, mistreated and stepped on, the wom...
+17      Just when George Banks has recovered from his ...
+18      Obsessive master thief, Neil McCauley leads a ...
+19      An ugly duckling having undergone a remarkable...
+20      A mischievous young boy, Tom Sawyer, witnesses...
+21      International action superstar Jean Claude Van...
+22      James Bond must unmask the mysterious head of ...
+23      Widowed U.S. president Andrew Shepherd, one of...
+24      When a lawyer shows up at the vampire's doorst...
+25      An outcast half-wolf risks his life to prevent...
+26      An all-star cast powers this epic look at Amer...
+27      Morgan Adams and her slave, William Shaw, are ...
+28      The life of the gambling paradise – Las Vegas ...
+29      Rich Mr. Dashwood dies, leaving his second wif...
+
+indices
+
+The Dark Knight Rises                         0
+Batman Forever                                1
+Batman                                        2
+Batman Returns                                3
+Batman & Robin                                4
+Batman: Mask of the Phantasm                  5
+Batman                                        6
+Batman Begins                                 7
+Batman: Under the Red Hood                    8
+Batman: Year One                              9
+Batman: The Dark Knight Returns, Part 1      10
+Batman: The Dark Knight Returns, Part 2      11
+Batman v Superman: Dawn of Justice           12
+Toy Story                                    13
+Jumanji                                      14
+Grumpier Old Men                             15
+Waiting to Exhale                            16
+Father of the Bride Part II                  17
+Heat                                         18
+Sabrina                                      19
+Tom and Huck                                 20
+Sudden Death                                 21
+GoldenEye                                    22
+The American President                       23
+Dracula: Dead and Loving It                  24
+Balto                                        25
+Nixon                                        26
+Cutthroat Island                             27
+Casino                                       28
+Sense and Sensibility                        29
+                                           ... 
+Army of Darkness                            978
+The Big Blue                                979
+Ran                                         980
+The Killer                                  981
+Psycho                                      982
+The Blues Brothers                          983
+The Godfather: Part II                      984
+Full Metal Jacket                           985
+A Grand Day Out                             986
+Henry V                                     987
+Amadeus                                     988
+The Quiet Man                               989
+Once Upon a Time in America                 990
+Raging Bull                                 991
+Annie Hall                                  992
+The Right Stuff                             993
+Stalker                                     994
+Das Boot                                    995
+The Sting                                   996
+Harold and Maude                            997
+Trust                                       998
+The Seventh Seal                            999
+Local Hero                                 1000
+The Terminator                             1001
+Braindead                                  1002
+Glory                                      1003
+Rosencrantz & Guildenstern Are Dead        1004
+Manhattan                                  1005
+Miller's Crossing                          1006
+Dead Poets Society                         1007
+Length: 1008, dtype: int64>
+1                              Batman Forever
+2                                      Batman
+3                              Batman Returns
+8                  Batman: Under the Red Hood
+9                            Batman: Year One
+10    Batman: The Dark Knight Returns, Part 1
+11    Batman: The Dark Knight Returns, Part 2
+5                Batman: Mask of the Phantasm
+7                               Batman Begins
+4                              Batman & Robin
+Name: title, dtype: object
+
+
+tfidf = TfidfVectorizer(stop_words='english')
+
+# Construct the TF-IDF matrix
+tfidf_matrix = tfidf.fit_transform(movie_plots)
+
+# Generate the cosine similarity matrix
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+ 
+ Generate recommendations 
+#print(get_recommendations('The Dark Knight Rises', cosine_sim, indices))
+
+
+# Generate mapping between titles and index
+indices = pd.Series(metadata.index, index=metadata['title']).drop_duplicates()
+
+def get_recommendations(title, cosine_sim, indices):
+    # Get index of movie that matches title
+    idx = indices[title]
+    # Sort the movies based on the similarity scores
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    # Get the scores for 10 most similar movies
+    sim_scores = sim_scores[1:11]
+    # Get the movie indices
+    movie_indices = [i[0] for i in sim_scores]
+    # Return the top 10 most similar movies
+    return metadata['title'].iloc[movie_indices]
+
+
+>>TED similar articles
+
+# Initialize the TfidfVectorizer 
+tfidf = TfidfVectorizer(stop_words='english')
+
+
+# Construct the TF-IDF matrix
+tfidf_matrix = tfidf.fit_transform(transcripts)
+
+# Generate the cosine similarity matrix
+cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+ 
+# Generate recommendations 
+print(get_recommendations( '5 ways to kill your dreams', cosine_sim, indices))
+
+>>Beyond n-gram word
+
+1. Word embeddings is mapping words into an n-dimensional vector space
+2. produced using deep learning and huge amounts of data
+3. the vectors can be used to discern how similar two words are to each other.
+4. Used to detect synonyms and antonyms
+5. Captures complex relationships
+
+King->Queen, Man->Woman
+France->Paris and Russia->Moscow
+
+dependent on spacy model; independent of dataset you use
+
+
+nlp=spacy.load('en_core_web_lg')
+doc=nlp('I am happy')
+
+python -m spacy download en_core_web_lg
+python -m spacy link en_core_web_lg en_core_web_lg
+
+for token in doc:
+	print(token.vector)
+
+
+doc=nlp('happy joyous sad")
+
+for token1 in doc:
+	for token2 in doc:
+	print(token1.text,token2.text,token1.similarity(token2))
+
+
+t1=nlp("I am happy")
+t2=nlp("I am sad")
+t3=nlp("I am joyous")
+
+t1.similarity(t2)
+
+>>Sample
+
+# Create the doc object
+print(sent)
+doc = nlp(sent)
+
+# Compute pairwise similarity scores
+for token1 in doc:
+  for token2 in doc:
+    print(token1.text, token2.text, token1.similarity(token2))
+
+>>Sample
+
+# Create Doc objects
+mother_doc = nlp(mother)
+hopes_doc = nlp(hopes)
+hey_doc = nlp(hey)
+
+# Print similarity between mother and hopes
+print(mother_doc.similarity(hopes_doc))
+
+# Print similarity between mother and hey
+print(mother_doc.similarity(hey_doc))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
