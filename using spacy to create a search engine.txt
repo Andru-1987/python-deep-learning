@@ -1,0 +1,227 @@
+>>>sample
+
+# Import the English language class
+from spacy.lang.en import English
+
+# Create the nlp object
+nlp = English()
+
+# Process a text
+doc = nlp("This is a sentence.")
+
+# Print the document text
+print(doc.text)
+
+>>>Sample
+
+# Import the Spanish language class
+from spacy.lang.es import Spanish
+
+# Create the nlp object
+nlp = Spanish()
+
+# Process a text (this is Spanish for: "How are you?")
+doc = nlp("¿Cómo estás?")
+
+# Print the document text
+print(doc.text)
+
+>>>Sample
+
+# Import the English language class and create the nlp object
+from spacy.lang.en import English
+nlp = English()
+
+# Process the text
+doc = nlp("I like tree kangaroos and narwhals.")
+
+# Select the first token
+first_token = doc[0]
+
+# Print the first token's text
+print(first_token.text)
+
+
+>>>Sample
+
+# Import the English language class and create the nlp object
+from spacy.lang.en import English
+nlp = English()
+
+# Process the text
+doc = nlp("I like tree kangaroos and narwhals.")
+
+# A slice of the Doc for "tree kangaroos"
+tree_kangaroos = doc[2:4]
+print(tree_kangaroos.text)
+
+# A slice of the Doc for "tree kangaroos and narwhals" (without the ".")
+tree_kangaroos_and_narwhals = doc[2:6]
+print(tree_kangaroos_and_narwhals.text)
+
+
+>>Sample
+
+# Process the text
+doc = nlp("In 1990, more than 60% of people in East Asia were in extreme poverty. Now less than 4% are.")
+
+# Iterate over the tokens in the doc
+for token in doc:
+    # Check if the token resembles a number
+    if token.like_num:
+        # Get the next token in the document
+        next_token = doc[token.i + 1]
+        # Check if the next token's text equals '%'
+        if next_token.text == '%':
+          print('Percentage found:', token.text)
+
+>>What are statistical models?
+1. Enable part of speech tags
+2. syntatic dependencies
+3. named entities
+
+en_core_web_sm
+1. binary weights
+2. vocabulary
+3. meta information (language, pipeline)
+
+
+doc=nlp("she at the pizza"
+
+for token in doc:
+	print(token.text, token.pos_)
+
+Print predicting syntactic dependencies
+
+for token in doc:
+	print(token.text, token.pos_, token.dep_, token.head.text
+
+syntax dependency
+nsubj - nominal subject
+dobj - direct object
+det - determiner
+
+for ent in doc.ents:
+	print(ent.text,ent.label_)
+
+spacy.explain('GPE')
+
+spacy.explain('NNP')
+
+>>>>Sample
+
+
+# Load the 'en_core_web_sm' model – spaCy is already imported
+nlp = spacy.load('en_core_web_sm')
+
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+# Print the document text
+print(doc.text)
+	
+>>>Sample
+
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+for token in doc:
+    # Get the token text, part-of-speech tag and dependency label
+    token_text = token.text
+    token_pos = token.pos_
+    token_dep = token.dep_
+    # This is for formatting only
+    print('{:<12}{:<10}{:<10}'.format(token_text, token_pos, token_dep))
+
+
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+# Iterate over the predicted entities
+for ent in doc.ents:
+    # print the entity text and its label
+    print(ent.text,ent.label_)
+
+>>>Sample
+
+text = "New iPhone X release date leaked as Apple reveals pre-orders by mistake"
+
+# Process the text
+doc = nlp(text)
+
+# Iterate over the entities
+for ent in doc.ents:
+    # print the entity text and label
+    print(ent.text, ent.label_)
+
+# Get the span for "iPhone X"
+iphone_x = doc[1:3]
+
+# Print the span text
+print('Missing entity:', iphone_x.text)
+
+
+>>>Rule-based matching
+ match patterns
+[{'ORTH':'iPhone',{'ORTH':'X'}]
+
+Match any token attributes
+[{'LEMMA':'buy'},{'POS':'NOUN'}]
+
+from spacy.matcher import Matcher
+
+nlp= spacy.load('en_core_web_sm')
+doc=nlp(paragraph)
+
+matcher=Matcher(nlp.vocab)
+
+pattern=[{'ORTH':'iPhone'},{'ORTH':'X'}]
+
+matcher.add('IPHONE_PATTERN',None,pattern)
+
+matches=matcher(doc)
+
+
+for match_id, start, end in matches
+	matched_span=doc[start:end]
+	print(matched_span.text)
+
+match_id: hash value of the pattern name
+start: start index of matched span
+end: end index of matched span
+
+pattern = [
+{'IS_DIGIT':True},
+{'LOWER': 'fifa'}.
+{IS_PUNCT': True}
+]
+
+
+pattern=[
+{'LEMMA':'love','POS':'VERB'},
+{'POS','NOUN'}
+]
+
+doc=nlp('I loved dogs but now I love cats more')
+
+produces
+loved dogs
+love cats
+
+{'OP':'!'} negation match 0 times
+{'OP': '?'} optional: match 0 or 1 times
+{'OP': '+'} match 1 or more times
+{'OP': '*'} match 0 or more times
+
+
+
+
+
+
+
