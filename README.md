@@ -3,6 +3,7 @@ python deep learning notebooks
 
 I am using python to visualize data and learn from it.
 
+* I added a deep learning stocastic descent to solve a linear matrix X, Y, Z set of equations.
 * I added NMF feature reduction to analyze words in a document to build a better search engine using ensemblies
 * I added Michelson vs Newcomb speed of light hypothesis testing code
 * I feature analyze and extract using K-means cluster on the Iris classifier using K-means cluster
