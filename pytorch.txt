@@ -1,0 +1,176 @@
+Random tensors are very important in neural networks. Parameters of the neural networks typically are initialized with random weights (random tensors).
+
+# Import torch
+import torch
+
+# Create random tensor of size 3 by 3
+your_first_tensor = torch.rand(3, 3)
+
+# Calculate the shape of the tensor
+tensor_size = your_first_tensor.shape
+
+# Print the values of the tensor and its shape
+print(your_first_tensor)
+print(tensor_size)
+
+>>>>Sample
+
+# Create a matrix of ones with shape 3 by 3
+tensor_of_ones = torch.ones(3, 3)
+
+# Create an identity matrix with shape 3 by 3
+identity_tensor = torch.eye(3)
+
+print(tensor_of_ones)
+print(identity_tensor)
+
+# Do a matrix multiplication of tensor_of_ones with identity_tensor
+matrices_multiplied = torch.matmul(tensor_of_ones, identity_tensor)
+print(matrices_multiplied)
+
+# Do an element-wise multiplication of tensor_of_ones with identity_tensor
+element_multiplication = tensor_of_ones * identity_tensor
+
+>>>Forward Propogation
+
+Input
+a=2,b=-4,c=-2,d=2
+
++ operator where e= a+b or 2+-4=-2
+* operator where f= c+d or -2*2 =-4
+* operator where g=-2*-4=8
+
+import torch
+
+a= torch.Tensor([2])
+b= torch.Tensor([-4])
+c= torch.Tensor([-2])
+d= torch.Tensor([2])
+
+e=a+b
+f=c*d
+g=e*f
+
+>>>Sample
+
+# Initialize tensors x, y and z
+x = torch.rand(1000,1000)
+y = torch.rand(1000,1000)
+z = torch.rand(1000,1000)
+
+# Multiply x with y
+q = x*y
+
+# Multiply elementwise z with q
+f = z*q
+
+mean_f = torch.mean(f)
+print(mean_f)
+
+>>Backpropagation
+1. derivatives represent the rate of change in the function.
+
+derivative
+addition= (f+g)' = f'+g'
+multiplication= (f*g)'=f*dg+g*df
+powers=(x^n)' = d/dx x^n = nx^(n-2)
+Inverse=(1/x)' = -1/x^2
+Division=(f/g)' = (df*1/g) + (-1/g2 * dg * f)
+
+x=torch.tensor(-3., requires_grad=true)
+y=torch.tensor(5., requires_grad=true)
+z=torch.tensor(-2., requires_grad=true)
+
+q=x+y
+f=q*z
+
+f.backward()
+
+print("gradient of z is:str(z.grad))
+print("gradient of y is:str(y.grad))
+print("gradient of x is:str(x.grad))
+
+
+>>>Sample
+
+# Initialize x, y and z to values 4, -3 and 5
+x = torch.tensor(4., requires_grad=True)
+y = torch.tensor(-3., requires_grad=True)
+z = torch.tensor(5., requires_grad=True)
+
+# Set q to sum of x and y, set f to product of q with z
+q = x+y
+f = q*z
+
+# Compute the derivatives
+f.backward()
+
+# Print the gradients
+print("Gradient of x is: " + str(x.grad))
+print("Gradient of y is: " + str(y.grad))
+print("Gradient of z is: " + str(z.grad))
+
+>>Sample
+
+# Multiply tensors x and y
+q = torch.matmul(x,y)
+
+# Elementwise multiply tensors z with q
+f = z * q
+
+mean_f = torch.mean(f)
+
+# Calculate the gradients
+mean_f.backward()
+
+>>>Introduction to neural networks
+1. The job of the hidden layer is to get good features
+
+
+import torch
+
+input_layer = torch.rand(10)
+w1=torch.rand(10,20)
+w2=torch.rand(20,20)
+w3=torch.rand(20,4)
+
+h1=torch.matmul(input_layer, w1)
+h2=torch.matmul(h1,w2)
+output_layer=torch.matmul(h2,w3)
+print(output_layer)
+
+
+import torch
+import torch.nn as nn
+
+class Net(nn.Module):
+	def __init__(self):
+		super(Net,self).__init__()
+		self.fc1=nn.Linear(10,20)
+		self.fc2=nn.Linear(20,20)
+		self.output=nn.Linear(20,4)
+	
+	def forward(self,x):
+		x=self.fc1(x)
+		x=self.fc2(x)
+		x=self.output(x)
+		return x
+
+>>>Sample
+
+# Initialize the weights of the neural network
+weight_1 = torch.rand(784, 200)
+weight_2 = torch.rand(200, 10)
+
+# Multiply input_layer with weight_1
+hidden_1 = torch.matmul(input_layer, weight_1)
+
+# Multiply hidden_1 with weight_2
+output_layer = torch.matmul(hidden_1, weight_2)
+print(output_layer)
+
+
+
+
+
+
