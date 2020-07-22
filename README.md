@@ -3,6 +3,9 @@ python deep learning notebooks
 
 I am using python to visualize data and learn from it.
 
+* I added a logistic regression binary classifier with lasso called (Logistic Regression predicting magazine subscription)
+* I added a logistic regression of multiple classes using cross_entropy and softmax called Logistic Regression prediction of Iris.ipynb
+* I added a logistic regression binary prediction of whether or not a person will open an account (Logistic Regression open account prediction.ipynb)
 * I added a deep learning stocastic descent to solve a linear matrix X, Y, Z set of equations.
 * I added NMF feature reduction to analyze words in a document to build a better search engine using ensemblies
 * I added Michelson vs Newcomb speed of light hypothesis testing code
