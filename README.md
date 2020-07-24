@@ -3,6 +3,7 @@ python deep learning notebooks
 
 I am using python to visualize data and learn from it.
 
+* Working on LSTM Input_shape
 * I added a logistic regression binary classifier with lasso called (Logistic Regression predicting magazine subscription)
 * I added a logistic regression of multiple classes using cross_entropy and softmax called Logistic Regression prediction of Iris.ipynb
 * I added a logistic regression binary prediction of whether or not a person will open an account (Logistic Regression open account prediction.ipynb)
