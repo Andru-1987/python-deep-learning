@@ -1,0 +1,220 @@
+XGBoost
+1. relies on labeled data
+training data: vectors of pixel values
+labels are 1 if it contains a face or 0
+
+Classification problems can be binary or multi-class
+
+predicting if a picture contains several specifies of birds is multi-class prediction.
+
+Area under the ROC curve (AUC)
+
+ROC is the most important metric for judging the quality of a binary classification model.
+
+A higher AUC means a sensitive better performing model.
+
+Accuracy:  (tp+tn)/(tp+tn+fp+fn)
+
+look at the confusion matrix to evaluate the quality of a model.
+
+
+>>XGBoost
+apis are in python
+speed and performance make XGBoost popular
+parallelizable on gpus and on networks of computers
+training datasets on the orders of 100s of millions of data elements
+
+installing XGBoost:
+conda install -c rdonnelly py-xgboost
+
+
+import xgboost as xgb
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+
+url = "https://raw.githubusercontent.com/dnishimoto/python-deep-learning/master/creditcard.csv"
+
+creditcard = pd.read_csv(url)
+
+creditcard.columns = [x.lower() for x in creditcard.columns]
+creditcard.rename(columns = {'class': 'fraud'}, inplace = True)
+print(creditcard.fraud.value_counts(dropna = False))
+
+X = creditcard.drop("fraud", axis = 1)
+y = creditcard["fraud"]
+
+
+X_train, X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=42)
+
+
+xg_cl= xgb.XGBClassifier(objective='binary:logistic',n_estimators=10,seed=123)
+
+xg_cl.fit(X_train,y_train)
+
+y_pred=xg_cl.predict(X_test)
+
+
+>>>What is a decision tree
+
+1.  A question is asked at each decision node with two possible choices (yes or no).
+2.  At the bottom of the tree is a single outcome
+3.  xgboost is an ensemble algorithm in that it uses many models for a final fit.
+4. Decision trees are constructed iteratively, one decision at a time until some stopping criteria is meet.  Such as the depth of the tree.
+
+5. creating a split point is where it divides the features from the targets.   The targets are dominated by one category.
+
+
+decision trees tend to have high varience when applied to unknown data.
+
+XgBoost uses a CART: classification adn regression trees.
+
+CART contain a real-valued scored in each leaf
+The real-valued scored can be converted into categories.
+
+
+>>>Sample
+
+# Import the necessary modules
+import xgboost as xgb
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+# Create the training and test sets
+X_train, X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,random_state=123)
+
+# Instantiate the classifier: dt_clf_4
+dt_clf_4 =DecisionTreeClassifier(max_depth=4)
+
+# Fit the classifier to the training set
+dt_clf_4.fit(X_train,y_train)
+
+# Predict the labels of the test set: y_pred_4
+y_pred_4 = dt_clf_4.predict(X_test)
+
+# Compute the accuracy of the predictions: accuracy
+accuracy = float(np.sum(y_pred_4==y_test))/y_test.shape[0]
+print("accuracy:", accuracy)
+
+
+>>>What is boosting
+1. boosting is a concept that can be applied to a set of machine learning models
+2. an ensemble meta-alogirthm used to convert many weak learners into a strong learner
+
+A weak learner is a prediction that is slightly better than 50%
+
+Boosting is convert a collection of weak learners into a strong learner
+
+Boosting is accomplished by iteratively learning a set of weak models on subsets of data
+
+Combine the weighted predictions of all the weak learner predictions to get a single weighted prediction
+
+It is incredible that it works as well as it does.
+
+
+>>>>>how to cross-validate the xgboost tree
+
+1. cross-validation is a method of estimating performmance on unseen data.
+2. generates many non-overlapping training/test splits on training data.
+3. reports the average test set performance across all data splits
+
+
+
+
+dmatrix=xgb.DMatrix(data=creditcard.iloc[:,:-1],
+    label=creditcard.fraud)
+params={"objective":"binary:logistic","max_depth":4}
+
+cv_results=xgb.cv(dtrain=dmatrix, params=params, nfold=4,
+    num_boost_round=10, metrics='error', as_pandas=True)
+
+print("Accuracy: %f" %((1-cv_results["test-error-mean"]).iloc[-1]))
+
+
+>>Sample
+
+print(churn_data.columns)
+# Create arrays for the features and the target: X, y
+X, y = churn_data.iloc[:,:-1], churn_data.iloc[:,-1]
+
+# Create the DMatrix from X and y: churn_dmatrix
+churn_dmatrix =xbg.DMatrix(data=X, label=churn_data.month_5_still_here)
+
+# Create the parameter dictionary: params
+params = {"objective":"reg:logistic", "max_depth":3}
+
+# Perform cross-validation: cv_results
+cv_results = xgb.cv(dtrain=churn_dmatrix, params=params, 
+                  nfold=4, num_boost_round=10, 
+                  metrics="error", as_pandas=True, seed=123)
+
+# Print cv_results
+print(cv_results)
+
+# Print the accuracy
+print(((1-cv_results["test-error-mean"]).iloc[-1]))
+
+>>>Sample auc
+
+# Perform cross_validation: cv_results
+cv_results = xgb.cv(dtrain=churn_dmatrix, params=params, 
+                  nfold=3, num_boost_round=5, 
+                  metrics="auc", as_pandas=True, seed=123)
+
+# Print cv_results
+print(cv_results)
+
+# Print the AUC
+print((cv_results["test-auc-mean"]).iloc[-1])
+
+
+>>When should I use xgboost
+1. supervised learning with large training sample and less than 100 features
+2. you have a mixture of categorical and numeric features
+
+
+when should you not use xgboost
+
+1. not suited for image recognition, computer vision, natural language processing and understanding of problem
+2. when the number of training samples is significantly smaller than the number of features
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

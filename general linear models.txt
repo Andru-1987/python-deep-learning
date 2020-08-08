@@ -1,0 +1,175 @@
+general linear models
+
+1. learning the building blocks of GLMs
+2. train GLMs
+3. intrepret model results
+4. assess model performance
+5. compute predictions
+
+
+Suppose you want to predict salary given years of experience
+
+salary ~ experience
+
+salary = B0+B1*experience +e
+y=B0+B1x1+e
+
+y is the contineous response variable (output)
+x - explanatory variable (input)
+
+B - model parameters
+B0 - intercept
+B1 - slope
+e - random error
+
+
+from statsmodels.formula.api import ols
+
+
+model = ols(formula='y~X', data=my_data).fit()
+
+
+>>>GLM function
+
+import statsmodels.api as sm
+from statsmodels.formula.api import glm
+
+model=glm(formula='y~X',data=my_data, famil=sm.families.____).fit()
+
+the ols functions tells us the linear fit
+
+salary = 25790+9449*experience
+
+E[y]=u=B0+B1x1
+
+
+What is the response 
+1. continueous - creating a normal distribution
+2. binary : 0 or 1  (bernoulii)
+3. Poisson  frequency vs count
+
+GLM is not greater than 1 so it fits the binomial groupings correctly
+
+probability >= 0.5 Yes
+probability < 0.5 No
+
+
+>>>Sample OLS
+
+import statsmodels.api as sm
+from statsmodels.formula.api import ols, glm
+
+# Fit a linear model
+model_lm = ols(formula = 'Salary ~ Experience',
+               data = salary).fit()
+
+# View model coefficients
+print(model_lm.params)
+
+>>>Sample GLM
+
+from statsmodels.formula.api import ols, glm
+import statsmodels.api as sm
+
+# Fit a GLM
+model_glm = glm(formula = 'Salary ~ Experience',
+                data = salary,
+                family = sm.families.Gaussian()).fit()
+
+# View model coefficients
+print(model_glm.params)
+
+>>>Linear models are not accomodating to contineous response data.
+
+1. binomial
+2. poisson
+
+random component
+systematic component
+interaction
+curvillinear
+link function (connects random with systematic components)
+
+>>>Linear Regression
+contineous with normally distributed
+family gaussian
+link: identity
+model: linear regression
+
+>>>>Binary
+
+Family: Binomal()
+model: Logistic Regression
+
+where 0=true and 1=False
+
+
+>>>>Poisson
+
+Data type: count
+example: number of votes
+
+Family: Poisson()
+link: logarithm
+Model: Poisson regression
+
+>>>>>Link functions:
+Normal 		Gaussian()
+Poisson		Poisson()
+Binomial	Binomial()
+Gamma		Gamma()
+Inverse Gaussian	InverseGaussian()
+
+
+>>>GLMs
+1. A unified framework for many different data distributions
+a. Exponential family of distributions
+
+Link Function
+a. Transforms the expected value of y
+b. Enables linear combinations
+
+
+>>>sample
+
+#the Gaussian family is a linear model (a special case of GLMs)
+#the Binomial family is a logistic regression model.
+
+# Define model formula
+formula = 'y ~ width'
+
+# Define probability distribution for the response variable for 
+# the linear (LM) and logistic (GLM) model
+family_LM = sm.families.Gaussian()
+family_GLM = sm.families.Binomial()
+
+# Define and fit a linear regression model
+model_LM = glm(formula = formula, data = crab, family = family_LM).fit()
+print(model_LM.summary())
+
+# Define and fit a logistic regression model
+model_GLM = glm(formula = formula, data = crab, family = family_GLM).fit()
+print(model_GLM.summary())
+
+>>>Sample
+print(test)
+
+# Compute estimated probabilities for linear model: pred_lm
+pred_lm = model_LM.predict(test)
+
+# Compute estimated probabilities for GLM model: pred_glm
+pred_glm = model_GLM.predict(test)
+
+# Create dataframe of predictions for linear and GLM model: predictions
+predictions = pd.DataFrame({'Pred_LM': pred_lm, 'Pred_GLM': pred_glm})
+
+# Concatenate test sample and predictions and view the results
+all_data = pd.concat([test, predictions], axis = 1)
+print(all_data.head())
+
+
+
+
+
+
+

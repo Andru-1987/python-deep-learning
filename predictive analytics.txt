@@ -1,0 +1,178 @@
+predicative analytics
+
+the donors most likely to donate
+1. age, gender, previoous gifts, donations
+
+population is a target
+features are the candidate information
+target is what we want to predict
+
+predictive analytics is based on historical data
+
+>>Sample
+
+# Assign the number of rows in the basetable to the variable 'population_size'.
+population_size  = len(basetable)
+
+# Print the population size.
+print(population_size)
+
+# Assign the number of targets to the variable 'targets_count'.
+targets_count = sum(basetable['target'])
+
+# Print the number of targets.
+print(targets_count)
+
+# Print the target incidence.
+print(targets_count / population_size) 
+
+>>Sample
+
+# Count and print the number of females.
+print(sum(basetable['gender'] == 'F'))
+
+# Count and print the number of males.
+print(sum(basetable['gender'] == 'M'))
+
+>>Logistic regression
+
+elder people are more likely to donate.
+
+ax + b where ax is the slope and b is the slope
+
+probability of likehood that a person will donate
+
+a number between 0 and 1
+
+
+from sklearn import linear_model
+
+logreg=linear_model.LogisticRegression()
+
+X= basetable[['age']]
+y= basetable[['target']]
+
+logreg.fit(X,y)
+
+Predictive sales
+https://github.com/itisdeeptigupta/Predict-Future-Sales
+
+
+print(logreg.coef_)
+
+print(logreg.intercept_)
+
+univariate : ax+b
+multivariate: a1x1 +a2x2 + anxn +b
+
+
+Generally, positive coefficients make the event more likely and negative coefficients make the event less likely. An estimated coefficient near 0 implies that the effect of the predictor is small.
+
+
+Binary logistic regression in Minitab Express uses the logit link function, which provides the most natural interpretation of the estimated coefficients. Binary logistic regression in Minitab Express uses the logit link function, which provides the most natural interpretation of the estimated coefficients. 
+
+
+>>>>Sample
+
+
+# Construct a logistic regression model that predicts the target using age, gender_F and time_since_last gift
+predictors = ["age","gender_F","time_since_last_gift"]
+X = basetable[predictors]
+y = basetable[["target"]]
+logreg = linear_model.LogisticRegression()
+logreg.fit(X, y)
+
+# Assign the coefficients to a list coef
+coef = logreg.coef_
+
+for p,c in zip(predictors,list(coef[0])):
+    print(p + '\t' + str(c))
+    
+# Assign the intercept to the variable intercept
+intercept = logreg.intercept_
+print(intercept)
+
+age	0.020876738501379857
+gender_F	0.54476392064619
+time_since_last_gift	-0.0014758119422210645
+[-3.38994928]
+
+
+>>>Using the logistic regression model from the coefficients
+
+equation: 0.545 * gender_f
++021 * age
+-0.001 * times_since_last_gift
+
+
+predict a donor : Female, age 72, 120 days since the last gift
+
+
+0.545 * 1
++0.021 *72-
+0.001(12-3.39
+
+=-1.45
+
+1/(1+e**-(-1.45) =0.19
+
+19% chance 
+
+
+logreg.predict_proba([1,72,120])
+
+the output is two numbers
+
+The first number is the probablity the donor will not donate
+
+The second number is the probability the donor will donate
+
+
+>>>Sample
+
+# Fit a logistic regression model
+from sklearn import linear_model
+X = basetable[["age","gender_F","time_since_last_gift"]]
+y = basetable[["target"]]
+logreg = linear_model.LogisticRegression()
+logreg.fit(X, y)
+
+# Create a dataframe new_data from current_data that has only the relevant predictors 
+new_data = current_data[["age","gender_F","time_since_last_gift"]]
+
+# Make a prediction for each observation in new_data and assign it to predictions
+predictions = logreg.predict_proba(new_data)
+print(predictions[0:5])
+
+
+print(len(predictions[predictions[:,1]>0.06]))
+
+>>>
+The predictions are in a pandas dataframe predictions that has two columns: the donor ID and the probability to be target. Sort these predictions such that the donors with lowest probability to donate are first.
+
+# Sort the predictions
+predictions_sorted = predictions.sort(["probability"])
+
+# Select the last row of the sorted predictions
+print(predictions_sorted.tail(1))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

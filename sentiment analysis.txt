@@ -1,0 +1,102 @@
+process of analyzing the opinion of the author
+positive
+neutral
+negative
+
+subject of discussion
+
+we want to know how people are talking about it
+
+data
+1. review
+2. label 0-negative 1-positive
+
+data.label.value_counts()
+
+data.label.value_counts()/len(data)
+
+#find the longest review
+length_reviews=data.review.str.len()
+
+max(length_reviews)
+min(length_reviews)
+
+
+>>>Sample
+
+# Find the number of positive and negative reviews
+print('Number of positive and negative reviews: ', movies.label.value_counts())
+
+# Find the proportion of positive and negative reviews
+print('Proportion of positive and negative reviews: ', movies.label.value_counts() / len(movies))
+
+
+>>>Sample find the largest and smallest review
+
+length_reviews = movies.review.str.len()
+
+# How long is the longest review
+print(max(length_reviews))
+
+
+>>>Getting started
+
+1. Document level
+2. Sentence level
+3. Aspect level
+
+
+Today was a good day.
+
+each words gets a score and we sum the balance
+
+today:0 was:0 good:1 day:0
+
++1 we have a positive sentence
+
+
+text="Today was a good day"
+
+from textblob import TextBlob
+
+my_valance = TextBlob(text)
+
+my_valance.sentiment
+
+#polarity is -1 to 1 where -1 is very negative and 1 very positive
+
+subjective -1 to 1
+
+rule/lexicon-base approach
+1. rely on manually created rules and dictionaries
+2. may fail on certain tasks because the polarity of words might change with the problem.
+
+
+>>>>Sample
+
+# Import the required packages
+from textblob import TextBlob
+
+# Create a textblob object  
+blob_two_cities = TextBlob(two_cities)
+
+# Print out the sentiment 
+print(blob_two_cities.sentiment)
+
+print(two_cities)
+
+>>>Word cloud example
+
+the more frequent the word the bigger the word
+
+can reveal the essential
+provide an overall sense of the text
+easy to grasp and engaging
+
+
+
+
+
+
+
+
