@@ -1,0 +1,49 @@
+pull reports to answer business questions
+
+DataBallers
+
+
+Dashboard
+1. aimed to answer specific business questions
+
+Most wins by country
+Game Log
+
+
+2. A base report is the data source for a visualization
+
+select country,
+Sum(wins) as wins
+from game_log
+group by country
+order by wins desc
+limit 3
+
+
+Most decorated athletes
+top athletes in Nobel-Prized countries
+Medal vs Population rate
+Average Tallest Athlete and GDP
+
+
+>>>Sample
+
+-- Query the sport and distinct number of athletes
+SELECT 
+	sport, 
+    count(distinct athlete_id) AS athletes
+FROM summer_games
+GROUP BY sport
+-- Only include the 3 sports with the most athletes
+ORDER BY athletes desc
+LIMIT 3;
+
+>>>Sample
+
+-- Query sport, events, and athletes from summer_games
+SELECT 
+	sport, 
+    count(distinct event) AS events, 
+    count(distinct athlete_id) AS athletes
+FROM summer_games
+GROUP BY sport;

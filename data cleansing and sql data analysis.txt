@@ -1,0 +1,399 @@
+
+
+# Print the information of ride_sharing
+print(ride_sharing.info())
+
+# Print summary statistics of user_type column
+print(ride_sharing['user_type'].describe())
+
+
+>>Sample
+
+# Print the information of ride_sharing
+print(ride_sharing.info())
+
+# Print summary statistics of user_type column
+print(ride_sharing['user_type'].describe())
+
+# Convert user_type from integer to category
+ride_sharing['user_type_cat'] = ride_sharing['user_type'].astype('category')
+
+# Write an assert statement confirming the change
+assert ride_sharing['user_type_cat'].dtype == 'category'
+
+# Print new summary statistics 
+print(ride_sharing['user_type_cat'].describe())
+
+print(ride_sharing['user_type_cat'])
+
+>>Sample
+
+# Strip duration of minutes
+ride_sharing['duration_trim'] = ride_sharing['duration'].str.strip('minutes') 
+
+# Convert duration to integer
+ride_sharing['duration_time'] = ride_sharing['duration_trim'].astype('int')
+
+# Write an assert statement making sure of conversion
+assert ride_sharing['duration_time'].dtype == 'int'
+
+# Print formed columns and calculate average ride duration 
+print(ride_sharing[['duration','duration_trim','duration_time']])
+print(ride_sharing['duration_time'].mean())
+
+
+>>>Data range constraints
+
+
+import matplotlib.pyplot as plt
+plt.hist(movies['avg_rating'])
+plt.title('Average rating of movies (1-5)')
+
+or signups in the future
+
+import datetime as dt
+today_date=dt.date.today()
+user_signups[user_signups['subscription_date']> today_date]
+
+>>>dealing with out of range data
+1. drop the data
+2. set custom minimums and maximums
+3. treat a s missing and impute
+4. Set custom value depending on business assumptions
+
+
+>>> dropping data
+
+movies.drop(movies[movies['avg_rating']>5].index, inplace=True)
+
+assert movies['avg_rating'].max()<=5
+
+>> Setting to a hard limit
+
+movie.loc[movies['avg_rating']>5, 'avg rating']=5
+
+
+user_signups.dtypes
+
+ouput: subscription_date object
+
+user_signups['subscription_date']= pd.to_datetime(user_signups['subscription_date'])
+
+assert user_signups['subscriptions_date'].dtype == 'datetime64[ns]'
+
+today_date=dt.date.today()
+
+assert user_signups.subscription_date.max().date() <= today_date
+
+
+>>>Sample
+
+# Convert tire_sizes to integer
+ride_sharing['tire_sizes'] = ride_sharing['tire_sizes'].astype('int')
+
+# Set all values above 27 to 27
+ride_sharing.loc[ride_sharing.tire_sizes > 27,'tire_sizes'] = 27
+
+# Reconvert tire_sizes back to categorical
+ride_sharing['tire_sizes'] = ride_sharing['tire_sizes'].astype('category')
+
+print(ride_sharing['tire_sizes'])
+# Print tire size description
+print(ride_sharing['tire_sizes'].describe())
+
+>>>Sample
+
+# Convert ride_date to datetime
+ride_sharing['ride_dt'] = pd.to_datetime(ride_sharing['ride_date'])
+
+# Save today's date
+today = dt.date.today()
+
+# Set all in the future to today's date
+ride_sharing.loc[ride_sharing['ride_dt'] > today, 'ride_dt'] = today
+
+# Print maximum of ride_dt column
+print(ride_sharing['ride_dt'].max())
+
+
+>>>Uniqueness Constraints
+
+duplicate values
+
+
+duplicates = height_weight.duplicated()
+print(duplicates)
+
+all columns are required to be duplicated to be have an duplicate output
+
+height_weight[duplicates]
+
+The .duplicated() method
+1. subset : list of column names to check for duplication
+2. keep: 'first', 'last', or all is False parameter for duplicate values
+
+column_names=['first_name','last_name','address']
+duplicates = height_weight.duplicated(subset=column_names, keep=False)
+
+>>>Sort
+
+height_weight[duplicates].sort_values(by='first_name')
+
+>>>.drop_duplicates method
+
+inplace: Drop duplicated rows directly inside DataFrame without creating new object (True)
+
+
+>>>Sample
+
+df = pd.DataFrame({'Keyword': {0: 'apply', 1: 'apply', 2: 'apply', 3: 'terms', 4: 'terms'},
+ 'X': {0: [1, 2], 1: [1, 2], 2: 'xy', 3: 'xx', 4: 'yy'},
+ 'Y': {0: 'yy', 1: 'yy', 2: 'yx', 3: 'ix', 4: 'xi'}})
+#print(df)
+#print(df.info())
+
+df2=df.copy()
+mylist=df2.iloc[0,1]
+df2.iloc[0,1]=' '.join(map(str,mylist))
+
+mylist=df2.iloc[1,1]
+df2.iloc[1,1]=' '.join(map(str,mylist))
+
+duplicates=df2.duplicated(keep=False)
+#print(df2[duplicates])
+
+df2[duplicates].drop_duplicates(inplace=True)
+#print(df2)
+#print(df.astype(str))
+
+print(df.astype(str).duplicated(keep=False))
+
+df=df.iloc[df.astype(str).drop_duplicates().index]
+
+
+>>>using the groupby() and .agg() methods
+
+column_names=['first_name','last_name','address']
+summaries={'height':'max','weight':'mean'}
+
+height_weight=height_weight.groupby(by=column_names).agg(summaries).reset_index()
+
+>>Sample
+
+#Correct! Subsetting on metadata and keeping all duplicate records gives you a better bird-eye's view over your data and how to duplicate it!
+
+
+# Find duplicates
+duplicates = ride_sharing.duplicated('ride_id', keep=False)
+print(duplicates)
+
+# Sort your duplicated rides
+duplicated_rides = ride_sharing[duplicates].sort_values('ride_id')
+
+# Print relevant columns of duplicated_rides
+print(duplicated_rides[['ride_id','duration','user_birth_year']])
+
+>>Sample dropping duplicates
+
+# Drop complete duplicates from ride_sharing
+ride_dup = ride_sharing.drop_duplicates()
+
+# Create statistics dictionary for aggregation function
+statistics = {'user_birth_year': 'min', 'duration': 'mean'}
+
+# Group by ride_id and compute new statistics
+ride_unique = ride_dup.groupby('ride_id').agg(statistics).reset_index()
+
+# Find duplicated values again
+duplicates = ride_unique.duplicated(subset = 'ride_id', keep = False)
+duplicated_rides = ride_unique[duplicates == True]
+
+# Assert duplicates are processed
+assert duplicated_rides.shape[0] == 0
+
+
+>>>>Sample
+
+SELECT count(*) - count(ticker) AS missing
+  FROM fortune500;
+
+
+>>>Sample
+
+SELECT count(*) - count(profits_change) AS missing
+  FROM fortune500;
+
+>>>Sample
+
+SELECT company.name
+-- Table(s) to select from
+  FROM company
+       join fortune500 on
+       company.ticker=fortune500.ticker
+
+
+Primary keys are columns with unique non-null value
+
+foreign keys reference a row in a different tabl or the same table via an unique id
+
+foreign keys contain a value in the reference column or null
+
+if the foreign key is null then it indicates there is no relationship for that row.
+
+parent id : id in the same table is a self referencing foreign key
+
+>>>>>>coalese
+
+coalesce returns the first non-null column value on the row
+
+
+select coalesce(column_1, column_2)
+
+>>>>>Sample
+
+-- Count the number of tags with each type
+SELECT type, count(*) AS count
+  FROM tag_type
+ -- To get the count for each type, what do you need to do?
+ GROUP BY type
+ -- Order the results with the most common
+ -- tag types listed first
+ ORDER BY count DESC;
+
+>>>Sample
+
+-- Select the 3 columns desired
+SELECT company.name, tag_type.tag,  tag_type.type
+  FROM company
+  	   -- Join to the tag_company table
+       JOIN tag_company 
+       ON company.id = tag_company.company_id
+       -- Join to the tag_type table
+       JOIN tag_type
+       ON tag_company.tag = tag_type.tag
+  -- Filter to most common type
+  WHERE type='cloud';
+
+
+>>>Sample group by
+
+-- Use coalesce
+SELECT coalesce(industry, sector, 'Unknown') AS industry2,
+       -- Don't forget to count!
+       count(*)
+  FROM fortune500 
+-- Group by what? (What are you counting by?)
+ GROUP BY industry2
+-- Order results to see most common first
+ order by count
+-- Limit results to get just the one value you want
+ limit 5;
+
+>>>sAMPLE
+
+SELECT company_original.Name, title, rank
+  -- Start with original company information
+  FROM Company AS company_original
+       -- Join to another copy of company with parent
+       -- company information
+	   LEFT JOIN Company AS company_parent
+       ON company_original.parent_id = company_parent.id
+       -- Join to fortune500, only keep rows that match
+       INNER JOIN fortune500 
+       -- Use parent ticker if there is one, 
+       -- otherwise original ticker
+       ON coalesce(company_parent.ticker, 
+                   company_original.ticker) = 
+             fortune500.ticker
+ -- For clarity, order by rank
+ ORDER BY rank;
+
+
+data types
+smallint  -32768 to 32767
+integer -2,147,483,648 to 2,147,483,647
+bigint  -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+decimal and numeric 131072 diits before the decimal point and 16383 digit after the decimal point
+real 6 decimal digits of precision
+double precision 15 decimal digits precision
+smallserial 1 to 32767
+serial 1 to 2,147,483,647
+bigserial 1 to 9,223,372,036,854,775,807
+
+
+cast()
+1. converting from one type to another
+select cast(value as new_type)
+
+select cast(3.7 as integer)
+output:4
+
+select value::new_type
+
+>>>Sample
+
+-- Select the original value
+SELECT profits_change, 
+	   -- Cast profits_change
+       CAST(profits_change as integer) AS profits_change_int
+  FROM fortune500;
+
+
+>>>Sample
+
+-- Divide 10 by 3
+SELECT 10/3, 
+       -- Cast 10 as numeric and divide by 3
+       10::numeric/3;
+
+
+>>>Sample
+
+SELECT '3.2'::numeric,
+       '-123'::numeric,
+       '1e3'::numeric,
+       '1e-3'::numeric,
+       '02314'::numeric,
+       '0002'::numeric;
+
+
+
+>>>Sample
+
+-- Select the count of each value of revenues_change
+SELECT count(*), revenues_change
+  FROM fortune500
+ group by revenues_change
+ -- order by the values of revenues_change
+ ORDER BY revenues_change;
+
+
+>>>Sample
+
+-- Select the count of each revenues_change integer value
+SELECT revenues_change::integer revenue_change
+, count(*)
+  FROM fortune500
+ group by revenue_change
+ -- order by the values of revenues_change
+ ORDER BY revenue_change;
+
+
+>>>Sample
+
+-- Count rows 
+SELECT count(*)
+  FROM fortune500
+ -- Where...
+ WHERE revenues_change > 0;
+
+
+
+
+
+
+
+
+ 
+
+
