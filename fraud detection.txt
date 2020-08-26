@@ -1,0 +1,18 @@
+Fraud is uncommon
+Fraudulent activity attempts to blend in
+change over time
+fraud participants attempt to work together
+
+based on data you train and algorithm that breaks the rules of the data.
+
+
+often companies use a rule based system to filter out strange cases.  the rules are based on manually set threshholds and experience.
+
+check the news
+
+receive external lists of fraudulent accounts and names
+
+look at credit card transaction with 29 features
+
+
+

@@ -1,0 +1,23 @@
+churn is when a customer ends a relationship with the company
+
+non-contractual churn (consumer loyalty)
+involuntary churn (expiration or non payment)
+
+Customer
+1. Lack of usage
+2. Poor service
+3. Better price
+
+Domain/industry knowledge
+
+Telco churn dataset.
+
+telecom features
+1. voice mail
+2. international calling
+3. cost for the service
+4. customer usage
+5. customer churn indicator
+
+churn is defined as the customer cancelling their cellular plan at a given point in time.
+
