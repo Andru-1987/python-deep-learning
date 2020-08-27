@@ -5,7 +5,10 @@ I am using python to visualize data and learn from it.
 * I added telco customer churn prediction 
       
       https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Telco%20customer%20churn.ipynb
+      
 * I added XgBoost classifier for the iris Data.  I included the notes to installing xgboost.
+      https://github.com/dnishimoto/python-deep-learning/blob/master/XGBoost%20Iris.ipynb
+      
 * I added Remaining payments (geometric progression)
 * I added Reinforcement Learning NChain
 * I added LSTM Input_shape (need to fix output)
