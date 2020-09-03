@@ -12,6 +12,8 @@ I am using python to visualize data and learn from it.
       https://github.com/dnishimoto/python-deep-learning/blob/master/XGBoost%20Iris.ipynb
       
 * I added Remaining payments (geometric progression)
+      https://github.com/dnishimoto/python-deep-learning/blob/master/Remaining%20Payment.ipynb
+      
 * I added Reinforcement Learning NChain
 * I added LSTM Input_shape (need to fix output)
 * I added a logistic regression binary classifier with lasso called (Logistic Regression predicting magazine subscription)
