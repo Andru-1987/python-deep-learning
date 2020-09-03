@@ -1,0 +1,283 @@
+taking raw data and generating features
+
+different types of data
+1. converting to vectors
+2. distributing normally
+
+contineous (integer and floats)
+categorical (limited set of values)
+ordinal (ranked values)
+boolean (true/false)
+datetime
+
+
+import pandas as pd
+
+df= pd.read_csv(path_to_csv_file)
+
+print(df.head())
+
+print(df.columns)
+
+stack overflow dataset
+
+SurveyData
+FormalEducation
+ConvertedSalary
+Hobby
+Country
+StackOverflowJobsRecommend
+VersionControl
+Age
+Years Experience
+Gender
+RawSalary
+
+print(df.dtypes)
+
+only_ints = df.select_dtypes(include=['int'])
+print(only_ints.columns)
+
+>>>Sample
+
+# Import pandas
+import pandas as pd
+
+# Import so_survey_csv into so_survey_df
+so_survey_df = pd.read_csv(so_survey_csv)
+
+print(so_survey_df.head())
+
+print(so_survey_df.dtypes)
+
+>>>Sample
+
+# Create subset of only the numeric columns
+so_numeric_df = so_survey_df.select_dtypes(include=['int','float'])
+
+# Print the column names contained in so_survey_df_num
+print(so_numeric_df.columns)
+
+
+>>>>Dealing with Categorical Variables
+
+1 - India
+2 - Usa
+
+encoding categorical features
+1) One-hot encoding
+2) dummy encoding
+
+>>>>>> One-hot encoding
+categories are converted to columns with possible values of 0 or 1
+
+pd.get_dummies(df, columns=['Country'], prefix='C')
+
+#prefix improves readibility
+
+pd.get_dummies(df, columns=['Country'], prefix='C', drop_first=True)
+
+#drops the first category because it is inferred
+
+>>>>Limiting your columns
+
+counts=df['Country'].value_counts()
+
+mask= df['Country'].isin(counts[counts<5].index)
+
+#a mask is a list of booleans
+
+df['Country'][mask]='Other'
+counts=df['Country'].value_counts()
+
+>>>Sample
+
+one_hot_encoded = pd.get_dummies(so_survey_df, columns=['Country'], prefix='OH')
+
+# Print the columns names
+print(one_hot_encoded.columns)
+
+>>>Sample drop first column
+
+# Create dummy variables for the Country column
+dummy = pd.get_dummies(so_survey_df, columns=['Country'], drop_first=True, prefix='DM')
+
+# Print the columns names
+print(dummy.columns)
+
+>>>>Sample
+
+# Create a series out of the Country column
+countries = so_survey_df['Country']
+
+# Get the counts of each category
+country_counts = countries.value_counts()
+
+# Print the count values for each category
+print(country_counts)
+
+>>>Sample
+
+# Create a series out of the Country column
+countries = so_survey_df['Country']
+
+# Get the counts of each category
+country_counts = countries.value_counts()
+
+# Create a mask for only categories that occur less than 10 times
+mask = countries.isin(country_counts[country_counts<10].index)
+
+# Print the top 5 rows in the mask series
+print(mask.head())
+print(countries[mask])
+
+
+>>>>Sample
+
+# Create a series out of the Country column
+countries = so_survey_df['Country']
+
+# Get the counts of each category
+country_counts = countries.value_counts()
+
+# Create a mask for only categories that occur less than 10 times
+mask = countries.isin(country_counts[country_counts < 10].index)
+
+# Label all other categories as Other
+countries[mask] = 'Other'
+
+# Print the updated category counts
+print(pd.value_counts(countries))
+
+>>>Types of numeric features
+1. is the magnitude the most important feature.  Decide if a threshhold is more important than a reoccurring pattern
+
+df['Binary_Violation']=0
+df.loc[df['Number_Of_Violations']>0,'Binary_Violation']=1
+
+
+
+df['Binned_Group]=pd.cut(
+df['Number_Of_Violations'],
+bins=[-np.inf,0,2, np.inf]
+labels=[1,2,3])
+
+
+>>>>>Sample
+
+# Create the Paid_Job column filled with zeros
+so_survey_df['Paid_Job'] = 0
+
+# Replace all the Paid_Job values where ConvertedSalary is > 0
+so_survey_df.loc[so_survey_df['ConvertedSalary']>0, 'Paid_Job'] = 1
+
+# Print the first five rows of the columns
+print(so_survey_df[['Paid_Job', 'ConvertedSalary']].head())
+
+
+>>Sample
+# Bin the continuous variable ConvertedSalary into 5 bins
+so_survey_df['equal_binned'] = pd.cut(so_survey_df['ConvertedSalary'], 5
+)
+
+# Print the first 5 rows of the equal_binned column
+print(so_survey_df[['equal_binned', 'ConvertedSalary']].head())
+
+>>>>Sample
+
+# Import numpy
+import numpy as np
+
+# Specify the boundaries of the bins
+bins = [-np.inf, 10000, 50000, 100000, 150000, np.inf]
+
+# Bin labels
+labels = ['Very low', 'Low', 'Medium', 'High', 'Very high']
+
+# Bin the continuous variable ConvertedSalary using these boundaries
+so_survey_df['boundary_binned'] = pd.cut(so_survey_df['ConvertedSalary'], 
+                                         bins=bins, labels=labels)
+
+# Print the first 5 rows of the boundary_binned column
+print(so_survey_df[['boundary_binned', 'ConvertedSalary']].head())
+
+>>>Messy and missing values
+1. Data not being collected properly
+2. Collection and management errors
+3. Data intentionally being omitted
+4. Could be created due to transformation of the data
+
+print(df.info()) #to look at how complete the data is
+
+print(df.isnull()) # will show where the rows are null
+print (df.isnull().sum())
+
+print(df.notnull())
+
+
+>>>Sample
+
+# Subset the DataFrame
+sub_df = so_survey_df[['Age','Gender']]
+
+# Print the number of non-missing values
+print(sub_df.info())
+
+>>>Sample (missing values)
+# Print the locations of the missing values
+print(sub_df.head(10).isnull())
+
+>>>>Sample (not missing values)
+
+# Print the locations of the non-missing values
+print(sub_df.head(10).notnull())
+
+
+>>>Dealing with missing values
+
+1. If you are certain that data is being randomly omitted then apply complete case analysis
+a. The record is excluded from the model if any of its records are missing
+
+df.dropna(how='any')
+#drops rows with missing values 
+
+df.dropna(subset=['VersionControl'])
+
+>>>Issues with deletion
+* it deletes valid data points
+* relies on randomness
+* reduces information and degrees of freedom
+
+df[VersionControl'].fillna(value='None given', inplace=True)
+
+>>Recording missing values
+
+df['SalaryGiven']= df['ConvertedSalary'].notnull()
+
+df.drop(columns=['ConvertedSalary']) #drops a specific column
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
