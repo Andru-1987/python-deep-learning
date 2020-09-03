@@ -4,7 +4,7 @@ python deep learning notebooks
 I am using python to visualize data and learn from it.
 * I added stackoverflow programmer features
 
-      https://github.com/dnishimoto/python-deep-learning/blob/master/2020%20Stack%20Overflow%20survey.ipynb
+      [[https://github.com/dnishimoto/python-deep-learning/blob/master/2020%20Stack%20Overflow%20survey.ipynb]]
       
 * I added logistic regression telco customer churn prediction      
 
