@@ -2,6 +2,9 @@
 python deep learning notebooks
 
 I am using python to visualize data and learn from it.
+* I added stackoverflow programmer features
+      https://github.com/dnishimoto/python-deep-learning/blob/master/2020%20Stack%20Overflow%20survey.ipynb
+      
 * I added telco customer churn prediction       
       https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Telco%20customer%20churn.ipynb
       
