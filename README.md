@@ -2,6 +2,10 @@
 python deep learning notebooks
 
 I am using python to visualize data and learn from it.
+
+* I added a bayensian predictor for covid cases and deaths
+https://github.com/dnishimoto/python-deep-learning/blob/master/covid%20prediction%20bayesian.ipynb
+
 * I added stackoverflow programmer features
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/2020%20Stack%20Overflow%20survey.ipynb
