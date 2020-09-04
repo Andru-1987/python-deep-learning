@@ -21,3 +21,87 @@ telecom features
 
 churn is defined as the customer cancelling their cellular plan at a given point in time.
 
+print(telco['Churn'].value_counts())
+
+>>> Sample using groupby
+print(telco.groupby(['Churn']).count())
+print(telco.groupby(['Churn']).std())
+print(telco.groupby('State')['Churn'].value_counts())
+
+>>>seaborn
+understand how your variables are distributed
+
+import seaborn as sns
+
+sns.distplot(telco['Account_Length')
+
+sns.boxplot(x='Churn', y='Account_Length', data=telco,sym="")
+plt.show()
+
+
+#The bell curve means that the data is normally distributed. This means that the data
+can be simulated by random sampling to increase the accurracy of the prediction
+
+sns.boxplot(x="Churn", y='Account_length',data=telco)
+plt.show()
+
+#The line in the middle represents the median
+#The colored boxes represent the middle 50% of each group
+
+#The floating points represent outliers
+sym="" removes the outliers
+
+
+sns.boxplot(x='Churn', y='Account_Length', data=telco,sym="", hue='StreamingMovies')
+plt.show()
+
+>>>Sample
+Day_Mins
+Eve_Mins
+Night_Mins
+Intl_Mins
+
+# Import matplotlib and seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Visualize the distribution of 'Day_Mins'
+
+sns.distplot(telco['Day_Mins'])
+# Display the plot
+plt.show()
+
+
+#If the data was not normal distribute, you would apply a feature transformation
+
+#In such cases, the extreme values could be identified and removed in order to make the distribution more Gaussian. These extreme values are often called outliers
+
+#Taking the square root and the logarithm of the observation in order to make the distribution normal belongs to a class of transforms called power transforms.
+
+
+>>>Sample
+
+# Import matplotlib and seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create the box plot
+sns.boxplot(x = 'Churn',
+          y = 'CustServ_Calls',
+          data = telco)
+
+# Display the plot
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>Churn Prediction Fundamentals
+
+test decision trees and logistic regression models (compare the models)
+
+churn definition depends on company
+1. churn happens when a customer stops buying or engaging with the company
+2. The business context could be contractual or non-contractual
+
+
+
+
