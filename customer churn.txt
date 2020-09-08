@@ -101,6 +101,1197 @@ test decision trees and logistic regression models (compare the models)
 churn definition depends on company
 1. churn happens when a customer stops buying or engaging with the company
 2. The business context could be contractual or non-contractual
+3. Failing to update subscription can cause involuntary churn
+4. Contractual churn happens explicitly when customers decide to terminate the relationship
+5. Non contractual churn happens on online shopping or when the customer stops shopping
+
+
+Encoding churn
+1=Churn
+0=No churn
+Or it could be a string churn and no churn
+
+Increase accuracy with under sampling or over sampling techniques
+
+train,test = train_test_split(telcom, test_size=.25)
+
+separate the independant features and the target variable
+
+target==['Churn']
+custid=['CustomerId']
+
+cols=[col for col in telcom.columns if col not in custid+target]
+
+train_X = train[cols]
+train_Y = train[target]
+test_X = test[cols]
+test_Y = test[target]
+
+
+>>>>Sample
+
+# Print the unique Churn values
+print(set(telcom['Churn']))
+
+# Calculate the ratio size of each churn group
+telcom.groupby(['Churn']).size() / telcom.shape[0] * 100
+
+# Import the function for splitting data to train and test
+from sklearn.model_selection import train_test_split
+
+# Split the data into train and test
+train, test = train_test_split(telcom, test_size = .25)
+
+
+# Store column names from `telcom` excluding target variable and customer ID
+cols = [col for col in telcom.columns if col not in custid + target]
+
+# Extract training features
+train_X = train[cols]
+
+# Extract training target
+train_Y = train[target]
+
+# Extract testing features
+test_X = test[cols]
+
+# Extract testing target
+test_Y = test[target]
+
+
+>>>>>>>>>>>>Predicting with Logistic Regression
+
+1. Statistical classification model for binary responses
+2. Models log-odds of the probabilty of the target
+
+odds= is the probability of the odd occurring divided by the probabiity of the event not occurring
+
+p/1-p
+
+helps to find the decision boundary between the two coeffiencts but keeping the variables linearly relatived.
+
+Accuracy - the % of correctly predicted labels (both churn and non-churn)
+Precision - the % of total models positive class predictions (here - predicted as Churn) that wee correctly classified
+Recall - The % of total positive class samples (all churned customers) that were correctly classified
+
+
+from sklearn.metrics import accuracy
+
+pred_train_Y=logreg.predict(train_X)
+pred_test_Y= logreg.predict(test_X)
+
+train_accuracy = accuracy_score(train_Y, pred_train_Y)
+test_accuracy=accuracy_score(test_Y, pred_test_Y)
+
+from sklearn.metrics import precision_score, recall_score
+
+train_precision = round(precision_score(train_Y. pred_train_Y,4)
+test_precision=round(precision_score(test_Y,pred_test_Y),4)
+
+
+>>>>Regularization
+
+* Introduces penalty coefficient in the model building phase
+* Addresses over-fitting (when patterns are memorized by the model)
+
+-- the classifier does well at recalling the predictions on the training data but does not do well on the testing data
+
+L1 Regularization and feature selection
+-- reduces the number of features and makes the model more predictable
+
+L1 regularization called LASSO can be called explicitly, and this approach performs
+feature selection by shrinking some of the model coefficients to zero
+
+logreg = LogisticRegression(penalty='l1', C=0.1, solver='liblinear')
+logreg.fit(train_X,train_Y)
+
+C=0 to 1
+
+C=[1,.5,.25,.1,.05,.25,.01,.005,.0025]
+
+l1_metrics=np.zeros(len(C),5))
+l1_metrics[:,0]=C
+
+for index in range(0, len(C)):
+	logreg = LogisticRegression(penalty='l1', C=0.1, solver='liblinear')
+	logreg.fit(train_X,train_Y)
+	pred_test_Y= logreg.predict(test_X)
+
+	l1_metrics[index,1]=np.count_nonzero(logreg.coef_)
+	l1_metrics[index,1]=accuracy_score(test_Y, pred_test_Y)
+	l1_metrics[index,1]=precision_score(test_Y,pred_test_Y)
+	l1_metrics[index,1]=recall_score(test_Y,pred_test_Y)
+col_names=['C','non-zero coeffs','accuracy','precision','recall']
+print(pd.DataFrame(l1_metrics, columns=col_names)
+
+we want a model that has reduced complexity but similar performance metrics
+
+Non-Zero coeffs are feature count
+
+>>>>Sample
+
+# Fit logistic regression on training data
+logreg.fit(train_X, train_Y)
+
+# Predict churn labels on testing data
+pred_test_Y = logreg.predict(test_X)
+
+# Calculate accuracy score on testing data
+test_accuracy = accuracy_score(test_Y, pred_test_Y)
+
+# Print test accuracy score rounded to 4 decimals
+print('Test accuracy:', round(test_accuracy, 4))
+
+>>>>>Sample
+
+# Initialize logistic regression instance 
+logreg = LogisticRegression(penalty='l1', C=0.025, solver='liblinear')
+
+# Fit the model on training data
+logreg.fit(train_X, train_Y)
+
+# Predict churn values on test data
+pred_test_Y = logreg.predict(test_X)
+
+# Print the accuracy score on test data
+print('Test accuracy:', round(accuracy_score(test_Y, pred_test_Y), 4))
+
+>>>>Sample
+
+# Run a for loop over the range of C list length
+for index in range(0, len(C)):
+  # Initialize and fit Logistic Regression with the C candidate
+  logreg = LogisticRegression(penalty='l1', C=C[index], solver='liblinear')
+  logreg.fit(train_X, train_Y)
+  # Predict churn on the testing data
+  pred_test_Y = logreg.predict(test_X)
+  # Create non-zero count and recall score columns
+  l1_metrics[index,1] = np.count_nonzero(logreg.coef_)
+  l1_metrics[index,2] = recall_score(test_Y, pred_test_Y)
+
+
+>>>>>>>>>>>>>>>>>>>Decision Tree
+
+if else rules
+
+dt= DecisionTreeClassifier(max_depth=2, random_state=1)
+
+dt.fit(X_train, y_train)
+
+pred_test= dt.predict(X_test)
+pred_train= dt.predict(X_train)
+
+
+buffer=pd.Series(pred_test)
+buffer.value_counts().plot(kind='pie')
+plt.show()
+
+print("0 none churn 1 churn")
+
+print("Training accuracy:",round(accuracy_score(y_train,pred_train),4))
+print("Testing accuracy:", round(accuracy_score(y_test, pred_test),4))
+
+
+depth_list=list(range(2,15))
+depth_tuning = np.zeros((len(depth_list),4))
+depth_tuning[:,0]=depth_list
+
+for index in range(len(depth_list)):
+    mytree=DecisionTreeClassifier(max_depth=depth_list[index])
+    mytree.fit(X_train,y_train)
+    pred_test_Y= mytree.predict(X_test)
+
+    depth_tuning[index,1]=accuracy_score(y_test,pred_test_Y)
+    depth_tuning[index,2]=precision_score(y_test,pred_test_Y)
+    depth_tuning[index,3]=recall_score(y_test,pred_test_Y)
+    
+col_names=['Max_Depth','Accuracy','Precision','Recall']
+print(pd.DataFrame(depth_tuning, columns=col_names))
+
+>>>Sample
+
+# Initialize decision tree classifier
+mytree = tree.DecisionTreeClassifier()
+
+# Fit the decision tree on training data
+mytree.fit(train_X, train_Y)
+
+# Predict churn labels on testing data
+pred_test_Y = mytree.predict(test_X)
+
+# Calculate accuracy score on testing data
+test_accuracy = accuracy_score(test_Y, pred_test_Y)
+
+# Print test accuracy
+print('Test accuracy:', round(test_accuracy, 4))
+
+>>>Sample
+
+# Run a for loop over the range of depth list length
+for index in range(0, len(depth_list)):
+  # Initialize and fit decision tree with the `max_depth` candidate
+  mytree = DecisionTreeClassifier(max_depth=depth_list[index])
+  mytree.fit(train_X, train_Y)
+  # Predict churn on the testing data
+  pred_test_Y = mytree.predict(test_X)
+  # Calculate the recall score 
+  depth_tuning[index,1] = recall_score(test_Y, pred_test_Y)
+
+
+>>>Identifying insights into churn
+
+from sklearn import tree
+import graphviz
+
+
+exported=tree.export_graphviz(
+	decision_tree=mytree,
+	out_file=None,
+	feature_names=cols,
+	precision=1,
+	class_names=['Not churn','Churn'],
+	filled=True)
+
+graph=graphviz.Source(exported)
+display(graph)
+
+
+<<<<<Logistic regression coefficients
+
+1. Logistic regression returns beta coefficients
+2. The coeffients can to be intrepretated as the log-odds of churn associated with 1 unit increase in the feature
+
+logb p/(1-p)
+
+log of odds is hard to intrepret
+
+logreg.coef_
+
+* calculate the exponent of the coefficients
+* This gives us the change in odds associated with 1 unit increase in the feature
+
+
+coefficients = pd.concat([pd.DataFrame(train_X.columns),
+pd.DataFrame(np.transpose(logit.coef_))],
+axis=1)
+
+coefficients.columns=['Feature','Coefficient']
+
+coefficients['Exp_Coefficients']=np.exp(coefficients['Coefficient'])
+coefficients=cefficients[coefficients['Coefficients]!=0]
+print(coefficients.sort_value(by=['Coefficient']))
+
+
+*values less than 1 decrease the odds
+*values greater than 1 increase the odds
+
+One additional year of tenure decrease churn odds by 60%
+
+
+>>>>>>>Customer Lifetime Value basics (CLV)
+
+*CLV is the amount of money a company expect to earn in a lifetime
+
+Historical CLV = (revenus)*Profit Margin
+
+* Does not account for tenure, retention and churn rates
+
+* Does not account for new customers and their future revenue
+
+
+CLV = Average Revenue (for a certain period of time) * Profit Margin * Average Lifespan
+
+* lifespan is knowledge about its customers or the average lifespan of the customer churn.
+
+CLV (avg.revenue per purchase * avg.frequency* profit margin) * average lifespan
+
+* does not account for customer retention rates
+
+CLV = (Average Revenue * Profit Margin) * Retention Rate/Churn Rate
+
+churn= 1- retention
+
+cohort_sizes=cohort_counts.iloc[:,0]
+retention=cohorts_counts.divide(cohort_sizes,axis=0)
+churn=1-retention
+
+sns.heatmap(retention, annot=True, vmin=0, vmax=0.5, map="Y1Gn")
+
+
+>>>>Sample (calculate retention and churn)
+
+# Extract cohort sizes from the first column of cohort_counts
+cohort_sizes = cohort_counts.iloc[:,0]
+
+# Calculate retention by dividing the counts with the cohort sizes
+retention = cohort_counts.divide(cohort_sizes, axis=0)
+
+# Calculate churn
+churn = 1 - retention
+
+# Print the retention table
+print(churn)
+print(cohort_counts.shape)
+
+
+>>>>Sample (calculate retention rate and churn rate)
+
+Now that you have calculated the monthly retention and churn metrics for monthly customer cohorts, you can calculate the overall mean retention and churn rates. You will use the .mean() method twice in a row (this is called "chaining") to calculate the overall mean
+
+# Calculate the mean retention rate
+retention_rate = retention.iloc[:,1:].mean().mean()
+
+# Calculate the mean churn rate
+churn_rate = churn.iloc[:,1:].mean().mean()
+
+# Print rounded retention and churn rates
+print('Retention rate: {:.2f}; Churn rate: {:.2f}'.format(retention_rate, churn_rate))
+
+>>>>>>>>CLV
+1. goal clv measure customers in terms of revenue or profit
+2. benchmark customers
+3. identify maximum investment to gain customer acquistion
+
+CLV = Average Revenue * Retention Rate/churn rate
+
+
+>>>>>>>>>>>>>Basic CLV
+
+1, Calculate montly spent by the customer
+
+monthly_revenue = online.groupby(['CustomerID','InvoiceMonth'])
+['TotalSum'].sum().mean()
+
+monthly_revenue=np.mean(month_revenue)
+
+lifespan_months=36
+
+clv_basic=monthly_revenue * lifespn_months
+
+print('Average basic CLV is (:1f) USD'.format(clv_basic))
+
+>>>>>>>>>>>>>>Granular CLV calculation
+
+revenue_per_purchase= online.groupby(['InvoiceNo']).['TotalSum'].mean().mean()
+
+##overall revenue for a purchase
+
+freq=online.groupby(['CustomerId','InvoicedMonth'])['InvoiceMonth'].nunique().mean()
+
+##calculate the average number of unique invoices per customer per month
+
+lifespan_months=36
+
+clv_granular= revenue_per_purchase * freq * lifespan_months
+
+print('Average granular CLV is (:,1f) USD'.format(clv_granular))
+
+print('Revenue per purchase is (:,1f) USD'.format(revenue_per_purchase)
+
+print('Frequency per month is (:,1f) USD'.format(freq)
+
+
+>>>>>>>>>>>>>>Traditional CLV calculation
+
+monthly_revenue= online.groupby(['CustomerID','InvoiceMonth'])['TotalSum'].sum().mean()
+
+retention_rate=retention.iloc[:,1].mean().mean()
+
+churn_rate=1-retention_rate
+
+clv_traditional=month_revenue * (retention_rate/churn_rate)
+
+print('Average traditional clv is (:.1f) % retention_rate'.format(clv_traditional, retention_rate*100))
+
+>>>>>>Which method to use
+
+1. depends on business model
+2.traditional clv model - assumes churn is definitive - customer dies.  The customer is assumed to not come back if they have churned once.
+3. traditional model is not robust at low retention values
+4. hardest thing to predict - frequency in the future
+
+
+>>>>Sample (basic clv of 36 months)
+
+
+# Calculate monthly spend per customer
+monthly_revenue = online.groupby(['CustomerID','InvoiceMonth'])['TotalSum'].sum().mean()
+
+# Calculate average monthly spend
+monthly_revenue = np.mean(monthly_revenue)
+
+# Define lifespan to 36 months
+lifespan_months = 36
+
+# Calculate basic CLV
+clv_basic = monthly_revenue * lifespan_months
+
+# Print the basic CLV value
+print('Average basic CLV is {:.1f} USD'.format(clv_basic))
+
+
+>>>Sample (granular)
+
+# Calculate average revenue per invoice
+revenue_per_purchase = online.groupby(['InvoiceNo'])['TotalSum'].mean().mean()
+
+# Calculate average number of unique invoices per customer per month
+frequency_per_month = online.groupby(['CustomerID','InvoiceMonth'])['InvoiceNo'].nunique().mean()
+
+# Define lifespan to 36 months
+lifespan_months = 36
+
+# Calculate granular CLV
+clv_granular = revenue_per_purchase * frequency_per_month * lifespan_months
+
+# Print granular CLV value
+print('Average granular CLV is {:.1f} USD'.format(clv_granular))
+
+>>>Sample (traditional)
+
+#Now you will calculate one of the most popular descriptive CLV models that accounts for the retention and churn rates. This gives a more robust estimate, but comes with certain assumptions that have to be validated
+
+# Calculate monthly spend per customer
+monthly_revenue = online.groupby(['CustomerID','InvoiceMonth'])['TotalSum'].sum().mean()
+
+# Calculate average monthly retention rate
+retention_rate = retention.iloc[:,1:].mean().mean()
+
+# Calculate average monthly churn rate
+churn_rate = 1 - retention_rate
+
+# Calculate traditional CLV 
+clv_traditional = monthly_revenue * (retention_rate / churn_rate)
+
+# Print traditional CLV and the retention rate values
+print('Average traditional CLV is {:.1f} USD at {:.1f} % retention_rate'.format(clv_traditional, retention_rate*100))
+
+#As you can see, the traditional CLV formula yields a much lower estimate as it accounts for monthly retention which is quite low for this company.
+
+
+>>>>>>>>>>>>>>>>>>Data preparation for purchase prediction
+
+* regression to predict purchasing
+* simplest model is linear regression
+* target variable is either continous or count
+
+* count data (number of active days) work better with poisson or negative binomal regression
+
+RFM - recency, frequency, or monetary features
+
+explore the sales distribution by month
+
+online.groupby(['InvoiceMonth']).size()
+
+#prints out the number of observations per month
+
+online_X=online[online['InvoiceMonth']='2011-11']
+
+#calculate the recency
+
+NOW= dt.datetime(2011,11,1)
+
+features = online_X.groupby('CustomerID').agg({
+	'InvoiceDate': lambda x(NOW-x.max())days,
+	'InvoiceMo': pd.Series.nunique,
+	'TotalSum': np.sum,
+	'Quantity': ['mean','sum']
+
+}).reset_index()
+
+features.columns=['CustomerID','recency','frequency','monetary','quantity_avg','quantity_total']
+
+#recency is the now date - the lastest invoice date
+#frequency by counting the unique number of invoice
+#sum the revenue for that customer
+#calculate the quantity and sum of the quantities
+#reindex makes sure the columns are not stored as an index for use later
+
+>>>>Calculate the target variable
+
+#build a pivot table
+
+cust_month_tx= pd.pivot_table(data=online, index=['CustomerID'],
+	values='InvoiceNo',
+	columns=['InvoiceMonth'],
+	aggfunc=pd.Series.nunique, fill_value=0)
+
+print(cust_month_tx.head())
+
+#the result is a matrix of unique invoices per month by customer ID
+
+#use the last month of data
+
+#store the identifier and the target variable as separate list
+
+custid=['CustomerID']
+target=['2011-11']
+
+Y=cust_month_tx[target]
+
+cols=[col for col in features.columns if col not in custid]
+
+X=featurs(cols)
+
+
+from sklearn.model_selection import train_test_split
+
+train_X,test_X,train_Y,test_Y= train_test_split(X,Y,
+	test_size=0.25, random_state=99)
+
+
+print(train_X.shape, train_Y.shape, test_
+X.shape, test_Y.shape)
+
+>>>>>Sample (building features of Recency, Frequency, and Monetary)
+
+
+# Define the snapshot date
+NOW = dt.datetime(2011,11,1)
+
+# Calculate recency by subtracting current date from the latest InvoiceDate
+features = online_X.groupby('CustomerID').agg({
+  'InvoiceDate': lambda x: (NOW - x.max()).days,
+  # Calculate frequency by counting unique number of invoices
+  'InvoiceNo': pd.Series.nunique,
+  # Calculate monetary value by summing all spend values
+  'TotalSum': np.sum,
+  # Calculate average and total quantity
+  'Quantity': ['mean', 'sum']}).reset_index()
+
+# Rename the columns
+features.columns = ['CustomerID', 'recency', 'frequency', 'monetary', 'quantity_avg', 'quantity_total']
+
+
+# Build a pivot table counting invoices for each customer monthly
+cust_month_tx = pd.pivot_table(data=online, values='InvoiceNo',
+                               index=['CustomerID'], columns=['InvoiceMonth'],
+                               aggfunc=pd.Series.nunique, fill_value=0)
+
+# Store November 2011 data column name as a list
+target = ['2011-11']
+
+# Store target value as `Y`
+Y = cust_month_tx[target]
+
+# Store customer identifier column name as a list
+custid = ['CustomerID']
+
+# Select feature column names excluding customer identifier
+cols = [col for col in features.columns if col not in custid]
+
+# Extract the features as `X`
+X = features[cols]
+
+# Split data to training and testing
+Train_X, test_X, train_Y, test_Y = train_test_split(X, Y, test_size=0.25, random_state=99)
+
+
+>>>>>>Predicting next months transactions
+
+Use linear regression to predict next months transactions
+initializing the model
+fit and predict
+measure
+
+
+root mean squared error (RMSE) - Square root of the average squared differences between prediction and actuals
+a. subtract the predicted and actuals
+b. square the results
+c. calculate the average
+d. take the square root to get a normalized measurement
+
+
+>>>>>> Mean absolute error (MAE)
+mean absolute error - Average absolute difference between the predicted and actuals
+
+>>>>>> Mean absolute percentage error (MAPE)
+average percentage difference between prediction and actuals
+normalized between 0 and 100 percent (actuals can't be zero)
+
+R-squared: statistical measure that represents the percentage proportion of variance that is explained by the model.  
+applies only to regression
+(Higer is better)
+
+coefficient p-values - probability that the regression coefficient is observed due to chance.  (lower is better)
+threshholds are 5% to 10%  (measures the significance of the null hypothesis)
+
+from sklearn.linear_model import LinearRegression
+
+linreg=LinearRegression()
+
+linreq.fit(train_X,train_Y)
+
+train_pred_Y= linreq.predict(train_X)
+test_pred_Y = linreq.predict(test_X)
+
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import mean_squared_error
+
+rmse_train=np.sqrt(mean_squared_error(train_Y,train_pred_Y))
+mae_train=mean_absolute_error(train_Y,train_pred_Y)
+
+rmse_test=np.sqrt(mean_squared_error(test_Y,test_pred_Y))
+mae_test=mean_absolute_error(test_Y,test_pred_Y)
+
+print('RMSE train: (:3f): RMSE test: (:3f)\nMAE train :{:3f}, MAE test: {:3f}'.format(rmse_train,rmse_test, mae_train, mae_test))
+
+
+>>>Interpreting the coefficients
+
+1. statistical significance - standard statistical significant is 95%
+
+import statsmodels.api as sm
+
+train_Y=np.array(train_Y)
+
+#Ordinary Least Square Model (curve fitting algorithm)
+
+olsreg = sm.OLS(train_Y, train_X)
+olsreg=olsreg.fit()
+
+print(olsreg.summary())
+
+#R-squared is the percentage of explained variance.  What percentage does the model explain of the variation? (higher is better)
+
+check the P-value coefficients
+(change in the output variable if one unit changed in the feature).  Some of the coeffiencts are not statistically significant. 1-significance = 100-95% or 5%  (look features for p values less than 5%)
+
+
+Sample>>
+
+# Initialize linear regression instance
+linreg = LinearRegression()
+
+# Fit the model to training dataset
+linreg.fit(train_X, train_Y)
+
+# Predict the target variable for training data
+train_pred_Y = linreg.predict(train_X)
+
+# Predict the target variable for testing data
+test_pred_Y = linreg.predict(test_X)
+
+
+#This is a critical step where you are measuring how "close" are the model predictions compared to actual values.
+
+# Calculate root mean squared error on training data
+rmse_train = np.sqrt(mean_squared_error(train_Y, train_pred_Y))
+
+# Calculate mean absolute error on training data
+mae_train = mean_absolute_error(train_Y, train_pred_Y)
+
+# Calculate root mean squared error on testing data
+rmse_test = np.sqrt(mean_squared_error(test_Y, test_pred_Y))
+
+# Calculate mean absolute error on testing data
+mae_test = mean_absolute_error(test_Y, test_pred_Y)
+
+# Print the performance metrics
+print('RMSE train: {}; RMSE test: {}\nMAE train: {}, MAE test: {}'.format(rmse_train, rmse_test, mae_train, mae_test))
+
+
+>>>Sample OLS 
+
+OLS Regression Results                                
+=======================================================================================
+Dep. Variable:                      y   R-squared (uncentered):                   0.488
+Model:                            OLS   Adj. R-squared (uncentered):              0.487
+Method:                 Least Squares   F-statistic:                              480.3
+Date:                Mon, 07 Sep 2020   Prob (F-statistic):                        0.00
+Time:                        22:03:37   Log-Likelihood:                         -2769.8
+No. Observations:                2529   AIC:                                      5550.
+Df Residuals:                    2524   BIC:                                      5579.
+Df Model:                           5                                                  
+Covariance Type:            nonrobust                                                  
+==================================================================================
+                     coef    std err          t      P>|t|      [0.025      0.975]
+----------------------------------------------------------------------------------
+recency            0.0002      0.000      1.701      0.089   -2.92e-05       0.000
+frequency          0.1316      0.003     38.000      0.000       0.125       0.138
+monetary        1.001e-06   3.59e-05      0.028      0.978   -6.95e-05    7.15e-05
+quantity_avg       0.0001      0.000      0.803      0.422      -0.000       0.000
+quantity_total    -0.0001   5.74e-05     -2.562      0.010      -0.000   -3.45e-05
+==============================================================================
+Omnibus:                      987.494   Durbin-Watson:                   1.978
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             5536.657
+Skew:                           1.762   Prob(JB):                         0.00
+Kurtosis:                       9.334   Cond. No.                         249.
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+In [2]: 
+
+
+>>>>Customer and product segmentation on basics
+
+wholesale.head()
+
+1. Fresh
+2. Milk
+3. Grocery
+4. Frozen
+5. Detergents_Paper
+6. Delicassens
+
+Unsupervised learning models
+
+* k-means
+* non-negative matrix factorization nmf
+
+1. initialize the model
+2. fit the model
+3. assign cluster values
+
+wholesale.agg(['mean','std']).round(0)
+
+averages= wholesale.mean()
+st_dev = wholesale.std()
+x_names=wholesale.columns
+x_ix= np.arange(wholesale.shape[1])
+
+import matplotlib.pyplot as plt
+plt.bar(x_ix-0.2, averages, color='grey', label='Average', width=0.4)
+plt.bar(x_ix+0.2, std_dev, color='orange',' label='Standard Deviation', width=0.4)
+plt.xticks(x_ix, x_names, rotation=90)
+plt.legend()
+plt.show()
+
+import seaborn as sns
+
+sns.pairplot(wholesale,diag_kind='kde')
+plt.show()
+
+
+
+>>>Sample (pairplot)
+
+# Print the header of the `wholesale` dataset
+print(wholesale.head())
+
+# Plot the pairwise relationships between the variables
+sns.pairplot(wholesale, diag_kind='kde')
+
+# Display the chart
+plt.show()
+
+>>>>Sample (bar plot average and standard deviation)
+
+# Create column names list and same length integer list
+x_names = wholesale.columns
+x_ix = np.arange(wholesale.shape[1])
+
+# Plot the averages data in gray and standard deviations in orange 
+plt.bar(x=x_ix-0.2, height=averages, color='grey', label='Average', width=0.4)
+plt.bar(x=x_ix+0.2, height=std_devs, color='orange', label='Standard Deviation', width=0.4)
+
+# Add x-axis labels and rotate
+plt.xticks(ticks=x_ix, labels=x_names, rotation=90)
+
+# Add the legend and display the chart
+plt.legend()
+plt.show()
+
+
+>>>>>Data preparation for segmentation
+
+1. start with k-means
+2. k-means works well when the data is normally distributed
+a. mean=0
+b. standard deviation=1
+
+Non-negative matrix factorization works well with on draw sparse matrices
+
+wholesale_log = np.log(wholesale)
+
+sns.pairplot(wholesale_log, diag_kind='kde')
+plt.show()
+
+#result in less skewed data
+
+>>>Box-cox transformation
+
+
+from scipy import stats
+
+def boxcox_df(x):
+	x_boxcox, _ = stats.boxcox(x)
+	return x_boxcox
+
+wholesale_boxcox = wholesale.apply(boxcox_df,axis, 0)
+
+sns.pairplot(wholesale_boxcox, diag_kind='kde')
+plt.show()
+
+>>>>>>Scale the data
+1. Subtract column average from each column value
+2. Divide each column value by column standard deviation
+
+from sklearn.preprocessing import StandardScaler
+
+scaler=StandardScaler()
+
+scaler.fit(wholesale_boxcox)
+
+#numpy array
+wholesale_scaled= scaler.transform(wholesale_box)
+
+wholesale_scaled_df=pd.DataFrame(data=whosale_scaled,
+	index=wholesale_boxcox.index,
+	columns=wholesale_boxcox.columns)
+
+wholesale_scaled_df.agg(['mean','[std']).round()
+
+>>>Sample sns pairplot
+
+# Define custom Box Cox transformation function
+def boxcox_df(x):
+    x_boxcox, _ = stats.boxcox(x)
+    return x_boxcox
+
+# Apply the function to the `wholesale` dataset
+wholesale_boxcox = wholesale.apply(boxcox_df, axis=0)
+
+# Plot the pairwise relationships between the transformed variables 
+sns.pairplot(wholesale_boxcox, diag_kind='kde')
+
+# Display the chart
+plt.show()
+
+
+>>>Sample (Scaling)
+
+# Fit the initialized `scaler` instance on the Box-Cox transformed dataset
+scaler.fit(wholesale_boxcox)
+
+# Transform and store the scaled dataset as `wholesale_scaled`
+wholesale_scaled = scaler.transform(wholesale_boxcox)
+
+# Create a `pandas` DataFrame from the scaled dataset
+wholesale_scaled_df = pd.DataFrame(data=wholesale_scaled,
+                                       index=wholesale_boxcox.index,
+                                       columns=wholesale_boxcox.columns)
+
+# Print the mean and standard deviation for all columns
+print(wholesale_scaled_df.agg(['mean','std']).round())
+
+>>>>>Kmeans
+
+
+from sklearn.cluster import KMeans
+
+kmeans= KMeans(n_cluster=k)
+
+kmeans.fit(wholesale_scaled_df)
+
+
+#Use the original df not the scaled one
+wholesale_kmeans4 = wholesale.assign(segment=kmeans.labels_)
+
+
+>>>NMF
+
+from sklearn.decomposition import NMF
+
+nmf=NMF(k)
+nmf.fit(wholesale)
+
+components=pd.DataFrame(nmf.components_, columns=wholesale.columns)
+
+segment_weights= pd.DataFrame(nmf.transform(wholesale, columns=component.index)
+
+segment_weights.index=wholesale.index
+
+wholesale_nmf= wholesale.assign(segment=segment_weights.idxmax(axis=1))
+
+#new column - which cluster weight is largest for each customer
+
+>>>>Defining k
+elbow criterion method to get the optimal number of k clusters
+a. iterate through a number of k values
+b. running cluster for each on the same data
+c. calculate sum of squared errors (se) for each
+d. plot the sse against k and identify the elbow of diminishing incremental improvements
+
+>>>>Samples (NMF heatmap)
+
+# Create the W matrix
+W = pd.DataFrame(data=nmf.transform(wholesale), columns=components.index)
+W.index = wholesale.index
+
+# Assign the column name where the corresponding value is the largest
+wholesale_nmf3 = wholesale.assign(segment = W.idxmax(axis=1))
+
+# Calculate the average column values per each segment
+nmf3_averages = wholesale_nmf3.groupby('segment').mean().round(0)
+
+# Plot the average values as heatmap
+sns.heatmap(nmf3_averages.T, cmap='YlGnBu')
+
+# Display the chart
+plt.show()
+
+
+
+sse={}
+
+for k in range(1,11):
+	kmeans=KMeans(n_clusters=k, random_state=333)
+	kmeans.fit(wholesale_scaled_df)
+	sse(k)=kmeans.inertia_
+
+
+plt.title('Elbow criterion method chart')
+sns.pointplot(x=list(sse.keys()), y=list(sse.values()))
+plt.show()
+
+build meanful segmentation
+can you give the segmentation a name given the clustering.
+
+>>>Sample (elbow)
+
+# Create empty sse dictionary
+sse = {}
+
+# Fit KMeans algorithm on k values between 1 and 11
+for k in range(1, 11):
+    kmeans = KMeans(n_clusters=k, random_state=333)
+    kmeans.fit(wholesale_scaled_df)
+    sse[k] = kmeans.inertia_
+
+# Add the title to the plot
+plt.title('Elbow criterion method chart')
+
+# Create and display a scatter plot
+sns.pointplot(x=list(sse.keys()), y=list(sse.values()))
+plt.show()
+
+
+>>>Sample (KMeans)
+
+# Import `KMeans` module
+from sklearn.cluster import KMeans
+
+# Initialize `KMeans` with 4 clusters
+kmeans=KMeans(n_clusters=4, random_state=123)
+
+# Fit the model on the pre-processed dataset
+kmeans.fit(wholesale_scaled_df)
+
+# Assign the generated labels to a new column
+wholesale_kmeans4 = wholesale.assign(segment = kmeans.labels_)
+
+>>>>Sample (NMF)
+
+# Import the non-negative matrix factorization module
+from sklearn.decomposition import NMF
+
+# Initialize NMF instance with 4 components
+nmf = NMF(4)
+
+# Fit the model on the wholesale sales data
+nmf.fit(wholesale)
+
+# Extract the components 
+components = pd.DataFrame(data=nmf.components_, columns=wholesale.columns)
+
+>>>>>>>>>>>>>>>Visualize and interpret segmentation solutions
+1. Calculate average/median/other percentile values for each variable by segment
+2. Calculate relative importance for each variable by segment
+3. Visualize using a heatmap
+
+
+
+kmeans4_averages= wholesale_kmeans4.groupby(['segment']).mean().round(0)
+
+print(kmeans4_averages)
+
+The four segments have different average values for fresh, milk, grocery, frozen, detergents_paper, delicassen
+
+sns.heatmap(kmeans4_averages.T, cmap='Y1GnBu')
+plt.show()
+
+>>>Plot average NMF segmentation attributes
+
+nmf4_averages=wholesale_nmf4.groupby('segment').mean().round(0)
+sns.heatmap(nmf4_averages.T, cmap='Y1GnBu')
+plt.show()
+
+
+>>>Sample (heatmap kmeans clusters)
+# Group by the segment label and calculate average column values
+kmeans3_averages= wholesale_kmeans3.groupby(['segment']).mean().round(0)
+
+# Print the average column values per each segment
+print(kmeans3_averages)
+
+# Create a heatmap on the average column values per each segment
+sns.heatmap(kmeans3_averages.T, cmap='YlGnBu')
+
+# Display the chart
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
