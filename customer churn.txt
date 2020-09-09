@@ -72,7 +72,7 @@ sns.distplot(telco['Day_Mins'])
 plt.show()
 
 
-#If the data was not normal distribute, you would apply a feature transformation
+#If the data was not normal distributed, you would apply a feature transformation
 
 #In such cases, the extreme values could be identified and removed in order to make the distribution more Gaussian. These extreme values are often called outliers
 
@@ -392,7 +392,7 @@ One additional year of tenure decrease churn odds by 60%
 
 *CLV is the amount of money a company expect to earn in a lifetime
 
-Historical CLV = (revenus)*Profit Margin
+Historical CLV = (revenues)*Profit Margin
 
 * Does not account for tenure, retention and churn rates
 
@@ -457,7 +457,7 @@ CLV = Average Revenue * Retention Rate/churn rate
 
 >>>>>>>>>>>>>Basic CLV
 
-1, Calculate montly spent by the customer
+1, Calculate monthly spent by the customer
 
 monthly_revenue = online.groupby(['CustomerID','InvoiceMonth'])
 ['TotalSum'].sum().mean()
@@ -1163,7 +1163,6 @@ plt.show()
 
 
 
- 
 
 
 
@@ -1189,45 +1188,873 @@ plt.show()
 
 
 
+<<<<<<<<  Predicting Customer Churn
+>>>>>>>>One hot encoding
 
+1. numeric one for a category in a column
 
+print(telco.dtypes) to find the objects to encode
 
+>>>>>>>>Standardization
 
+from sklearn.preprocessing import StandardScaler
 
+df=StandardScaler().fit_transform(df)
 
+>>>>Sample (encoding)
 
+# Replace 'no' with 0 and 'yes' with 1 in 'Vmail_Plan'
+telco['Vmail_Plan'] = telco['Vmail_Plan'].replace({'no': 0 , 'yes': 1})
 
+# Replace 'no' with 0 and 'yes' with 1 in 'Churn'
+telco['Churn'] = telco['Churn'].replace({'no': 0 , 'yes': 1})
 
+# Print the results to verify
 
+# Import pandas
+import pandas as pd
 
+# Perform one hot encoding on 'State'
+telco_state = pd.get_dummies(telco['State'])
 
+print(telco_state)
 
 
+>>>Sample (Scaler)
 
+# Import StandardScaler
+from sklearn.preprocessing import StandardScaler
 
+# Scale telco using StandardScaler
+telco_scaled = StandardScaler().fit_transform(telco)
 
+# Add column names back for readability
+telco_scaled_df = pd.DataFrame(telco_scaled, columns=["Intl_Calls", "Night_Mins"])
 
+# Print summary statistics
+print(telco_scaled_df.describe())
 
 
+>>>>>>>>>>>>>>Feature selection
 
+Unique identifiers that need to be dropped
+1. phone numbers
+2. customerid
+3. account numbers
 
+telco.drop(['Soc_Sec'], axis=1)
 
+Features that are highly correlated to features can be dropped because they offer no additional information to the model.
 
+telco.corr()
 
+remove features that are highly correlated
 
+should consult with business and subject matter experts
 
+A new feature could be
 
+Total_Minutes = Day_Mins+Eve_Mins+Night_Mins+Intl_Mins
 
+understanding the ratio of minutes and charge
 
+telco['Day_Cost']=telco['Day_Mins']/telco['Day_Charge']
 
 
+>>>Sample dropping columns
 
+# Drop the unnecessary features
+telco = telco.drop(['Area_Code','Phone'],axis=1)
 
+>>>>Sample (new features)
 
+# Create the new feature
+telco['Avg_Night_Calls'] = telco['Night_Mins']/telco['Night_Calls']
 
+# Print the first five rows of 'Avg_Night_Calls'
+print(telco['Avg_Night_Calls'])
 
+>>>>>>>>>>>>>Making predictions
 
+Logistic Regression: Good baseline offering simplicity and interpretability.
 
+Can not capture more complex relationships in the dataset
+
+Random forest
+
+Support vector machines
+
+>>>>>Suport Vector Machine
+
+
+from sklearn.svm import SVC
+
+svc=SVC()
+
+svc.fit(telco[features], telco['target'])
+
+1. features must be contineous values
+2. dataframes or numpy arrays
+
+SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+decision_function_shape='ovr', degree=3, gamma='auto',
+kernel='rbf', max_iter=-1, probability=False,
+random_state=None, shrinking=True, tol=0.001,
+verbose=False)
+
+prediction = svc.predict(new_customer)
+print(prediction)
+
+
+>>>Sample (Logistic Regression)
+
+from sklearn.linear_model import LogisticRegression
+
+clf = LogisticRegression()
+
+# Fit the classifier
+clf.fit(telco[features], telco['Churn'])
+
+New customer
+
+Account_Length  Vmail_Message  Day_Mins  Eve_Mins  Night_Mins  ...  Eve_Charge  Night_Calls  Night_Charge  Intl_Calls  Intl_Charge
+0              91             23     232.4     186.0       190.5  ...       15.81          128          8.57           3         3.32
+
+
+print(clf.predict(new_customer))
+
+>>>>>Sample (Decision Tree Classifier)
+
+# Import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+# Instantiate the classifier
+
+clf=DecisionTreeClassifier()
+
+# Fit the classifier
+clf.fit(telco[features], telco['Churn'])
+
+# Predict the label of new_customer
+print(clf.predict(new_customer))
+
+>>>>>>>>>>>>>>evaluate model performance
+1. Compute its accuracy
+2. Accuracy = Correct Predictions/total number of data points
+training data may not represent actual data
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test=train_test_split(telco['data'],
+	telco['target'],
+	test_size=0.2,
+	random_state=42)
+
+
+
+from sklearn.svm import SVC
+
+svc=SVC()
+svc.fit(X_train, y_train)
+svc.predict(X_test)
+
+svc.score(X_test,y_test)
+
+#overfitting means the model has become to sensitive to noise in the training data
+
+#underfitting is means not capturing trends in the training data
+
+>>>>Sample - Train Test Split
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+X_train, X_test, y_train, y_test=train_test_split(X,
+	y,
+	test_size=0.3,
+	random_state=42)
+
+print(X_train.shape, X_test.shape)
+
+>>>Sample - (Random Forest Classifier)
+
+# Import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train,y_train)
+
+# Compute accuracy
+print(clf.score(X_test, y_test))
+
+>>>>>>>>>>>>>>>>>Model Metrics
+
+
+<<<<<<<<  Predicting Customer Churn
+>>>>>>>>One hot encoding
+
+1. numeric one for a category in a column
+
+print(telco.dtypes) to find the objects to encode
+
+>>>>>>>>Standardization
+
+from sklearn.preprocessing import StandardScaler
+
+df=StandardScaler().fit_transform(df)
+
+>>>>Sample (encoding)
+
+# Replace 'no' with 0 and 'yes' with 1 in 'Vmail_Plan'
+telco['Vmail_Plan'] = telco['Vmail_Plan'].replace({'no': 0 , 'yes': 1})
+
+# Replace 'no' with 0 and 'yes' with 1 in 'Churn'
+telco['Churn'] = telco['Churn'].replace({'no': 0 , 'yes': 1})
+
+# Print the results to verify
+
+# Import pandas
+import pandas as pd
+
+# Perform one hot encoding on 'State'
+telco_state = pd.get_dummies(telco['State'])
+
+print(telco_state)
+
+
+>>>Sample (Scaler)
+
+# Import StandardScaler
+from sklearn.preprocessing import StandardScaler
+
+# Scale telco using StandardScaler
+telco_scaled = StandardScaler().fit_transform(telco)
+
+# Add column names back for readability
+telco_scaled_df = pd.DataFrame(telco_scaled, columns=["Intl_Calls", "Night_Mins"])
+
+# Print summary statistics
+print(telco_scaled_df.describe())
+
+
+>>>>>>>>>>>>>>Feature selection
+
+Unique identifiers that need to be dropped
+1. phone numbers
+2. customerid
+3. account numbers
+
+telco.drop(['Soc_Sec'], axis=1)
+
+Features that are highly correlated to features can be dropped because they offer no additional information to the model.
+
+telco.corr()
+
+remove features that are highly correlated
+
+should consult with business and subject matter experts
+
+A new feature could be
+
+Total_Minutes = Day_Mins+Eve_Mins+Night_Mins+Intl_Mins
+
+understanding the ratio of minutes and charge
+
+telco['Day_Cost']=telco['Day_Mins']/telco['Day_Charge']
+
+
+>>>Sample dropping columns
+
+# Drop the unnecessary features
+telco = telco.drop(['Area_Code','Phone'],axis=1)
+
+>>>>Sample (new features)
+
+# Create the new feature
+telco['Avg_Night_Calls'] = telco['Night_Mins']/telco['Night_Calls']
+
+# Print the first five rows of 'Avg_Night_Calls'
+print(telco['Avg_Night_Calls'])
+
+>>>>>>>>>>>>>Making predictions
+
+Logistic Regression: Good baseline offering simplicity and interpretability.
+
+Can not capture more complex relationships in the dataset
+
+Random forest
+
+Support vector machines
+
+>>>>>Suport Vector Machine
+
+
+from sklearn.svm import SVC
+
+svc=SVC()
+
+svc.fit(telco[features], telco['target'])
+
+1. features must be contineous values
+2. dataframes or numpy arrays
+
+SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+decision_function_shape='ovr', degree=3, gamma='auto',
+kernel='rbf', max_iter=-1, probability=False,
+random_state=None, shrinking=True, tol=0.001,
+verbose=False)
+
+prediction = svc.predict(new_customer)
+print(prediction)
+
+
+>>>Sample (Logistic Regression)
+
+from sklearn.linear_model import LogisticRegression
+
+clf = LogisticRegression()
+
+# Fit the classifier
+clf.fit(telco[features], telco['Churn'])
+
+New customer
+
+Account_Length  Vmail_Message  Day_Mins  Eve_Mins  Night_Mins  ...  Eve_Charge  Night_Calls  Night_Charge  Intl_Calls  Intl_Charge
+0              91             23     232.4     186.0       190.5  ...       15.81          128          8.57           3         3.32
+
+
+print(clf.predict(new_customer))
+
+>>>>>Sample (Decision Tree Classifier)
+
+# Import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier
+
+# Instantiate the classifier
+
+clf=DecisionTreeClassifier()
+
+# Fit the classifier
+clf.fit(telco[features], telco['Churn'])
+
+# Predict the label of new_customer
+print(clf.predict(new_customer))
+
+>>>>>>>>>>>>>>evaluate model performance
+1. Compute its accuracy
+2. Accuracy = Correct Predictions/total number of data points
+training data may not represent actual data
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test=train_test_split(telco['data'],
+	telco['target'],
+	test_size=0.2,
+	random_state=42)
+
+
+
+from sklearn.svm import SVC
+
+svc=SVC()
+svc.fit(X_train, y_train)
+svc.predict(X_test)
+
+svc.score(X_test,y_test)
+
+#overfitting means the model has become to sensitive to noise in the training data
+
+#underfitting is means not capturing trends in the training data
+
+>>>>Sample - Train Test Split
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+X_train, X_test, y_train, y_test=train_test_split(X,
+	y,
+	test_size=0.3,
+	random_state=42)
+
+print(X_train.shape, X_test.shape)
+
+>>>Sample - (Random Forest Classifier)
+
+# Import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train,y_train)
+
+# Compute accuracy
+print(clf.score(X_test, y_test))
+
+>>>>>>>>>>>>>>>>>Model Metrics
+
+imbalanced classes
+
+telco['Churn'].value_counts()
+
+up balancing and down balancing
+
+confusion matrix
+
+
+          Churn   		No Churn
+
+Churn	True positive		False positive
+
+No Churn false Negatives	True Negatives
+
+
+Precision = true positives/(true positives+false positives)
+
+* high precision means there are not many false positives
+
+Recall sensitivity = true positives/(true positives+false negatives)
+* a high recall means it correctly recalled most churners
+* minimizes false negatives
+
+high precision when the offer is expensive
+
+high recall if losing customers is expensive
+
+
+from sklearn.metrics import confusion_matrix
+
+cm=confusion_matrix(y_test,y_pred)
+
+>>>Sample (confusion Matrix)
+
+# Import confusion_matrix
+from sklearn.metrics import confusion_matrix
+
+# Print the confusion matrix
+print(confusion_matrix(y_test,y_pred)
+
+)
+
+
+>>>>Sample (confusion Matrix)
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+# Create training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.2))
+
+>>>Sample (confusion matrix - RandomForestClassifier)
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+# Create training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train, y_train)
+
+# Predict the labels of the test set
+y_pred = clf.predict(X_test)
+
+# Import confusion_matrix
+from sklearn.metrics import confusion_matrix
+
+# Print confusion matrix
+print(confusion_matrix(y_test,y_pred))
+
+>>>Sample (score_precision)
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+# Create training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+
+# Import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train, y_train)
+
+# Predict the labels of the test set
+y_pred = clf.predict(X_test)
+
+# Import precision_score
+from sklearn.metrics import precision_score
+
+print(precision_score(y_test,y_pred))
+
+>>>>>Sample (Precision and recall)
+
+# Import train_test_split
+from sklearn.model_selection import train_test_split
+
+# Create feature variable
+X = telco.drop('Churn', axis=1)
+
+# Create target variable
+y = telco['Churn']
+
+# Create training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+
+# Import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train, y_train)
+
+# Predict the labels of the test set
+y_pred = clf.predict(X_test)
+
+# Import precision_score
+from sklearn.metrics import precision_score, recall_score
+from sklearn.metrics import confusion_matrix
+
+# Print the precision
+print(precision_score(y_test,y_pred))
+
+print(recall_score(y_test,y_pred))
+
+print(confusion_matrix(y_test,y_pred))
+
+<<<<<<Other model metrics
+
+receiving operating curve ROC 
+
+every prediction your classifier makes has an associated probability.
+
+> 50% belongs to the positive class
+
+* default probability threshold in scikit-learn is 50%
+
+measuring the true positive rate against the false positive rate we get the roc curve
+
+Area under the curve 
+* a large area would have a well performing model
+
+* AUC allows you to compare the performance of different classifiers
+
+y_pred_prob= logreg.predict_proba(X_test)[:,1]
+
+*0 column- the probablity the first column will be 0
+*1 column= the probability the second column will be 1
+
+from sklearn.metrics import roc_curve
+
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
+
+fpr=false positive rate
+tpr=true positive rate
+
+import matplotlib.pyplot as plt
+
+plt.plot(fpr,tpr)
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.plot([0,1],[0,1],"k--")
+plt.show()
+
+
+from sklearn.metrics import roc_auc_score
+
+auc= roc_auc_score(y_test, y_pred)
+
+>>>>Sample (Print probabilities - ROC curve)
+
+# Generate the probabilities
+y_pred_prob = clf.predict_proba(X_test)[:, 1]
+print(y_pred_prob)
+
+from sklearn.metrics import roc_curve
+
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_prob)
+
+# Plot the ROC curve
+plt.plot(fpr,tpr)
+
+# Add labels and diagonal line
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.plot([0, 1], [0, 1], "k--")
+plt.show()
+
+
+>>>>Sample ( auc)
+
+# Import roc_auc_score
+from sklearn.metrics import roc_auc_score
+
+# Print the AUC
+print(roc_auc_score(y_test, y_pred_prob)
+
+>>>Precision - recall curve
+
+Another way to evaluate model performance is using a precision-recall curve, which shows the tradeoff between precision and recall for different thresholds.
+
+>>>>Sample F1 score
+
+
+f1=2 * (precision * recall) / (precision + recall)
+
+F1 score is it incorporates both precision and recall into a single metric
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train, y_train)
+
+# Predict the labels of the test set
+y_pred = clf.predict(X_test)
+
+# Import f1_score
+from sklearn.metrics import f1_score
+
+# Print the F1 score
+print(f1_score(y_test, y_pred))
+
+
+#a high F1 score is a sign of a well-performing model
+
+>>>>>>>>>Tuning your model >>>>>>>>>>>>>>>>>>
+
+hyper parameters of the random forest model
+1. n_estimators = number of trees
+2. criterion = quality of split
+3. max_features= number of features for best split
+4. max_depth= max depth of tree
+5. min_sample_splits=minimum samples to spit node
+6. bootstrap = whether bootstrap samples are used
+
+grid search is brute force search
+a. returns the best model fit
+
+cross validation
+
+from sklearn.model_selection import GridSearchCV
+
+param_grid={'n_estimators':np.arange(10,51)}
+
+clf_cv= GridSearchCV(RandomForestClassifier(), param_grid)
+
+clf_cv.fit(X,y)
+
+print(clf_cv.best_params_)
+
+print(clf_cv.best_score_)
+
+>>>>>>>Sample GridSearchCV
+
+# Import GridSearchCV
+from sklearn.model_selection import GridSearchCV
+
+# Create the hyperparameter grid
+param_grid = {'max_features': ['auto', 'sqrt', 'log2']}
+
+# Call GridSearchCV
+grid_search = GridSearchCV(RandomForestClassifier(), param_grid)
+
+# Fit the model
+grid_search.fit(X, y)
+
+print(grid_search.best_params_)
+print(grid_search.best_score_)
+
+>>>>Sample (complex hyper parameter)
+
+
+# Import GridSearchCV
+from sklearn.model_selection import GridSearchCV
+
+# Create the hyperparameter grid
+param_grid = {"max_depth": [3, None],
+              "max_features": [1, 3, 10],
+              "bootstrap": [True, False],
+              "criterion": ["gini", "entropy"]}
+
+# Call GridSearchCV
+grid_search = GridSearchCV(RandomForestClassifier(),param_grid)
+# Fit the model
+grid_search.fit(X, y)
+
+print(grid_search.best_params_)
+print(grid_search.best_score_)
+
+{'bootstrap': True, 'criterion': 'entropy', 'max_depth': None, 'max_features': 10}
+0.9534953495349535
+
+>>>>>>Sample (Random Grid Search)
+
+we could randomly jump around the grid and try different combinations.
+
+from sklearn.model_selection import RandomizedSearchCV
+
+# Create the hyperparameter grid
+param_dist = {"max_depth": [3, None],
+              "max_features": randint(1, 11),
+              "bootstrap": [True, False],
+              "criterion": ["gini", "entropy"]}
+
+# Call RandomizedSearchCV
+random_search = RandomizedSearchCV(RandomForestClassifier(),param_dist)
+# Fit the model)
+random_search.fit(X, y)
+
+print(random_search.best_params_)
+print(random_search.best_score_)
+
+
+>>>>>>>>>>>>>>>>>>>Feature importances
+
+* scoring represents how much each feature contributes to a prediction.
+* visualization is an effective way to communicate results to stakeholders
+1. which features are important drivers of churn
+2. which features can be removed from the model
+
+interpretability might be reasons you get buyin from stakeholders
+
+
+clf = RandomForestClassifier()
+
+# Fit to the training data
+clf.fit(X_train, y_train)
+
+clf.feature_importances_
+
+>>>>Sample (calculating feature importances)
+
+# Calculate feature importances
+importances = clf.feature_importances_
+
+# Create plot
+plt.barh(range(X.shape[1]), importances)
+plt.show()
+
+In order to make the plot more readable, we need to do achieve two goals:
+
+Re-order the bars in ascending order.
+Add labels to the plot that correspond to the feature names.
+
+>>>Sort features by importance
+
+# Sort importances
+sorted_index = np.argsort(importances)
+
+# Create labels
+labels = X.columns[sorted_index]
+
+# Clear current plot
+plt.clf()
+
+# Create plot
+plt.barh(range(X.shape[1]), importances[sorted_index], tick_label=labels)
+plt.show()
+
+
+>>>>>>>>Adding New Features
+
+additional data sources: customer service, web logs, email campaigns, network, transactions, and signal strength
+
+1. can improve model performances
+2. avoid underfitting
+
+churn features:
+Region Code,
+Total Charges,
+Total Minutes,
+Minutes per Call
+Cost per Call
+Total Calls
+
+
+Compare both ROC curves
+
+Discuss with business the benefits and costs of incorporating the additional features
+1. improved return on investment
+2. decreased cost
+3. increased performance
+
+Benefits must exceed costs
+
+
+>>>>Sample Adding additional features
+
+# Import necessary modules
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+# Create training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3)
+
+# Instantiate the classifier
+clf = RandomForestClassifier()
+
+# Fit to the data
+clf.fit(X_train,y_train)
+
+# Print the accuracy
+print(clf.score(X_test, y_test))
+
+# Predict the labels of the test set
+y_pred = clf.predict(X_test)
+
+# Print the F1 score
+print(f1_score(y_test,y_pred))
+
+
+
+>>>Exploratory Data Analysis in python
+>>>Designing Machine Learning Workflows in python
 
 
 
