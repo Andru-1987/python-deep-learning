@@ -3,6 +3,10 @@ python deep learning notebooks
 
 I am using python to visualize data and learn from it.
 
+* I added an XGBoost predictor for idaho housing prices
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/XGBoost%20Idaho%20housing%20prices.ipynb
+
 * I added a bayensian predictor for covid cases and deaths (keras)
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/covid%20prediction%20bayesian.ipynb
