@@ -1,0 +1,15 @@
+>>>>list comprehensions
+
+nums=[12,8,21,3,16]
+
+new_nums=[num+1 for num in nums]
+
+output: adds 1 to each num in the nums list
+
+components are an iterable and iterable variable
+
+
+
+
+
+
