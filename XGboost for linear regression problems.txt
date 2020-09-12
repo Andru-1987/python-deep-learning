@@ -867,9 +867,14 @@ print("Best rmse: ", randomized_roc_auc.best_score_)
 print(randomized_roc_auc.best_estimator_)
 
 
+example of a pipeline
+https://stackoverflow.com/questions/52055658/sklearn-pandas-in-a-pipeline-returns-typeerror-builtin-function-or-method-obj
+
+https://dunyaoguz.github.io/my-blog/dataframemapper.html
 
 
-
+Installation
+pip install https://github.com/scikit-learn/scikit-learn/archive/master.zip
 
 
 
