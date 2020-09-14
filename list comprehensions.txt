@@ -8,8 +8,22 @@ output: adds 1 to each num in the nums list
 
 components are an iterable and iterable variable
 
+output expression
+
+pairs_2=[(num1,num2) for num1 in range(0,2) for num2 in range(6,8)]
+
+output [(0,6), (0,7), (1,6), (1,7)]
 
 
+>>>>Sample
+
+doctor = ['house', 'cuddy', 'chase', 'thirteen', 'wilson']
+
+[doc[0] for doc in doctor]
 
 
+>>>>Sample **2
 
+# Create list comprehension: squares
+squares = [i**2 for i in range(0,10)]
+print(squares)
