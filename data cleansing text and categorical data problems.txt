@@ -1,0 +1,173 @@
+categories
+1. Predefined finite set of categories
+2. Text categories are converted to numeric representations
+
+how to treat the problems
+1. drop rows of data
+2. remap the categories
+3. infer the category
+
+study data
+name, birthday, blood_type
+
+awesome-public datasets
+https://github.com/awesomedata/awesome-public-datasets
+
+
+study_data= pd.read_csv('study.csv')
+
+
+anti joins (left join)
+what is a and not in b
+
+inner join
+what is both a and b
+
+inconsistent_categories = set(study_data['blood_type']).difference(categories['blood_type'])
+
+print(inconsistent_categories)
+
+outputs {'Z+'}
+
+inconsistent_rows=study_data['blood_type'].isin(inconsistent_categories)
+
+#returns a boolean of true for inconsistent rows
+
+study_data[inconsistent_rows]
+
+consistent_data=study_data[~inconsistent_rows]
+
+>>>>Sample >> using unique to find categories
+
+# Print categories DataFrame
+print(categories)
+
+# Print unique values of survey columns in airlines
+print('Cleanliness: ', airlines['cleanliness'].unique(), "\n")
+print('Safety: ', airlines['safety'].unique(), "\n")
+print('Satisfaction: ', airlines['satisfaction'].unique(),"\n")
+
+>>>Sample >>> finding inconsistencies in the categories
+
+print(airlines['cleanliness'])
+print(categories.columns)
+inconsistent_categories1=set(airlines['cleanliness']).difference(categories['cleanliness'])
+inconsistent_categories2=set(airlines['safety']).difference(categories['safety'])
+inconsistent_categories3=set(airlines['satisfaction']).difference(categories['satisfaction'])
+print(len(inconsistent_categories1),len(inconsistent_categories2),len(inconsistent_categories3))
+
+>>>>Sample >>> finding the rows with the inconsistent data
+
+# Find the cleanliness category in airlines not in categories
+inconsistent_categories1=set(airlines['cleanliness']).difference(categories['cleanliness'])
+
+# Find rows with that category
+cat_clean_rows = airlines['cleanliness'].isin(inconsistent_categories1)
+
+# Print rows with inconsistent category
+print(airlines[cat_clean_rows])
+
+# Print rows with consistent categories
+print(airlines[~cat_clean_rows])
+
+>>>>>>>>>>>>>>>What type of errors could we have
+
+1. inconsistent fields
+2. trailing white spaces
+
+Collapsing too many categories to few
+1. create new groups (0-20k) (20-40k) from contineous household income data
+2. mapping groups to new ones
+
+Capitalization:
+married or Married or UNMARRIED or unmarried
+
+marriage_status=demographics['marriage_status']
+marriage_status.value_counts()
+
+
+for a dataframe
+
+marriage_status.groupby('marriage_status').count()
+
+fix
+
+marriage_status['marriage_status']=marriage_status['marriage_status'].str.upper()
+
+leading spaces
+
+
+marriage_status['marriage_status']=marriage_status['marriage_status'].str.strip()
+
+
+>>>>>>Collapsing data into categories
+
+ranges=[0, 200000,500000,np.inf]
+group_names=['0-200k','200k-500k','500k+']
+
+demographics['income_group']=pd.cut(demographics['household_income'], bins=ranges, labels=group_names)
+
+print(demographics[['income_group','household_income']]
+
+
+>>>>Collapsing data into categories
+
+'Microsoft', 'MacOS', 'IOS', 'Android', 'Linus' are collasped into a category called 'operating sytems'
+
+mapping={'Microsoft':'DesktopOS','MacOS':'DesktopOS',
+'Linux':'DesktopOS','IOS':'MobileOS','Android':'MobileOS'}
+
+devices['operating_systems]=devices['operating_systems'].replace(mapping)
+
+
+>>>>> Sample >>>> lower and replace
+
+# Print unique values of both columns
+print(airlines['dest_region'].unique())
+print(airlines['dest_size'].unique())
+
+# Lower dest_region column and then replace "eur" with "europe"
+airlines['dest_region'] = airlines['dest_region'].str.lower()
+airlines['dest_region'] = airlines['dest_region'].replace({'eur':'europe'})
+
+
+
+>>>>Sample >>> Strip
+
+# Print unique values of both columns
+print(airlines['dest_region'].unique())
+print(airlines['dest_size'].unique())
+
+# Lower dest_region column and then replace "eur" with "europe"
+airlines['dest_region'] = airlines['dest_region'].str.lower() 
+airlines['dest_region'] = airlines['dest_region'].replace({'eur':'europe'})
+
+# Remove white spaces from `dest_size`
+airlines['dest_size'] = airlines['dest_size'].str.strip()
+airlines['dest_region'] = airlines['dest_region'].str.strip()
+
+# Verify changes have been effected
+print(airlines['dest_region'].unique())
+print(airlines['dest_size'].unique())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

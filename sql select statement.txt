@@ -1,0 +1,175 @@
+>>>>Sample
+
+SELECT count(*) - count(ticker) AS missing
+  FROM fortune500;
+
+
+>>>Sample
+
+SELECT count(*) - count(profits_change) AS missing
+  FROM fortune500;
+
+>>>Sample
+
+SELECT company.name
+-- Table(s) to select from
+  FROM company
+       join fortune500 on
+       company.ticker=fortune500.ticker
+
+
+Primary keys are columns with unique non-null value
+
+foreign keys reference a row in a different tabl or the same table via an unique id
+
+foreign keys contain a value in the reference column or null
+
+if the foreign key is null then it indicates there is no relationship for that row.
+
+parent id : id in the same table is a self referencing foreign key
+
+>>>>>>coalese
+
+coalesce returns the first non-null column value on the row
+
+
+select coalesce(column_1, column_2)
+
+>>>>>Sample
+
+-- Count the number of tags with each type
+SELECT type, count(*) AS count
+  FROM tag_type
+ -- To get the count for each type, what do you need to do?
+ GROUP BY type
+ -- Order the results with the most common
+ -- tag types listed first
+ ORDER BY count DESC;
+
+>>>Sample
+
+-- Select the 3 columns desired
+SELECT company.name, tag_type.tag,  tag_type.type
+  FROM company
+  	   -- Join to the tag_company table
+       JOIN tag_company 
+       ON company.id = tag_company.company_id
+       -- Join to the tag_type table
+       JOIN tag_type
+       ON tag_company.tag = tag_type.tag
+  -- Filter to most common type
+  WHERE type='cloud';
+
+
+>>>Sample group by
+
+-- Use coalesce
+SELECT coalesce(industry, sector, 'Unknown') AS industry2,
+       -- Don't forget to count!
+       count(*)
+  FROM fortune500 
+-- Group by what? (What are you counting by?)
+ GROUP BY industry2
+-- Order results to see most common first
+ order by count
+-- Limit results to get just the one value you want
+ limit 5;
+
+>>>sAMPLE
+
+SELECT company_original.Name, title, rank
+  -- Start with original company information
+  FROM Company AS company_original
+       -- Join to another copy of company with parent
+       -- company information
+	   LEFT JOIN Company AS company_parent
+       ON company_original.parent_id = company_parent.id
+       -- Join to fortune500, only keep rows that match
+       INNER JOIN fortune500 
+       -- Use parent ticker if there is one, 
+       -- otherwise original ticker
+       ON coalesce(company_parent.ticker, 
+                   company_original.ticker) = 
+             fortune500.ticker
+ -- For clarity, order by rank
+ ORDER BY rank;
+
+
+data types
+smallint  -32768 to 32767
+integer -2,147,483,648 to 2,147,483,647
+bigint  -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+decimal and numeric 131072 diits before the decimal point and 16383 digit after the decimal point
+real 6 decimal digits of precision
+double precision 15 decimal digits precision
+smallserial 1 to 32767
+serial 1 to 2,147,483,647
+bigserial 1 to 9,223,372,036,854,775,807
+
+
+cast()
+1. converting from one type to another
+select cast(value as new_type)
+
+select cast(3.7 as integer)
+output:4
+
+select value::new_type
+
+>>>Sample
+
+-- Select the original value
+SELECT profits_change, 
+	   -- Cast profits_change
+       CAST(profits_change as integer) AS profits_change_int
+  FROM fortune500;
+
+
+>>>Sample
+
+-- Divide 10 by 3
+SELECT 10/3, 
+       -- Cast 10 as numeric and divide by 3
+       10::numeric/3;
+
+
+>>>Sample
+
+SELECT '3.2'::numeric,
+       '-123'::numeric,
+       '1e3'::numeric,
+       '1e-3'::numeric,
+       '02314'::numeric,
+       '0002'::numeric;
+
+
+
+>>>Sample
+
+-- Select the count of each value of revenues_change
+SELECT count(*), revenues_change
+  FROM fortune500
+ group by revenues_change
+ -- order by the values of revenues_change
+ ORDER BY revenues_change;
+
+
+>>>Sample
+
+-- Select the count of each revenues_change integer value
+SELECT revenues_change::integer revenue_change
+, count(*)
+  FROM fortune500
+ group by revenue_change
+ -- order by the values of revenues_change
+ ORDER BY revenue_change;
+
+
+>>>Sample
+
+-- Count rows 
+SELECT count(*)
+  FROM fortune500
+ -- Where...
+ WHERE revenues_change > 0;
+
