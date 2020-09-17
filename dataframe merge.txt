@@ -1,0 +1,113 @@
+>>merge
+
+# Merge revenue with managers on 'city': merge_by_city
+merge_by_city = pd.merge(revenue,managers, on='city')
+
+# Print merge_by_city
+print(merge_by_city)
+
+# Merge revenue with managers on 'branch_id': merge_by_id
+merge_by_id = pd.merge(revenue,managers,  on='branch_id')
+
+# Print merge_by_id
+print(merge_by_id)
+
+>>merge left_on and right_on
+combined = pd.merge(revenue, managers, left_on='city', right_on='branch')
+
+>>merge on multiple columns
+
+combined = pd.merge(revenue,managers, on=['branch_id','city','state'])
+
+
+>>groupby, sum, and pivot
+
+df.groupby(['Fruit','Name'],as_index = False).sum().pivot('Fruit','Name').fillna(0)
+
+>>set_index by level
+
+df.set_index(['Fruit','Name']).sum(level=[0,1])
+
+>>left and right merge
+
+# Merge revenue and sales: revenue_and_sales
+revenue_and_sales = pd.merge(revenue,sales, how='right', on=['city','state'])
+
+# Print revenue_and_sales
+print(revenue_and_sales)
+
+# Merge sales and managers: sales_and_managers
+sales_and_managers = pd.merge(sales, managers, how='left', left_on=['city','state'], right_on=['branch','state'])
+
+# Print sales_and_managers
+print(sales_and_managers)
+
+>>merge on
+# Perform the first merge: merge_default
+merge_default = pd.merge(sales_and_managers, revenue_and_sales)
+
+# Print merge_default
+print(merge_default)
+
+# Perform the second merge: merge_outer
+merge_outer = pd.merge(sales_and_managers, revenue_and_sales, how='outer')
+
+# Print merge_outer
+print(merge_outer)
+
+# Perform the third merge: merge_outer_on
+merge_outer_on = pd.merge(sales_and_managers, revenue_and_sales, how='outer', on=['city','state'])
+
+# Print merge_outer_on
+print(merge_outer_on)
+
+>>merge ordered and forward filled
+
+# Perform the first ordered merge: tx_weather
+tx_weather = pd.merge_ordered(austin,houston)
+
+# Print tx_weather
+print(tx_weather)
+
+# Perform the second ordered merge: tx_weather_suff
+tx_weather_suff = pd.merge_ordered(austin,houston, on='date', suffixes=['_aus','_hus'])
+
+# Print tx_weather_suff
+print(tx_weather_suff)
+
+# Perform the third ordered merge: tx_weather_ffill
+tx_weather_ffill = pd.merge_ordered(austin,houston, on='date', suffixes=['_aus','_hus'],fill_method='ffill')
+
+# Print tx_weather_ffill
+print(tx_weather_ffill)
+
+>>Resample
+
+merged = pd.merge_asof(auto, oil, left_on='yr', right_on='Date')
+
+# Print the tail of merged
+print(merged.tail())
+
+# Resample merged: yearly
+yearly = merged.resample('A', on='Date')[['mpg','Price']].mean()
+
+# Print yearly
+print(yearly)
+
+# print yearly.corr()edition
+print(yearly.corr())
+
+>>sep='\t' - tab delimited csv
+
+
+# Create file path: file_path
+file_path = 'Summer Olympic medallists 1896 to 2008 - EDITIONS.tsv'
+
+# Load DataFrame from file_path: editions
+editions = pd.read_csv(file_path, sep='\t')
+
+# Extract the relevant columns: editions
+editions = editions[['Edition', 'Grand Total', 'City', 'Country']]
+
+# Print editions DataFrame
+print(editions)

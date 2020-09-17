@@ -1,0 +1,18 @@
+>>pd.melt and reshape melt moves columns values into rows
+
+import pandas as pd
+
+print(fractions_change.head(5))
+# Reshape fractions_change: reshaped
+reshaped = pd.melt(fractions_change, id_vars='Edition', value_name='Change')
+print(reshaped.head(5))
+# Print reshaped.shape and fractions_change.shape
+print(reshaped.shape, fractions_change.shape)
+
+# Extract rows from reshaped where 'NOC' == 'CHN': chn
+#chn = reshaped.loc[reshaped.NOC == 'CHN']
+chn = reshaped.loc[reshaped.NOC == 'ANZ']
+
+# Print last 5 rows of chn
+print(chn.tail())
+

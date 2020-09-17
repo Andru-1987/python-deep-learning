@@ -96,7 +96,6 @@ marriage_status['marriage_status']=marriage_status['marriage_status'].str.upper(
 
 leading spaces
 
-
 marriage_status['marriage_status']=marriage_status['marriage_status'].str.strip()
 
 

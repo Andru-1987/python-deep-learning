@@ -1,0 +1,24 @@
+>>>Group by   
+
+
+ id=[1,2,3,4,5,6]
+    sub_id1=[424775,424775,424775,678321,678321,424755]
+    sub_id2=[101,101,102,101,102,102]
+    date=['2018-09-21','2018-09-21','2018-09-21','2018-09-21','2018-09-21','2018-09-21']
+    
+    dict={
+        'id':id,
+        'sub_id1':sub_id1,
+        'sub_id2':sub_id2,
+        'date':date
+    }
+    
+    df1=pd.DataFrame(dict,index=id)
+    df1['date']=pd.to_datetime(df1['date'])
+    df1.sort_values(['sub_id1','sub_id2'],inplace=True)
+    #print(df1.info())
+    #print(df1.keys)
+    query=df1[df1['date']=='2018-09-21']
+    #print(query)
+    #print(df1)
+    print(df1.groupby(['sub_id1','date'])['sub_id2'].min())
