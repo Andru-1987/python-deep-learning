@@ -110,7 +110,7 @@ pipleline for hypothesis testing
 
 we want to know if there is something michelson speed of light 299,852 km/s and newcomb 299,860 km/s are correlated
 
-we only have th newcomb mean
+we only have the newcomb mean
 
 Null hypothesis
 
@@ -308,6 +308,113 @@ print('p-val =', p)
 
 
 , the pitcher was no longer allowed to spit on or scuff the ball, an activity that greatly favors pitchers.
+
+
+>>>>>>>>>>>>>>>>How to do a hypothesis Test on Correlation and execute it.
+
+pearson correlation = covariance/(std of x)*(std of y)
+
+-1 negatively correlated and 1 totally correlated
+
+* posit null hypothesis that there are no correlation between the two variables
+
+
+* use pearson correlation, p as test statistic
+* compute p-value as a fraction of replicates that have p at least as large as observed
+
+given an observed value of .54
+
+no replicia has a value greater than .54
+this suggest a very low p value
+suggesting counties with high vote counts voted for the candidate
+
+
+>>>>Sample >> the affect on insectide on bee reproduction
+
+# Compute x,y values for ECDFs
+x_control, y_control = ecdf(control)
+x_treated, y_treated = ecdf(treated)
+
+# Plot the ECDFs
+plt.plot(x_control, y_control, marker='.', linestyle='none')
+plt.plot(x_treated, y_treated, marker='.', linestyle='none')
+
+# Set the margins
+plt.margins(0.02)
+
+# Add a legend
+plt.legend(('control', 'treated'), loc='lower right')
+
+# Label axes and show plot
+plt.xlabel('millions of alive sperm per mL')
+plt.ylabel('ECDF')
+plt.show()
+
+>>>>>>>Boot strapping bees and insecticide
+Null test: hypothesis: On average, male bees treated with neonicotinoid insecticide have the same number of active sperm per milliliter of semen than do untreated male bees. You will use the difference of means as your test statistic.
+
+# Compute the difference in mean sperm count: diff_means
+
+diff_means = np.mean(control) - np.mean(treated)
+
+# Compute mean of pooled data: mean_count
+mean_count = np.mean(np.concatenate((control, treated)))
+
+# Generate shifted data sets
+control_shifted = control - np.mean(control) + mean_count
+treated_shifted = treated - np.mean(treated) + mean_count
+
+# Generate bootstrap replicates
+bs_reps_control = draw_bs_reps(control_shifted,
+                               np.mean, size=10000)
+bs_reps_treated = draw_bs_reps(treated_shifted,
+                               np.mean, size=10000)
+
+# Get replicates of difference of means: bs_replicates
+bs_replicates = bs_reps_control - bs_reps_treated
+
+# Compute and print p-value: p
+p = np.sum(bs_replicates >= np.mean(control) - np.mean(treated)) \
+            / len(bs_replicates)
+print('p-value =', p)
+
+
+>>>>>>>>>>>>>Case study
+study of small birds (finches)
+1. geospiza fortis
+2. geospiza scandens
+
+princeton university
+dryad digital repository
+
+1. beak length
+2. beak depth
+
+check how the beak depth of g. scandens has changed over time.
+
+1975 to 2012
+
+estimates of the mean beak depth for the representive years
+
+hypothesis test if the beaks did get deeper
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
