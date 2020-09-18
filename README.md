@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I am hypothesis testing finch beak size changes between 1975 and 2012
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/statistics%20hypothesis%20testing%20scandens%20and%20fortis%20beak%20size.ipynb
+
 I am using python to visualize data and learn from it.
 
 * I added an XGBoost predictor for idaho housing prices
