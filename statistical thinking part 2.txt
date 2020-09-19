@@ -303,7 +303,7 @@ _ = plt.ylabel('PDF')
 # Show the plot
 plt.show()
 
-#if the tail to right of left is longer than the data is not normally distributed.  use np.var to determine if an normally distributed curve exists.
+#if the tail to right or left is longer than the data is not normally distributed.  use np.var to determine if an normally distributed curve exists.
 
 >>Sample 3 - confidence interval
 
