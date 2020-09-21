@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added visualization of nitrogen dioxide levels in Utah
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Visualizing%20Nitrogen%20Dioxide.ipynb
+
 * I am hypothesis testing finch beak size changes between 1975 and 2012
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/statistics%20hypothesis%20testing%20scandens%20and%20fortis%20beak%20size.ipynb
