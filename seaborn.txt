@@ -2,6 +2,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
+>>>>>>>>>>>Count Plot
+
 height[62,64,69,75,66,68,65,71,76,73]
 weight[120,136,148,175,137,165,154,172,200,187]
 
@@ -19,6 +22,8 @@ sns.countplot(y=region)
 # Show plot
 plt.show()
 
+
+>>>>>>>>>>>>>>Scatter plot
 
 participant_id, age, how_masculine, how_important
 
@@ -42,7 +47,7 @@ sns.scatterplot(x="total_bill", y="tip", data=tips, hue="smoker", palette=hue_co
 hue colors: blue, green, red, cyan, purple, yellow, black, white
 
 
->> relplot
+>>>>>>>>>>>>>>> relplot
 
 palette_colors = {'Rural': "green", 'Urban': "blue"}
 
@@ -60,7 +65,8 @@ sns.relplot(x="absences", y="G3",
 # Show plot
 plt.show()
 
->>
+>>>>>>>>>>>>Relplot
+
 # Change this scatter plot to arrange the plots in rows instead of columns
 sns.relplot(x="absences", y="G3", 
             data=student_data,
@@ -84,8 +90,6 @@ sns.relplot(x="G1", y="G3",
 # Show plot
 plt.show()
 
->>>size
-
 sns.relplot(x='total_bill'
 , y='tip'
 , data=tips
@@ -93,6 +97,552 @@ sns.relplot(x='total_bill'
 ,size='size')
 
 plt.show()
+
+>>>>>>>>>>>>>>>>Line plots
+
+line plots represent the same thing tracked over time
+* tracking a companies stock over time
+* No_2_mean
+
+air pollution data
+1. nitrogen dioxide each hour
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.replot(x="hour", y="NO_2_mean",
+	data=air_df_mean,
+	kind="line")
+
+plt.show()
+
+#Nitrogen dioxide is a criteria pollutant that can irritate the lungs, cause bronchitis and pneumonia, and lower resistance to respiratory infections
+
+
+we can track subgroups by location
+
+
+sns.relplot(x="hour", y="NO_2_mean",
+	data=air_df_mean,
+	kind="line",
+style='location',
+hue='location',
+markers=True,
+dashes=False
+
+)
+
+#seaborn will display a confidence interval displayed by the mean
+
+95% confident that the mean is within this interval
+confident intervals represent the uncertainty of our estimate
+
+
+you can turn off the confidence interval by setting the ci=none
+
+
+
+>>>>Sample >>> turn off the confidence interval
+
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create line plot of model year vs. horsepower
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create line plot of model year vs. horsepower
+
+sns.relplot(x="model_year", y="horsepower",
+	data=mpg,
+	kind="line",
+	ci=None)
+
+
+# Show plot
+plt.show()
+
+>>>>>>Sample >>> show the origin of the country
+
+# Import Matplotlib and Seaborn
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Change to create subgroups for country of origin
+sns.relplot(x="model_year", y="horsepower", 
+            data=mpg, kind="line", 
+            ci=None, style="origin",hue="origin", markers=True,dashes=False)
+
+# Show plot
+plt.show()
+
+>>>>>Count plots and bar plots
+
+categorical plots
+
+involve a categorical variable
+
+involve comparisons between groups
+
+catplot
+col and row
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.countplot(x="how_masculine", data=masculinity_data)
+plt.show()
+
+or
+
+sns.catplot(x="how_masculine", data=masculinity_data, kind="count")
+
+category_order=["No answer","Not at all","Not very","Somewhat","Very"]
+
+
+sns.catplot(x="how_masculine", data=masculinity_data, kind="count", order=category_order)
+
+>>>>Barplots
+
+display mean of quantative variable per category
+
+sns.catplot(x="day", y="total_bill", data=masculinity_data, kind="bar")
+
+shows the confidence interval
+ci=None
+
+>>>>>Sample >>> Count plot
+
+# Create count plot of internet usage
+
+
+sns.countplot(x="Internet usage", data=survey_data)
+plt.show()
+
+# Show plot
+plt.show()
+
+or 
+
+# Create count plot of internet usage
+sns.catplot(x="Internet usage", data=survey_data,
+            kind="count")
+
+# Show plot
+plt.show()
+
+>>>Sample Count plot by category
+
+# Create column subplots based on age category
+sns.catplot(y="Internet usage", data=survey_data,
+            kind="count", col="Age_Category")
+
+# Show plot
+plt.show()
+
+>>>Sample >> Gender interested in Math
+
+# Create a bar plot of interest in math, separated by gender
+
+sns.catplot(x="Gender", y="Interested in Math", data=survey_data,kind="bar")
+
+# Show plot
+plt.show()
+
+
+>>>>Sample >> x and y catplot
+
+# Create a bar plot of interest in math, separated by gender
+
+sns.catplot(x="Gender", y="Interested in Math", data=survey_data,kind="bar")
+
+# Show plot
+plt.show()
+
+>>>Sample >> changing the sort order
+
+# Rearrange the categories
+sort=["5 to 10 hours", ">10 hours","<2 hours", "2 to 5 hours"]
+
+sns.catplot(x="study_time", y="G3",
+            data=student_data,
+            kind="bar", order=sort)
+
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>>>Box plot
+
+75 and 25 percentile
+
+g = sns.catplot(x="time",
+y="total_bill"
+data=tips,
+kind="box")
+
+sym=""  #remove the outlier
+whisker 1.5 the interquartile range
+
+whis=2.0  #extends to 2.0 interquartile range
+
+whis=[0,100]  #no outliers
+
+
+>>>Sample >> boxplot
+
+# Specify the category ordering
+study_time_order = ["<2 hours", "2 to 5 hours", 
+                    "5 to 10 hours", ">10 hours"]
+
+# Create a box plot and set the order of the categories
+
+g = sns.catplot(x="study_time",
+y="G3",
+data=student_data,
+kind="box")
+
+>>>>>>>>>>>Point plots
+
+points show the mean of a quantative variable
+verticle lines show 95% confidence intervals
+show the uncertainty about the mean estimates
+
+line plot has quantative variable on the x-axis
+point plot has categorical variable on the x-axis
+
+sns.catplot(x="age",
+	y="masculinity_important",
+	data=masculinity_data,
+	hue="feel_masculine",
+	kind="point")
+
+join=False #removes the relationship lines
+
+
+
+sns.catplot(x="smoker",
+	y="total_bill",
+	data=tips,
+	kind="point",
+	estimator=median
+	)
+
+estimator is the function
+
+capsize=0.2 #adds caps to the confidence intervals
+
+ci=None
+
+>>>Sample >>> point plot
+
+# Create a point plot of family relationship vs. absences
+
+
+sns.catplot(x="famrel",
+	y="absences",
+	data=student_data,
+	kind="point",
+	capsize=0.2
+	)
+
+            
+# Show plot
+plt.show()
+
+
+>>>>>Sample >>> hue
+
+# Create a point plot with subgroups
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school")
+
+# Show plot
+plt.show()
+
+>>>>>Sample >>> estimator
+
+# Import median function from numpy
+import numpy as np
+# Plot the median number of absences instead of the mean
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school",
+            estimator=np.median,
+            ci=None)
+
+# Show plot
+plt.show()
+#smokers vs non smoker data
+# Show plot
+plt.show()
+>>>>>>>>>>>>>>Customize the plots
+
+change the style improves readability
+
+figure style
+
+1. white
+2. dark
+3. whitegrid
+4. darkgrid
+5. ticks
+
+sns.set_style()
+
+sns.set_palette()
+
+diverging palettes
+
+1.RdBu
+2. PRGn
+3. RdBu_r
+4. PRGn_r
+
+_r means to reverse the pallete
+
+sequential palletes
+1. Greys
+2. Blues
+3. PuRed
+4. GnBu
+
+custom_palette=['red','green','orange','blue','yellow','purple']
+sns.set_palette(custom_palette)
+
+or hexcodes
+
+sns.set_context()
+1. paper
+2. notebook
+3. talk
+4. poster
+
+
+
+>>>Sample >> set style to white grid
+
+# Set the style to "whitegrid"
+sns.set_style("whitegrid")
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+
+# Show plot
+plt.show()
+
+
+>>>>>samples >>>Set palette to purples
+
+ Change the color palette to "RdBu"
+sns.set_style("whitegrid")
+sns.set_palette("Purples")
+
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+
+# Show plot
+plt.show()
+
+>>>>>>Samples >>>> Custom palette
+
+# Set the style to "darkgrid"
+sns.set_style("darkgrid")
+
+# Set a custom color palette
+custom_palette=["#39A7D0","#36ADA4"]
+sns.set_palette(custom_palette)
+
+# Create the box plot of age distribution by gender
+sns.catplot(x="Gender", y="Age", 
+            data=survey_data, kind="box")
+
+# Show plot
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>Adding titles and labels
+
+creating informative visualizations
+
+FacetGrids vs AxesSubplots
+
+g = sns.scatterplot(x="height",y="weight", data=df)
+type(g)
+
+output: matplotlib.axes._subplots.AxesSubplot
+
+A FacetGrid is composed of one or more axes subplots
+
+relplot and catplot create subplots
+
+scatterplot and countplot create a single plot
+
+>>>Set the title
+
+g.fig.suptitle("New Title", y=1.03)
+
+y default value is 1
+
+>>>>>Sample >>find the type of a relplot 
+
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Identify plot type
+type_of_g = type(g)
+
+# Print type
+print(type_of_g)
+
+>>>>>>>Sample >>>>Add a title
+
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Add a title "Car Weight vs. Horsepower"
+g.fig.suptitle("Car Weight vs. Horsepower", y=1.03)
+
+# Show plot
+plt.show()
+
+>>>>Part 2
+
+adding a title to axesSubplot
+
+g=sns.boxplot(x="Region", y="Birthrate", data=gdp_data)
+g.set_title("New Title",y=1.03)
+
+>>>>subplots
+
+g=sns.catplot(x="Region"
+	y="Birthrate",
+	data=gdp_data,
+	kind="box",
+	col="Group")
+
+
+g.fig.suptitle("New Title", y=1.03)
+
+g.set_titles("This is {col_name}")
+
+inserts the column value in the title
+
+>>>>set labels
+
+g.set(xlabel="New X Label",
+	ylabel="New Y Label")
+
+>>>> rotating tick labels
+
+plt.xticks(rotation=90)
+
+>>>>>Sample >>> set x and y labels
+
+# Create line plot
+g = sns.lineplot(x="model_year", y="mpg_mean", 
+                 data=mpg_mean,
+                 hue="origin")
+
+# Add a title "Average MPG Over Time"
+g.set_title("Average MPG Over Time")
+
+# Add x-axis and y-axis labels
+g.set(
+    xlabel="Car Model Year",
+    ylabel="Average MPG")
+
+
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>>Putting it together
+
+>>>Sample >>fig.suptitle
+
+# Set palette to "Blues"
+sns.set_palette("Blues")
+
+# Adjust to add subgroups based on "Interested in Pets"
+g = sns.catplot(x="Gender",
+                y="Age", data=survey_data, 
+                kind="box", hue="Interested in Pets")
+
+# Set title to "Age of Those Interested in Pets vs. Not"
+g.fig.suptitle("Age of Those Interested in Pets vs Not")
+
+# Show plot
+plt.show()
+
+
+>>>>Sample >>> dark and with labels
+
+# Set the figure style to "dark"
+sns.set_style("dark")
+# Adjust to add subplots per gender
+g = sns.catplot(x="Village - town", y="Likes Techno", 
+                data=survey_data, kind="bar",
+                col="Gender")
+
+# Add title and axis labels
+g.fig.suptitle("Percentage of Young People Who Like Techno", y=1.02)
+g.set(xlabel="Location of Residence", 
+       ylabel="% Who Like Techno")
+
+# Show plot
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

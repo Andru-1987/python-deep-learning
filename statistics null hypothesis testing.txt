@@ -398,6 +398,114 @@ estimates of the mean beak depth for the representive years
 
 hypothesis test if the beaks did get deeper
 
+>>>>>>>>>>>>>>>Variation in beak size
+the beak size changed.  Here are reasons why.
+1. there was a drought on the island between 1976 and 1977.   The smaller seeds died.  The larger seeds were harder to break causing the bird beaks to adapt.  Large beak birds survived.
+
+The beak has the same shape and it got bigger
+
+linear regression
+
+>>>linear regression finds correlation in the data
+
+x=total votes in thousands
+y=percent of votes for obama
+
+the distance between the slope line and a point is called a residual. points below the line will have a negative residual.
+
+The line will be where the sum of squares of residuals (which is the distance) is minimal.
+
+np.polyfit();
+
+#a line is a one degree polynomial
+
+slope, intercept= np.polyfit(total_votes,
+dem_share, 1)
+
+#slope is rise over run
+#a slope of 4 means we get 4 more voters for every 100,000 total votes
+
+a, b = np.polyfit(illiteracy,fertility,1)
+
+x = np.array([0,100])
+y = a * x + b
+
+# Add regression line to your plot
+_ = plt.plot(x,y)
+
+
+# Compute the linear regressions
+slope_1975, intercept_1975 = np.polyfit(bl_1975, bd_1975, 1)
+slope_2012, intercept_2012 = np.polyfit(bl_2012, bd_2012, 1)
+
+# Perform pairs bootstrap for the linear regressions
+bs_slope_reps_1975, bs_intercept_reps_1975 = \
+        draw_bs_pairs_linreg(bl_1975, bd_1975, 1000)
+bs_slope_reps_2012, bs_intercept_reps_2012 = \
+        draw_bs_pairs_linreg(bl_2012, bd_2012, 1000)
+
+# Compute confidence intervals of slopes
+slope_conf_int_1975 = np.percentile(bs_slope_reps_1975, [2.5, 97.5])
+slope_conf_int_2012 = np.percentile(bs_slope_reps_2012, [2.5, 97.5])
+intercept_conf_int_1975 = np.percentile(
+                            bs_intercept_reps_1975, [2.5, 97.5])
+intercept_conf_int_2012 = np.percentile(
+                            bs_intercept_reps_2012, [2.5, 97.5])
+
+# Print the results
+print('1975: slope =', slope_1975,
+      'conf int =', slope_conf_int_1975)
+print('1975: intercept =', intercept_1975,
+      'conf int =', intercept_conf_int_1975)
+print('2012: slope =', slope_2012,
+      'conf int =', slope_conf_int_2012)
+print('2012: intercept =', intercept_2012,
+      'conf int =', intercept_conf_int_2012)
+
+
+<<<<<<<calculate heritablity
+
+scanton birds are mating with fortis bring fortis characteristics into the species
+
+def draw_bs_pairs(x, y, func, size=1):
+    """Perform pairs bootstrap for a single statistic."""
+
+    # Set up array of indices to sample from: inds
+    inds = np.arange(len(x))
+
+    # Initialize replicates: bs_replicates
+    bs_replicates = np.empty(size)
+
+    # Generate replicates
+    for i in range(size):
+        bs_inds = np.random.choice(inds, len(inds))
+        bs_x, bs_y = x[bs_inds], y[bs_inds]
+        bs_replicates[i] = func(bs_x, bs_y)
+
+    return bs_replicates
+
+
+>>>>Covariance
+
+Remember that the Pearson correlation coefficient is the ratio of the covariance to the geometric mean of the variances of the two data sets. This is a measure of the correlation between parents and offspring, but might not be the best estimate of heritability. If we stop and think, it makes more sense to define heritability as the ratio of the covariance between parent and offspring to the variance of the parents alone. In this exercise, you will estimate the heritability and perform a pairs bootstrap calculation to get the 95% confidence interval.
+
+>>> Covariance
+
+1) A measure of how two quantities vary together
+2) if the distance from the x mean and the distance from the y mean are positive than the point is positively correlated
+
+1/m (x-x_mean)*(y-y_mean)  if positive then positively correlated
+
+if y is below the mean then the variable is negatively correlated
+
+pearson correlation = covariance/(std of x)*(std of y)
+
+equals
+
+pearson correlation = variability due to codependence/ independant variability
+
+-1 no correlation and 1 totally correlated
+
 
 
 
