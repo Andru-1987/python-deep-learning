@@ -1,5 +1,8 @@
 # python-deep-learning
 python deep learning notebooks
+* I added a search for the best movies
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Movies%202013.ipynb
 
 * I added visualization of nitrogen dioxide levels in Utah
 
