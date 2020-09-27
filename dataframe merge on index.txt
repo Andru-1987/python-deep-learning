@@ -1,0 +1,42 @@
+>>>>>>>Merging on indexes
+1. merge tables together using their indexes
+
+movies table
+1. id
+2. title
+3. popularity
+4. release_date
+
+Table with an index
+the id is the table index
+
+>>>methods to set the index of a table>> using the index_col argument
+
+movies=pd.read_csv('tmpdb_movies.csv',index_col=['id'])
+print(movies.head())
+
+>>>>>MultiIndex dataset
+
+samuel = pd.read_csv('samuel.csv',
+	index_col=['movie_id','cast_id'])
+
+index merge with left_on and right_on
+
+samuel_casts = samuel.merge(casts, on=['movie_id','cast_id'])
+
+
+movies_genres=movies.merge(movie_to_genres, left_on='id',left_index=True, right_on='movie_id', right_index=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

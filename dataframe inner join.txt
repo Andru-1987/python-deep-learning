@@ -8,3 +8,65 @@ medals = pd.concat(medal_list, keys=['bronze', 'silver', 'gold'], axis=1, join='
 
 # Print medals
 print(medals)
+
+
+>>>>Dataset of local government offices called wards
+
+census data merged with the ward data
+
+ward_census
+1. ward
+2. pop_2000
+3. pop_2010
+4. change
+5. address
+6.zip
+
+pop100 : 100% population count
+hu100: 100% count of housing units
+
+https://www2.census.gov/census_2010/04-Summary_File_1/Idaho/
+
+
+wards_census=wards.merge(census, on='ward')
+print(wards_census.head(4))
+
+inner joins return results matching in both tables
+
+>>>Suffixes
+wards_census=wards.merge(census, on='ward', suffixes=('_census','_ward')
+
+to distinquish duplicate column names
+
+
+>>>>Sample  >>> Merge on vid
+
+# Merge the taxi_owners and taxi_veh tables
+taxi_own_veh = taxi_owners.merge(taxi_veh,on='vid',suffixes=('_own','_veh'))
+
+# Print the column names of the taxi_own_veh
+print(taxi_own_veh.columns)
+
+# Print the most popular fuel_type
+print(taxi_own_veh['fuel_type'].value_counts())
+
+
+>>>>>Sample >>> get the merge shape
+
+# Merge the wards and census tables on the ward column
+wards_census = wards.merge(census, on="ward")
+
+# Print the shape of wards_census
+print(wards_census.shape)
+
+wards.loc[wards['ward'] == '1', 'ward'] = '61'
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+reading a text file
+
+filename="huck_finn.txt"
+
+file=open(filename,mode='r')
+text=file.read()
+file.close()
+
+print(text)
+
+
+with file=open(filename,mode='r') as file
+	print(file.read())
+
+context manager by binding a variable
+
+
+>>>>>Sample  >>> reading a flat file
+
+# Open a file: file
+file = open("moby_dick.txt", mode="r")
+
+# Print it
+print(file.read())
+
+# Check whether file is closed
+print(file.closed)
+
+# Close file
+file.close()
+
+
+# Check whether file is closed
+print(file.closed)
+
+
+>>>>>>Sample >>> using a context
+
+# Read & print the first 3 lines
+with open('moby_dick.txt') as file:
+    print(file.readline())
+    print(file.readline())
+    print(file.readline())

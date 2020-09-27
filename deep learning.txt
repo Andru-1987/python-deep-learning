@@ -527,6 +527,18 @@ model.load_weights("model.h5")
 
 
 
+Problem to solve
+
+X1	X2	XOR
+-1	-1	0
+-1	1	1
+1	-1	1
+1	1	0
+
+
+
+
+
 
 
 

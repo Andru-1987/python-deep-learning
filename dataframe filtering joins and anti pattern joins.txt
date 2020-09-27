@@ -1,0 +1,150 @@
+Pandas does not support filtering join
+
+Filtering joins
+1. Filter observations from table based on whether or not they match an observation in another table.
+
+Semi-join
+1. Returns the intersection, similar to an inner join
+2. Returns only columns from the left table and not the right
+
+only columns and rows with matchs on the left table are resulted
+
+genre
+gid name
+
+songs
+tid
+name
+aid
+mtid
+gid
+composer
+u_price
+
+
+genres_tracks= genres.merge(top_tracks, on='gid')
+
+genres['gid'].isin(genres_tracks['gid'])
+
+this will tell use if genres appears in the genres_tracks table.  the result is true or false
+
+top_genres=genres[genres['gid'].isin(genres_tracks['gid'])]
+
+
+This is called a filtering join because the genres table matches genres in the top_tracks table
+
+
+>>>>>Anti  Join
+
+1. returns the left table, excluding the intersection
+
+2. returns only column from the left table and not the right
+
+
+genres_tracks= genres.merge(top_tracks, on='gid', how="left", indicator=True)
+
+Indicator=True adds a column called _merge
+
+gid_list=genres_tracks.loc[genres_tracks[_merge]=='left_only','gid']
+
+produces a list not in the tracks table
+
+non_top_genres = genres[genres['gid'].isin(gid_list)]
+
+>>>>Sample Left join  >>indicator to add _merge
+
+# Merge employees and top_cust
+empl_cust = employees.merge(top_cust, on="srid", 
+                            how="left", indicator=True)
+
+# Select the srid column where _merge is left_only
+srid_list = empl_cust.loc[empl_cust['_merge']=='left_only', 'srid']
+
+# Get employees not working with top customers
+print(employees[employees['srid'].isin(srid_list)])
+
+>>>Sample  >>> merge
+
+You have been given a table of invoices that include top revenue-generating items. Additionally, you have a table of non-musical tracks from the streaming service
+
+non_mus_tcks(200)
+
+ tid                          name  aid  mtid  gid  u_price  ilid  iid  uprice  quantity
+0   2850                       The Fix  228     3   21     1.99   473   88    1.99         1
+1   2850                       The Fix  228     3   21     1.99  2192  404    1.99         1
+2   2868                     Walkabout  230     3   19     1.99   476   88    1.99         1
+3   2868                     Walkabout  230     3   19     1.99  2194  404    1.99         1
+4   3177                      Hot Girl  249     3   19     1.99  1668  306    1.99         1
+5   3177                      Hot Girl  249     3   19     1.99  2240  412    1.99         1
+6   3200                Gay Witch Hunt  251     3   19     1.99  1098  201    1.99         1
+7   3200                Gay Witch Hunt  251     3   19     1.99  1670  307    1.99         1
+8   3214             Phyllis's Wedding  251     3   22     1.99   527   96    1.99         1
+9   3214             Phyllis's Wedding  251     3   22     1.99  1678  310    1.99         1
+10  3223  How to Stop an Exploding Man  228     3   21     1.99   528   96    1.99         1
+11  3223  How to Stop an Exploding Man  228     3   21     1.99  1100  202    1.99         1
+12  3250                         Pilot  254     3   19     1.99   533   99    1.99         1
+13  3250                         Pilot  254     3   19     1.99  1686  312    1.99         1
+
+
+top invoices (16)
+
+ilid  iid   tid  uprice  quantity
+469    470   88  2832    1.99         1
+472    473   88  2850    1.99         1
+475    476   88  2868    1.99         1
+526    527   96  3214    1.99         1
+527    528   96  3223    1.99         1
+532    533   99  3250    1.99         1
+1097  1098  201  3200    1.99         1
+1099  1100  202  3223    1.99         1
+1667  1668  306  3177    1.99         1
+1669  1670  307  3200    1.99         1
+1677  1678  310  3214    1.99         1
+1685  1686  312  3250    1.99         1
+2189  2190  404  2832    1.99         1
+2191  2192  404  2850    1.99         1
+2193  2194  404  2868    1.99         1
+2239  2240  412  3177    1.99         1
+
+track invoices
+
+ tid                          name  aid  mtid  gid  u_price  ilid  iid  uprice  quantity
+0   2850                       The Fix  228     3   21     1.99   473   88    1.99         1
+1   2850                       The Fix  228     3   21     1.99  2192  404    1.99         1
+2   2868                     Walkabout  230     3   19     1.99   476   88    1.99         1
+3   2868                     Walkabout  230     3   19     1.99  2194  404    1.99         1
+4   3177                      Hot Girl  249     3   19     1.99  1668  306    1.99         1
+5   3177                      Hot Girl  249     3   19     1.99  2240  412    1.99         1
+6   3200                Gay Witch Hunt  251     3   19     1.99  1098  201    1.99         1
+7   3200                Gay Witch Hunt  251     3   19     1.99  1670  307    1.99         1
+8   3214             Phyllis's Wedding  251     3   22     1.99   527   96    1.99         1
+9   3214             Phyllis's Wedding  251     3   22     1.99  1678  310    1.99         1
+10  3223  How to Stop an Exploding Man  228     3   21     1.99   528   96    1.99         1
+11  3223  How to Stop an Exploding Man  228     3   21     1.99  1100  202    1.99         1
+12  3250                         Pilot  254     3   19     1.99   533   99    1.99         1
+13  3250                         Pilot  254     3   19     1.99  1686  312    1.99         1
+
+
+# Merge the non_mus_tck and top_invoices tables on tid
+tracks_invoices = non_mus_tcks.merge(top_invoices,on="tid",how="inner")
+
+# Use .isin() to subset non_mus_tcks to rows with tid in tracks_invoices
+top_tracks = non_mus_tcks[non_mus_tcks['tid'].isin(tracks_invoices['tid'])]
+
+# Group the top_tracks by gid and count the tid rows
+cnt_by_gid = top_tracks.groupby(['gid'], as_index=False).agg({'tid':'count'})
+
+print(non_mus_tcks.head(100))
+print(cnt_by_gid)
+print(top_invoices)
+
+# Merge the genres table to cnt_by_gid on gid and print
+print(cnt_by_gid.merge(genres, on='gid'))
+
+
+
+
+
+
+
+

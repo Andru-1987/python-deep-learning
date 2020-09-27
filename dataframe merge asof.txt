@@ -1,0 +1,71 @@
+similar to merge_ordered left-join
+
+it will match on the nearest key column and not exact matches
+
+merged on columns must be sorted
+
+
+B	C    ->	C	D   results	B	C	D
+B2	1	1	D1		B2	1	D1
+B3	5	2	D2		B3	5	D3
+B4	10	3	D3		B4	10	D7
+		6	D6
+		7	D7
+
+
+the resuls of B3 are because 5 is greater than equal to 3
+b4 because 10 is greater than 7
+
+the right table is being compared to the left table
+
+
+pd.merge_asof(visa, ibm, on='date_time',suffixes('_visa','_ibm'))
+
+all the visa times are included and the ibm times are matches to how close they match the visa times
+
+ibm time is slightly less than the visa time for each match
+
+to get the ibm time slight greater use forward
+
+pd.merge_asof(visa, ibm, on='date_time', direction='forward', suffixes('_visa','_ibm'))
+
+
+when to use merge_asof
+1. when you dealing with a sample process
+
+
+>>>>Sample  >>> direction nearest
+
+# Use merge_asof() to merge jpm and wells
+jpm_wells = pd.merge_asof(jpm, wells, on='date_time',suffixes=['','_wells'],direction='nearest')
+
+
+# Use merge_asof() to merge jpm_wells and bac
+jpm_wells_bac = pd.merge_asof(jpm_wells, bac, on='date_time',suffixes=['_jpm','_bac'],direction='nearest')
+
+
+# Compute price diff
+price_diffs = jpm_wells_bac.diff()
+
+# Plot the price diff of the close of jpm, wells and bac only
+price_diffs.plot(y=['close_jpm','close_wells','close_bac'])
+plt.show()
+
+#https://www.geeksforgeeks.org/python-pandas-dataframe-diff/
+
+the diff results from the previous row minus the current row
+
+>>>>>Sample >>>   using a color to indicate recession or non recession bar plot
+
+# Merge gdp and recession on date using merge_asof()
+gdp_recession = pd.merge_asof(gdp,recession,on="date")
+
+# Create a list based on the row value of gdp_recession['econ_status']
+is_recession = ['r' if s=='recession' else 'g' for s in gdp_recession['econ_status']]
+
+# Plot a bar chart of gdp_recession
+gdp_recession.plot(kind='bar', y='gdp', x='date', color=is_recession, rot=90)
+plt.show()
+
+
+

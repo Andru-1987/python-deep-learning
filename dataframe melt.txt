@@ -16,3 +16,32 @@ chn = reshaped.loc[reshaped.NOC == 'ANZ']
 # Print last 5 rows of chn
 print(chn.tail())
 
+
+>>>>melt Moving column data in rows
+https://www.geeksforgeeks.org/python-pandas-melt/
+
+Name	Course		Age
+John	Masters		27
+Bob	Graduate	23
+Shiela	Graduate	21
+
+pd.melt(df, id_vars=['name'], value_vars=['Course'])
+
+Name	variable	value
+John	Course		Masters
+Bob	Course		Graduate
+Shiela	Course		Graduate
+
+pd.melt(df, id_vars=['name'], value_vars=['Course'],
+	var_name=['ChangedVarname'],value_name=['ChangedValName'])
+
+
+
+0      5.1     X
+1    5.1.1     Y
+2    5.1.1.1   Y1
+3    5.1.2     Z
+4      5.2     A
+5    5.2.2     B
+6  5.2.2.1     C
+7  5.2.2.2     D

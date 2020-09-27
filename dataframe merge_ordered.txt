@@ -1,0 +1,107 @@
+merge_ordered can merge time series data and other ordered data
+
+similar to a left outer join but the results are sorted
+
+.merge_order
+on
+left_on
+right_on
+how (left,right,inner,outer)
+suffixes
+
+pd.merge_ordered(df1,df2)
+
+appl stock prices
+1. date
+2. close
+
+mcd
+
+pd.merge_ordered(appl, mcd, on='date', suffixes('_appl','_mcd'))
+
+Forward fill will interpolate by filling the missing values with the previous values
+
+
+pd.merge_ordered(appl, mcd, on='date', suffixes('_appl','_mcd'), fill_method='ffill')
+
+
+>>>>>>When to use
+1. ordered data or time series data
+2. fill in the missing values
+
+
+>>>Sample >>> order merge >> left join
+
+# Use merge_ordered() to merge gdp and sp500 on year and date
+gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on="year", right_on="date", 
+                             how="left")
+
+# Print gdp_sp500
+print(gdp_sp500.head())
+
+>>>>Sample >>> use forward fill to extrapolate
+
+# Use merge_ordered() to merge gdp and sp500, interpolate missing value
+gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on="year", right_on="date", 
+                             how="left",
+                             fill_method='ffill')
+
+
+# Print gdp_sp500
+print (gdp_sp500)
+
+
+>>>Samples >> use the correlation
+
+#see if there is a correlation between the gdp and the stock returns
+
+# Use merge_ordered() to merge gdp and sp500, interpolate missing value
+gdp_sp500 = pd.merge_ordered(gdp, sp500, left_on='year', right_on='date', 
+                             how='left',  fill_method='ffill')
+
+# Subset the gdp and returns columns
+gdp_returns = gdp_sp500[['gdp','returns']]
+
+# Print gdp_returns correlation
+print (gdp_returns.corr())
+
+>>>>Samples >>> merge ordered
+
+#as the cpi decreases the unemployment increases
+
+# Use merge_ordered() to merge inflation, unemployment with inner join
+inflation_unemploy = pd.merge_ordered(inflation, unemployment,on="date",how='inner')
+
+# Print inflation_unemploy 
+print(inflation_unemploy)
+
+# Plot a scatter plot of unemployment_rate vs cpi of inflation_unemploy
+inflation_unemploy.plot(kind='scatter', x='unemployment_rate',y="cpi")
+plt.show()
+
+>>>>>Samples >>> merge ordered >>> difference merge column names
+
+# Merge gdp and pop on date and country with fill and notice rows 2 and 3
+ctry_date = pd.merge_ordered(gdp,pop, on=['date','country'],
+                             fill_method='ffill')
+
+# Print ctry_date
+print(ctry_date)
+
+>>>>Sample >>> merge ordered
+
+When using merge_ordered() to merge on multiple columns, the order is important when you combine it with the forward fill feature. The function sorts the merge on columns in the order provided
+
+# Merge gdp and pop on country and date with fill
+# Merge gdp and pop on date and country with fill and notice rows 2 and 3
+date_ctry = pd.merge_ordered(gdp,pop, on=['country','date'],
+                             fill_method='ffill') 
+
+
+# Print date_ctry
+print(date_ctry)
+
+When forward fill is applied, the value of the US population in January is used to fill in the missing values for both China and the US for the remainder of the year. This is not what you want. The fill forward is using unintended data to fill in the missing values. 
+
+
+However, when you merge on country first, the table is sorted by country then date, so the forward fill is applied appropriately in this 
