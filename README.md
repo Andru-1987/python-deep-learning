@@ -1,5 +1,11 @@
 # python-deep-learning
 python deep learning notebooks
+
+
+* I added a chicago crime sas file
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Crime%20analysis%20(SAS).ipynb
+
 * I added a search for the best movies
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Movies%202013.ipynb
