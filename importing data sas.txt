@@ -1,0 +1,273 @@
+sas - statistical analysis system
+stata = statistics and data
+
+sas is used for business analytics and biostatistics
+
+stata : academic social sciences research
+
+sas is a system for
+1. advanced analytics
+2. multivariate analysis
+3. business intelligence
+4. data management
+5. predictive analytics
+6. a standard for computational analysis
+
+import pandas as pad
+
+from sas7bdat import SAS7BDAT
+
+with SAS7BDAT('urbanpop.sas7bdat') as file:
+	df_sas=file.to_data_frame()
+
+https://anaconda.org/anaconda/sas7bdat
+
+
+from shapely import geometry
+import geopandas as gpd
+import pandas as pd
+
+file = r'C:\folder\user141.csv'
+crs = {'init': 'epsg:4326'}
+
+#Create a geoseries holding the single polygon. Coordinates in counter-clockwise order
+pointList = [(39.77750000, 116.17944444),(39.77750000, 116.58888889),(40.04722222, 116.58888889),(40.04722222, 116.17944444)]
+poly = geometry.Polygon(pointList)
+spoly = gpd.GeoSeries([poly],crs=crs)
+
+#Create geodataframe of points
+dfcsv = pd.read_csv(file)
+geometry = [geometry.Point(xy) for xy in zip(dfcsv.lat, dfcsv.long)]
+dfpoints = gpd.GeoDataFrame(dfcsv, crs=crs, geometry=geometry)
+
+#Create a subset dataframe of points within the polygon
+subset = dfpoints[dfpoints.within(spoly.geometry.iloc[0])]
+print('Number of points within polygon: ', subset.shape[0])
+
+conda install -c conda-forge shapely
+conda install -c conda-forge geopandas
+
+
+https://catalog.data.gov/dataset/tiger-line-shapefile-2019-county-idaho-county-id-topological-faces-polygons-with-all-geocodes-c
+
+
+>>>>importing stata files
+
+import pandas as pd
+
+data=pd.read_stata('urbanpop.dta')
+
+ICUR - illinois crime rate
+
+llinois Uniform Crime Reporting (IUCR) codes are four digit codes that law enforcement agencies use to classify criminal incidents when taking individual reports. 
+
+
+
+>>>>>Sample >>> sas sales data import
+
+# Import sas7bdat package
+from sas7bdat import SAS7BDAT
+
+# Save file to a DataFrame: df_sas
+with SAS7BDAT('sales.sas7bdat') as file:
+    df_sas=file.to_data_frame()
+
+# Print head of DataFrame
+
+print(df_sas.head())
+
+# Plot histogram of DataFrame features (pandas and pyplot already imported)
+pd.DataFrame.hist(df_sas[['P']])
+plt.ylabel('count')
+plt.show()
+
+>>>>>Sample >>> read a stata file
+
+# Import pandas
+import pandas as pd
+
+# Load Stata file into a pandas DataFrame: df
+
+df=pd.read_stata('disarea.dta')
+# Print the head of the DataFrame df
+
+print(df.head())
+# Plot histogram of one column of the DataFrame
+pd.DataFrame.hist(df[['disa10']])
+plt.xlabel('Extent of disease')
+plt.ylabel('Number of countries')
+plt.show()
+
+
+>>>>>>>>>importing hdf5
+
+1. hierarchical data format version 5
+2. standard for storing large quantities of numerical data
+
+Datasets can be hundreds of gigabytes or terbytes in size
+
+HDF5 can scale to exabytes
+
+conda install -c conda-forge hdf5 
+
+import h5py
+filename='H-H1_LOSC_4_V1_815411200-4096.hdf5'
+
+data=h5py.File(filename,'r') #read only
+print(type(data))
+
+what is the hdf5 structure
+
+for key in data.keys()
+	print(key)
+
+output: meta, quality, strain
+
+>>> find the meta data
+
+for key in data['meta'].keys():
+	print(key)
+Description
+DescriptionURL
+Duration
+GPSstart
+Type
+UTCstart
+
+print(data['meta']['Description'].value)
+
+
+>>>>Sample >>> Einstein gravitational waves
+
+# Import packages
+import numpy as np
+import h5py
+
+# Assign filename: file
+
+file='LIGO_data.hdf5'
+print(file)
+# Load file: data
+data = h5py.File(file,'r')
+
+# Print the datatype of the loaded file
+output:
+meta
+quality
+strain
+
+# Print the keys of the file
+for key in data.keys():
+    print(key)
+
+Output:
+quality
+strain
+Description
+DescriptionURL
+Detector
+Duration
+GPSstart
+Observatory
+Type
+UTCstart
+
+
+>>>>Sample  >>> output and plot strain
+
+# Get the HDF5 group: group
+group=data['strain']
+
+# Check out keys of group
+for key in group.keys():
+    print(key)
+
+# Set variable equal to time series data: strain
+strain=data['strain']['Strain'].value
+
+# Set number of time points to sample: num_samples
+num_samples=10000
+
+# Set time vector
+time = np.arange(0, 1, 1/num_samples)
+
+# Plot data
+plt.plot(time, strain[:num_samples])
+plt.xlabel('GPS Time (s)')
+plt.ylabel('strain')
+plt.show()
+
+print(len(strain))
+
+
+>>>>>>>importing MatLab files
+
+matlab : matrix laboratory
+
+industry standard in engineering and science
+
+data is saved as .mat files
+
+scipy.io.loadmat()  #read
+scipy.io.savemat()  #write
+
+mat is a collection:
+variables, string, float, vectors, and arrays
+
+
+import scipy.io
+filename="workspace.mat"
+
+mat=scipy.io.loadmat(filename)
+
+print(type(mat))
+output: dictionary
+
+the keys of the dictionary are the matlab variable names and the values are the objects
+
+
+
+>>>Sample >> importing an matlib file
+
+# Import package
+
+import scipy.io
+# Load MATLAB file: mat
+filename="albeck_gene_expression.mat"
+
+mat=scipy.io.loadmat(filename)
+
+# Print the datatype type of mat
+print(type(mat))
+
+
+
+>>>>>Sample accessing values >> subsetting a range of data
+
+# Print the keys of the MATLAB dictionary
+print(mat.keys())
+
+# Print the type of the value corresponding to the key 'CYratioCyt'
+print(type(mat['CYratioCyt']))
+
+# Print the shape of the value corresponding to the key 'CYratioCyt'
+print(np.shape(mat['CYratioCyt']))
+
+# Subset the array and plot it
+data = mat['CYratioCyt'][25, 5:]
+fig = plt.figure()
+plt.plot(data)
+plt.xlabel('time (min.)')
+plt.ylabel('normalized fluorescence (measure of expression)')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+

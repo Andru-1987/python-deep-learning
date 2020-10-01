@@ -1,0 +1,577 @@
+the dataset for stops by police officers in the state of rhode island.
+
+1. State
+2. stop_date
+3. stop_time
+4. county_name (contains nan values)
+5. driver_gender
+6. driver_race
+
+
+ri=pd.read_csv('police.csv')
+ri.isnull()
+
+ri.isnull().sum()
+county_name=91741
+
+ri.shape()
+output: 91741,15
+
+drop county_name column
+
+ri.drop('county_name',axis='columns', inplace=True)
+
+.dropna() : drops rows based on the presence of missing values.
+
+
+
+>>>> sample >>> dropping a column
+
+# Examine the shape of the DataFrame
+print(ri.shape)
+
+# Drop the 'county_name' and 'state' columns
+ri.drop(['county_name', 'state'], axis='columns', inplace=True)
+
+# Examine the shape of the DataFrame (again)
+print(ri.shape)
+
+>>>> sample >>> drop na subset
+
+# Count the number of missing values in each column
+print(ri.isnull().sum())
+
+# Drop all rows that are missing 'driver_gender'
+ri.dropna(subset=['driver_gender'], inplace=True)
+
+# Count the number of missing values in each column (again)
+print(ri.isnull().sum())
+
+# Examine the shape of the DataFrame
+print(ri.shape)
+
+
+removing columns and rows that will not be useful.
+
+
+>>>>>>Examining the data types
+read_csv creates an inferred datatype
+
+print(ri.dtypes)
+
+dtype:
+1.object
+2.bool
+3.int
+4.float
+5.datetime
+6.category
+
+datatype affect opeations you can perform
+
+math operations can be performed on int and floats
+
+datetime 
+category uses less memory and runs faster
+bool enables logical and mathematical operations
+
+
+apple
+1. date
+2. time
+3. price
+
+apple.price.dtype
+output dtype('O') means object
+
+apple['price']= apple.price.astype('float')
+
+
+>>>>>Sample >>> convert object dtype to bool
+
+# Examine the head of the 'is_arrested' column
+print(ri.is_arrested.dtype)
+
+# Change the data type of 'is_arrested' to 'bool'
+ri['is_arrested'] = ri.is_arrested.astype(bool)
+
+# Check the data type of 'is_arrested' 
+print(ri.is_arrested.dtype)
+
+
+>>>> sample >>> value_counts and unique
+
+# Count the unique values in 'violation'
+print(ri['violation'].unique())
+
+# Express the counts as proportions
+print(ri['violation'].value_counts(normalize=True))
+
+['Equipment' 'Speeding' 'Other' 'Moving violation' 'Registration/plates'
+ 'Seat belt']
+Speeding               48423
+Moving violation       16224
+Equipment              10921
+Other                   4409
+Registration/plates     3703
+Seat belt               2856
+Name: violation, dtype: int64
+
+>>>>>normalized=True  >> output
+
+Speeding               0.559571
+Moving violation       0.187483
+Equipment              0.126202
+Other                  0.050950
+Registration/plates    0.042791
+Seat belt              0.033004
+Name: violation, dtype: float64
+
+
+>>>>>sample >>>> women have more speeding violations
+
+# Create a DataFrame of female drivers
+female = ri[ri['driver_gender']=='F']
+
+# Create a DataFrame of male drivers
+male = ri[ri['driver_gender']=='M']
+
+print(female.violation.value_counts(normalize=True))
+
+# Compute the violations by male drivers (as proportions)
+print(male.violation.value_counts(normalize=True))
+
+output:
+
+Speeding               0.658114
+Moving violation       0.138218
+Equipment              0.105199
+Registration/plates    0.044418
+Other                  0.029738
+Seat belt              0.024312
+Name: violation, dtype: float64
+
+Speeding               0.522243
+Moving violation       0.206144
+Equipment              0.134158
+Other                  0.058985
+Registration/plates    0.042175
+Seat belt              0.036296
+Name: violation, dtype: float64
+
+
+Filtering a dataframe using multiple conditions
+
+female = ri[ri.driver_gender=='F']
+female.shape
+
+or
+
+female = ri[
+(ri.driver_gender=='F') &
+(ri.is_arrested==True)
+]
+female.shape
+
+
+each condition is surround by parentheses and the & separates the conditions
+
+only female drivers who were arrested
+
+| represents the or condition
+
+|| represents the and condition
+
+
+>>sample >>> filtering
+
+ri[(ri.driver_gender=='F') & (ri.violation=='Speeding')]
+
+
+>>> Sample >>> Stop outcomes
+
+
+# Create a DataFrame of female drivers stopped for speeding
+female_and_speeding = ri[(ri.driver_gender=='F') & (ri.violation=='Speeding')]
+
+# Create a DataFrame of male drivers stopped for speeding
+male_and_speeding = ri[(ri.driver_gender=='M') & (ri.violation=='Speeding')]
+
+print("male")
+# Compute the stop outcomes for female drivers (as proportions)
+print(female_and_speeding.stop_outcome.value_counts(normalize=True))
+print("female")
+# Compute the stop outcomes for male drivers (as proportions)
+print(male_and_speeding.stop_outcome.value_counts(normalize=True))
+
+Output::  (95% of stops resulting in a ticket)
+
+male
+Citation            0.952192
+Warning             0.040074
+Arrest Driver       0.005752
+N/D                 0.000959
+Arrest Passenger    0.000639
+No Action           0.000383
+Name: stop_outcome, dtype: float64
+
+female
+Citation            0.944595
+Warning             0.036184
+Arrest Driver       0.015895
+Arrest Passenger    0.001281
+No Action           0.001068
+N/D                 0.000976
+Name: stop_outcome, dtype: float64
+
+
+>>>>>>>Does gender affect the vehicles that are searched?
+
+
+ri.isnull().sum()
+
+true is 1
+false is 0
+then sum the rows
+
+the mean of a boolean series represents the percentage of True values
+
+ri.is_arrested.value_counts(normalized=True)
+.03
+ri.is_arrested.mean()
+.03
+
+
+find the unique districts
+
+ri.district.unique()
+
+print(df_sas[df_sas['District'].isin(districts)]['ArrestInt'].mean())
+
+
+print(df_sas.groupby('District')['ArrestInt'].mean())
+
+print(df_sas.groupby(['District','Ward'])['ArrestInt'].mean())
+
+>>>>>Sample  >> search_conducted
+
+# Check the data type of 'search_conducted'
+print(ri['search_conducted'].dtype)
+
+# Calculate the search rate by counting the values
+print(ri['search_conducted'].value_counts(normalize=True))
+
+# Calculate the search rate by taking the mean
+print(ri.search_conducted.mean())
+
+
+output
+bool
+False    0.961785
+True     0.038215
+Name: search_conducted, dtype: float64
+0.0382153092354627
+
+
+>>>>Sample >>> female
+
+# Calculate the search rate for female drivers
+print(ri[ri.driver_gender=='F'].search_conducted.mean())
+
+output: 0.019180617481282074 (female)
+output: 0.04542557598546892 (male)
+
+>>>Sample >>> groupby
+
+# Calculate the search rate for both groups simultaneously
+print(ri.groupby('driver_gender').search_conducted.mean())
+
+>>>Sample >>> groupby multiple column
+
+print(ri.groupby(['driver_gender','violation']).search_conducted.mean())
+
+driver_gender  violation          
+F              Equipment              0.039984
+               Moving violation       0.039257
+               Other                  0.041018
+               Registration/plates    0.054924
+               Seat belt              0.017301
+               Speeding               0.008309
+
+M              Equipment              0.071496
+               Moving violation       0.061524
+               Other                  0.046191
+               Registration/plates    0.108802
+               Seat belt              0.035119
+               Speeding               0.027885
+Name: search_conducted, dtype: float64
+
+
+>>>>>>>>>>>>>>>Gender affect frisking
+
+ri.search_type.value_counts(dropna=False)
+1. Incident to Arrest
+2. Probable cause
+3. Inventory
+4. Reasonable Suspicion
+5. Protective Frisk
+6. Incident to Arrest, Inventory
+7. Incident to Arrest, Probable Cause
+
+
+ri['inventory']=ri.search_type.str.contains('Inventory',na=False)
+
+na=False means return a false when it finds a missing value
+ri.inventory.sum()
+
+
+search=ri[ri.searched_conducted==True]
+searched.inventory.mean()
+
+
+>>>Sample   >>> search type count, frisk in the search_type
+
+# Count the 'search_type' values
+print(len(ri.search_type.unique()))
+
+# Check if 'search_type' contains the string 'Protective Frisk'
+ri['frisk'] = ri.search_type.str.contains('Protective Frisk', na=False)
+
+# Check the data type of 'frisk'
+print(ri['frisk'].dtype)
+
+# Take the sum of 'frisk'
+print(ri['frisk'].sum())
+
+
+>>>Sample >>> search conduction  >> frisk average per gender
+
+# Create a DataFrame of stops in which a search was conducted
+searched = ri[ri.search_conducted == True]
+
+# Calculate the overall frisk rate by taking the mean of 'frisk'
+print(searched.frisk.mean())
+
+# Calculate the frisk rate for each gender
+print(searched.groupby("driver_gender").frisk.mean())
+
+>>>>>>>>>>>>Does the time of day affect arrest rate
+
+analyzing datetime data
+
+apple
+1. price
+2. volume (shares traded)
+3. date_and_time
+
+
+dt.month
+dt.week
+dt.dayofweek
+dt.hour
+
+apple.set_index('date_and_time', inplace=True)
+apple.index.month
+apple.price.mean()
+
+month_price=apple.groupby(apple.index.month).price.mean()
+
+monthly_price.plot()
+plt.xlabel('Month')
+plt.ylabel('Price')
+
+df_sas['Year']=pd.DatetimeIndex(df_sas['date']).year
+arrest_year=df_sas.groupby(['Year'])['ArrestInt'].sum()
+
+
+>>>>>Sample  >>> arrest rate as a time of day
+
+# Calculate the overall arrest rate
+print(ri.is_arrested.mean())
+
+# Calculate the hourly arrest rate
+print(ri.groupby(ri.index.hour).is_arrested.mean())
+
+# Save the hourly arrest rate
+hourly_arrest_rate = ri.groupby(ri.index.hour).is_arrested.mean()
+
+
+>>>>Sample >>> plot arrest time
+
+# Import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+
+# Create a line plot of 'hourly_arrest_rate'
+hourly_arrest_rate.plot()
+
+# Add the xlabel, ylabel, and title
+plt.xlabel('Hour')
+plt.ylabel('Arrest Rate')
+plt.title('Arrest Rate by Time of Day')
+
+# Display the plot
+plt.show()
+
+>>>>>>>>>>>>>>>>>>Are drug related stops on the rise
+1. We will use a subplot to see how two variables change over time
+
+2. Resampling is when you change the frequency of the time series
+
+monthly_price=apple.price.resample('M').mean()
+
+resample by month
+
+the output is the last day of the month rather than a number
+
+monthly_volume=apple.volume.resample('M').mean()
+
+
+pd.concat([monthly_price,monthly_volume],axis='columns')
+
+concatenates along a specified axis
+
+monthly.plot(subplots=True)
+plt.show()
+
+
+>>>>Sample >>>> drug related stops >> resampling
+
+# Calculate the annual rate of drug-related stops
+print(ri.drugs_related_stop.resample('A').mean())
+
+# Save the annual rate of drug-related stops
+annual_drug_rate = ri.drugs_related_stop.resample('A').mean()
+
+# Create a line plot of 'annual_drug_rate'
+annual_drug_rate.plot(subplots=True)
+
+# Display the plot
+plt.show()
+
+>>>>Sample >>> concatenate the two columns
+
+# Calculate and save the annual search rate
+annual_search_rate = ri.search_conducted.resample('A').mean()
+
+# Concatenate 'annual_drug_rate' and 'annual_search_rate'
+annual = pd.concat([annual_drug_rate,annual_search_rate], axis='columns')
+
+# Create subplots from 'annual'
+annual.plot(subplots=True)
+
+# Display the subplots
+plt.show()
+
+
+>>>>>>>>What violations are caught in each district
+
+result=df_sas.groupby(['Year','Month','fbi_code'])['ArrestInt'].sum().reset_index()
+#print(top20.columns)
+mask=result['ArrestInt']>30
+fbi_codes=result[mask]['fbi_code'].unique()
+
+filter=df_sas['fbi_code'].isin(fbi_codes) 
+fbi_codes=df_sas['fbi_code'].unique()
+
+arrest_breakdown=df_sas[filter].groupby(['Year','Month','fbi_code'])['ArrestInt'].sum().reset_index()
+keys=arrest_breakdown.keys()
+#print(arrest_breakdown)
+
+g = sns.factorplot(data=arrest_breakdown, x='Year', y='ArrestInt', 
+                  hue='fbi_code',  kind='point',size=8,aspect=2)
+
+plt.show()
+
+>>>>>>>>>>>>>>>> cross tab
+
+table=pd.crosstab(ri.driver_race, ri_driver_gender)
+
+creates a pivot table building a frequency table
+
+ri[(ri.driver_race=='Asian') & (ri.driver_gender=='F')].shape
+
+
+range=table.loc['Asian':'Hispanic']
+
+range.plot(kind='bar')
+plt.show()
+
+
+>>> stack bar plot
+
+range.plot(kind='bar', stacked=True)
+plt.show()
+
+
+>>>>  Sample
+
+# Create a frequency table of districts and violations
+print(pd.crosstab(ri.district,ri.violation))
+
+# Save the frequency table as 'all_zones'
+all_zones = pd.crosstab(ri.district,ri.violation)
+
+# Select rows 'Zone K1' through 'Zone K3'
+print(all_zones.loc['Zone K1':'Zone K3'])
+
+# Save the smaller table as 'k_zones'
+k_zones = all_zones.loc['Zone K1':'Zone K3']
+
+k_zone.plot(kind='bar', stacked=True)
+plt.show()
+
+>>>>>>>>>>How long might you be stopped
+
+apple
+date_and_time
+price
+volume
+change
+
+change when  change
+
+True if the price went up
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,179 @@
+PostgreSQL
+MySQL
+SQLite
+
+>>>>>Creating a database engine in python
+
+import pyodbc
+import sqlalchemy as sal
+from sqlalchemy import create_engine
+from sqlalchemy import MetaData, Table
+import pandas as pd
+
+connection=pyodbc.connect("Driver={SQL Server Native Client 11.0};user=xx;password=xxx;Database=db;Server=vp-devbear;Trusted_Connection=yes;")
+
+query="select * from Viewpoint.dbo.EMEM"
+df = pd.read_sql(query, connection)
+print(df.head(5))
+
+table_names=engine.table_names()
+
+def pyconn():
+    return connection
+
+engine=create_engine('mssql://',creator=pyconn)
+
+
+print(engine.table_names())
+
+metadata=MetaData()
+equipment=Table('bEMEM', metadata,autoload=True,autoload_with=engine)
+print(repr(equipment))
+
+>>>>Samples >> create engine
+
+# Import necessary module
+from sqlalchemy import create_engine
+
+# Create engine: engine
+engine=create_engine('sqlite:///Chinook.sqlite')
+
+# Save the table names to a list: table_names
+table_names=engine.table_names()
+
+# Print the table names to the shell
+print(table_names)
+
+
+>>>>>>>SQL
+
+select * from Table_Name
+
+create engine
+connect to engine
+query
+close the connection
+
+con=engine.connect()
+
+rs=con.execute("select * from orders")
+
+df=pd.DataFrame(rs.fetchall())
+
+df.columns=rs.keys()
+
+con.close()
+
+>>>>Context to open a connection
+
+with engine.connect() as con:
+	rs=con.execute("select * from orders")
+
+	df=pd.DataFrame(rs.fetchall()) #fetchmany(size=5)
+
+	df.columns=rs.keys()
+
+
+>>>>Samples  >> sql alchemy
+
+# Import packages
+from sqlalchemy import create_engine
+import pandas as pd
+
+# Create engine: engine
+engine = create_engine('sqlite:///Chinook.sqlite')
+
+# Open engine connection
+con = engine.connect()
+
+# Perform query: rs
+rs = con.execute("SELECT * FROM Album")
+
+# Save results of the query to DataFrame: df
+df = pd.DataFrame(rs.fetchall())
+df.columns=rs.keys()
+print(df.head())
+# Close connection
+con.close()
+
+>>>>>Sample >>> fetchmany
+
+# Open engine in context manager
+# Perform query and save results to DataFrame: df
+with engine.connect() as con:
+    rs = con.execute("select LastName, Title from Employee")
+    df = pd.DataFrame(rs.fetchmany(3))
+    df.columns = rs.keys()
+
+# Print the length of the DataFrame df
+print(len(df))
+
+# Print the head of the DataFrame df
+print(df.head())
+
+>>>>Sample >>> fetchall
+
+# Create engine: engine
+engine = create_engine('sqlite:///Chinook.sqlite')
+
+# Open engine in context manager
+# Perform query and save results to DataFrame: df
+with engine.connect() as con:
+    rs = con.execute("select * from Employee where EmployeeId>=6")
+    df = pd.DataFrame(rs.fetchall())
+    df.columns = rs.keys()
+
+# Print the head of the DataFrame df
+print(df.head())
+	
+>>>Sample >>> order by
+
+# Create engine: engine
+
+engine = create_engine('sqlite:///Chinook.sqlite')
+# Open engine in context manager
+with engine.connect() as con:
+    rs = con.execute("SELECT * FROM Employee ORDER BY BirthDate")
+    df = pd.DataFrame(rs.fetchall())
+    df.columns = rs.keys()
+
+    # Set the DataFrame's column names
+
+
+# Print head of DataFrame
+print(df.head())
+
+>>>>>>>>>>>>>>Joining tables
+
+sql="select OrderID, CompanyName from Orders
+Inner Join Customers on Orders.CustomerID
+=Customers.CustomerID", engine)
+
+>>>Sample >>> inner join
+
+# Open engine in context manager
+# Perform query and save results to DataFrame: df
+with engine.connect() as con:
+    rs=con.execute('select Title, Name from Album inner join Artist on Artist.ArtistId=Album.ArtistId')
+    df=pd.DataFrame(rs.fetchall())
+    df.columns=rs.keys()
+
+# Print head of DataFrame df
+print(df.head())
+
+
+>>>>>Sample >>> read_sql_query
+
+# Execute query and store records in DataFrame: df
+import pandas as pd
+from sqlalchemy import create_engine
+engine = create_engine('sqlite:///Chinook.sqlite')
+
+df=pd.read_sql_query("select * from PlaylistTrack INNER JOIN Track on PlaylistTrack.TrackId = Track.TrackId where Milliseconds<250000", engine)
+
+# Print head of DataFrame
+print(df.head())
+
+
+
+

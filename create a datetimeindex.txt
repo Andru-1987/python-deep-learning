@@ -1,0 +1,44 @@
+>>>>>>>Create a DateTimeIndex
+
+1. combine stop_date and stop_time into one column
+
+2. convert to datetime format
+
+
+apple.date.str.replace('/','-')
+
+combined=apple.date.str.cat(apple.time, sep=' ')
+#concatenate and separate with a space
+
+appled['date_and_time']=pd.to_datetime(combined)
+
+stored in a more standard way
+
+setting the index
+
+
+apple.set_index('date_and_time', inplace=True)
+
+when a column becomes an index, it is not longer considered a dataframe column
+
+>>>>sample >>> combining a date and time columns into a datetime column
+
+# Concatenate 'stop_date' and 'stop_time' (separated by a space)
+combined = ri.stop_date.str.cat(ri.stop_time, sep=' ')
+
+# Convert 'combined' to datetime format
+ri['stop_datetime'] = pd.to_datetime(combined)
+
+# Examine the data types of the DataFrame
+print(ri.dtypes)
+
+>>>>>sample >>> set_index
+
+# Set 'stop_datetime' as the index
+ri.set_index('stop_datetime', inplace=True)
+
+# Examine the index
+print(ri.index)
+
+# Examine the columns
+print(ri.columns)
