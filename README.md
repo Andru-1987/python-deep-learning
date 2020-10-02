@@ -1,8 +1,11 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added boise weather for sept 2020,  temperature and humidity affected wind speeds
 
-* I added a chicago crime sas file
+https://github.com/dnishimoto/python-deep-learning/blob/master/Idaho%20Weather%20in%20Sep%202020.ipynb
+
+* I added a chicago crime sas file  - crime trends from 2001 to 2016 trended down
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Crime%20analysis%20(SAS).ipynb
 
