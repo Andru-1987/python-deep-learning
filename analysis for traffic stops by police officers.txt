@@ -532,6 +532,416 @@ change when  change
 
 True if the price went up
 
+calculate how often the price went up taking the column mean
+
+
+Stefan Jansen
+https://www.amazon.com/dp/B08D9SP6MB/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1
+
+mapping = {'up':True, 'down':False}
+apple['is_up']=apple.chage.map(mapping)
+
+apple.is_up.mean()
+
+>>>>>how often searches occur after each violation
+
+search_rate=ri.groupby('violation').search_conducted.mean()
+
+search_rate.plot(kind='bar')
+plt.show()
+
+search rate is on the y axis
+the violation is on the x axis
+
+
+search_rate.plot(kind='barh')
+plt.show()
+
+>>>>sample >>>> mapping
+
+# Print the unique values in 'stop_duration'
+print(ri.stop_duration.unique())
+
+# Create a dictionary that maps strings to integers
+mapping = {
+    '0-15 Min': 8,
+    '16-30 Min': 23,
+    '30+ Min': 45
+    }
+
+# Convert the 'stop_duration' strings to integers using the 'mapping'
+ri['stop_minutes'] = ri.stop_duration.map(mapping)
+
+# Print the unique values in 'stop_minutes'
+print(ri['stop_minutes'].unique())
+
+
+>>>>>>sample >>>  groupby  >> average >>> sort
+
+
+# Calculate the mean 'stop_minutes' for each value in 'violation_raw'
+print(ri.groupby('violation_raw')['stop_minutes'].mean())
+
+# Save the resulting Series as 'stop_length'
+stop_length = ri.groupby('violation_raw')['stop_minutes'].mean()
+
+# Sort 'stop_length' by its values and create a horizontal bar plot
+stop_length.sort_values().plot(kind='barh')
+
+# Display the plot
+plt.show()
+
+
+>>>>>>Exploring the weather dataset
+
+do weather conditions affect police behavior
+
+noaa : national centers for environmental information
+
+single station in rhode islands to give weather information
+
+weather = pd.read_csv('weather.csv')
+
+weather.head(3)
+
+TAVG, TMIN, TMAX: Temperature
+AWND. WSF2: Wind Speed (average, fastest wind speed in a 2 minute interval)
+WT01, WT022: Bad Weather conditions
+
+https://mesonet.agron.iastate.edu/request/download.phtml?network=ID_ASOS
+
+increased convinced the data is trustworthy
+
+
+station:three or four character site identifier
+valid:timestamp of the observation
+tmpf:Air Temperature in Fahrenheit, typically @ 2 meters
+dwpf:Dew Point Temperature in Fahrenheit, typically @ 2 meters
+relh:Relative Humidity in %
+drct:Wind Direction in degrees from north
+sknt:Wind Speed in knots 
+p01i:One hour precipitation for the period from the observation time to the time of the previous hourly precipitation reset. This varies slightly by site. Values are in inches. This value may or may not contain frozen precipitation melted by some device on the sensor or estimated by some other means. Unfortunately, we do not know of an authoritative database denoting which station has which sensor.
+alti:Pressure altimeter in inches
+mslp:Sea Level Pressure in millibar
+vsby:Visibility in miles
+gust:Wind Gust in knots
+skyc1:Sky Level 1 Coverage
+skyc2:Sky Level 2 Coverage
+skyc3:Sky Level 3 Coverage
+skyc4:Sky Level 4 Coverage
+skyl1:Sky Level 1 Altitude in feet
+skyl2:Sky Level 2 Altitude in feet
+skyl3:Sky Level 3 Altitude in feet
+skyl4:Sky Level 4 Altitude in feet
+wxcodes:Present Weather Codes (space seperated)
+feel:Apparent Temperature (Wind Chill or Heat Index) in Fahrenheit
+ice_accretion_1hr:Ice Accretion over 1 Hour (inches)
+ice_accretion_3hr:Ice Accretion over 3 Hours (inches)
+ice_accretion_6hr:Ice Accretion over 6 Hours (inches)
+peak_wind_gust:Peak Wind Gust (from PK WND METAR remark) (knots)
+peak_wind_drct:Peak Wind Gust Direction (from PK WND METAR remark) (deg)
+peak_wind_time:Peak Wind Gust Time (from PK WND METAR remark)
+metar:unprocessed reported observation in METAR format
+
+weather[['AWND','WSF2']].describe()
+
+create a box plot
+weather[['AWND','WSF2']].plot(kind='box')
+plt.show()
+
+
+take the fast wind speed minus the average wind speed
+
+weather['WDIFF']= weather.WSF2-weather.AWND
+
+weather.WDIFF.plot(kind='hist', bins =20)
+plt.show()
+
+>>>>Sample  >>> box plot temperatures
+
+# Read 'weather.csv' into a DataFrame named 'weather'
+df=pd.read_csv('weather.csv')
+
+# Describe the temperature columns
+print(df[['TMIN','TAVG','TMAX']].describe())
+
+# Create a box plot of the temperature columns
+df[['TMIN','TAVG','TMAX']].plot(kind='box')
+
+# Display the plot
+plt.show()
+
+>>>>>Sample >> histogram to confirm temperature range distribution
+
+# Create a 'TDIFF' column that represents temperature difference
+weather['TDIFF']=weather.TMAX- weather.TMIN
+
+# Describe the 'TDIFF' column
+print(weather['TDIFF'].describe())
+
+# Create a histogram with 20 bins to visualize 'TDIFF'
+weather['TDIFF'].plot(kind='hist',bins=20)
+
+# Display the plot
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>Categorizing the weather
+
+
+slicing columns of the original dataframe
+
+temp=weather.loc[:,'TAVG':'TMAX']
+
+
+temp.sum(axis='columns').head()  
+
+this sums all the columns
+
+ri.stop_duration.unique()
+
+mapping = {
+    '0-15 Min': 'short',
+    '16-30 Min': 'medium',
+    '30+ Min': 'long'
+    }
+
+# Convert the 'stop_duration' strings to integers using the 'mapping'
+ri['stop_length'] = ri.stop_duration.map(mapping)
+
+ri.stop_length.dtype
+outputs object type because it contains string data
+
+ri.stop_length.unique()
+
+
+cats=['short','medium','long']
+ri.stop_length.astype('category',ordered=True,categories=cats)
+
+
+1. stores more efficiently
+2. allows a logical order
+
+ri.stop_length.memory_usage(deep=True)  #memory used to store the column
+
+cats=['short','medium','long']
+
+ri[ri.stop_length>'short']
+output data with categories of medium or long stop_length
+
+ri.groupby('stop_length').is_arrested.mean()
+
+
+>>>> Sample >>> bad weather conditions
+
+# Copy 'WT01' through 'WT22' to a new DataFrame
+WT = weather.loc[:,'WT01':'WT22']
+
+# Calculate the sum of each row in 'WT'
+weather['bad_conditions'] = WT.sum(axis='columns')
+
+# Replace missing values in 'bad_conditions' with '0'
+weather['bad_conditions'] = weather.bad_conditions.fillna(0).astype('int')
+
+# Create a histogram to visualize 'bad_conditions'
+
+
+weather['bad_conditions'].plot(kind='hist')
+plt.show()
+# Display the plot
+
+>>>> sample  >>> bad_conditions by category
+
+# Count the unique values in 'bad_conditions' and sort the index
+print(weather.bad_conditions.value_counts().sort_index())
+
+# Create a dictionary that maps integers to strings
+mapping = {0:'good', 1:'bad', 2:'bad', 3:'bad', 4:'bad', 5:'worse', 6:'worse', 7:'worse', 8:'worse', 9:'worse'}
+
+# Convert the 'bad_conditions' integers to strings using the 'mapping'
+weather['rating'] = weather.bad_conditions.map(mapping)
+
+# Count the unique values in 'rating'
+print(weather['rating'].unique())
+
+print(weather.rating.value_counts())
+
+output:
+bad      1836
+good     1749
+worse     432
+Name: rating, dtype: int64
+
+>>>>Sample  >>> create a column as a category
+
+# Create a list of weather ratings in logical order
+cats=['good','bad','worse']
+
+# Change the data type of 'rating' to category
+weather['rating'] = weather.rating.astype('category', ordered=True, categories=cats)
+
+# Examine the head of 'rating'
+print(weather['rating'].head())
+
+
+>>>>>>>>>>>>>>Merging Datasets
+
+reset_index returns the index to an autonumber
+
+
+high=high_low[['DATE','HIGH']]
+
+we only need the high column
+
+apple_high=pd.merge(left=apple, right=high, left_on='date', right_on='DATE', how=left)
+
+apple_high.set_index('date_and_time', inplace=True)
+
+
+
+<<<<<<<Sample >>> reset the index to the autonumber,  extract the DATE and rating columns from the weather dataframe
+
+# Reset the index of 'ri'
+ri.reset_index(inplace=True)
+
+# Examine the head of 'ri'
+print(ri.head())
+
+# Create a DataFrame from the 'DATE' and 'rating' columns
+weather_rating=weather[['DATE','rating']]
+
+# Examine the head of 'weather_rating'
+print(weather_rating.head())
+
+
+>>>>>>Sample >>> merge columns on stop_date and date
+
+# Examine the shape of 'ri'
+print(ri.shape)
+
+# Merge 'ri' and 'weather_rating' using a left join
+ri_weather = pd.merge(left=ri, right=weather_rating, left_on='stop_date', right_on='DATE', how='left')
+
+# Examine the shape of 'ri_weather'
+print(ri_weather.shape)
+
+# Set 'stop_datetime' as the index of 'ri_weather'
+ri_weather.set_index('stop_datetime', inplace=True)
+
+
+https://datatofish.com/multiple-linear-regression-python/
+
+
+>>> weather and behavior
+
+search_rate = ri.groupby(['violation','driver_gender']).search_conducted.mean()
+
+multi-index
+pandas.core.indexes.multi.multiindex (second dimension)
+
+level=0
+level=1
+
+search_rate.loc['Equipment'] #level 0
+search_rate.loc['Equipment','M'] #level 1
+
+search_rate.unstack()
+
+results in a dataframe
+
+ri.pivot_table(index='violation',
+	columns='driver_gender',
+	values='search_conducted')
+
+>>>>>Sample
+print(ri_weather.is_arrested.mean())
+0.0355690117407784
+
+overall arrest rate
+
+
+# Calculate the arrest rate for each 'rating'
+print(ri_weather.groupby('rating').is_arrested.mean())
+
+stop_minutes  
+rating                
+good     0.033715
+bad      0.036261
+worse    0.041667
+
+>>>>Sample  >>> create a multi index series  >> violation and rating for is_arrested mean
+
+# Calculate the arrest rate for each 'violation' and 'rating'
+print(ri_weather.groupby(['violation','rating']).is_arrested.mean())
+
+violation            rating
+*Equipment            good      0.059007
+                     bad       0.066311
+                     worse     0.097357
+*Moving violation     good      0.056227
+                     bad       0.058050
+                     worse     0.065860
+*Other                good      0.076966
+                     bad       0.087443
+                     worse     0.062893
+*Registration/plates  good      0.081574
+                     bad       0.098160
+                     worse     0.115625
+Seat belt            good      0.028587
+                     bad       0.022493
+                     worse     0.000000
+Speeding             good      0.013405
+                     bad       0.013314
+                     worse     0.016886
+
+>>>>sample >>> slicing the multi-index series
+
+# Save the output of the groupby operation from the last exercise
+arrest_rate = ri_weather.groupby(['violation', 'rating']).is_arrested.mean()
+
+# Print the 'arrest_rate' Series
+print(arrest_rate)
+
+# Print the arrest rate for moving violations in bad weather
+print(arrest_rate.loc['Moving violation','bad'])
+
+# Print the arrest rates for speeding violations in all three weather conditions
+print(arrest_rate.loc['Speeding'])
+
+
+>>>>sample >>> unstack and pivot
+
+# Unstack the 'arrest_rate' Series into a DataFrame
+print(arrest_rate.unstack())
+
+# Create the same DataFrame using a pivot table
+print(ri_weather.pivot_table(index='violation', columns='rating', values='is_arrested'))
+
+practice answering questions using data
+
+https://openpolicing.stanford.edu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
