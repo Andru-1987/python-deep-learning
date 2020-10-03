@@ -1,0 +1,135 @@
+from statsmodels.formula.api import ols
+
+masses=[7.812435,7.698824,7.817183,7.872703,8.176541] 
+volumes=[2.0,2.1,2.2,2.3,2.4]
+df=pd.DataFrame({'masses':masses,'volumes':volumes})
+
+model_fit = ols(formula="masses ~ volumes", data=df)
+model_fit = model_fit.fit()
+
+a0 = model_fit.params['Intercept']
+a1 = model_fit.params['volumes']
+
+# Print model parameter values with meaningful names, and compare to summary()
+print( "container_mass   = {:0.4f}".format(a0) )
+print( "solution_density = {:0.4f}".format(a1) )
+
+x=np.linspace(0,15,16)
+predicted_mass=a0+a1*x
+plt.plot(x,predicted_mass)
+plt.show()
+
+>>>>>finding the optimal model
+
+errors in the form of a cost function of the residuals
+
+residuals= y_model - y_data  (but the residuals sum to zero)
+
+>>>>>>>>>>>>>>RSS
+
+instead we use the square residuals and they do not sum to zero
+
+residuals_squared= np.squared(y_model-y_data)
+
+print(np.sum(residuals_squared))
+
+RSS=np.sum(np.squared(y_model-y_data)))
+
+vary the model until rss is the smallest number
+
+plot RSS against a1 (slope)
+
+the best model is the minimal inflection point of the graph where rss is the smallest
+
+
+>>>>sample >>> find the smallest rss or the optimium a1
+
+def model(x_data, a0, a1):
+    retval=[]
+    for x in x_data:
+        retval.append(a0+ a1*x)
+    return np.array(retval);
+
+x_data=[  0.,0.5,1.,1.5,2.,2.5,3.,3.5,4.,4.5,5.,5.5
+,6.,6.5,7.,7.5,8.,8.5,9.,9.5, 10. ]
+
+y_data=[161.78587909,132.72560763,210.81767421,179.6837026, 181.98528167
+,234.67907351,246.48971034,221.58691239,250.3924093, 206.43287615
+,303.75089312,312.29865056,323.8331032, 261.9686295, 316.64806585
+,337.55295912,360.13633529,369.72729852,408.0289548, 348.82736117
+,394.93384188]
+
+
+
+y_model = model(x_data, a0=150, a1=25)
+#print(y_model)
+
+#print(len(x_data),len(y_data),len(y_model))
+
+rss = np.sum(np.square(y_model - y_data))
+print("RSS = {}".format(rss))
+
+chg_a1=np.linspace(0,50,100)
+
+result_rss=[]
+for i in chg_a1:
+    y_model=model(x_data, a0=150,a1=i)
+    rss = np.sum(np.square(y_model - y_data))
+    result_rss.append(rss)
+    
+plt.plot(chg_a1,result_rss)    
+plt.show()
+
+minimum rss is 25
+
+best_rss = np.min(result_rss) 
+best_a1 = chg_a1[np.where(result_rss==best_rss)]
+
+print('The minimum RSS = {}, came from a1 = {}'.format(best_rss, best_a1))
+
+
+>>>>Sample   >>> build a function for plotting the regression
+
+# Complete function to load data, build model, compute RSS, and plot
+def compute_rss_and_plot_fit(a0, a1):
+    xd, yd = load_data()
+    ym = model(xd, a0, a1)
+    residuals = ym - yd
+    rss = np.sum(np.square(residuals))
+    summary = "Parameters a0={}, a1={} yield RSS={:0.2f}".format(a0, a1, rss)
+    fig = plot_data_with_model(xd, yd, ym, summary)
+    return rss, summary
+
+# Chose model parameter values and pass them into RSS function
+rss, summary = compute_rss_and_plot_fit(a0=150, a1=25)
+print(summary)
+
+>>>>> Sample >>> Find the best rss value
+
+# Loop over all trial values in a1_array, computing rss for each
+a1_array = np.linspace(15, 35, 101)
+for a1_trial in a1_array:
+    y_model = model(x_data, a0=150, a1=a1_trial)
+    rss_value = compute_rss(y_data, y_model)
+    rss_list.append(rss_value)
+
+# Find the minimum RSS and the a1 value from whence it came
+rss_array = np.array(rss_list)
+best_rss = np.min(rss_array) 
+best_a1 = a1_array[np.where(rss_array==best_rss)]
+print('The minimum RSS = {}, came from a1 = {}'.format(best_rss, best_a1))
+
+# Plot your rss and a1 values to confirm answer
+fig = plot_rss_vs_a1(a1_array, rss_array)
+
+
+
+
+
+
+
+
+
+
+
+

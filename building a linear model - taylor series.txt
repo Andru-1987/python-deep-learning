@@ -1,0 +1,146 @@
+taylor series are extremely popular.  They are found in math (calculus).
+
+They can be used to approximate curves
+
+Taylor series
+y=a0+a1*x+a2*x**2+a3*x**3 ....+an*x**n
+
+referred to as order
+a0 is the zero ordered term
+a1 is the first ordered term
+
+y=a0+a1*x   (slope intercept - one variable ) a linear regressor
+
+linear models are first ordered models
+
+a0 is the y intercept
+a1 is the slope (rise over run)
+
+a2 makes the curve non-linear
+
+by selecting the right values of a0, a1, a2 we can build almost any shape.
+
+global average sea levels
+
+http://users.stat.ufl.edu/~winner/datasets.html
+
+sea level change
+1. finding the best model to fit the data
+
+adding more order parameters creates overfitting
+
+
+
+>>>sample  >>> a0 + (a1*x) + (a2*x*x)
+
+# Define the general model as a function
+def model(x, a0=3, a1=2, a2=0):
+    return a0 + (a1*x) + (a2*x*x)
+
+# Generate array x, then predict y values for specific, non-default a0 and a1
+x = np.array(-10, 10, 21)
+y = model(x)
+
+# Plot the results, y versus x
+fig = plot_prediction(y, x)
+
+y is the dependent variable
+x is the independent variable
+
+>>>>sample >>> curve fit
+
+# Complete the plotting function definition
+def plot_data_with_model(xd, yd, ym):
+    fig = plot_data(xd, yd)  # plot measured data
+    fig.axes[0].plot(xd, ym, color='red')  # over-plot modeled data
+    plt.show()
+    return fig
+
+# Select new model parameters a0, a1, and generate modeled `ym` from them.
+a0 = 140
+a1 = 25
+ym = model(xd, a0, a1)
+
+# Plot the resulting model to see whether it fits the data
+fig = plot_data_with_model(xd, yd, ym)
+
+>>>>>>>>>>>>>>>>>>>>>>Interpreting slope and intercept
+
+y=a0+a1*x
+
+x in an independent variable
+y = dependent variable changes with x
+
+xp=10 then yp=a0+a1*xp
+
+slope describes how two variables co-vary
+
+as the slope changes with read data then the slope will vary with the data. this variation causes uncertainty or spread
+
+
+>>>>>>>sample  >>> plot celsius in terms of fahrenheit
+
+# Complete the function to convert C to F
+def convert_scale(temps_C):
+    (freeze_C, boil_C) = (0, 100)
+    (freeze_F, boil_F) = (32, 212)
+    change_in_C = boil_C - freeze_C
+    change_in_F = boil_F - freeze_F
+    slope = change_in_F / change_in_C
+    intercept = freeze_F - freeze_C
+    temps_F = intercept + (slope * temps_C)
+    return temps_F
+
+# Use the convert function to compute values of F and plot them
+temps_C = np.linspace(0, 100, 101)
+temps_F = convert_scale(temps_C)
+plt.plot(temps_C, temps_F)
+plt.ylabel('Fahrenheit')
+plt.xlabel('Celsius')
+plt.show()
+
+>>>>>sample  >>> calculating velocities as a change in distance / change in time
+
+times=[ 0.0,0.08333333,0.16666667,0.25,0.33333333,  0.41666667, 
+       0.5,0.58333333,0.66666667, 0.75 ,0.83333333,0.91666667,
+  1.,1.08333333,1.16666667,1.25, 1.33333333 , 1.41666667,
+  1.5,1.58333333,1.66666667,1.75, 1.83333333  ,1.91666667,
+  2.0]
+distances=[0.0,0.08333333,0.16666667,0.25,0.33333333,0.41666667,
+0.5,0.58333333,0.66666667,0.75,0.83333333,0.91666667,
+1.0,1.08333333,1.16666667,1.25,1.33333333,1.41666667,
+1.5,1.58333333,1.66666667,1.75,1.83333333,1.91666667,2.0]
+
+#print(distances)
+diff_distances=np.diff(distances,)
+#print(diff_distances)
+diff_times=np.diff(times)
+velocities=diff_distances/diff_times
+
+
+v_avg = np.mean(velocities)
+v_max = np.max(velocities)
+v_min = np.min(velocities)
+v_range = v_max - v_min
+
+#print(velocities)
+
+plt.plot(times[1:],velocities)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
