@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added linear model of restaurant tips
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/linear%20model%20-%20restaurant%20tips.ipynb
+
 * I added boise weather for sept 2020,  temperature and humidity affected wind speeds
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Idaho%20Weather%20in%20Sep%202020.ipynb
