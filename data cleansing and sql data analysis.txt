@@ -86,7 +86,7 @@ today_date=dt.date.today()
 assert user_signups.subscription_date.max().date() <= today_date
 
 
->>>Sample
+>>>Sample  >>> convert to categorical
 
 # Convert tire_sizes to integer
 ride_sharing['tire_sizes'] = ride_sharing['tire_sizes'].astype('int')
@@ -101,7 +101,7 @@ print(ride_sharing['tire_sizes'])
 # Print tire size description
 print(ride_sharing['tire_sizes'].describe())
 
->>>Sample
+>>>Sample  >>> convert to datetime
 
 # Convert ride_date to datetime
 ride_sharing['ride_dt'] = pd.to_datetime(ride_sharing['ride_date'])
@@ -116,67 +116,6 @@ ride_sharing.loc[ride_sharing['ride_dt'] > today, 'ride_dt'] = today
 print(ride_sharing['ride_dt'].max())
 
 
->>>Uniqueness Constraints
-
-duplicate values
-
-
-duplicates = height_weight.duplicated()
-print(duplicates)
-
-all columns are required to be duplicated to be have an duplicate output
-
-height_weight[duplicates]
-
-The .duplicated() method
-1. subset : list of column names to check for duplication
-2. keep: 'first', 'last', or all is False parameter for duplicate values
-
-column_names=['first_name','last_name','address']
-duplicates = height_weight.duplicated(subset=column_names, keep=False)
-
->>>Sort
-
-height_weight[duplicates].sort_values(by='first_name')
-
->>>.drop_duplicates method
-
-inplace: Drop duplicated rows directly inside DataFrame without creating new object (True)
-
-
->>>Sample
-
-df = pd.DataFrame({'Keyword': {0: 'apply', 1: 'apply', 2: 'apply', 3: 'terms', 4: 'terms'},
- 'X': {0: [1, 2], 1: [1, 2], 2: 'xy', 3: 'xx', 4: 'yy'},
- 'Y': {0: 'yy', 1: 'yy', 2: 'yx', 3: 'ix', 4: 'xi'}})
-#print(df)
-#print(df.info())
-
-df2=df.copy()
-mylist=df2.iloc[0,1]
-df2.iloc[0,1]=' '.join(map(str,mylist))
-
-mylist=df2.iloc[1,1]
-df2.iloc[1,1]=' '.join(map(str,mylist))
-
-duplicates=df2.duplicated(keep=False)
-#print(df2[duplicates])
-
-df2[duplicates].drop_duplicates(inplace=True)
-#print(df2)
-#print(df.astype(str))
-
-print(df.astype(str).duplicated(keep=False))
-
-df=df.iloc[df.astype(str).drop_duplicates().index]
-
-
->>>using the groupby() and .agg() methods
-
-column_names=['first_name','last_name','address']
-summaries={'height':'max','weight':'mean'}
-
-height_weight=height_weight.groupby(by=column_names).agg(summaries).reset_index()
 
 >>Sample
 

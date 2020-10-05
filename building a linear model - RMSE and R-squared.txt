@@ -1,0 +1,367 @@
+>>>>>>>>>>>>>>>>Goodness of Fit>>>>>>>>>>>>>>>>>>>>>>>
+
+3 different Rs
+RSS
+RMSE
+and R-squared
+
+Residual sum of squares
+
+RMSE and R squared are used to determine goodness of fit.
+
+RSS= np.sum(np.square(residuals))
+
+mean_squared_residuals = np.sum(np.square(residuals))/ len(residuals)
+
+thought of a the mean of errors
+
+MSE = np.mean(np.square(residuals))
+
+root means squared error
+
+RMSE= np.sqrt(np.mean(np.square(residuals)))
+
+RMSE = np.std(residuals)
+
+>>>>>>Goodness of fit
+
+deviations = np.mean(y_data) - y_data
+
+VAR = np.sum(np.square(deviations))
+
+residuals = y_model - y_data
+
+RSS = np.sum(np.square(residuals))
+
+r_squared = 1 - (RSS/VAR)
+
+r= correlation(y_data,y_model)
+
+
+RMSE vs R-Squared
+
+RMSE: how much variation is residual
+R-Squared : what fraction of variation is linear
+
+
+>>>>>Sample  RSS, MSE, RMSE
+
+# Build the model and compute the residuals "model - data"
+y_model = model_fit_and_predict(x_data, y_data)
+residuals = y_model - y_data
+# Compute the RSS, MSE, and RMSE and print the results
+RSS = np.sum(np.square(residuals))
+MSE = RSS/len(residuals)
+RMSE = np.sqrt(MSE)
+print('RMSE = {:0.2f}, MSE = {:0.2f}, RSS = {:0.2f}'.format(RMSE, MSE, RSS))
+
+>>>> Sample >>> R-Squared
+
+# Compute the residuals and the deviations
+residuals = y_model- y_data
+deviations = np.mean(y_data) - y_data
+
+# Compute the variance of the residuals and deviations
+var_residuals = np.mean(np.square(residuals))
+var_deviations = np.mean(np.square(deviations))
+
+# Compute r_squared as 1 - the ratio of RSS/Variance
+r_squared = 1 - (var_residuals / var_deviations)
+print('R-squared is {:0.2f}'.format(r_squared))
+
+
+>>>>>>>>>>>>>>>>>Standard Error
+
+Model Predictions and RMSE
+predictions compared to data gives risuals
+residuals have spread
+RMSE, measures residual spread
+RMSE, quantifies predition goodness
+
+a small spread is consider less uncertain
+
+standard error is a measure of the spread
+
+stats model
+
+
+model_fit=ols(formula="distances ~ times", data=df).fit()
+
+a1= model_fit.params['times']
+a0= model_fit.params['Intercept']
+
+e0= model_fit.bse['Intercept']
+e1= model_fit.bse['times']
+
+this of errors as probability distributions
+
+
+>>>Sample  >>>   bse >> standard error >> level of uncertainty
+
+# Store x_data and y_data, as times and distances, in df, and use ols() to fit a model to it.
+df = pd.DataFrame(dict(times=x_data,distances=y_data))
+model_fit = ols(formula="distances ~ times", data=df).fit()
+
+# Extact the model parameters and their uncertainties
+a0 = model_fit.params['Intercept']
+e0 = model_fit.bse['Intercept']
+a1 = model_fit.params['times']
+e1 = model_fit.bse['times']
+
+# Print the results with more meaningful names
+print('Estimate    of the intercept = {:0.2f}'.format(a0))
+print('Uncertainty of the intercept = {:0.2f}'.format(e0))
+print('Estimate    of the slope = {:0.2f}'.format(a1))
+print('Uncertainty of the slope = {:0.2f}'.format(e1))
+
+
+output:
+ Estimate    of the intercept = -0.81
+    Uncertainty of the intercept = 1.29
+    Estimate    of the slope = 50.78
+    Uncertainty of the slope = 1.11
+
+
+>>>> sample >>> two different distances
+
+# Build and fit two models, for columns distances1 and distances2 in df
+model_1 = ols(formula="distances1 ~ times", data=df).fit()
+model_2 = ols(formula="distances2 ~ times", data=df).fit()
+
+# Extract R-squared for each model, and the standard error for each slope
+se_1 = model_1.bse['times']
+se_2 = model_2.bse['times']
+rsquared_1 = model_1.rsquared
+rsquared_2 = model_2.rsquared
+
+# Print the results
+print('Model 1: SE = {:0.3f}, R-squared = {:0.3f}'.format(se_1, rsquared_1))
+print('Model 2: SE = {:0.3f}, R-squared = {:0.3f}'.format(se_2, rsquared_2))
+
+output:
+Model 1: SE = 3.694, R-squared = 0.898
+Model 2: SE = 3.694, R-squared = 0.335
+
+
+#The uncertainty in the estimates of the model parameters is indepedent from R-squared because that uncertainty is being driven not by the linear trend, but by the inherent randomness in the data.
+
+>>>>>>>>>>>>>>>>>>>>>inferential statistics concepts
+
+distibution of probabilities
+
+mean is the best values
+
+what is meant by probability distributions?
+
+population statistics and sample statistics are not the same
+
+draw a random sample from the population
+1. month_of_temps= np.random.choice(decade _of_temps, size=31)
+
+if the general population and sample population are normalize then they match
+
+the shape of the distribution is used to make inferences about the distribution.
+
+resampling
+
+num_samples=20
+for ns in range(num_samples):
+	sample = np.random.choice(population, num_pts)
+	distribution_of_means[ns]=sample.mean()
+
+
+mean_of_means= np.mean(distribution_of_means)
+stdev_of_means=np.std(distribution_of_means)
+
+
+
+>>>>> Sample  >>> random sampling
+
+# Compute the population statistics
+print("Population mean {:.1f}, stdev {:.2f}".format( population.mean(), population.std() ))
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# Construct a sample by randomly sampling 31 points from the population
+sample = np.random.choice(population, size=31)
+
+# Compare sample statistics to the population statistics
+print("    Sample mean {:.1f}, stdev {:.2f}".format( sample.mean(), sample.std() ))
+
+
+>>>>>Sample  >>> resampling
+
+# Initialize two arrays of zeros to be used as containers
+means = np.zeros(num_samples)
+stdevs = np.zeros(num_samples)
+
+num_samples=1000
+means=np.empty(1000)
+stdevs=np.empty(1000)
+# For each iteration, compute and store the sample mean and sample stdev
+for ns in range(num_samples):
+    sample = np.random.choice(population, num_pts)
+    means[ns] = sample.mean()
+    stdevs[ns] = sample.std()
+
+# Compute and print the mean() and std() for the sample statistic distributions
+print("Means:  center={:>6.2f}, spread={:>6.2f}".format(means.mean(), means.std()))
+print("Stdevs: center={:>6.2f}, spread={:>6.2f}".format(stdevs.mean(), stdevs.std()))
+
+
+>>>>>sample  >>> distribution of means
+
+# Generate sample distribution and associated statistics
+means, stdevs = get_sample_statistics(population, num_samples=100, num_pts=1000)
+
+# Define the binning for the histograms
+mean_bins = np.linspace(97.5, 102.5, 51)
+std_bins = np.linspace(7.5, 12.5, 51)
+
+# Plot the distribution of means, and the distribution of stdevs
+fig = plot_hist(data=means, bins=mean_bins, data_name="Means", color='green')
+fig = plot_hist(data=stdevs, bins=std_bins, data_name="Stdevs", color='red')
+
+
+>>>>>>>>>>>>>>>>>>>>Estimation >>>>>>>>>>>>>
+
+1. assume the data is guassian in shape
+
+def gaussian_model(x, mu, sigma):
+	coeff_part = 1/(np.sqrt(2*np.pi*sigma**2))
+	exp_part=np.exp(-(x-mu)**2/(2*sigma**2))
+	return coeff_part * exp_part
+
+
+mean=np.mean(sample)
+stdev=np.std(sample)
+
+population_model = gaussian_model(sample, mu=mean, sigma=stdev)
+
+conditional probability P(outcome a| given B)
+
+if model is given what is the probability of any data 
+probability: P(data|model)
+likelihood: L(model|data)
+
+
+>>>>>>>liklihood from probabilities
+
+mu_guess = np.mean(sample_distances)
+sigma_guess=np.std(sample_distances)
+probabilities = np.zeros(len(sample_distances))
+
+for n,distance in enumerate(sample_distances):
+	probabilities[n] = gaussian_model(distance, mu=mu_guess, sigma=sigma_guess)
+
+likelihood=np.product(probs)
+loglikelihood=np.sum(np.log(probs))
+
+
+>>>> maximum likelihood estimation
+
+low_guess= sample_mean - 2*sample_stdev
+high_guess=sample_mean + 2*sample_stdev
+
+mu_guesses = np.linspace(low_guess, high_guess, 101)
+
+loglikelihoods = np.zeros(len(mu_guesses))
+for n, mu_guess in enumerate(mu_guesses):
+	loglikelihoods[n]=compute_loglikelihood(sample_distances, mu=mu_guess, sigma=sample_stdev)
+
+
+max_loglikelihood=np.max(loglikelikhoods)
+
+best_mu=mu_guesses[loglikelihoods==max_loglikelihood]
+
+
+>>>>>Sample  >>>  computing loglikelihood
+
+In Part 1, you will use a computational approach to compute the log-likelihood of a given estimate. Then, in 
+
+Part 2, we will see that when you compute the log-likelihood for many possible guess values of the estimate, one guess will result in the maximum likelihood.
+
+
+# Compute sample mean and stdev, for use as model parameter value guesses
+mu_guess = np.mean(sample_distances)
+sigma_guess = np.std(sample_distances)
+
+# For each sample distance, compute the probability modeled by the parameter guesses
+probs = np.zeros(len(sample_distances))
+for n, distance in enumerate(sample_distances):
+    probs[n] = gaussian_model(distance, mu=mu_guess, sigma=sigma_guess)
+
+# Compute and print the log-likelihood as the sum() of the log() of the probabilities
+loglikelihood = np.sum(np.log(probs))
+print('For guesses mu={:0.2f} and sigma={:0.2f}, the loglikelihood={:0.2f}'.format(mu_guess, sigma_guess, loglikelihood))
+
+output:
+For guesses mu=26918.10 
+and sigma=224.88, 
+the loglikelihood=-6834.53
+
+
+>>>>>>>>>sample >>>> maximizing likelihood
+
+# Create an array of mu guesses, centered on sample_mean, spread out +/- by sample_stdev
+low_guess = sample_mean - 2*sample_stdev
+high_guess = sample_mean + 2*sample_stdev
+mu_guesses = np.linspace(low_guess, high_guess, 101)
+
+# Compute the loglikelihood for each model created from each guess value
+loglikelihoods = np.zeros(len(mu_guesses))
+for n, mu_guess in enumerate(mu_guesses):
+    loglikelihoods[n] = compute_loglikelihood(sample_distances, mu=mu_guess, sigma=sample_stdev)
+
+# Find the best guess by using logical indexing, the print and plot the result
+best_mu = mu_guesses[loglikelihoods==np.max(loglikelihoods)]
+print('Maximum loglikelihood found for best mu guess={}'.format(best_mu))
+fig = plot_loglikelihoods(mu_guesses, loglikelihoods)
+
+>>>>>>>>>>>>>>>>>>>>>Model Uncertainty and sample distributions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
