@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added medicare healthcare by drg
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Healthcare%20%20costs%20by%20DRG%20Codes.ipynb
+
 * I added linear model of restaurant tips
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/linear%20model%20-%20restaurant%20tips.ipynb
