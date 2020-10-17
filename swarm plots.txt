@@ -1,0 +1,91 @@
+seaborn categorical plot types
+
+limited or fix number of values
+
+renal failure'
+gender
+ethnicity
+blood type
+eye color
+
+strip plot and swarm plot (shows all the individual observations)
+
+box plot and violinplot and lvlplot (abstract of the categorical data)
+point plot and bar plot and count plot (statistical estimates)
+a. number of instances of each observation
+
+df['DRG']=df['DRG Definition'].str[:3]
+df['DRG']=df['DRG'].astype('category')
+#print(df['DRG'])
+
+filter =df['DRG'].isin(['682','683','684'])
+#print(df[filter])
+sns.stripplot(data=df[filter], y="DRG Definition", x=" Average Covered Charges ",jitter=True)
+plt.show()
+
+sns.swarmplot(data=df[filter], y="DRG Definition", x=" Average Covered Charges ")
+plt.show()
+
+
+sns.boxplot(data=df[filter], y="DRG Definition", x=" Average Covered Charges ")
+plt.show()
+
+sns.violinplot(data=df,y="DRG Definition", x=" Average Covered Charges ")
+plt.show()
+
+sns.lvplot(data=df[filter],y="DRG Definition", x=" Average Covered Charges ")
+plt.show()
+
+plt.figure(figsize=(22,22))
+
+sns.barplot(data=df[filter], y="DRG Definition", x=" Average Covered Charges ", hue='Provider State')
+plt.show()
+
+plt.figure(figsize=(22,22))
+
+sns.countplot(data=df[filter], y="DRG Definition", x=" Average Covered Charges ", hue='Provider State')
+plt.show()
+
+
+plt.figure(figsize=(22,22))
+
+sns.countplot(data=df[filter], y="DRG Definition", hue='Provider State')
+plt.show()
+
+
+>>>>>Sample >>> palette >>  husl
+
+# Create a violinplot with the husl palette
+sns.violinplot(data=df,
+               x='Award_Amount',
+               y='Model Selected',
+               palette='husl')
+
+plt.show()
+plt.clf()
+
+
+>>>>>Sample >>> lvplot >>> palette
+
+# Create a lvplot with the Paired palette and the Region column as the hue
+sns.lvplot(data=df,
+         x='Award_Amount',
+         y='Model Selected',
+         palette='husl',
+         hue='Region')
+
+plt.show()
+plt.clf()
+
+>>>>>Sample >>> pointpoint
+
+# Create a pointplot and include the capsize in order to show bars on the confidence interval
+sns.pointplot(data=df,
+         y='Award_Amount',
+         x='Model Selected',
+         capsize=.1)
+
+plt.show()
+plt.clf()
+
+

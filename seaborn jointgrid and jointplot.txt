@@ -1,0 +1,147 @@
+relationship between tuition and admission rates
+
+JointGrid
+import scipy.stats as stats
+
+g=sns.JointGrid(data=df, x='Tuition', y='ADM_RATE_ALL')
+
+g.plot(sns.regplot, sns.distplot)
+
+or
+
+g=g.plot_joint(sns.kdeplot)
+g=g.plot_marginals(sns.kdeplot,shade=True)
+g=g.annotate(stats.pearsonr)
+
+
+>>>>>jointplot
+
+g=sns.jointplot(data=df, x='Tuition', y='ADM_RATE_ALL', kind='hex')
+
+
+KDE is the Kernel Density Estimate for visualizing the probability density of a continous variable
+
+>>>>> sample >> hex >>> jointplot
+
+g=sns.jointplot(data=df[filter], x=' Total Discharges ', y=' Average Total Payments ', kind='hex')
+plt.show()
+
+kind=scatter, hex, residual, reg, kde
+
+
+>>> Customizing joint plot
+
+sns.jointplot(x='Tuition', y='ADM_RATE_ALL', kind='scatter',
+xlim(0,25000),
+marginal_kws=dict(bins=15, rug=True),
+data=df.query('UG < 25000 & Ownership=="Public"'))
+.plot_joint(sns.kdeplot))
+
+
+>>>> Sample  >>> JointGrid
+
+# Build a JointGrid comparing humidity and total_rentals
+sns.set_style("whitegrid")
+g = sns.JointGrid(x="hum",
+            y="total_rentals",
+            data=df,
+            xlim=(0.1, 1.0)) 
+
+g.plot(sns.regplot, sns.distplot)
+
+plt.show()
+plt.clf()
+
+>>>>> Sample >>> Jointplot
+# Create a jointplot similar to the JointGrid 
+sns.jointplot(x="hum",
+        y="total_rentals",
+        kind='reg',
+        data=df)
+
+plt.show()
+plt.clf()
+
+>>>>Sample >>> joint plot >> regression >> 2nd order
+
+# Plot temp vs. total_rentals as a regression plot
+sns.jointplot(x="temp",
+         y="total_rentals",
+         kind='reg',
+         data=df,
+         order=2,
+         xlim=(0, 1))
+
+plt.show()
+plt.clf()
+
+print(df.head())
+
+>>>> Sample >>> joint plot >>> regression >>> 2nd order >>> residual
+
+# Plot a jointplot showing the residuals
+sns.jointplot(x="temp",
+        y="total_rentals",
+        kind='resid',
+        data=df,
+        order=2)
+
+plt.show()
+plt.clf()
+
+>>>>> Sample >>> scatter plot over a kde plot
+
+# Create a jointplot of temp vs. casual riders
+# Include a kdeplot over the scatter plot
+g = (sns.jointplot(x="temp",
+             y="casual",
+             kind='scatter',
+             data=df,
+             marginal_kws=dict(bins=10, rug=True))
+    .plot_joint(sns.kdeplot))
+    
+plt.show()
+plt.clf()
+
+>>>>> Sample   scatter over kde plot
+
+# Replicate the above plot but only for registered riders
+g = (sns.jointplot(x="temp",
+             y="registered",
+             kind='scatter',
+             data=df,
+             marginal_kws=dict(bins=10, rug=True))
+    .plot_joint(sns.kdeplot))
+
+plt.show()
+plt.clf()
+
+>>>>>>>>>>>>>>>>>>>selection of a plot
+
+1. kde plot can be generated on its own or generated from a dist plot
+2. PairGrid and pairplot build on the regression plot
+
+first look at the data distribution
+1. distplot() is best place to start for analysis
+2 rugplot() and kdeplot() are useful alternatives
+
+lmplot performs regression analysis and supports faccetting.
+scatter plot compares the interaction between two variables on the x and y axis
+
+lmplot is the best plot to determine linear relationships
+
+Categorical plots
+
+use the violin or boxplot to examine the distribution of variables. use a factor plot to facet across rows and columns
+
+pairplot and jointplot are going to be useful after you have analyzed the various distributions of data.
+pair Grid and Joint Grid allow for greater flexibility.
+
+
+
+
+
+
+
+
+

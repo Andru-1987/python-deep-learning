@@ -1,0 +1,54 @@
+univariant plotting
+
+regplot function generates a scatter plot with a regression line
+
+
+sns.regplot(x='alcohol',y='pH', data=df)
+
+lmplot adjusts the aspect ratio
+
+sns.lmplot(x='alcohol',y='pH', data=df)
+
+lmplot allows for use of hue
+
+sns.lmplot(x='alcohol',y='pH', hue='type', data=df)
+
+organize data by columns
+
+faceting is plotting several graphs while changing a single variable.
+
+sns.lmplot(x='alcohol',y='pH', col='type', data=df)
+
+A separate graph is created for each type
+
+>>>>>Sample  >>> regplot  >>> scatter of loss and premiums
+For this set of exercises, we will be looking at FiveThirtyEight's data on which US State has the worst drivers. 
+
+# Create a regression plot of premiums vs. insurance_losses
+sns.regplot(x='insurance_losses',y='premiums',data=df)
+
+# Display the plot
+plt.show()
+
+
+>>>>Sample >>> lmplot
+
+# Create an lmplot of premiums vs. insurance_losses
+sns.lmplot(x='insurance_losses',y='premiums',data=df)
+
+# Display the plot
+plt.show()
+
+>>>>Sample >>> lmplot >>> display by row
+
+# Create a regression plot with multiple rows
+sns.lmplot(data=df,
+           x="insurance_losses",
+           y="premiums",
+           row="Region")
+
+# Show the plot
+plt.show()
+
+
+

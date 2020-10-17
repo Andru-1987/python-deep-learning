@@ -1,0 +1,508 @@
+>>>>>>>>>>>>>>Customize the plots
+
+change the style improves readability
+
+figure style
+
+1. white
+2. dark
+3. whitegrid
+4. darkgrid
+5. ticks
+
+sns.set_style()
+
+sns.set_palette()
+
+diverging palettes
+
+1.RdBu
+2. PRGn
+3. RdBu_r
+4. PRGn_r
+
+_r means to reverse the pallete
+
+sequential palletes
+1. Greys
+2. Blues
+3. PuRed
+4. GnBu
+
+custom_palette=['red','green','orange','blue','yellow','purple']
+sns.set_palette(custom_palette)
+
+or hexcodes
+
+sns.set_context()
+1. paper
+2. notebook
+3. talk
+4. poster
+
+
+
+>>>Sample >> set style to white grid
+
+# Set the style to "whitegrid"
+sns.set_style("whitegrid")
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+
+# Show plot
+plt.show()
+
+
+>>>>>samples >>>Set palette to purples
+
+ Change the color palette to "RdBu"
+sns.set_style("whitegrid")
+sns.set_palette("Purples")
+
+# Create a count plot of survey responses
+category_order = ["Never", "Rarely", "Sometimes", 
+                  "Often", "Always"]
+
+sns.catplot(x="Parents Advice", 
+            data=survey_data, 
+            kind="count", 
+            order=category_order)
+
+# Show plot
+plt.show()
+
+>>>>>>Samples >>>> Custom palette
+
+# Set the style to "darkgrid"
+sns.set_style("darkgrid")
+
+# Set a custom color palette
+custom_palette=["#39A7D0","#36ADA4"]
+sns.set_palette(custom_palette)
+
+# Create the box plot of age distribution by gender
+sns.catplot(x="Gender", y="Age", 
+            data=survey_data, kind="box")
+
+# Show plot
+plt.show()
+
+>>>>>Sample >>> hue
+
+# Create a point plot with subgroups
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school")
+
+# Show plot
+plt.show()
+
+>>>>>Sample >>> estimator
+
+# Import median function from numpy
+import numpy as np
+# Plot the median number of absences instead of the mean
+sns.catplot(x="romantic", y="absences",
+			data=student_data,
+            kind="point",
+            hue="school",
+            estimator=np.median,
+            ci=None)
+
+# Show plot
+plt.show()
+#smokers vs non smoker data
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>>>>>>>>>Adding titles and labels
+
+creating informative visualizations
+
+FacetGrids vs AxesSubplots
+
+g = sns.scatterplot(x="height",y="weight", data=df)
+type(g)
+
+output: matplotlib.axes._subplots.AxesSubplot
+
+A FacetGrid is composed of one or more axes subplots
+
+relplot and catplot create subplots
+
+scatterplot and countplot create a single plot
+
+>>>Set the title
+
+g.fig.suptitle("New Title", y=1.03)
+
+y default value is 1
+
+>>>>>Sample >>find the type of a relplot 
+
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Identify plot type
+type_of_g = type(g)
+
+# Print type
+print(type_of_g)
+
+>>>>>>>Sample >>>>Add a title
+
+# Create scatter plot
+g = sns.relplot(x="weight", 
+                y="horsepower", 
+                data=mpg,
+                kind="scatter")
+
+# Add a title "Car Weight vs. Horsepower"
+g.fig.suptitle("Car Weight vs. Horsepower", y=1.03)
+
+# Show plot
+plt.show()
+
+>>>>Part 2
+
+adding a title to axesSubplot
+
+g=sns.boxplot(x="Region", y="Birthrate", data=gdp_data)
+g.set_title("New Title",y=1.03)
+
+>>>>subplots
+
+g=sns.catplot(x="Region"
+	y="Birthrate",
+	data=gdp_data,
+	kind="box",
+	col="Group")
+
+
+g.fig.suptitle("New Title", y=1.03)
+
+g.set_titles("This is {col_name}")
+
+inserts the column value in the title
+
+>>>>set labels
+
+g.set(xlabel="New X Label",
+	ylabel="New Y Label")
+
+>>>> rotating tick labels
+
+plt.xticks(rotation=90)
+
+>>>>>Sample >>> set x and y labels
+
+# Create line plot
+g = sns.lineplot(x="model_year", y="mpg_mean", 
+                 data=mpg_mean,
+                 hue="origin")
+
+# Add a title "Average MPG Over Time"
+g.set_title("Average MPG Over Time")
+
+# Add x-axis and y-axis labels
+g.set(
+    xlabel="Car Model Year",
+    ylabel="Average MPG")
+
+
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>>Putting it together
+
+>>>Sample >>fig.suptitle
+
+# Set palette to "Blues"
+sns.set_palette("Blues")
+
+# Adjust to add subgroups based on "Interested in Pets"
+g = sns.catplot(x="Gender",
+                y="Age", data=survey_data, 
+                kind="box", hue="Interested in Pets")
+
+# Set title to "Age of Those Interested in Pets vs. Not"
+g.fig.suptitle("Age of Those Interested in Pets vs Not")
+
+# Show plot
+plt.show()
+
+
+>>>>Sample >>> dark and with labels
+
+# Set the figure style to "dark"
+sns.set_style("dark")
+# Adjust to add subplots per gender
+g = sns.catplot(x="Village - town", y="Likes Techno", 
+                data=survey_data, kind="bar",
+                col="Gender")
+
+# Add title and axis labels
+g.fig.suptitle("Percentage of Young People Who Like Techno", y=1.02)
+g.set(xlabel="Location of Residence", 
+       ylabel="% Who Like Techno")
+
+# Show plot
+plt.show()
+
+
+>>>> despine
+
+sometimes plots are improved by removing elements
+seaborn contains a short cut to removing spines of a plot
+
+sns.despine(left=True)
+
+sns.set_style()
+1.white
+2.dark
+3.whitegrid
+4.darkgrid
+5.ticks
+
+
+>>>>>>>Sample  >>> set default
+
+# Plot the pandas histogram
+df['fmr_2'].plot.hist()
+plt.show()
+plt.clf()
+
+# Set the default seaborn style
+sns.set()
+
+# Plot the pandas histogram again
+df['fmr_2'].plot.hist()
+plt.show()
+plt.clf()
+
+
+>>>>Sample >>> set_style dark
+
+
+sns.set_style('dark')
+sns.distplot(df['fmr_2'])
+
+plt.show()
+plt.clf()
+
+
+>>>>Sample >>> despine left
+
+# Set the style to white
+sns.set_style('white')
+
+# Create a regression plot
+sns.lmplot(data=df,
+           x='pop2010',
+           y='fmr_2')
+
+# Remove the spines
+sns.despine(left=True)
+
+# Show the plot and clear the figure
+plt.show()
+plt.clf()
+
+
+>>>>>>>>>>>>>Colors in seaborn
+
+sns.set(color_codes=True)
+sns.distplot(df['Tuition'], color='g')
+
+
+Palettes
+
+seaborn uses the set_palette to define a palette
+
+1. deep
+2. muted
+3. pastel
+4. bright
+5. dark
+6. colorblind
+
+
+for p in sns.palettes.SEABORN_PALETTES:
+	sns.set_palette(p)
+	sns.palplot(sns.color_palette())
+	plt.show()
+
+circular colors = when the data is not ordered
+
+sequential colors=when the data has a consistent range from high to low
+
+diverging colors = when both the low and high values are interesting
+
+
+>>>>sample >>> use matplotlib colors m for magenta
+
+# Set style, enable color code, and create a magenta distplot
+sns.set(color_codes=True)
+sns.distplot(df['fmr_3'], color='m')
+
+# Show the plot
+plt.show()
+
+>>>sample >>> use different palettes
+
+# Loop through differences between bright and colorblind palettes
+for p in ['bright', 'colorblind']:
+    sns.set_palette(p)
+    sns.distplot(df['fmr_3'])
+    plt.show()
+    
+    # Clear the plots    
+    plt.clf()
+
+
+>>>>sample >>> purples
+
+sns.palplot(sns.color_palette("Purples", 8))
+plt.show()
+
+
+sns.palplot(sns.color_palette("husl", 10))
+plt.show()
+
+sns.palplot(sns.color_palette("coolwarm", 6))
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>Customizing with matplotlib
+
+most customization available through matplotlib axes
+
+axes can be passed to seaborn functions
+
+fig, ax = plt.subplots()
+
+sns.displot(df['Tuition'], ax=ax)
+ax.set(xlabel="Tuition-2013-14"
+
+,ylabel="Distribution",
+xlim(0,50000),
+title="2013-14 Tuition and Fees Distribution"
+)
+
+>>>>>>>>>>> combining and configuring multiple plots
+
+fig, (ax0,ax1) = plt.subplots(
+nrows=1, ncols=2, sharey=True, figsize(7,4)
+
+sns.displot(df['Tuition'], ax=ax0)
+
+sns.displot(df.query('State== "MN"')['Tuition'], ax=ax1)
+
+ax1.set(xlabel="Tuition (MN)", xlim=(0,70000))
+ax1.axvline(x=20000,label="My Budget", linestyle="--")
+ax1.legend()
+
+>>>sample   >>> subplots
+
+
+# Create a figure and axes
+fig, ax = plt.subplots()
+
+# Plot the distribution of data
+sns.distplot(df['fmr_3'], ax=ax)
+
+# Create a more descriptive x axis label
+ax.set(xlabel="3 Bedroom Fair Market Rent")
+
+# Show the plot
+plt.show()
+
+
+>>>>Sample >>>  subplots with ax
+
+# Create a figure and axes
+fig, ax = plt.subplots()
+
+# Plot the distribution of 1 bedroom rents
+sns.distplot(df['fmr_1'], ax=ax)
+
+# Modify the properties of the plot
+ax.set(xlabel="1 Bedroom Fair Market Rent",
+       xlim=(100,1500),
+       title="US Rent")
+
+# Display the plot
+plt.show()
+
+
+>>>>>sample >>> Adding vertical lines
+
+# Create a figure and axes. Then plot the data
+fig, ax = plt.subplots()
+sns.distplot(df['fmr_1'], ax=ax)
+
+# Customize the labels and limits
+ax.set(xlabel="1 Bedroom Fair Market Rent", xlim=(100,1500), title="US Rent")
+
+# Add vertical lines for the median and mean
+ax.axvline(x=median, color='m', label='Median', linestyle='--', linewidth=2)
+ax.axvline(x=mean, color='b', label='Mean', linestyle='-', linewidth=2)
+
+# Show the legend and plot the data
+ax.legend()
+plt.show()
+
+
+>>>>>sample >>> two comparison plots
+
+# Create a plot with 1 row and 2 columns that share the y axis label
+fig, (ax0, ax1) = plt.subplots(nrows=1, ncols=2, sharey=True)
+
+# Plot the distribution of 1 bedroom apartments on ax0
+sns.distplot(df['fmr_1'], ax=ax0)
+ax0.set(xlabel="1 Bedroom Fair Market Rent", xlim=(100,1500))
+
+# Plot the distribution of 2 bedroom apartments on ax1
+sns.distplot(df['fmr_2'], ax=ax1)
+ax1.set(xlabel="2 Bedroom Fair Market Rent", xlim=(100,1500))
+
+# Display the plot
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

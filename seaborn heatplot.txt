@@ -1,0 +1,66 @@
+pd.crosstab(df['mnth'],df['weekday'],
+values=df['total_rentals'], aggfunc='mean')
+
+
+>>>>Sample >>>  
+filter =(df['DRG'].isin(['682','683','684'])) & (df[' Total Discharges ']>=200)
+
+result=df[filter]
+
+ct=pd.crosstab(result['Provider Name'],result['DRG'],
+values=result[' Average Total Payments '], aggfunc='mean')
+
+print(ct)
+
+plt.figure(figsize=(22,22))
+sns.heatmap(ct,annot=True,fmt='f',
+cmap='YlGnBu', cbar=True)
+plt.show()
+
+
+Pandas corr functions correlations between columns in a dataframe.
+
+sns.heatmap(df.corr())
+
+
+>>>>>> sample >>> heatmaps show change over time
+
+# Create a crosstab table of the data
+pd_crosstab = pd.crosstab(df["Group"], df["YEAR"])
+print(pd_crosstab)
+
+# Plot a heatmap of the table
+sns.heatmap(pd_crosstab)
+
+# Rotate tick marks for visibility
+plt.yticks(rotation=0)
+plt.xticks(rotation=90)
+
+plt.show()
+
+
+<<<<< sample >>> cmap BuGn  >> counts guests
+
+# Create the crosstab DataFrame
+pd_crosstab = pd.crosstab(df["Group"], df["YEAR"])
+
+# Plot a heatmap of the table with no color bar and using the BuGn palette
+sns.heatmap(pd_crosstab, cbar=False, cmap="BuGn", linewidths=.3)
+
+# Rotate tick marks for visibility
+plt.yticks(rotation=0)
+plt.xticks(rotation=90)
+
+#Show the plot
+plt.show()
+plt.clf()
+
+YEAR GoogleKnowlege_Occupation     Show   Group    Raw_Guest_List
+0  1999                     actor  1/11/99  Acting    Michael J. Fox
+1  1999                  Comedian  1/12/99  Comedy   Sandra Bernhard
+2  1999        television actress  1/13/99  Acting     Tracey Ullman
+3  1999              film actress  1/14/99  Acting  Gillian Anderson
+4  1999                     actor  1/18/99  Acting  David Alan Grier
+
+
+

@@ -1,0 +1,39 @@
+>>>>>distplot
+builds a guassian distribution plot
+
+# Display a Seaborn distplot
+sns.distplot(df['Award_Amount'],kde=False, hist=False, rug=False, bins=10)
+plt.show()
+
+# Clear the distplot
+plt.clf()
+
+
+distplot uses several functions including kdeplot and rugplot
+
+sns.distplot(df['alcohol'], hist=False, rug=True, kde_kws={'shade':True})
+
+
+The distplot() function will return a Kernel Density Estimate (KDE) by default. The KDE helps to smooth the distribution and is a useful way to look at the data
+
+>>>>sample >>> disable kde
+
+sns.distplot(df['Award_Amount'],
+             kde=False,
+             bins=20)
+
+# Display the plot
+plt.show()
+
+
+>>>>>sample  >>> add a rug plot  >>>o show the kde_kws dictionary
+
+# Create a distplot of the Award Amount
+sns.distplot(df['Award_Amount'],
+             hist=False,
+             rug=True,
+             kde_kws={'shade':True})
+
+# Plot the results
+plt.show()
+

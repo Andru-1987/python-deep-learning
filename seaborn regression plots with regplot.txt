@@ -1,0 +1,72 @@
+>>>>>>>>>Regression Plot
+
+sns.regplot(data=df, x='temp', y='total_rentals', marker='+')
+
+sns.residplot(data=df, x='temp', y='total_rentals')
+
+sns.regplot(data=df, x='temp', y='total_rentals', order=2)
+
+order greater than 1 will create a polynomial
+
+
+sns.regplot(data=df[filter], y=' Total Discharges ', x=" Average Covered Charges ", order=2)
+plt.show()
+
+#order greater than 1 will create a polynomial
+
+sns.residplot(data=df[filter],y=' Average Covered Charges ',
+       x=' Average Total Payments ', order=2)
+plt.show()
+
+
+<<<<<< sample categorical values over time >> polynomial plot
+
+sns.regplot(data=df, x='mnth', y='total_rentals',
+x_jitter=1, order=2)
+
+or
+
+sns.regplot(data=df, x='mnth', y='total_rentals',
+x_estimator=np.mean, order=2)
+
+or
+
+sns.regplot(data=df, x='mnth', y='total_rentals', bins=4)
+
+
+>>>Sample >>> the higher the sat score the higher the tuition
+
+# Display a regression plot for Tuition
+sns.regplot(data=df,
+         y='Tuition',
+         x="SAT_AVG_ALL",
+         marker='^',
+         color='g')
+
+plt.show()
+plt.clf()
+
+>>>>Sample >>> regplot with x_bins to summarize trend
+
+# Create another plot that estimates the tuition by PCTPELL
+sns.regplot(data=df,
+            y='Tuition',
+            x="PCTPELL",
+            x_bins=5
+		, order=2)
+
+plt.show()
+plt.clf()
+
+
+>>>>sample >>> creating a scatter plot by disabling the regression line
+
+sns.regplot(data=df,
+            y='Tuition',
+            x="UG",
+            fit_reg=False)
+
+plt.show()
+plt.clf()
+
+

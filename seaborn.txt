@@ -614,12 +614,9 @@ g.set(xlabel="Location of Residence",
 plt.show()
 
 
+>>>>>>OPengl and python
 
-
-
-
-
-
+conda install -c anaconda pyopengl 
 
 
 

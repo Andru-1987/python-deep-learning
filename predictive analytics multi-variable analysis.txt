@@ -1,0 +1,216 @@
+companies often store over 1000 variable describing their customers
+
+drawbacks to models that use many variables
+1. overfitting can be caused from too many variables
+2. use only the significant variables
+3. you want interpretation of the model to be possible
+
+Area under curve
+
+import numpy as np
+from sklearn.metrics import roc_auc_score
+
+roc_auc_score(true_target, prob_target)
+
+auc is a number between 0 and 1 where 1 is a perfect model.  Random models have a score of 0.5
+
+The least complex model with the performance is best understood
+
+
+>>>Sample  >>> predict_proba  and compare to true value
+
+# Make predictions
+predictions = logreg.predict_proba(X)
+predictions_target = predictions[:,1]
+
+# Calculate the AUC value
+auc = roc_auc_score(y,predictions_target)
+print(round(auc,2))
+
+
+#The AUC value assesses how well a model can order observations from low probability to be target to high probability to be target.
+
+>>>Sample >>> compare variable selection to auc scores
+
+# Create appropriate dataframes
+X_1 = basetable[variables_1]
+X_2 = basetable[variables_2]
+y = basetable[["target"]]
+
+# Create the logistic regression model
+logreg = linear_model.LogisticRegression()
+
+# Make predictions using the first set of variables and assign the AUC to auc_1
+logreg.fit(X_1, y)
+predictions_1 = logreg.predict_proba(X_1)[:,1]
+auc_1 = roc_auc_score(y, predictions_1)
+
+# Make predictions using the second set of variables and assign the AUC to auc_2
+logreg.fit(X_2, y)
+predictions_2 = logreg.predict_proba(X_2)[:,1]
+auc_2 = roc_auc_score(y,predictions_2)
+
+# Print auc_1 and auc_2
+print(round(auc_1,2))
+print(round(auc_2,2))
+
+
+>>>>>>>>>>>>>>>>Stepwise functions
+
+1. function that returns the auc for a get set of variables
+2. build a function that returns the next best variable in combination with current variables
+3. loop until desired number of variable is discovered
+
+def auc(variables, target, basetable):
+	X = basetable(variables)
+	y= basetable(target)
+
+	logreg=linear_model.LogisticRegression()
+	logreg.fit(X,y)
+	predictions=logreg.predict_proba(X)[:,1]
+	auc=roc_auc_score(y, predictions)
+	return auc
+
+auc=auc(['age','gender_F'],['target'],basetable)
+print(round(auc,2))
+
+def next_best(current_variables, candidate_variables, target, basetable):
+	best_auc=-1
+	best_variable=None
+	for v in candidate_variables:
+		auc_v= auc(current_variables+[v],target, basetable)
+		if auc_v >= best_auc:
+			best_auc=auc_v
+			best_variable=v
+	return best_variable
+
+current_variables=['age','gender_F']
+candidate_variables=['min_gift','max_gift','mean_gift']
+
+next_variable=next_best(current_variables, candidate_variables, basetable)
+print(next_variable)
+
+>>>>>>>>>>>>>>Stepwise variable selection
+
+candidate_variables=['min_gift','max_gift','mean_gift']
+current_variables=[]
+target=['target']
+max_number_variables=5
+
+number_iterations=min(max_number_variables, len(candidate_variables))
+
+for i in range(0,number_iterations):
+	next_var= next_best(current_variables, candidate_varaibles, target, basetable)
+	current_variables=current_variables+[next_variable]
+	candidate_variables.remove(next_variable)
+
+print(current_variables)
+
+
+>>>>>> Sample  >>> auc  and stepwise reduction
+
+# Calculate the AUC of a model that uses "max_gift", "mean_gift" and "min_gift" as predictors
+auc_current = auc(['max_gift','mean_gift','min_gift'], ["target"], basetable)
+print(round(auc_current,4))
+
+# Calculate which variable among "age" and "gender_F" should be added to the variables "max_gift", "mean_gift" and "min_gift"
+next_variable = next_best(['max_gift','mean_gift','min_gift'], ['age', 'gender_F'], ["target"], basetable)
+print(next_variable)
+
+# Calculate the AUC of a model that uses "max_gift", "mean_gift", "min_gift" and "age" as predictors
+auc_current_age = auc(['max_gift','mean_gift','min_gift', 'age'], ["target"], basetable)
+print(round(auc_current_age,4))
+
+# Calculate the AUC of a model that uses "max_gift", "mean_gift", "min_gift" and "gender_F" as predictors
+auc_current_gender_F = auc(['max_gift','mean_gift','min_gift', 'gender_F'], ["target"], basetable)
+print(round(auc_current_gender_F,4))
+
+
+>>>> Sample  >>> steps 5 variables
+
+# Find the candidate variables
+candidate_variables = list(basetable.columns.values)
+candidate_variables.remove("target")
+
+# Initialize the current variables
+current_variables = []
+
+# The forward stepwise variable selection procedure
+number_iterations = 5
+for i in range(0, number_iterations):
+    next_variable = next_best(current_variables, candidate_variables, ["target"], basetable)
+    current_variables = current_variables + [next_variable]
+    candidate_variables.remove(next_variable)
+    print("Variable added in step " + str(i+1)  + " is " + next_variable + ".")
+
+>>>>>>Sample >>> auc >>> and np.corrcoef
+
+The 10 variables in the model
+['max_gift', 'number_gift', 'time_since_last_gift', 'mean_gift', 'income_high', 'age', 'country_USA', 'gender_F', 'income_low', 'country_UK']
+
+
+Question: why was min_gift not added.  
+answer: it was highly correlated to the mean_gift
+
+import numpy as np
+
+# Calculate the AUC of the model using min_gift only
+auc_min_gift = auc(['min_gift'], ["target"], basetable)
+print(round(auc_min_gift,2))
+
+# Calculate the AUC of the model using income_high only
+auc_income_high = auc(['income_high'], ['target'], basetable)
+print(round(auc_income_high,2))
+
+# Calculate the correlation between min_gift and mean_gift
+correlation = np.corrcoef(basetable["min_gift"], basetable["mean_gift"])[0,1]
+print(round(correlation,2))
+
+#It can happen that a good variable is not added because it is highly correlated with a variable that is already in the model. You can test this calculating the correlation between these variables: 
+
+
+>>>>>>>>>>>>>>>>>>>>>>>Partitioning Data
+
+from sklearn.cross_validation import train_test_split
+
+X=basetable.drop("target",1)
+y=basetable["target"]
+
+X_train, X_test, y_train, y_test=
+train_test_split(X,y,test_size=0.4, stratify=Y)
+
+train= pd.concat([X_train,y_train], axis=1)
+test=pd.concat([X_test,y_test],axis=1)
+
+Deciding the cutoff
+AUC is high as possible
+Least amount of variables to avoid overfitting
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
