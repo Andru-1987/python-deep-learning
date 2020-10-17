@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added auc the stepwise refinement to find multiple variables for the model using customer churn data
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Customer%20Churn%20-%20stepwise%20variables%20auc.ipynb
+
 * I added medicare healthcare by drg
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Healthcare%20%20costs%20by%20DRG%20Codes.ipynb
