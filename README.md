@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added pct change for netflix and domino then feed it into a lstm for a future prediction
+
+*https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Netflix.ipynb
+
 * I added auc the stepwise refinement to find multiple variables for the model using customer churn data
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Customer%20Churn%20-%20stepwise%20variables%20auc.ipynb
