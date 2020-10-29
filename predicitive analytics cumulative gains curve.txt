@@ -1,0 +1,188 @@
+>>>>>>>>>>>>>>Cumulative gains curve>>>>>>>>>
+
+auc 
+1. complex
+2. single number
+
+
+Cumulative gains curve is easier for business people to understand
+
+left is the highest probability to be targeted and on the left is the lowest probability
+
+The better model is orientated to the upper left on the vertical axis
+
+
+import scikitplot as skplot
+import matplotlib.pyplot as plt
+
+
+conda install -c conda-forge scikit-plot
+
+skplt.metrics.plot_cumulative_gain(true_values, predictions)
+
+plt.show()
+
+
+The cumulative gains curve is an evaluation curve that assesses the performance of your model. It shows the percentage of targets reached when considering a certain percentage of your population with the highest probability to be target according to your model. 
+
+# Import the matplotlib.pyplot module 
+import matplotlib.pyplot as plt
+
+# Import the scikitplot module
+import scikitplot as skplt
+
+print(type(targets_test))
+print(type(predictions_test))
+print(targets_test.shape)
+# Plot the cumulative gains graph
+skplt.metrics.plot_cumulative_gain(targets_test, predictions_test)
+plt.show()
+
+>>>>>>Sample  >>> Random predictions  >> reconstruct the base curve.
+
+import random
+import scikitplot as skplot
+import matplotlib.pyplot as plt
+
+# Generate random predictions
+random_predictions = [random.uniform(0,1) for _ in range(len(targets_test))]
+
+# Adjust random predictions
+random_predictions = [(r, 1 - r) for r in random_predictions]
+
+# Plot the cumulative gains graph
+skplt.metrics.plot_cumulative_gain(targets_test, random_predictions)
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>Lift curve
+
+lift curve construction
+
+
+how many times more than average that this group is considered.
+
+top 10% include 4x average of targets
+or 4 x 5% or 20%
+
+vertical axis represents the number times average
+
+50% of the group is 2 times average
+50% of the group will yield 2x5% or 10% targets
+
+
+import scikitplot as skplot
+import matplotlib.pyplot as plt
+
+skplt.metrics.plot_lift_curve(true_values, predictions)
+plt.show()
+
+
+
+>>>>sample >>> plot_lift_curve
+
+# Import the matplotlib.pyplot module 
+import matplotlib.pyplot as plt
+
+# Import the scikitplot module
+import scikitplot as skplt
+
+# Plot the lift curve
+skplt.metrics.plot_lift_curve(targets_test, predictions_test)
+plt.show()
+
+
+<<<<<<<sample >>> predicting perfect predictions
+
+# Generate perfect predictions
+perfect_predictions = [(1-target , target) for target in targets_test["target"]]
+
+# Plot the lift curve
+skplt.metrics.plot_lift_curve(targets_test, perfect_predictions)
+plt.show()
+
+You can observe that the lift is first 20, which is normal as there are 5% targets: you can only have 20 times more than average targets. After that the lift gradually decreases because there are no targets to add anymore.
+
+>>>>>>>>>>>>>>>.Estimating project
+
+
+100,000 candidate donors and 5% is targeted
+
+donors to donate 50 euro
+
+def profit(per_targets, perc_selected, population_size, reward_target, cost_campaign):
+	cost=cost_campaign * perc_selected* population_size
+	reward=reward_target*perc_target*per_selected*population_size
+	return(reward-cost)
+
+
+population_size=100000
+target_incident=0.05
+reward_target=50
+cost_campaign=2
+
+perc_selected =0.20 #top 20% of donors
+lift=2.5
+perc_targets=lift*target_incidence
+
+print(profit(perc_targets, perc_selected, population_size, reward-target, cost_campaign))
+
+
+Consider a population of 10 000 potential donors and 1000 targets that you want to write a letter to ask if they can donate 10 Euro. 
+
+>>>>>Sample target incidence  >>> profit
+
+# Plot the lift graph
+skplt.metrics.plot_lift_curve(targets_test, predictions_test)
+plt.show()
+
+# Read the lift at 40% (round it up to the upper tenth)
+perc_selected = 0.4
+lift = 1.5
+
+# Information about the campaign
+population_size, target_incidence, campaign_cost, campaign_reward = 100000, 0.01, 1, 100
+    
+# Profit if all donors are targeted
+profit_all = profit(target_incidence, 1, population_size, campaign_cost, campaign_reward)
+print(profit_all)
+
+# Profit if top 40% of donors are targeted
+profit_40 = profit(lift * target_incidence, 0.4, population_size, campaign_cost, campaign_reward)
+print(profit_40)
+
+In this method, perc_targets is the percentage of targets in the group that you select for your campaign, perc_selected the percentage of people that is selected for the campaign, population_size the total population size, campaign_cost the cost of addressing a single person for the campaign, and campaign_reward the reward of addressing a target.
+
+
+>>>>Samples  >>> number donors to reach
+
+# Plot the cumulative gains
+skplt.metrics.plot_cumulative_gain(targets_test, predictions_test)
+plt.show()
+
+# Number of targets you want to reach
+number_targets_toreach = 30000 / 50
+perc_targets_toreach = number_targets_toreach / 1000
+cumulative_gains = 0.4
+number_donors_toreach = cumulative_gains * 10000
+
+print(perc_targets_toreach)
+print(number_donors_toreach)
+
+#The cumulative gains graph can be used to estimate how many donors one should address to make a certain profit. Indeed, the cumulative gains graph shows which percentage of all targets is reached when addressing a certain percentage of the population. If one knows the reward of a campaign, it follows easily how many donors should be targeted to reach a certain profit. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

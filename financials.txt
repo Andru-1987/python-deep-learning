@@ -1,0 +1,95 @@
+Gross Profit=direct sales + cost
+
+Cogs = is the cost of selling these goods
+
+gross profit = sales - cogs
+
+
+Income Statement:
+Inc: Sales
+Inc: Cost of Goods Sold
+
+Operating Expense
+Exp: Selling Admin
+Exp: R&D
+Exp: Training
+
+Net Profit
+
+
+Gross Profit Margin = Gross Profit / SalesValue
+
+
+>>>> Sample   >>> gross profit
+
+# Set the sales variable to 8000
+sales = 8000
+
+# Set the cost of goods sold (cogs) variable to 5400
+cogs = 5400
+
+# Calculate the gross profit (gross_profit)
+gross_profit = sales - cogs
+
+# Print the gross profit
+print("The gross profit is {}.".format(gross_profit))
+
+# Calculate the gross profit margin
+gross_profit_margin = gross_profit / sales
+
+# Print the gross profit margin
+print("The gross profit margin is {}.".format(gross_profit_margin))
+
+2600
+.3256
+
+The higher margin you have the better of course, and also this margin will then pay for other expenses not directly related to the product, like Marketing
+
+
+>>>>>Sample >>>> calculating net Profit
+
+# Create and print the opex list
+print(admin)
+opex = [admin, travel, training, marketing, insurance]
+print(opex)
+
+print(sum(opex))
+# Calculate and print net profit
+net_profit = gross_profit - sum(opex)
+print("The net profit is {}.".format(net_profit))
+
+
+>>>>>>>>>>>>calculating sales and cost of goods sold
+
+gross profits= sales - cost of sales 
+
+
+Sales (income, revenue, turnover)
+
+sales price per unit sp_unit
+number of units sold
+
+complexities:
+discounts (discounted sales price)
+credit sales 
+
+
+>>>cost of goods sold (cogs)
+1. total fixed costs
+2. variable cost per unit
+3. inventory opening balance
+4. inventory closing balance
+
+what does gross profit tells
+
+profit margin %
+Gross Profit Margin = Gross Profit / SalesValue
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,326 @@
+predictive models
+1. build the predictive model
+2. evaluate the model using auc
+3. evaluate the model using cumulative gains and lift curves
+4. verify whether the variables in the model are interpretable.
+
+https://github.com/nd1/DC_RestaurantViolationForecasting/tree/master/scripts/support_scripts/yelp
+
+Interpretation of predictor insight graphs
+
+Income and donations:
+
+income and Size and incidence
+
+pig=predictor insight graph table
+
+Income	Size	Incidence
+low	20850	0.0431
+average	62950	0.0492
+high	16200	0.0615
+
+
+>>>>Sample >>> Pig
+
+# Inspect the predictor insight graph table of Country
+print(pig_table)
+
+# Print the number of UK donors
+print(pig_table["Size"][pig_table["Country"]=="UK"])
+
+# Check the target incidence of USA and India donors
+print(pig_table["Incidence"][pig_table["Country"]=="USA"])
+print(pig_table["Size"][pig_table["Country"]=="India"])
+
+
+>>>>>>>>>>>>>>>Discretization in python
+
+variable="max_gift"
+
+number_bins=3
+
+basetable['disc_max_gift']=pd.qcut(basetable[variable], number_bins)
+
+verification of 3 equal bins
+basetable.groupby("disc_max_gift").size()
+
+
+>>>>>automating discretization  >>> qcut
+
+variables_model=["income_average","mean_gift","gender_M","min_gift","age"]
+
+def check_discretize(basetable, variable, threshold):
+	return(len(basetable.groupby(variable))>threshhold)
+
+threshold=5
+number_bins=5
+for variable in variable_model:
+	if check_discretize(basetable, variable, threshold):
+	new_variable="disc"+variable
+	basetable[new_variable]=pd.cut(basetable[variable], num_bins)
+
+
+>>>>>>>automating discretization >>> cut
+
+basetable["disc_age"]=pd.cut(basetable["age"],[18,30,40,50,60,110]
+basetable.groupby("disc_age").size())
+
+(18,30)
+(30,40)
+(40,50)
+(50,60)
+(60.110)
+
+
+>>>>>>Sample >>> recency frequency for 10 bins
+
+# Discretize the variable time_since_last_donation in 10 bins
+basetable["bins_recency"] = pd.qcut(basetable["time_since_last_donation"],10)
+
+# Print the group sizes of the discretized variable
+print(basetable.groupby("bins_recency").size())
+
+
+>>>>Sample >>> only columns with cd
+
+# Print the columns in the original basetable
+print(basetable.columns)
+
+# Get all the variable names except "target"
+variables = list(basetable.loc[:, basetable.columns != 'Target'])
+variables.remove("target")
+
+# Loop through all the variables and discretize in 10 bins if there are more than 5 different values
+for variable in variables:
+    if len(basetable.groupby(variable))>5:
+        new_variable = "disc_" + variable
+        basetable[new_variable] = pd.qcut(basetable[variable], 10)
+        
+# Print the columns in the new basetable
+print(basetable.columns)
+
+output:
+
+Index([
+'target', 
+'gender_F', 
+'gender_M', 
+'income_average', 
+'income_low',
+'income_high', 
+'country_USA', 
+'country_India', 
+'country_UK', 
+'age',
+      
+'time_since_last_gift', 
+'time_since_first_gift', 
+'max_gift', 
+'min_gift',
+'mean_gift', 
+'median_gift', 
+'disc_age', 
+'disc_time_since_last_gift',
+'disc_time_since_first_gift', 
+'disc_max_gift', 
+'disc_min_gift',
+'disc_mean_gift', 
+'disc_median_gift'
+
+
+>>>> sample >>> discretizing using cut
+
+# Discretize the variable 
+basetable["disc_number_gift"] = pd.cut(basetable["number_gift"],[0,5.5,10,20])
+
+# Count the number of observations per group
+print(basetable.groupby("disc_number_gift").size())
+
+Incidence is the mean of the group
+Size is the population of the group
+
+
+def create_pig_table(df, target, variable):
+	groups= df[[target,variable]].groupby(variable)
+	pig_table=groups[target].agg({'Incidence': np.mean, 'Size': np.size)).reset_index()
+	return pig_table
+
+print(create_pig_table(basetable,"target","country")
+
+>>>>>>>> Create graph tables and store them in a dictionary one by one
+
+variables=["country","gender","disc_mean_gift","age"]
+
+pig_tables={}
+
+for variable in variables:
+	pig_table=create_pig_table(basetable,"target",variable)
+	pig_tables[variable]=pig_table
+
+
+>>>> sample >>> calculating incidence
+
+#incidence show the average target value for each group
+
+# Select the income and target columns
+basetable_income = basetable[["income","target"]]
+
+# Group basetable_income by income
+groups = basetable_income.groupby("income")
+
+# Calculate the target incidence and print the result
+incidence = groups["target"].agg({"Incidence" : np.mean}).reset_index()
+print(incidence)
+
+>>>> sample >>> creating a pig table
+
+# Function that creates predictor insight graph table
+def create_pig_table(basetable, target, variable):
+  
+    # Create groups for each variable
+    groups = basetable[[target,variable]].groupby(variable)
+    
+    # Calculate size and target incidence for each group
+    pig_table = groups[target].agg({'Incidence' : np.mean, 'Size' : np.size}).reset_index()
+    
+    # Return the predictor insight graph table
+    return pig_table
+
+# Calculate the predictor insight graph table for the variable gender
+pig_table_gender = create_pig_table(basetable, "target", "gender")
+
+# Print the result
+print(pig_table_gender)
+
+
+>>>>>sample >>> automating discretization
+
+# Create the list of variables for our predictor insight graph tables
+variables = ["income","gender","disc_mean_gift","disc_time_since_last_gift"]
+
+# Create an empty dictionary
+pig_tables = {}
+
+# Loop through the variables
+for variable in variables:
+  
+    # Create a predictor insight graph table
+    pig_table = create_pig_table(basetable, "target", variable)
+    
+    # Add the table to the dictionary
+    pig_tables[variable] = pig_table
+
+# Print the predictor insight graph table of the variable "disc_time_since_last_gift"
+print(pig_tables["disc_time_since_last_gift"])
+
+
+>>>>>>>>>>>>>>>>>>>Plotting
+
+pig_table["Incidence"].plot()
+
+#show the group names
+plt.xticks(np.arange(len(pig_table)),
+	pig_table["income"])
+
+#center the group names
+width=0.5
+plt.xlim(-width,len(pig_table)-width)
+
+plt.ylabel("Incidence",rotation=0,
+rotation_mode="anchor",
+ha="right")
+plt.xlabel("Income")
+plt.show()
+
+
+plt.ylabel("Size", rotation=0, rotation_mode="anchor", ha="right")
+
+pig_table["Incidence"].plt(secondary_y=True)
+
+pig_table["Size"].plot(kind="bar", width=0.5,
+color="lightgrey", edgecolor="none")
+
+
+>>>>>>>>Sample >>>> plotting the incidence only
+
+# The function to plot a predictor insight graph.
+def plot_incidence(pig_table, variable):
+    
+    # Plot the incidence line
+    pig_table["Incidence"].plot()
+    
+    # Formatting the predictor insight graph
+    plt.xticks(np.arange(len(pig_table)), pig_table[variable])
+    plt.xlim([-0.5, len(pig_table) - 0.5])
+    plt.ylim([0, max(pig_table["Incidence"]*2)])
+    plt.ylabel("Incidence", rotation=0, rotation_mode="anchor", ha="right")
+    plt.xlabel(variable)
+    
+    # Show the graph
+    plt.show()
+
+# Apply the function for the variable "country".
+plot_incidence(pig_table, "country")
+
+
+>>>Sample >>> plot the incidence trend and size
+
+# The function to plot a predictor insight graph
+def plot_pig(pig_table, variable):
+    
+    # Plot formatting
+    plt.ylabel("Size", rotation=0, rotation_mode="anchor", ha="right")
+    
+    # Plot the bars with sizes 
+    pig_table["Size"].plot(kind="bar", width=0.5, color="lightgray", edgecolor="none") 
+    
+    # Plot the incidence line on secondary axis
+    pig_table["Incidence"].plot(secondary_y=True)
+    
+    # Plot formatting
+    plt.xticks(np.arange(len(pig_table)), pig_table[variable])
+    plt.xlim([-0.5, len(pig_table) - 0.5])
+    plt.ylabel("Incidence", rotation=0, rotation_mode="anchor", ha="left")
+    
+    # Show the graph
+    plt.show()
+
+plot_pig(pig_table, "country")
+
+
+>>>>> Sample >>>> putting it all together
+
+# Variables you want to make predictor insight graph tables for
+variables = ["income","gender","disc_mean_gift","disc_time_since_last_gift"]
+
+# Loop through the variables
+for variable in variables: 
+    
+    # Create the predictor insight graph table
+    pig_table = create_pig_table(basetable, "target", variable)
+    
+    # Plot the predictor insight graph
+    plot_pig(pig_table, variable)
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+

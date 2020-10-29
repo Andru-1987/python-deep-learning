@@ -1,0 +1,921 @@
+A predictive model can be used to predict and event
+
+basetable
+1. population
+2. candidate predictors
+3. target (0 or 1)
+
+draw a time line
+
+
+target period (50 euros in the next three months)
+
+
+start_target = datetime(year=2018, month=5, day=1)
+end_target = datetime(year=2018, month=8, day=1)
+
+gifts_target=gifts[(gifts["date"]>= start_target) & gifts["date"]<end_target)]
+
+
+Donation Id
+donor id
+donation date
+donation amount.group
+
+donations for 2016 and 2017
+
+>>>>Sample  >>> Filter by start date
+
+# Start of the target is January 1st 2017
+start_target = datetime(year=2017, month=1, day=1)
+
+print(gifts.columns)
+# Select gifts made before start_target
+gifts_before_2017 = gifts[gifts['date'] < start_target]
+
+# Print the number of donations in gifts_before_2017
+print(len(gifts_before_2017))
+
+
+There are two columns in the pandas dataframe basetable: "amount_2017" is the total amount of donations in 2017, and "target" is 1 if this amount is larger than 30 and 0 else.
+
+
+>>>>>Sample >>>> build the basetable
+
+# Select the relevant predictors and the target
+X = basetable[["amount_2017"]]
+y = basetable[["target"]]
+
+# Build the logistic regression model
+logreg = linear_model.LogisticRegression()
+logreg.fit(X, y)
+
+# Make predictions for X
+predictions = logreg.predict_proba(X)[:,1]
+
+# Calculate and print the AUC value
+auc = roc_auc_score(y, predictions)
+print(round(auc, 2))
+
+>>>>>>>>>>>>>>>Population requirements
+
+the population should be eligible for being a target
+* address available
+* privacy settings
+
+
+Age, Gender, previous gifts, and donated(target)
+
+
+get donation counts for the previous year
+
+
+>>>>>>>using set
+
+donations_2016=gifts[gifts["date].dt.year==2016]
+donors_include=set(donations_2016["id"])
+
+print(donors_include)
+
+
+next
+
+
+donations_2017=gifts[(gifts["date].dt.year==2017)
+& (gifts["date"].dt.month<5)]
+dono
+donors_include=set(donations_2017["id"])
+
+population= donors_include.difference(donors_exclude)
+
+the population include a set of donors that made a donation in 2016, but not between may 1 2017
+
+
+>>>>>sample  donors between 2013 and 2018 that made a donation but did not make a donation after 2017 
+
+# Gifts made in 2013 or later
+gifts_include = gifts[gifts["date"].dt.year >= 2013]
+
+# Gifts made in 2017 or later
+gifts_exclude = gifts[gifts["date"].dt.year >= 2017]
+
+# Set with ids in gifts_include
+donors_include = set(gifts_include["id"])
+
+# Set with ids in gifts_exclude
+donors_exclude = set(gifts_exclude["id"])
+
+# Population
+population = donors_include.difference(donors_exclude)
+print(len(population))
+
+
+>>>>> Sample  >>> filter a population
+
+# Create a dataframe donors_population
+donors_population = donors[(donors["address"] == 1) & (donors["letter_allowed"] == 1)]
+
+# Create a list of donor IDs
+population_list = list(donors_population["donor_id"])
+
+# Select unique donors in population_list
+population = set(population_list)
+print(len(population))
+
+
+>>>>>>>>>>>>>>>>>Add a target to the basetable
+
+1. if the conditions of the event occur than the target is 1 otherwise it is 0
+
+2.  The target should be based on a previous time line
+a. aug 2017 to sept 2017
+b. check if the donor donated
+
+unsubscribed_2017[:5]
+a. donor_id that unsubscribed in 2017
+
+basetable["target"] = pd.Series([1 if donor_id in unsubscribe_2017 else 0 for donor_id in basetable["donor_id"]])
+
+
+>>>>filter donation in 2017
+
+start_target=datetime(year=2017, month=1, day=1)
+end_target=datetime(year=2018, month=1, day=1)
+
+
+gifts_target=gifts(gifts["date"]>=start_target)
+& (gifts["date"]<end_target)]
+
+
+gifts_target_byid=gifts_target.groupby("id")["amount"].sum().reset_index()
+
+mask=gifts_target_byid["amount"]>500
+
+targets=list(gifts_target_byid["id"][mask])
+
+basetable["target"] = pd.Series([1 if donor_id in targets else 0 for donor_id in basetable["donor_id"]])
+
+>>>>  sample >>>> create target and calculate incidence
+
+
+basetable = pd.DataFrame(population, columns=["donor_id"])
+
+# Add target to the basetable
+basetable["target"] = pd.Series([1 if donor_id in attend_event else 0 for donor_id in basetable["donor_id"]])
+
+# Calculate and print the target incidence
+print(round(basetable["target"].sum() / len(basetable), 2))
+
+
+>>>> sample >>> create target by filter and calculate incidence
+
+print(basetable)
+print(gifts_201701)
+# Sum of donations for each donor in gifts_201701
+gifts_summed = gifts_201701.groupby("id")["amount"].sum().reset_index()
+
+# List with targets
+targets = list(gifts_summed["id"][gifts_summed["amount"] > 50])
+
+# Add targets to the basetable
+basetable["target"] = pd.Series([1 if donor_id in targets else 0 for donor_id in basetable["donor_id"]])
+
+# Calculate and print the target incidence
+print(round(basetable["target"].sum() / len(basetable), 2))
+
+
+>>>>Predictive varaibles
+
+demographics: 
+age, gender, living place,
+spending behavior
+watching behavior
+product usage
+surfing behavior
+payment information
+
+variables need to be compliant with the time line
+
+>>>>lifetime date
+
+where 4/1/2018 is the beginning of the target period
+
+reference_date = datetime.date(2018,4,1)
+basetable["lifetime"]=reference_date - basetable["member_since"]
+print(basetable.head())
+
+
+>>>>>Contact channel
+
+donor_id
+start_valid_date
+end_valid_date
+contact_channel
+
+reference_date=datetime.date(2018,4,1)
+contact_change_reference_date=
+living_places[
+(contact_channel['start_valid_date']<=reference_date)
+&
+(living_places["end_valid_date"]>reference_date)
+]
+
+
+>>>>>merge
+
+basetable=
+	pd.merge(
+	basetable,
+	living_places_reference_date[["donor_ID","contact_channel"]],
+	on="donor_ID"
+)
+
+print(basetable.head())
+
+>>>>> Sample  >>>  calculating age
+
+predictive variables (may 1, 2017) target period (jul 1, 2017)
+# Reference date
+
+reference_date = datetime.date(2017, 5, 1)
+
+# Add age to the basetable
+basetable["age"] = (pd.Series([calculate_age(date_of_birth, reference_date)
+                              for date_of_birth in basetable["date_of_birth"]]))
+                              
+print(basetable["age"])                              
+
+# Calculate mean age
+print(round(basetable["age"].mean()))
+
+
+>>>>Sample >>> merge
+
+donor_id segment
+5491     18728  silver
+276        729    gold
+8139     27922  silver
+1449     70087  silver
+7180     24611    gold
+2935     75278    gold
+1732      5489  silver
+1344     69718  bronze
+3237     43454  bronze
+2661     74276  silver
+9329     32171  bronze
+3873     78448    gold
+7470     58376  bronze
+6401     87520    gold
+
+
+
+basetable = pd.merge(basetable,segments, on =["donor_id"], how="left")
+
+# Count the number of donors in each segment
+basetable.groupby("segment").size()
+
+# Count the number of donors with no segment assigned
+print(basetable["segment"].isna().sum())
+
+
+
+>>>>>sample add living places
+
+The living place must have a start date less than the reference date and an end date greater than the reference date.
+
+
+# Reference date
+reference_date = datetime.date(2017, 5, 1)
+
+# Select living place reference date
+living_places_reference_date = living_places[(living_places["start_date"] <= reference_date) & 
+                                            (living_places["end_date"] > reference_date)]
+
+print(living_places_reference_date)
+# Add living place to the basetable
+basetable = pd.merge(basetable, living_places_reference_date[["donor_ID", "living_place"]], on="donor_ID")
+
+
+>>>>>>>>>>>>>>>>>>Aggregation >>>>>>>>>>>
+
+id
+date
+amount
+
+
+start_date=datetime.date(2016,1,1)
+end_date=datetime.date(2017,1,1)
+
+gifts_2016=gifts(gifts["date"]>=start_target)
+& (gifts["date"]<end_target)]
+
+gifts_2016_bydonor=gifts.groupby(["id"])["amount"].sum().reset_index()
+
+gifts_2016_bydonor=["donor_ID","sum_2016"]
+
+basetable = pd.merge(basetable, gifts_2016_bydonor, how="left", on ="donor_ID")
+print(basetable.head())
+
+
+and frequency
+
+["amount"].sum().reset_index()
+
+gifts_2016_bydonor=["donor_ID","count_2016"]
+
+gifts_2016_bydonor=gifts[gifts["amount"]>0]
+.groupby(["id"])["amount"].count().reset_index()
+
+basetable = pd.merge(basetable, gifts_2016_bydonor, how="left", on ="donor_ID")
+print(basetable.head())
+
+
+>>>>Sample  >>>> aggregate >> max amount
+
+# Start and end date of the aggregation period
+start_date = datetime.date(2017,1,1)
+end_date = datetime.date(2017,5, 1)
+
+# Select gifts made in 2017
+gifts_2017 = gifts[(gifts["date"] >= start_date) & (gifts["date"] < end_date)]
+
+print(gifts.columns)
+# Maximum gift per donor in 2017
+gifts_2017_bydonor = gifts_2017.groupby(["id"])["amount"].max().reset_index()
+gifts_2017_bydonor.columns = ["donor_ID", "max_amount"]
+
+# Add maximum amount to the basetable
+basetable = pd.merge(basetable, gifts_2017_bydonor)
+print(basetable)
+
+>>>>>>Sample >>>> aggregate >>> recency
+
+look for the last day that a donor contributed then subtract it from the reference date yielding the elapsed days since contributing.
+
+# Reference date to calculate the recency
+reference_date = datetime.date(2017, 5, 1)
+
+# Select gifts made before the reference date
+gifts_before_reference = gifts[(gifts["date"] < reference_date)]
+
+# Latest gift per donor in 2017
+last_gift = gifts_before_reference.groupby(["id"])["date"].max().reset_index()
+print(last_gift)
+last_gift["recency"] = reference_date - last_gift["date"]   
+
+# Add recency to the basetable
+basetable = pd.merge(basetable, last_gift[["id", "recency"]], how="left")
+
+print(basetable)
+
+
+>>>>>>>>>>>>>>>>>>>>>>Adding evolutions>>>>>>>>
+
+will a donor donate more than 5 times in the next year?
+
+look at intervals of data
+
+1/1/2015, 1/1/2016, 1/1/2017
+
+see if the trend is up or even for likely predictions
+
+start_2017 = datetime.date(2017, 1, 1)
+start_2016 = datetime.date(2016, 1, 1)
+start_2015 = datetime.date(2015, 1, 1)
+
+
+gifts_2016=gifts[(gifts["date"] <start_2017) & (gifts["date"] >=start_2016)]
+
+
+gifts_2015_2016=gifts[(gifts["date"] <start_2017) & (gifts["date"] >=start_2015)]
+
+
+number_gifts_2016=gifts_2016.groupby("id")["amount"].size().reset_index()
+
+number_gifts_2016.columns=["donor_ID","number_gifts_2016"]
+
+number_gifts_2015_2016.columns=["donor_ID","number_gifts_2015_and_2016"]
+
+number_gifts_2015_2016=gifts_2015_2016.groupby("id")["amount"].size().reset_index()
+
+
+basetable = pd.merge(basetable, gifts_2016_bydonor, how="left", on ="donor_ID")
+
+
+basetable["ratio_2015_to_2015_and_2016"]=
+basetable["number_gifts_2016"]/
+basetable["number_gifts_2015_and_2016"]
+
+>>>>>>Sample >>>> calculate evolutions
+
+
+# Average gift last month for each donor
+average_gift_last_month = gifts_last_month.groupby("id")["amount"].mean().reset_index()
+
+print(average_gift_last_month)
+
+average_gift_last_month.columns = ["donor_ID", "mean_gift_last_month"]
+
+# Average gift last year for each donor
+average_gift_last_year = gifts_last_year.groupby("id")["amount"].mean().reset_index()
+
+average_gift_last_year.columns = ["donor_ID", "mean_gift_last_year"]
+
+# Add average gift last month and year to basetable
+basetable = pd.merge(basetable, average_gift_last_month, on="donor_ID", how="left")
+basetable = pd.merge(basetable, average_gift_last_year, on="donor_ID", how="left")
+
+# Calculate ratio of last month's and last year's average
+basetable["ratio_month_year"] = basetable["mean_gift_last_month"] / basetable["mean_gift_last_year"]
+print(basetable.head())
+
+
+>>>>>>>sample >>>> calculate recency
+
+# Number of gifts in 2016 and 2017 for each donor
+gifts_2016_bydonor = gifts_2016.groupby("id").size().reset_index()
+gifts_2016_bydonor.columns = ["donor_ID", "donations_2016"]
+gifts_2017_bydonor = gifts_2017.groupby("id").size().reset_index()
+gifts_2017_bydonor.columns = ["donor_ID", "donations_2017"]
+
+# Add number of gifts in 2016 and 2017 to the basetable
+basetable = pd.merge(basetable, gifts_2016_bydonor, on="donor_ID", how="left")
+basetable = pd.merge(basetable, gifts_2017_bydonor, on="donor_ID", how="left")
+
+# Calculate the number of gifts in 2017 minus number of gifts in 2016
+basetable.fillna(0)
+basetable["gifts_2017_min_2016"] = basetable["donations_2017"] - basetable["donations_2016"]
+print(basetable.head())
+
+
+>>>>>>>>>>Predicting using logistic regression and evolutions
+
+
+from sklearn import linear_model
+
+variables=["gender","age","donations_last_year","ratio_month_year"]
+
+X=basetable[variables]
+y=basetable[["target"]]
+
+logreg=linear_model.LogisticRegression()
+logreg.fit(X,y)
+
+predictions=logreg.predict_proba(X)[:,1]
+
+from sklearn.metrics import roc_auc_score
+
+auc=roc_auc_score(y,predictions)
+print(round(auc,2))
+
+
+>>>>>> predictor insight graph
+
+
+basetable["ratio_month_year_disc"]=pd.qcut(basetable["ratio_month_year"],5)
+
+pig_table=create_pig_table(basetable,"target","ratio_month_year_disc")
+
+plot_pig(pig_table,"ratio_month_year_disc")
+
+
+>>>>Sample >>> evolutions
+variables_evolution=
+['gender_F', 'age', 'donations_2017_min_2016']
+
+print(variables_evolution)
+# Select the evolution variables and fit the model
+X_evolution = basetable[variables_evolution]
+logreg.fit(X_evolution, y)
+
+# Make predictions and calculate the AUC
+predictions_evolution = logreg.predict_proba(X_evolution)[:,1]
+auc_evolution = roc_auc_score(y, predictions_evolution)
+
+# Print the respective AUC values
+print(round(auc_regular, 2))
+print(round(auc_evolution, 2))
+
+output 
+.5
+.6
+
+>>>>Sample >>> plot discretized contineous variables
+
+# Discretize the variable in 5 bins and add to the basetable
+basetable["donations_2017_min_2016_disc"] = pd.qcut(basetable["donations_2017_min_2016"], 5)
+
+# Construct the predictor insight graph table
+pig_table = create_pig_table(basetable, "target", "donations_2017_min_2016_disc")
+
+# Plot the predictor insight graph
+plot_pig(pig_table, "donations_2017_min_2016_disc")
+
+
+>>>>>>>>>>>>>>Creating dummies
+
+logit (a1x1 + a2x2 + anxn + b
+
+multicollinearity means on of the dummy variables can be constructed from the other variable
+
+
+dummies_segment = pd.get_dummies(basetable["segment"], drop_first=True)
+
+basetable= pd.concat([basetable,dummies_segment],axis=1)
+del basetable["segment"]
+
+
+>>>>>>  Sample  >>> gender dummies >> concat new columns to basetable
+
+# Create the dummy variable
+dummies_gender = pd.get_dummies(basetable["gender"], drop_first=True)
+
+# Add the dummy variable to the basetable
+basetable = pd.concat([basetable, dummies_gender], axis=1)
+
+# Delete the original variable from the basetable
+del basetable["gender"]
+print(basetable.head())
+
+
+>>>>>Sample >>> dummies country
+
+# Create the dummy variable
+dummies_country = pd.get_dummies(basetable["country"], drop_first=True)
+
+# Add the dummy variable to the basetable
+basetable = pd.concat([basetable, dummies_country], axis=1)
+
+# Delete the original variable from the basetable
+del basetable["country"]
+print(basetable.head())
+
+
+>>>>>>>>>>>>>>Missing values
+
+1. replace missing values with the aggregate of the remaining values
+
+2. if the max varies greatly from the median than it is better to use the median value
+
+3. replace with a fixed value
+
+replacement=0
+
+basetable["donations_last_year"]=
+basetable["donations_last_year"].fillna(replacement)
+
+
+replacement=basetable["age"].mean()
+
+asetable["donations_last_year"]=
+basetable["donations_last_year"].fillna(replacement)
+
+
+replacement=basetable["age"].median()
+
+asetable["donations_last_year"]=
+basetable["donations_last_year"].fillna(replacement)
+
+
+>>>missing email
+
+basetable["no_email"]=pd.Series([0 if email==email else 1 for email in basetable["email"]])
+
+
+>>>>Sample  >>> no donations >>> calculate percentage
+
+
+# Calculate percentage of missing values
+print(round(number_na / len(basetable), 2))Create dummy indicating missing values
+basetable["no_donations"] = pd.Series([1 if b else 0 for b in basetable["total_donations"].isna()])
+
+# Calculate number of missing values
+number_na = sum(basetable["no_donations"] == 1)
+
+
+>>>> sample >>> replace na with median
+
+# Calculate the median of age
+median_age = basetable["age"].median()
+print(median_age)
+
+# Replace missing values by the median
+basetable["age"] = basetable["age"].fillna(median_age)
+
+# Calculate the median of age after replacement
+median_age = basetable["age"].median()
+print(median_age)
+
+>>>>sample >>> total donations 0 for na
+
+replacement = 0
+# Replace missing values by the appropriate value
+basetable["total_donations"] = basetable["total_donations"].fillna(replacement)
+
+
+>>>>>>>>>>handling outliers
+
+winsorization concepts
+
+lower 5% and upper 5% from the mean
+
+import scipy.stats.mstats import winsorize
+
+basetable["variable_winsorized"]=
+winsorize(basetable["variable"],
+limits=[0.05,0.01])
+
+
+>>>>>standard deviation method
+
+mean -3 standard deviation 
+mean +3 standard deviation
+
+
+mean=basetable["age"].mean()
+sd_age = basetable["age"].std()
+
+lower_limit= mean_age - 3*sd_age
+upper_limit = mean_age +3*sd_age
+
+basetable["age_no_outliers"]=pd.Series(
+	[min(max(a, lower_limt),upper_limit)
+for a in basetable["age"]])
+
+
+>>>>>sample >>>> using winsorize to handle outliers
+
+from scipy.stats.mstats import winsorize
+
+# Check minimum sum of donations
+print(basetable["sum_donations"].min())
+print(basetable["sum_donations"].max())
+
+# Fill out the lower limit
+lower_limit = 0
+
+# Winsorize the variable sum_donations
+basetable["sum_donations_winsorized"] = winsorize(basetable["sum_donations"], limits=[lower_limit, 0.05])
+
+# Check maximum sum of donations after winsorization
+print(basetable["sum_donations_winsorized"].max())
+
+
+
+>>>>>sample>>>> replace outliers with 3*std
+
+# Show the maximum age 
+print(basetable["age"].max())
+
+# Calculate mean and standard deviation of age
+mean_age = basetable["age"].mean()
+std_age = basetable["age"].std()
+
+# Calculate the lower and upper limits
+lower_limit = mean_age - 3 * std_age
+upper_limit = mean_age + 3 * std_age
+
+# Add a variable age_no_outliers to the basetable with outliers replaced
+basetable["age_mod"] = (pd.Series([min(max(a, lower_limit), upper_limit) 
+                             for a in basetable["age"]]))
+print(basetable["age_mod"].max())
+
+
+>>>>>>>>>>>>>>>Transformations
+
+
+
+finding significant differences between candidates
+
+log transformations
+
+differences between smaller amounts will have a large log number or more significance
+
+
+import numpy as np
+
+basetable["log_variable"]=np.log(basetable["variable"])
+
+
+>>>> interactions
+
+
+basetable["number_donations_int_recency"]=
+basetable["number_donations"] *
+basetable["recency"]
+
+
+add interactions with variables with high predictive power on their own.
+
+
+>>>>>> sample  >>> np.log donations
+# Add the log transformation of the variable "donations"
+basetable["donations_log"] = np.log(basetable["donations"])
+
+# Add the square root transformation of the variable "donations"
+basetable["donations_sqrt"] = np.sqrt(basetable["donations"])
+
+# Compare the transformations
+print(basetable["donations_log"],basetable["donations_sqrt"])
+
+
+>>>>> sample >>> auc the interactions of age * country spain and france
+
+# Calculate AUC using age only
+print(auc(["age"], basetable))
+
+# Calculate AUC using country_Spain only
+print(auc(["country_Spain"], basetable))
+
+# Calculate AUC using age and country_Spain
+print(auc(["age", "country_Spain"], basetable))
+
+# Add interactions country_Spain x age and country_France x age
+basetable["spain_age"] = basetable["age"] * basetable["country_Spain"]
+basetable["france_age"] = basetable["age"] * basetable["country_France"]
+
+# Calculate AUC using age, country_Spain and interactions
+print(auc(["age", "country_Spain", "spain_age", "france_age"], basetable))
+
+
+>>>>>>>>>>Seasonal effects
+1. donations are higher during the holidays
+
+january 1 2019
+
+
+check for seasonality
+
+gifts.groupby("month")["amount"].mean()
+gifts.groupby("month").size()
+
+
+>>>>Sample  >>> group by mean, number, median of the donation
+
+# Calculate the mean amount donated per month
+mean_per_month = gifts.groupby("month")["amount"].mean().reset_index()
+print(mean_per_month)
+
+# Calculate the number of donations per month 
+number_per_month = gifts.groupby("month").size().reset_index()
+print(number_per_month)
+
+# Calculate the median amount donated per month 
+median_per_month = gifts.groupby("month")["amount"].median().reset_index()
+print(median_per_month)
+
+
+# AUC of model in July:
+predictions = logreg.predict_proba(test_july[["age", "max_amount"]])[:,1]
+auc =roc_auc_score(test_july["target"], predictions)
+print(auc)
+
+.55
+
+# AUC of model in September:
+predictions = logreg.predict_proba(test_september[["age", "max_amount"]])[:,1]
+auc = roc_auc_score(test_september["target"], predictions)
+print(auc)
+
+.54
+
+# AUC of model in December:
+predictions = logreg.predict_proba(test_december[["age", "max_amount"]])[:,1]
+auc = roc_auc_score(test_december["target"], predictions)
+print(auc)
+
+.529
+
+>>>>>>>>>>>>>>>>>Using multiple snapshots
+
+not enough data
+
+use multiple snaps
+
+1. april 1st 2019 - may 1 2019
+2. april 1st 2018 - may 1 2018 (1000 donors)
+3. mar 1st 2018 - apr 1 2018 (1000 donors)
+4. feb 1st 2018 - mar 1 2018 (1000 donors)
+
+basetable = basetable_april2018.append(basetable_march2018)
+
+>>>>> Sample >>> donations for each donor >>> calculate incidence
+
+# Sum of donations for each donor
+gifts_summed_january_2017 = gifts_january_2017.groupby("donor_id")["amount"].sum().reset_index()
+gifts_summed_january_2018 = gifts_january_2018.groupby("donor_id")["amount"].sum().reset_index()
+
+# List with targets in January 2017
+targets_january_2017 = list(gifts_summed_january_2017["donor_id"][gifts_summed_january_2017["amount"] >= 500])
+targets_january_2018 = list(gifts_summed_january_2018["donor_id"][gifts_summed_january_2018["amount"] >= 500])
+
+# Add targets to the basetables
+basetable_january_2017["target"] = pd.Series([1 if donor_id in targets_january_2017 else 0 for donor_id in basetable_january_2017["donor_id"]])
+basetable_january_2018["target"] = pd.Series([1 if donor_id in targets_january_2018 else 0 for donor_id in basetable_january_2018["donor_id"]])
+
+# Target incidences
+print(round(sum(basetable_january_2017["target"]) / len(basetable_january_2017), 2))
+print(round(sum(basetable_january_2018["target"]) / len(basetable_january_2018), 2))
+
+
+>>>>>>Sample   >>> find max donations in 2016 adn 217
+
+# Maximum of donations for each donor in december 2016
+gifts_max_december_2016 = gifts_december_2016.groupby("donor_id")["amount"].max().reset_index()
+gifts_max_december_2016.columns = ["donor_id", "max_amount"]
+
+# Maximum of donations for each donor in december 2017
+gifts_max_december_2017 = gifts_december_2017.groupby("donor_id")["amount"].max().reset_index()
+gifts_max_december_2017.columns = ["donor_id", "max_amount"]
+
+
+>>>>>sample >>>> two snapshots
+
+# Maximum of donations for each donor in december 2016
+gifts_max_december_2016 = gifts_december_2016.groupby("donor_id")["amount"].max().reset_index()
+gifts_max_december_2016.columns = ["donor_id", "max_amount"]
+
+# Maximum of donations for each donor in december 2017
+gifts_max_december_2017 = gifts_december_2017.groupby("donor_id")["amount"].max().reset_index()
+gifts_max_december_2017.columns = ["donor_id", "max_amount"]
+
+
+# Add max_amount to the basetables
+basetable_january_2017 = pd.merge(basetable_january_2017, gifts_max_december_2016, on="donor_id", how="left")
+basetable_january_2018 = pd.merge(basetable_january_2018, gifts_max_december_2017, on="donor_id", how="left")
+
+# Show the basetables
+print(basetable_january_2017.head())
+print(basetable_january_2018.head())
+
+
+>>>>>>sample >>> append snapshots
+
+# Add basetable_january_2017 to basetable_january_2016
+basetable = basetable_january_2016.append(basetable_january_2017)
+
+# Add basetable_january_2018 to basetable
+basetable = basetable.append(basetable_january_2018)
+
+# Number of observations in the final basetable
+print(len(basetable))
+
+
+>>>>>>>>>>>>>>>>Time gap
+
+who will donate 50 euros
+
+timegap
+1. gather data
+2. run the model
+3. prepare the campaign
+
+mar 1 2019 to apr 1 2019
+
+timegap should also apply to the previous year
+
+mean donations last year, should be feb 2018 and not mar 2018 the time gap
+
+target period is apr 1 2018 through may 1 2018
+
+
+>>>>>>sample
+
+time gap is May 2018
+
+# Start and end date of last month
+start_date = datetime.date(2018, 4, 1)
+end_date = datetime.date(2018,5,1)
+
+# Gifts made last month
+gifts_last_month = gifts[(gifts["date"] >= start_date) & (gifts["date"] < end_date)]
+
+# Mean gift made last month
+gifts_last_month_mean = gifts_last_month.groupby("donor_id")["amount"].mean().reset_index()
+gifts_last_month_mean.columns = ["donor_id", "mean_donation_last_month"]
+
+# Add mean_donation_last_month to the basetable
+basetable = pd.merge(basetable, gifts_last_month_mean, on="donor_id", how="left")
+print(basetable.head(10))
+
+>>>>>> sample >>> reference data 2018-5-1
+
+calculate the age as of the reference date
+
+# Reference date
+reference_date = datetime.date(2018, 5, 1)
+
+# Add age to the basetable
+basetable["age"] = (pd.Series([calculate_age(date_of_birth, reference_date)
+                              for date_of_birth in basetable["date_of_birth"]]))
+
+# Calculate mean age
+print(round(basetable["age"].mean()))
+
+
+
+
+
+
+
+

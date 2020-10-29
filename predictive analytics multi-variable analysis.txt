@@ -187,25 +187,62 @@ AUC is high as possible
 Least amount of variables to avoid overfitting
 
 
+>>>>Sample  >>>> compare two variables for auc
+
+# Load the partitioning module
+from sklearn.cross_validation import train_test_split
+
+# Create dataframes with variables and target
+X = basetable.drop('target', 1)
+y = basetable["target"]
+
+# Carry out 70-30 partititioning with stratification
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = .3, stratify = y)
+
+# Create the final train and test basetables
+train = pd.concat([X_train, y_train], axis=1)
+test = pd.concat([X_test, y_test], axis=1)
+
+ # Apply the auc_train_test function
+auc_train, auc_test = auc_train_test(['age', 'gender_F'], ["target"], train, test)
+print(round(auc_train,2))
+print(round(auc_test,2))
 
 
+>>>>>Sample  >>>> evaluate multiple variables
 
+# Keep track of train and test AUC values
+auc_values_train = []
+auc_values_test = []
+variables_evaluate = []
 
+print (variables)
 
+# Iterate over the variables in variables
+for v in variables:
+  
+    # Add the variable
+    variables_evaluate.append(v)
+    
+    # Calculate the train and test AUC of this set of variables
+    auc_train, auc_test = auc_train_test(variables_evaluate, ["target"], train, test)
+    
+    # Append the values to the lists
+    auc_values_train.append(auc_train)
+    auc_values_test.append(auc_test)
+    
+# Make plot of the AUC values
+import matplotlib.pyplot as plt
+import numpy as np
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+x = np.array(range(0,len(auc_values_train)))
+y_train = np.array(auc_values_train)
+y_test = np.array(auc_values_test)
+plt.xticks(x, variables, rotation = 90)
+plt.plot(x,y_train)
+plt.plot(x,y_test)
+plt.ylim((0.6, 0.8))
+plt.show()
 
 
 
