@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added baby birthweight predictions
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Baby%20BirthWeight.ipynb
+
 * I added pct change for netflix and domino then feed it into a lstm for a future prediction
 
 *https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Netflix.ipynb
