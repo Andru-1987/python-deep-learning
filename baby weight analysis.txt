@@ -1,0 +1,143 @@
+Index(['caseid', 'outcome', 'birthwgt_lb1', 'birthwgt_oz1', 'prglngth', 'nbrnaliv', 'agecon', 'agepreg', 'hpagelb', 'wgt2013_2015'], dtype='object')
+
+pounds=nsfg["birthwgt_lbl"]
+
+ounces=nsfg["birthwgt_oz1"]
+
+pounds.value_counts().sort_index()
+
+#sort_index sorts the results by value
+
+98 refused
+99 don't know
+
+pounds.describe()
+
+pounds=pounds.replace([98,99],np.nan)
+pounds.mean()
+
+ounces.replace([98,99],np.nan,inplace=True)
+
+birth_weight = pounds+ (ounces/16.0)
+birth_weight.describe
+
+
+>>>> Sample >> replace a value with nan for a column
+
+# Replace the value 8 with NaN
+nsfg['nbrnaliv'].replace(8, np.nan, inplace=True)
+
+# Print the values and their frequencies
+print(nsfg['nbrnaliv'].value_counts())
+
+>>>> sample >>> change values
+
+agecon = nsfg["agecon"]/100
+agepreg = nsfg["agepreg"]/100
+
+# Compute the difference
+preg_length = agepreg-agecon
+
+print(preg_length)
+
+print(preg_length.describe())
+
+
+>>>>>> dropna
+
+pounds=df["bwt_lbs"]
+
+plt.hist(pounds.dropna(),bins=30)
+plt.ylabel("baby weight")
+plt.show()
+
+
+df["PreTerm"]=df["gestation_wks"].apply(lambda x: True if x<37 else False)
+
+preterm = df["PreTerm"]
+
+print("Count of PreTerm babies ", preterm.sum())
+print("Percent of PreTerm babies ", df["PreTerm"].mean())
+
+preterm_weight=pounds[preterm].mean()
+print("Average PreTerm baby weight ", preterm_weight)
+
+>>>>> Filtering
+
+& is the and operation
+| is the or operator
+
+birth_weight[A&B]
+birth_weight[A|B]
+
+
+function
+resample_rows_weighted
+
+Some groups are oversampled
+
+
+>>>>>Sample >>> histogram
+
+# Plot the histogram
+
+plt.hist(agecon,bins=20,histtype='step')
+# Label the axes
+plt.xlabel('Age at conception')
+plt.ylabel('Number of pregnancies')
+
+# Show the figure
+plt.show()
+
+>>>> Sample >>> mask by full term and get weight
+
+# Create a Boolean Series for full-term babies
+full_term = nsfg['prglngth']>=37
+
+print(birth_weight)
+# Select the weights of full-term babies
+full_term_weight = birth_weight[full_term]
+
+# Compute the mean weight of full-term babies
+print(full_term_weight.mean())
+
+>>>>>>Sample >>>>  single and multiple filters
+
+# Filter full-term babies
+full_term = nsfg['prglngth'] >= 37
+
+# Filter single births
+single = nsfg['nbrnaliv']==1
+
+# Compute birth weight for single full-term babies
+single_full_term_weight = birth_weight[single & full_term]
+print('Single full-term mean:', single_full_term_weight.mean())
+
+# Compute birth weight for multiple full-term babies
+mult_full_term_weight = birth_weight[~single & full_term]
+print('Multiple full-term mean:', mult_full_term_weight.mean())
+
+
+>>>>>>>>>>>>>>Sample >>>> probability mass functions
+
+GSS - General Social Survey
+
+asks questions about demographics, social, and political beliefs
+
+year
+sex
+age
+cohort
+race
+educ
+realinc
+wtssall
+
+
+>>>>>>>PMF  
+
+unique value in the set and how often it is used
+
+
+
+
