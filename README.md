@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added general social survey
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/General%20Social%20Survey.ipynb
+
 * I added baby birthweight predictions
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Logistic%20Regression%20Baby%20BirthWeight.ipynb
