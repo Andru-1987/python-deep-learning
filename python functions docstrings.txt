@@ -1,0 +1,254 @@
+anatomy of a docstring
+
+1. description of what the function does
+2. description of the arguments
+3. description of the return value
+4. description of errors raised
+5. optional extra notes
+
+Google style
+def function(arg_1, arg_2=42)
+""Description of what the function does.
+
+Args:
+	arg_1(str) : description of arg_1 that can break onto the next line if needed
+	arg_2(int, optional): write optional when an argument has a default value
+"""
+
+
+
+def the_answer():
+"""Return the answer
+
+returns:
+	int
+"""
+return 42
+
+print(the_answer.__doc__)
+
+import inspect
+print(inspect.getdoc(the_answer))
+
+
+>>>>Sample >> add a docstring
+
+# Add a docstring to count_letter()
+def count_letter(content, letter):
+  """Count the number of times `letter` appears in `content`."""
+  if (not isinstance(letter, str)) or len(letter) != 1:
+    raise ValueError('`letter` must be a single character string.')
+  return len([char for char in content if char == letter])
+
+>>>>>Sample >>> add a google string
+
+def count_letter(content, letter):
+  """Count the number of times `letter` appears in `content`.
+
+  # Add a Google style arguments section
+  Args:
+   content (str): The string to search.
+    letter (str): The letter to search for
+  # Add a returns section
+  Returns:
+    int
+ # Add a section detailing what errors might be raised
+  Raises:
+    ValueError: If `letter` is not a one-character string.
+  """
+  if (not isinstance(letter, str)) or len(letter) != 1:
+    raise ValueError('`letter` must be a single character string.')
+  return len([char for char in content if char == letter])
+
+
+>>>>Sample  >>> retrieving the doc string
+
+# Get the docstring with an attribute of count_letter()
+docstring = count_letter.__doc__
+
+border = '#' * 28
+print('{}\n{}\n{}'.format(border, docstring, border))
+
+
+>>>>>Sample >>> use google inspect to retrieve the doc string
+
+import inspect
+
+# Get the docstring with a function from the inspect module
+docstring = inspect.getdoc(count_letter)
+
+border = '#' * 28
+print('{}\n{}\n{}'.format(border, docstring, border))
+
+>>>Sample >>> using google inspect getdoc
+
+def build_tooltip(function):
+  """Create a tooltip for any function that shows the 
+  function's docstring.
+  
+  Args:
+    function (callable): The function we want a tooltip for.
+    
+  Returns:
+    str
+  """
+  # Use 'inspect' to get the docstring
+  docstring = inspect.getdoc(function)
+  border = '#' * 28
+  return '{}\n{}\n{}'.format(border, docstring, border)
+
+print(build_tooltip(count_letter))
+print(build_tooltip(range))
+print(build_tooltip(print))
+
+This IDE is going to be an incredibly delightful experience for your users now! Notice how the count_letter.__doc__ version of the docstring had strange whitespace at the beginning of all but the first line. That's because the docstring is indented to line up visually when reading the code. But when we want to print the docstring, removing those leading spaces with inspect.getdoc() will look much better.
+
+>>>>>>>>>>>>Dry and Do One Thing
+
+def load_and_plot
+"""" load a data set and plot the first two principale components
+
+Args:
+	path(str): The location of a csv file
+Returns:
+	tuple of ndarray: (features, labels)
+
+	data=pd.read_csv(path)
+	y=data['label'].values
+	x=data[col for col in train.columns if col!= 'label'].values
+
+#dimensional reduction
+
+	pca=PCA(n_components=2).fit_transform(X)
+	plt.scatter(pca[:,0], pca[:,1])
+	return X,y
+
+train_X, train_y = load_and_plot('train.csv')
+
+every function should have a single responsiblity
+
+def plot_data(X):
+""""Plot the first two principal components of a matrix
+
+Args:
+	X(numpy.ndarray): The data to plot
+"""
+	pca=PCA(n_components=2).fit_transform(X)
+	plt.scatter(pca[:,0], pca[:,1])
+
+The code has become more flexible
+The code is easier for other developers to understand
+Simplier to debug
+Easier to predict how the code will impact the larger code base
+
+
+>>>>>Sample   >>> functions to reduce code duplications
+
+def standardize(column):
+  """Standardize the values in a column.
+
+  Args:
+    column (pandas Series): The data to standardize.
+
+  Returns:
+    pandas Series: the values as z-scores
+  """
+  # Finish the function so that it returns the z-scores
+  z_score = (df[column] - df[column].mean()) / df[column].std()
+  return z_score
+
+# Use the standardize() function to calculate the z-scores
+df['y1_z'] = standardize('y1_gpa')
+df['y2_z'] = standardize('y2_gpa')
+df['y3_z'] = standardize('y3_gpa')
+df['y4_z'] = standardize('y4_gpa')
+
+>>>>>Sample >>> list function to calculate a mean
+
+def mean(values):
+  """Get the mean of a list of values
+
+  Args:
+    values (iterable of float): A list of numbers
+
+  Returns:
+    float
+  """
+  # Write the mean() function
+  mean = sum(values) / len(values)
+  return mean
+
+>>>>Sample  >>> list function to get the median
+
+def median(values):
+  """Get the median of a list of values
+
+  Args:
+    values (iterable of float): A list of numbers
+
+  Returns:
+    float
+  """
+  # Write the median() function
+  n = len(values)
+  if n%2==0:
+    median1 = values[n//2] 
+    median2 = values[n//2 - 1] 
+    median = (median1 + median2)/2
+  else:
+    median = values[n//2] 
+  return median
+
+print(median([1,2,3,4,5]))
+
+>>>>>>>>>>>>>>Pass by Assignment
+lists parameters are mutable
+integer parameters are immutable
+
+immutable: int, float, bool, string, bytes, tuple,
+frozenset, none
+
+mutable: list, dict, set, bytearray, objects, functions, almost everything else.
+
+def foo(X):
+	X[0]=99
+
+my_list=[1,2,3]
+foo(my_list)
+print(my_list)
+output:[99,2,3]
+
+def bar(x):
+	x=x+90
+
+my_var=3
+bar(my_var)
+print(my_var)
+
+output:3
+
+>>>>>>Sample  >>default to none
+
+# Use an immutable variable for the default argument 
+def better_add_column(values, df=None):
+  """Add a column of `values` to a DataFrame `df`.
+  The column will be named "col_<n>" where "n" is
+  the numerical index of the column.
+
+  Args:
+    values (iterable): The values of the new column
+    df (DataFrame, optional): The DataFrame to update.
+      If no DataFrame is passed, one is created by default.
+
+  Returns:
+    DataFrame
+  """
+  # Update the function to create a default DataFrame
+  if df is None:
+    df = pandas.DataFrame()
+  df['col_{}'.format(len(df.columns))] = values
+  return df
+  
+
+
+

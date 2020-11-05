@@ -1,0 +1,810 @@
+>>>>>>>PMF  
+
+unique value in the set and how often it is used
+
+
+>>>> Cumulative distribution functions
+
+cdf is the probability that your get a value <=x
+for a given value of x
+
+pmf is the probability that you get exactly x
+
+pmf of 1,2,2,3,5
+
+pmf(1)=1/5
+pmf(2)=2/5
+pmf(3)=1/5
+pmf(5)=1/5
+
+cdf is the cumulative sum of the probabilities of pmf
+
+cdf(1)=1/5
+cdf(2)=3/5
+cdf(3)=4/5
+cdf(5)=1
+
+cdf accumulates to 1
+
+
+cdf=Cdf(gss['age'])
+cdf.plot()
+plt.xlabel('age')
+plt.ylabel('cdf')
+plt.show()
+
+>>>>get the probability for q or get the q for a probability
+
+q=51
+p=cdf(q)
+print(p)
+
+p=.25
+q=cdf.inverse(p)
+print(q)
+
+
+>>>> sample >>> get the probability for age for 30
+
+# Select the age column
+age = gss['age']
+
+# Compute the CDF of age
+cdf_age = Cdf(age)
+
+# Calculate the CDF of 30
+print(cdf_age[30])
+
+
+>>>>>> sample >>> plotting the probabilitie of real income
+
+# Select realinc
+income = gss["realinc"]
+
+# Make the CDF
+cdf_income = Cdf(income)
+
+# Plot it
+cdf_income.plot()
+
+# Label the axes
+plt.xlabel('Income (1986 USD)')
+plt.ylabel('CDF')
+plt.show()
+
+
+
+Recall from the video that the interquartile range (IQR) is the difference between the 75th and 25th percentiles. It is a measure of variability that is robust in the presence of errors or extreme values
+
+
+>>> sample >>> what age represents the 75th percentile
+
+
+age = gss['age']
+
+p=.75
+cdf_income=cdf(age)
+# Compute the CDF of age
+percentile_75th = cdf_income.inverse(p)
+
+# Calculate the 75th percentile 
+print(percentile_75th)
+
+output:57 years old
+
+
+>>>>> sample >>> iqr
+
+# Calculate the 75th percentile 
+percentile_75th = cdf_income.inverse(0.75)
+
+# Calculate the 25th percentile
+percentile_25th = cdf_income.inverse(0.25)
+
+# Calculate the interquartile range
+iqr = percentile_75th - percentile_25th
+
+# Print the interquartile range
+print(iqr)
+
+29676.0
+
+>>>>> sample >>> plotting multiple pmfs
+
+
+def cdf(data,label):
+    # sort the data:
+    data_sorted = np.sort(data)
+
+    # calculate the proportional values of samples
+    p = 1. * np.arange(len(data)) / (len(data) - 1)
+
+    # plot the sorted data:
+    fig = plt.figure()
+    #ax1 = fig.add_subplot(121)
+    #ax1.plot(p, data_sorted)
+    #ax1.set_xlabel('$p$')
+    #ax1.set_ylabel('$x$')
+
+    #ax2 = fig.add_subplot(122)
+    #ax2.plot(data_sorted, p)
+    #ax2.set_xlabel('${}$'.format(label))
+    #ax2.set_ylabel('$p$')
+    return (pd.DataFrame({label:data_sorted,"probability":p}))
+
+
+def Pmf(data,label):
+    total_count=data.count()
+    return_df=data.value_counts().rename_axis(label).reset_index(name='Counts')
+    return_df["probability"]=return_df["Counts"]/total_count
+    return_df=return_df.sort_values(by=label)
+    return return_df
+
+
+#print(df["GENDER1"])
+male=df["GENDER1"]==1
+
+male_age=age[male]
+female_age=age[~male]
+
+male_age_proba=Pmf(male_age,"AGE")
+female_age_proba=Pmf(female_age,"AGE")
+
+plt.plot(male_age_proba["AGE"],male_age_proba["probability"])
+plt.plot(female_age_proba["AGE"],female_age_proba["probability"])
+plt.legend(["Male","Female"])
+plt.xlabel("AGE")
+plt.ylabel("PMF")
+plt.show()
+   
+
+statistics resource
+
+https://github.com/AllenDowney/ThinkStats2/blob/master/code/regression.py
+
+
+
+>>>>sample >>> cdf
+
+print(df[df["EDUC"]<=12]["EDUC"].count()/df["EDUC"].count())
+
+
+# Select educ
+educ = gss['educ']
+
+# Bachelor's degree
+bach = (educ >= 16)
+
+# Associate degree
+assc = (educ >= 14) & (educ < 16)
+
+# High school
+high = (educ <= 12)
+print(high.mean())
+
+
+>>>>>Sample >>> use the cdf to predict if incomes will be higher with more education
+
+income = gss['realinc']
+
+# Plot the CDFs
+Cdf(income[high]).plot(label='High school')
+Cdf(income[assc]).plot(label='Associate')
+Cdf(income[bach]).plot(label='Bachelor')
+
+# Label the axes
+plt.xlabel('Income (1986 USD)')
+plt.ylabel('CDF')
+plt.legend()
+plt.show()
+
+
+>>>>>>>>>>>Model distribution
+many things in the real world have a normal distribution
+
+
+sample= np.random.normal(size=1000)
+
+Cdf(sample).plot()
+
+
+from scipy.stats import norm
+
+xs=np.linspace(-3,3)
+ys=norm(0,1).cdf(xs)
+
+norm has a mean of 0 and a standard deviation of 1
+
+plt.plot(xs, ys, color='gray')
+
+
+>>>>>>probability density function
+
+xs=np.linspace(-3,3)
+ys=norm(0,1).pdf(xs)
+
+plt.plot(xs, ys, color='gray')
+
+>>>kernal density estimation (KDE)
+
+KDE is way to go from a Probability mass function PMF to a Probability density function PDF.
+
+sns.kdeplot(education)
+
+>>>>>>Modeling distributions
+1. CDFs for exploration
+2. PMFs if there are a small number of unique values
+3. KDE if there are a lot of values.
+
+
+>>>>>Sample >>> passing the mean and std to the norm with cdf
+
+# Extract realinc and compute its log
+income = gss['realinc']
+log_income = np.log10(income)
+
+# Compute mean and standard deviation
+mean = log_income.mean()
+std = log_income.std()
+print(mean, std)
+
+# Make a norm object
+from scipy.stats import norm
+dist = norm(mean,std)
+
+# Evaluate the model CDF
+xs = np.linspace(2, 5.5)
+#ys = norm(mean,std).cdf(xs)
+ys=dist.cdf(xs)
+
+# Plot the model CDF
+plt.clf()
+plt.plot(xs, ys, color='gray')
+
+# Create and plot the Cdf of log_income
+#log_income.plot()
+Cdf(log_income).plot()
+    
+# Label the axes
+plt.xlabel('log10 of realinc')
+plt.ylabel('CDF')
+plt.show()
+
+
+>>>>>>Sample >>> compare pdf with kde
+
+# Evaluate the normal PDF
+xs = np.linspace(2, 5.5)
+ys = dist.pdf(xs)
+
+# Plot the model PDF
+plt.clf()
+plt.plot(xs, ys, color='gray')
+
+# Plot the data KDE
+sns.kdeplot(log_income)
+
+# Label the axes
+plt.xlabel('log10 of realinc')
+plt.ylabel('PDF')
+plt.show()
+
+>>>>>>>>>>>>>>>>>>>>>>BRFSS>>>>>>
+
+Behavioral Risk Factor Surveillance System
+
+heath resource csv
+https://github.com/pgsmith2000/BRFSS/tree/master/data
+
+https://healthdata.gov/dataset/behavioral-risk-factor-surveillance-system-brfss-national-cardiovascular-disease-0
+
+Scatter plot
+
+height=brfss["HTM4"] #centimeters
+weight=brfss["WTKG3"] #millimeters
+
+plt.plot(height,weight,"0")
+
+alpha is the Transparency
+
+plt.plot(height,weight,"o",alpha=0.02,markersize=1)
+
+Jittering is adding random noise
+
+height_jitter=height + np.random.normal(0,2,size=len(brfss))
+
+weight_jitter=weight + np.random.normal(0,2,size=len(brfss))
+
+plt.plot(height_jitter, weight_jitter,"o", markersize=1, alpha=0.02)
+plt.show()
+
+axis allows zoom
+
+axis is (lower and upper bounds for the x and y axis)
+
+plt.axis(140,200,0,160)
+
+it takes some effort to make an effective scatter plot
+
+
+>>>>>   Sample   >>> Age distribution from brfss
+
+# Extract age
+age = brfss["AGE"]
+
+# Plot the PMF
+Pmf(age).plot()
+
+# Label the axes
+plt.xlabel('Age in years')
+plt.ylabel('PMF')
+plt.show()
+
+>>>> Sample >>> Scatter plot age by weight
+
+# Select the first 1000 respondents
+brfss = brfss[:1000]
+
+# Extract age and weight
+age = brfss['AGE']
+weight = brfss['WTKG3']
+
+# Make a scatter plot
+
+plt.plot(age,weight,'o', alpha=0.1)
+
+plt.xlabel('Age in years')
+plt.ylabel('Weight in kg')
+
+plt.show()
+
+>>>>>Sample >>>> Add jitter to age
+
+# Select the first 1000 respondents
+brfss = brfss[:1000]
+
+# Add jittering to age
+age = brfss['AGE'] + np.random.normal(0,2,size=len(brfss))
+# Extract weight
+weight = brfss['WTKG3']
+
+# Make a scatter plot
+plt.plot(age,weight,'o', alpha=0.2,markersize=5)
+
+plt.xlabel('Age in years')
+plt.ylabel('Weight in kg')
+plt.show()
+
+>>>>>>>>>>>>>>Box plots and violin plots
+
+violin plot shows the density of each category
+
+data= brfss.dropna(subset=['AGE','WTKG3'])
+
+
+sns.violinplot(x='AGE', y='WTKGS', data=data, inner=None)
+plt.show()
+
+the width is the category density with an upper and lower range on the y value
+
+>>>> box plot
+
+sns.boxplot(x='AGE', y='WTKG3', data=data, whis=10)
+plt.show()
+
+each box represents the interquartile range
+or iqr from the 25th to 75th percentile.  the line in the middle is the median.  The spines show the minimum and maximum values.
+
+the heaviest people are the furthest away from the median
+
+switch to a logrithmic scale for simplification
+
+sns.boxplot(x='AGE', y='WTKG3', data=data, whis=10)
+plt.yscale('log')
+plt.show()
+
+>>>>>>>Sample >>>> Box plot
+
+# Drop rows with missing data
+data = brfss.dropna(subset=['_HTMG10', 'WTKG3'])
+
+# Make a box plot
+sns.boxplot(x='_HTMG10', y='WTKG3', data=data, whis=10)
+
+# Plot the y-axis on a log scale
+plt.yscale('log')
+
+# Remove unneeded lines and label axes
+sns.despine(left=True, bottom=True)
+plt.xlabel('Height in cm')
+plt.ylabel('Weight in kg')
+plt.show()
+
+>>>>>sample >>> plot the income distribution of eight income categories
+
+# Extract income
+income = brfss['INCOME2']
+
+print(income)
+# Plot the PMF
+Pmf(income).plot()
+
+
+# Label the axes
+plt.xlabel('Income level')
+plt.ylabel('PMF')
+plt.show()
+
+
+>>>>>Sample violin plot by income category
+
+
+# Drop rows with missing data
+data = brfss.dropna(subset=['INCOME2', 'HTM4'])
+
+# Make a violin plot
+
+sns.violinplot(x="INCOME2",y="HTM4",data=data,inner=None)
+# Remove unneeded lines and label axes
+sns.despine(left=True, bottom=True)
+plt.xlabel('Income level')
+plt.ylabel('Height in cm')
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>Correlation
+
+
+the coefficient of correlation highlights the strength of the relationships in data.
+
+in statistics correlation means pearson correlation coefficient.
+
+columns=['HTM4','WTKG3','AGE']
+
+subset=brfss[columns]
+subset.corr()
+
+correlation only works with linear relationships
+
+so age to weight is low but there is a non linear correlation.  older and younger people are lighter.
+
+
+xs=np.linspace(-1,1)
+ys=xs**2
+
+ys += normal(0,0.05, len(xs))
+
+if correlation is close to 1 or -1 then there is a strong linear correlation.
+
+
+correlation says nothing about slope.
+
+
+>>>>>Sample >>>> Correlation between columns
+look for linear correlation
+
+# Select columns
+columns = ['AGE','INCOME2','_VEGESU1']
+subset = brfss[columns]
+
+# Compute the correlation matrix
+print(subset.corr())
+
+
+>>>>>>>Simple Regression 
+
+correlation between weight and age
+
+plt.clf()
+plt.scatter(age[weight_filter],weight)
+plt.show()
+
+from scipy.stats import linregress
+
+
+
+rvalue is correlation
+
+using linregress to plot a line
+
+get the min and max of the observed x
+
+fx=np.array([xs.min(),xs.max()])
+fy=res.intercept + res.slope * fx
+plt.plot(fx,fy,'-')
+
+regression line can not handle nans
+
+
+>>>>>Sample >>>>> Linear Regressor
+
+from scipy.stats import linregress
+
+# Extract the variables
+subset = brfss.dropna(subset=['INCOME2', '_VEGESU1'])
+xs = subset['INCOME2']
+ys = subset['_VEGESU1']
+
+# Compute the linear regression
+res = linregress(xs,ys)
+print(res)
+
+
+>>>>>Sample >>> plotting the line of best fit
+
+# Plot the scatter plot
+plt.clf()
+x_jitter = xs + np.random.normal(0, 0.15, len(xs))
+plt.plot(x_jitter, ys, 'o', alpha=0.2)
+
+# Plot the line of best fit
+res=linregress(xs,ys)
+fx = np.array([xs.min(),xs.max()])
+fy = res.intercept + res.slope * fx
+plt.plot(fx, fy, '-', alpha=0.7)
+
+plt.xlabel('Income code')
+plt.ylabel('Vegetable servings per day')
+plt.ylim([0, 6])
+plt.show()
+
+
+>>>>>> Limits of simple regression
+
+
+regression is not symmetric
+
+the slope for vegetable consumption to income differs from income unit to vegetable consumption.
+
+the slopes are different because they are based on different assumptions.  one variable is known and the other is random.
+
+regression does not tell you much about causation.
+
+>>>>>>>Sample >>>> multiple regression
+
+#ordinary least squares
+
+import statsmodels.formula.api as smf
+
+results =smf.ols('INCOME2 ~ _VEGESU1", data=brfss).fit()
+results.params
+
+_VEGESU1 (slope) 0.232515
+Intrecept: 5.39999
+
+>>>>Sample linregress vs statsmodels
+
+
+from scipy.stats import linregress
+import statsmodels.formula.api as smf
+
+# Run regression with linregress
+subset = brfss.dropna(subset=['INCOME2', '_VEGESU1'])
+xs = subset['INCOME2']
+ys = subset['_VEGESU1']
+res = linregress(xs,ys)
+print(res)
+
+# Run regression with StatsModels
+results = smf.ols('INCOME2 ~ _VEGESU1', data = brfss).fit()
+print(results.params)
+
+LinregressResult(slope=0.06988048092105019, intercept=1.5287786243363106, rvalue=0.11967005884864107, pvalue=1.378503916247615e-238, stderr=0.002110976356332332)
+Intercept    1.528779
+INCOME2      0.069880
+dtype: float64
+
+
+>>>>>>>>  Multiple Regression
+
+realinc ~ educ
+
+
+results=smf.ols('realinc ~ educ',data=gss).fit()
+
+realinc is the variable we are trying to predict
+
+results=smf.ols('realinc ~ educ+age',data=gss).fit()
+
+age is additive to the prediction with educ
+
+grouped= gss.groupby('age')
+mean_income_by_age=grouped['realinc'].mean()
+
+plt.plot(mean_income_by_age,'o', alpha=0.5)
+plt.xlabel('age (years)')
+plt.ylable('income')
+
+the correlation between age and income is non-linear.  correlation can not measure non linear
+
+>>>>>>> adding a quaratic termin
+
+print("adding a quadratic variable for age")
+df["AGE2"]=df["AGE"]**2
+
+results= smf.ols("REALINC ~ EDUC+AGE+AGE2", data=df).fit()
+
+print(results.params)
+print("The additive of age is small")
+
+fx=df["REALINC"]
+fy=results.params.Intercept + results.params.EDUC * fx + results.params.AGE*fx + results.params.AGE2*fx
+
+plt.plot(fx,fy,'-',color='blue')
+plt.xlabel("Income")
+plt.ylabel("Education")
+plt.show()
+
+
+>>>>>Sample >>> plot real income by education using groupby
+
+# Group by educ
+grouped = gss.groupby('educ')
+
+# Compute mean income in each group
+mean_income_by_educ = grouped['realinc'].mean()
+
+# Plot mean income as a scatter plot
+plt.plot(mean_income_by_educ)
+
+# Label the axes
+plt.xlabel('Education (years)')
+plt.ylabel('Income (1986 $)')
+plt.show()
+
+>>>>Sample >>> adding a education quadratic educ2
+
+import statsmodels.formula.api as smf
+
+# Add a new column with educ squared
+gss['educ2'] = gss['educ']**2
+
+# Run a regression model with educ, educ2, age, and age2
+results =smf.ols('realinc ~ educ + educ2 + age + age2 ',data=gss).fit()
+
+# Print the estimated parameters
+print(results.params)
+
+Intercept   -23241.884034
+educ          -528.309369
+educ2          159.966740
+age           1696.717149
+age2           -17.196984
+dtype: float64
+
+>>>>>>>>using Predict to visualize
+
+
+df2=pd.DataFrame()
+df2['age']=np.linspace(18,85)
+df2['age2']=df2['age']**2
+df2['educ']=12
+df2['educ2']=df2['educ']**2
+
+pred12=results.predict(df)
+
+plt.plot(df2['age'],pred12,label='High school')
+
+plt.plot(mean_income_by_age,'o',alpha=0.5)
+plt.xlabel('age')
+plt.ylabel('income')
+plt.legend()
+plt.show()
+
+>>> sample>>> predict
+
+results = smf.ols('realinc ~ educ + educ2 + age + age2', data=gss).fit()
+
+# Make the DataFrame
+df = pd.DataFrame()
+df['educ'] = np.linspace(0,20)
+df['age'] = 30
+df['educ2'] = df['educ']**2
+df['age2'] = df['age']**2
+
+# Generate and plot the predictions
+pred =results.predict(df)
+print(pred.head())
+
+>>>>>sample >>> predict income by age 30 for education 0 to 20
+
+# Plot mean income in each age group
+plt.clf()
+grouped = gss.groupby('educ')
+mean_income_by_educ = grouped['realinc'].mean()
+plt.plot(mean_income_by_educ,'o',alpha=0.5)
+
+# Plot the predictions
+pred = results.predict(df)
+plt.plot(df['educ'], pred, label='Age 30')
+
+# Label axes
+plt.xlabel('Education (years)')
+plt.ylabel('Income (1986 $)')
+plt.legend()
+plt.show()
+
+
+>>>>>>>>>Logistic Regression
+
+categorical variables: sex and race
+
+C(sex) indicates a categorical variable
+
+
+print("should a permit be required to own a gun")
+print(df["GUNLAW"].value_counts())
+formula="GUNLAW ~ AGE+AGE2+EDUC+EDUC2+C(SEX)"
+results = smf.logit(formula,data=df).fit()
+
+logit must be a 0 or 1 value
+
+>>>> Sample >>> Gun law prediction
+
+print("should a permit be required to own a gun")
+formula="GUNLAW ~ AGE+AGE2+EDUC+EDUC2+C(SEX)"
+print("logit must be a variable of 0 or 1")
+gun_filter=(df["GUNLAW"]==0) | (df["GUNLAW"]==1)
+print(df[gun_filter]["GUNLAW"].value_counts())
+results = smf.logit(formula,data=df[gun_filter]).fit()
+print(results.params)
+
+print("women are more likely to support gun permit control")
+
+df2=pd.DataFrame()
+df2['AGE']=np.linspace(18,89)
+df2['EDUC']=12
+df2['AGE2']=df2['AGE']**2
+df2['EDUC2']=df2['EDUC']**2
+df2['SEX']=1
+pred1=results.predict(df2)
+df2['SEX']=2
+pred2=results.predict(df2)
+
+grouped=df[gun_filter].groupby('AGE')
+favor_by_age=grouped['GUNLAW'].mean()
+
+plt.plot(favor_by_age,'o',alpha=0.5)
+plt.plot(df2['AGE'],pred1,label="Male")
+plt.plot(df2['AGE'],pred2,label="FeMale")
+plt.legend()
+plt.show()
+
+>>>> Sample >>> grass prediction
+# Recode grass
+gss['grass'].replace(2, 0, inplace=True)
+
+print
+# Run logistic regression
+results = smf.logit("grass ~ age+age2+educ+educ2+C(sex)",data=gss).fit()
+results.params
+
+
+# Make a DataFrame with a range of ages
+df = pd.DataFrame()
+df['age'] = np.linspace(18, 89)
+df['age2'] = df['age']**2
+
+# Set the education level to 12
+df['educ'] = 12
+df['educ2'] = df['educ']**2
+
+
+df['sex'] = 1
+pred1 = results.predict(df)
+
+df['sex'] = 2
+pred2 = results.predict(df)
+
+plt.clf()
+grouped = gss.groupby('age')
+favor_by_age = grouped['grass'].mean()
+plt.plot(favor_by_age, 'o', alpha=0.5)
+
+plt.plot(df['age'], pred1, label='Male')
+plt.plot(df['age'],pred2,label='FeMale')
+
+plt.xlabel('Age')
+plt.ylabel('Probability of favoring legalization')
+plt.legend()
+plt.show()
