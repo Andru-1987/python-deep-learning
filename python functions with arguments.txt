@@ -1,0 +1,206 @@
+adding arguments to the decorator
+
+def run_three_times(func):
+	def wrapper(*args, **kwargs):
+	for i in range(3):
+		func(*args,**kwargs)
+	return wrapper
+
+>>>>>decorator factory
+
+write a function that returns a decorator object rather than runs a decorator.   A decorator can only have one parameter being func for function.
+
+def run_n_times(n):
+	def decorator(func):
+		def wrapper(**args,**kwargs):
+			for i in range(n)
+				func(*args,**kwargs)
+		return wrapper
+	return decorator
+
+
+@run_n_times(3)
+def print_sum(a,b)
+	print(a+b)
+
+>>>>Sample >>> passing parameters to the decorator
+
+# Make print_sum() run 10 times with the run_n_times() decorator
+@run_n_times(10)
+def print_sum(a, b):
+  print(a + b)
+  
+print_sum(15, 20)
+
+>>>> sample >>> decorator factor to a variable
+
+# Use run_n_times() to create the run_five_times() decorator
+run_five_times = run_n_times(5)
+
+@run_five_times
+def print_sum(a, b):
+  print(a + b)
+  
+print_sum(4, 100)
+
+>>>>> sample >>> access the function directly >> decorator then function.
+
+# Modify the print() function to always run 20 times
+print = run_n_times(20)(print)
+
+print('What is happening?!?!')
+
+
+>>>>> sample >>> creating the decorator factory
+
+ef html(open_tag, close_tag):
+  def decorator(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      msg = func(*args, **kwargs)
+      return '{}{}{}'.format(open_tag, msg, close_tag)
+    # Return the decorated function
+    return wrapper
+  # Return the decorator
+  return decorator
+
+# Make hello() return bolded text
+@html("<b>","</b>")
+def hello(name):
+  return 'Hello {}!'.format(name)
+  
+print(hello('Alice'))
+
+
+# Make goodbye() return italicized text
+@html("<i>","</i>")
+def goodbye(name):
+  return 'Goodbye {}.'.format(name)
+  
+print(goodbye('Alice'))
+
+
+>>> sample >>> decorated functions can be called within another decorated function. for example goodbye
+
+# Wrap the result of hello_goodbye() in <div> and </div>
+html("<div>","</div>")
+def hello_goodbye(name):
+  return '\n{}\n{}\n'.format(hello(name), goodbye(name))
+  
+print(hello_goodbye('Alice'))
+
+>>>>>>>>Time out
+
+def function1():
+	"""this functions sometimes runs for a long time
+
+def function2():
+	"""This function does not return control
+
+create a time function that raises an error if the function run longer than expected
+
+
+import signal
+
+def raise_timeout(*args, **kwargs):
+	raise TimeoutError()
+signal.signal(signalnum=signal.SIGALRM, handler=raise_timeout)
+
+
+#set off an alerm in 5 seconds
+signal.alarm(5)
+
+signal.alarm(0)
+
+def timeout_in_5s(func):
+	@wraps(func)
+	def wrapper(*args,**kwargs):
+		signal.alarm(5)
+			try:
+				return func(*args,**kwargs)
+			finally:
+				signal.alarm(0)
+
+	return wrapper()
+
+
+@timeout_in_5s
+def foo():
+	time.sleep(10)
+	print('foo!')
+
+>>>>>timeout
+
+def timeout(n_seconds):
+	def decorator(func):
+		@wraps(func)
+		def wrapper(*args,**kwargs):
+			signal.alarm(n_seconds)
+			try:
+				return func(*args,**kwargs)
+			finally:
+				signal.alarm(0)
+		return wrapper
+	return decorator
+
+
+
+
+@timeout(20)
+def bar():
+	time.sleep(10)
+	print('bar!')
+
+
+>>>>sample  >>> decorator factory
+
+def tag(*tags):
+  # Define a new decorator, named "decorator", to return
+  def decorator(func):
+    # Ensure the decorated function keeps its metadata
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+      # Call the function being decorated and return the result
+      return func(*args, **kwargs)
+    wrapper.tags = tags
+    return wrapper
+  # Return the new decorator
+  return decorator
+
+@tag('test', 'this is a tag')
+def foo():
+  pass
+
+print(foo.tags)
+
+
+>>> sample >>> decorator checks if the parameter passed to wrapper is a dictionary
+
+def returns_dict(func):
+  # Complete the returns_dict() decorator
+  def wrapper(*args, **kwargs):
+    result = func(*args,**kwargs)
+    assert(type(result) == dict)
+    return result
+  return wrapper
+  
+@returns_dict
+def foo(value):
+  return value
+
+try:
+  print(foo([1,2,3]))
+except AssertionError:
+  print('foo() did not return a dict!')
+
+
+  
+
+
+			
+
+
+
+
+
+

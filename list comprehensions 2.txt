@@ -1,0 +1,126 @@
+>>>>>>List comprehension structure
+
+[output expression for iterator variable in iterable]
+
+Advanced
+[output expression +
+conditional on output for iterator variable in iterable + conditional on iterable]
+
+#You can think of DataFrame columns as single-dimension arrays called Series.
+
+>>>Sample (extracting time from tweets)
+
+# Extract the created_at column from df: tweet_time
+tweet_time = df['created_at']
+
+# Extract the clock time: tweet_clock_time
+tweet_clock_time = [item[11:19] for item in tweet_time]
+
+# Print the extracted times
+print(tweet_clock_time)
+
+>>>Sample  (find time where 17 to 19 character positions =19)
+
+# Extract the created_at column from df: tweet_time
+tweet_time = df['created_at']
+
+# Extract the clock time: tweet_clock_time
+tweet_clock_time = [item[11:19] for item in tweet_time if item[17:19] == '19']
+
+# Print the extracted times
+print(tweet_clock_time)
+
+>>>>World bank data
+1. population
+2. electricity consumption
+3. co2 emissions
+4. literacy rates
+5. unemployment
+6. morality rates
+
+>>>Sample (zip and create a dictionary)
+
+print(row_vals)
+# Zip lists: zipped_lists
+zipped_lists = zip(feature_names, row_vals)
+
+print(list(zipped_lists))
+# Create a dictionary: rs_dict
+rs_dict = dict(zipped_lists)
+
+# Print the dictionary
+
+print(rs_dict)
+
+>>>>Sample build a list comprehension function
+https://stackoverflow.com/questions/209840/convert-two-lists-into-a-dictionary
+
+
+# Define lists2dict()
+def lists2dict(list1, list2):
+    """Return a dictionary where list1 provides
+    the keys and list2 provides the values."""
+
+    # Zip lists: zipped_lists
+    zipped_lists = zip(list1, list2)
+
+    # Create a dictionary: rs_dict
+    rs_dict = dict(zipped_lists)
+
+    # Return the dictionary
+    return(rs_dict)
+
+# Call lists2dict: rs_fxn
+rs_fxn = lists2dict(feature_names,row_vals)
+
+# Print rs_fxn
+print(rs_fxn)
+
+
+>>>>Sample create a list of dictionary items
+
+# Print the first two lists in row_lists
+print(row_lists[0])
+print(row_lists[1])
+
+# Turn list of lists into list of dicts: list_of_dicts
+list_of_dicts = [lists2dict(feature_names, sublist) for sublist in row_lists]
+
+# Print the first two dictionaries in list_of_dicts
+print(list_of_dicts[0])
+print(list_of_dicts[1])
+
+# Print the first two lists in row_lists
+print(row_lists[0])
+print(row_lists[1])
+
+# Turn list of lists into list of dicts: list_of_dicts
+list_of_dicts = [lists2dict(feature_names, sublist) for sublist in row_lists]
+
+# Print the first two dictionaries in list_of_dicts
+print(list_of_dicts[0])
+print(list_of_dicts[1])
+
+Output:
+
+['CountryName', 'CountryCode', 'IndicatorName', 'IndicatorCode', 'Year', 'Value']
+
+{'CountryName': 'Arab World', 'CountryCode': 'ARB', 'IndicatorName': 'Age dependency ratio (% of working-age population)', 'IndicatorCode': 'SP.POP.DPND', 'Year': '1960', 'Value': '87.7976011532547'}
+
+
+>>>>Sample convert the dictionary to a dataframe
+
+# Import the pandas package
+import pandas as pd
+
+# Turn list of lists into list of dicts: list_of_dicts
+list_of_dicts = [lists2dict(feature_names, sublist) for sublist in row_lists]
+
+# Turn list of dicts into a DataFrame: df
+df = pd.DataFrame(list_of_dicts)
+
+# Print the head of the DataFrame
+print (df.head())
+
+
+

@@ -1,0 +1,696 @@
+from datetime import date
+
+two_hurricane_dates=[date(2016,10,7), date(2017,6,21)]
+
+print (two_hurricane_dates[0].weekday())
+
+>>>> sample >>>  date
+
+# Import date from datetime
+from datetime import date
+
+# Create a date object
+hurricane_andrew = date(1992, 8, 24)
+
+# Which day of the week is the date?
+print(hurricane_andrew.weekday())
+
+
+>>>>>sample >>>> month
+
+# Counter for how many before June 1
+early_hurricanes = 0
+
+# We loop over the dates
+for hurricane in florida_hurricane_dates:
+  # Check if the month is before June (month number 6)
+  if hurricane.month < 6:
+    early_hurricanes = early_hurricanes + 1
+    
+print(early_hurricanes)
+
+<<<<<<<<<Math with Dates
+
+2017-11-05  and 2017-12-04
+
+from datetime import date
+
+d1=date(2017,11,5)
+d2=date(2017,12,4)
+
+delta= d2 - d1
+
+print(delta.days)
+
+output: 29 days elapsed
+
+from datetime import timedelta
+
+td=timedelta(days=29)
+print(d1+td)
+
+output 2017-12-04
+
+
+>>>sample  >>> subtract two dates
+
+# Import date
+from datetime import date
+
+# Create a date object for May 9th, 2007
+start = date(2007,5,9)
+
+# Create a date object for December 13th, 2007
+end = date(2007,12,13)
+
+# Subtract the two dates and print the number of days
+print((end-start).days)
+
+
+>>>sample >>> month as an index into a dictionary
+
+# A dictionary to count hurricanes per calendar month
+hurricanes_each_month = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6:0,
+		  				 7: 0, 8:0, 9:0, 10:0, 11:0, 12:0}
+
+# Loop over all hurricanes
+for hurricane in florida_hurricane_dates:
+  # Pull out the month
+  month = hurricane.month
+  # Increment the count in your dictionary by one
+  hurricanes_each_month[month] +=1
+  
+print(hurricanes_each_month)
+
+>>>> sample  print the first and last scrambled dates
+
+ # Print the first and last scrambled dates
+print(dates_scrambled)
+print(dates_scrambled[0])
+print(dates_scrambled[-1])
+
+
+>>>>> sample >>> sort dates
+
+# Print the first and last scrambled dates
+print(dates_scrambled[0])
+print(dates_scrambled[-1])
+
+# Put the dates in order
+dates_ordered =sorted(dates_scrambled)
+
+# Print the first and last ordered dates
+print(dates_ordered[0])
+print(dates_ordered[-1])
+
+>>>>>>turning dates into strings
+
+from datetime import date
+
+d+date(2017,11,5)
+
+print(d)
+
+output:2017-11-05
+
+YYYY-MM-DD (ISO 8601 format)
+
+some_dates=['2001-01-01','1999-12-31']
+
+iso 8601 strings sort correctly
+
+
+print(sorted(some_dates))
+
+d.strftime()
+
+d=date(2017,1,5)
+
+print(d.strftime("%Y"))
+
+
+base = datetime.datetime.today()
+date_list = [base - datetime.timedelta(days=x) for x in range(numdays)]
+
+ datetime.datetime.strptime
+
+
+>>>Sample >>> format string
+
+import datetime
+#https://strftime.org/
+d=datetime.datetime.now()
+
+dateList=['2017-12-31','2001-01-01','2010-11-21']
+
+for item in dateList:
+    diff_days=(d-datetime.datetime.strptime(item,'%Y-%m-%d')).days
+    if (diff_days/365)>5:
+        print(item," found")
+
+
+>>>>> sample >>> isoformat
+
+# Assign the earliest date to first_date
+first_date = min(florida_hurricane_dates)
+
+# Convert to ISO and US formats
+iso = "Our earliest hurricane date: " + first_date.isoformat()
+us = "Our earliest hurricane date: " + first_date.strftime("%m/%d/%Y")
+
+print("ISO: " + iso)
+print("US: " + us)
+
+>>>>>> sample >>> YYYY-MM
+
+# Import date
+from datetime import date
+
+# Create a date object
+andrew = date(1992, 8, 26)
+
+# Print the date in the format 'YYYY-MM'
+print(andrew.strftime('%Y-%m'))
+
+>>>>>>> sample Month and Year
+
+# Import date
+from datetime import date
+
+# Create a date object
+andrew = date(1992, 8, 26)
+
+# Print the date in the format 'MONTH (YYYY)'
+print(andrew.strftime('%B (%Y)'))
+
+
+>>>>>>>> sample Julian day
+
+from datetime import date
+
+# Create a date object
+andrew = date(1992, 8, 26)
+
+# Print the date in the format 'YYYY-DDD'
+print(andrew.strftime('%Y-%j'))
+
+>>>>>>>>>>> working with dates and times
+
+october 1, 2017 3:23:25 PM
+
+from datetime import datetime
+
+dt=datetime(2017,10,1,15,23,25)
+
+
+dt=datetime(2017,10,1,15,23,25,500000)
+
+python breaks down secords to a millionth of second
+
+
+dt=datetime(year=2017,
+month=10,
+day=1,
+hour=15,
+minute=23,
+second=25,
+microsecond=500000)
+
+>>>replace
+
+dt_hr = dt.replace(minute=0, second=0, microsecond=0
+
+print(dt_hr)
+
+output: 2017-10-01 15:00:00
+
+>>>>>> sample >>> isoformat()
+
+# Import datetime
+from datetime import datetime
+
+# Create a datetime object
+dt = datetime(2017,10,1,15,26,26)
+
+# Print the results in ISO 8601 format
+print(dt.isoformat())
+
+
+dt = datetime(2017, 12, 31, 15, 19, 13)
+
+dt_old = dt.replace(year=1917)
+
+>>>> sample using a dictionary to count time occurrences
+
+
+# Create dictionary to hold results
+trip_counts = {'AM': 0, 'PM': 0}
+
+
+# Loop over all trips
+for trip in onebike_datetimes:
+  # Check to see if the trip starts before noon
+  if trip['start'].hour < 12:
+    # Increment the counter for before noon
+    trip_counts['AM'] += 1
+  else:
+    # Increment the counter for after noon
+    trip_counts['PM'] += 1
+  
+print(trip_counts)
+
+>>>>>>>>Printing and parsing datetimes
+
+convert a string into datetime
+
+dt=datetime(2017,12,30,15,19,13)
+
+print(dt.strftime('%Y-%m-%d'))
+
+output:2017-12-30
+
+print(dt.strftime('%Y-%m-%d %H:%M:%S'))
+output:2017-12-30 15:19:13
+
+print(dt.isoformat())
+
+>>>>>>>>>>strptime  >>> string parse time
+
+dt=datetime.strptime("12/30/2017 15:19:13","%m/%d/%Y %H:%M:%S)
+
+
+number of seconds from jan 1 1970
+
+ts=1514665153.0
+
+print(datetime.formattimestamp(ts))
+
+
+>>>>> Sample >>> strptime
+
+# Import the datetime class
+from datetime import datetime
+
+# Starting string, in YYYY-MM-DD HH:MM:SS format
+s = '2017-02-03 00:00:01'
+
+# Write a format string to parse s
+fmt = '%Y-%m-%d %H:%M:%S'
+
+# Create a datetime object d
+d = datetime.strptime(s, fmt)
+
+# Print d
+print(d)
+
+or
+
+
+# Import the datetime class
+from datetime import datetime
+
+# Starting string, in YYYY-MM-DD format
+s = '2030-10-15'
+
+# Write a format string to parse s
+fmt = '%Y-%m-%d'
+
+# Create a datetime object d
+d = datetime.strptime(s, fmt)
+
+# Print d
+print(d)
+
+or
+
+# Import the datetime class
+from datetime import datetime
+
+# Starting string, in MM/DD/YYYY HH:MM:SS format
+s = '12/15/1986 08:00:00'
+
+# Write a format string to parse s
+fmt = '%m/%d/%Y %H:%M:%S'
+
+# Create a datetime object d
+d = datetime.strptime(s, fmt)
+
+# Print d
+print(d)
+
+>>>>> Sample >>> cleanup strings to dates
+
+# Write down the format string
+fmt = "%Y-%m-%d %H:%M:%S"
+
+# Initialize a list for holding the pairs of datetime objects
+onebike_datetimes = []
+
+# Loop over all trips
+for (start, end) in onebike_datetime_strings:
+  trip = {'start': datetime.strptime(start, fmt),
+          'end': datetime.strptime(end, fmt)}
+  
+  # Append the trip
+  onebike_datetimes.append(trip)
+
+
+<<<< sample >>> isoformat using strftime
+
+
+# Import datetime
+from datetime import datetime
+
+# Pull out the start of the first trip
+first_start = onebike_datetimes[0]['start']
+
+# Format to feed to strftime()
+fmt = "%Y-%m-%dT%H:%M:%S"
+
+# Print out date with .isoformat(), then with .strftime() to compare
+print(first_start.isoformat())
+print(datetime.strftime(first_start,fmt))
+
+
+>>>>>>sample  >> fromtimestamp
+
+# Import datetime
+from datetime import datetime
+
+# Starting timestamps
+timestamps = [1514665153, 1514664543]
+
+# Datetime objects
+dts = []
+
+# Loop
+for ts in timestamps:
+  dts.append(datetime.fromtimestamp(ts))
+  
+# Print results
+print(dts)
+
+>>>>>>>>>> working with durations
+
+working with durations
+
+
+
+start= datetime(2017,10,8,23,46,47)
+end=datetime(2017,10,9,0,10,57)
+
+duration=end-start
+
+timedelta is a duration
+
+print(duration.total_seconds())
+
+output: 1450
+
+from datetime import timedelta
+
+delta = timedelta(seconds=1)
+
+print(start + delta1)
+
+output: 2017-10-08 23:46:48
+
+one second later
+
+delta2= timedelta(days=1, seconds=1)
+
+print(start+delta2)
+output: 2017-10-09 23:46:48
+
+
+delta3 = timedelta(week=-1)
+
+>>>>>> sample >>>> duration in seconds
+
+# Initialize a list for all the trip durations
+onebike_durations = []
+
+for trip in onebike_datetimes:
+  # Create a timedelta object corresponding to the length of the trip
+  trip_duration = trip['end'] - trip['start']
+  
+  # Get the total elapsed seconds in trip_duration
+  trip_length_seconds = trip_duration.total_seconds()
+  
+  # Append the results to our list
+  onebike_durations.append(trip_length_seconds)
+
+
+# What was the total duration of all trips?
+total_elapsed_time = sum(onebike_durations)
+
+# What was the total number of trips?
+number_of_trips = len(onebike_durations)
+  
+# Divide the total duration by the number of trips
+print(total_elapsed_time / number_of_trips)
+
+>>>>>sample >>> finding min and max durations
+
+
+# Calculate shortest and longest trips
+shortest_trip = min(onebike_durations)
+longest_trip = max(onebike_durations)
+
+# Print out the results
+print("The shortest trip was " + str(shortest_trip) + " seconds")
+print("The longest trip was " + str(longest_trip) + " seconds")
+
+
+>>>>>>>>>>>>UTC offsets
+
+comparing dates across different parts of the world
+
+time zones
+pacific 3 pm
+mountain 4 pm
+central 5 pm
+eastern 6 pm
+
+uk standard time is utc
+
+utc-x (North and South America)
+utc+x (Africa, Russia, China, and Australia)
+
+
+from datetime import datetime, timedelta, timezone
+
+ET=timezone(timedelta(hours=-5))
+
+dt=datetime(2017,12,30,15,9,3,tzinfo=ET)
+
+output: 2017-12-30 15:09:03-05:00
+
+includes the utc offset
+
+>>>> change the close to India Standard time zone
+
+IST= timezone(timedelta(hours=5,minutes=30))
+
+print(dt.astimezone(ITS))
+
+print(dt.replace(tzinfo=timezone.utc))
+
+timezone.utc has 0 timezone offset
+
+print(dt.replace(tzinfo=timezone.utc))
+
+the clock stays the same, but the utc has shifted
+
+
+>>>> adjusting timezones and changing the tzinfo
+
+import os, time
+time.strftime('%X %x %Z')
+'12:45:20 08/19/09 CDT'
+os.environ['TZ'] = 'Europe/London'
+time.tzset()
+
+year = time.strftime('%Y')
+month = time.strftime('%m')
+day = time.strftime('%d')
+hour = time.strftime('%H')
+minute = time.strftime('%M')
+
+astimezone changes the clock and the utc offset
+
+>>>>>>sample  set the tzinfo
+
+the datetime object does not supply any concrete subclass of tzinfo.  The tzinfo object reveals the local time from UTC.  the tzinfo object contains the offset, the name of the time zone, and the dst offset.
+
+# Import datetime, timezone
+from datetime import datetime, timezone
+
+# October 1, 2017 at 15:26:26, UTC
+dt = datetime(2017, 10, 1, 15, 26, 26, tzinfo=timezone.utc)
+
+# Print results
+print(dt.isoformat())
+
+>>>> sample >>> datetime in pacific time zone
+
+# Import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone
+
+# Create a timezone for Pacific Standard Time, or UTC-8
+pst = timezone(timedelta(hours=-8))
+
+# October 1, 2017 at 15:26:26, UTC-8
+dt = datetime(2017, 10, 1, 15, 26, 26, tzinfo=pst)
+
+# Print results
+print(dt.isoformat())
+
+>>> sample >>> australia time zone
+
+# Import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone
+
+# Create a timezone for Australian Eastern Daylight Time, or UTC+11
+aedt = timezone(timedelta(hours=11))
+
+# October 1, 2017 at 15:26:26, UTC+11
+dt = datetime(2017, 10, 1, 15, 26, 26, tzinfo=aedt)
+
+# Print results
+print(dt.isoformat())
+
+
+>>>> sample >>> replace the time as utc time
+
+# Loop over the trips
+for trip in onebike_datetimes[:10]:
+  # Pull out the start
+  dt = trip['start']
+  # Move dt to be in UTC
+  dt = dt.astimezone(timezone.utc)
+  
+  # Print the start time in UTC
+  print('Original:', trip['start'], '| UTC:', dt.isoformat())
+
+Original: 2017-10-01 15:23:25-04:00 | UTC: 2017-10-01T15:23:25+00:00
+    Original: 2017-10-01 15:42:57-04:00 | UTC: 2017-10-01T15:42:57+00:00
+
+ .replace() just changes the timezone whereas .astimezone() actually moves the hours and days to match.
+
+>>>>>>>>>>>>>>>>>>>Time Zone Database
+
+how to align your data to utc
+
+from datetime import datetime
+for dateutil import tz
+
+#eastern time zone
+et=tz.gettz('America/New_York')
+
+#continent slash major city
+
+'America/New_York'
+'America/Mexico_City'
+'Europe/London'
+'Africa/Accra'
+
+
+last=datetime(2017,12,30.15,9,3,tzinfo=et)
+
+
+in some place the clocks change twice a year
+
+>>>>sample >>> using dateutil
+
+from dateutil import tz
+
+# Create a timezone object for Eastern Time
+et = tz.gettz('America/New_York')
+
+# Loop over trips, updating the datetimes to be in Eastern Time
+for trip in onebike_datetimes[:10]:
+  # Update trip['start'] and trip['end']
+  trip['start'] = trip['start'].replace(tzinfo=et)
+  trip['end'] = trip['end'].replace(tzinfo=et)
+
+
+>>>>sample >>> uk time and local time
+
+# Create the timezone object
+uk = tz.gettz('Europe/London')
+
+# Pull out the start of the first trip
+local = onebike_datetimes[0]['start']
+
+# What time was it in the UK?
+notlocal = local.astimezone(uk)
+
+# Print them out and see the difference
+print(local.isoformat())
+print(notlocal.isoformat())
+
+>>>>> sample >>>> asia time vs local time
+
+# Create the timezone object
+ist = tz.gettz('Asia/Kolkata')
+
+# Pull out the start of the first trip
+local = onebike_datetimes[0]['start']
+
+# What time was it in India?
+notlocal = local.astimezone(ist)
+
+# Print them out and see the difference
+print(local.isoformat())
+print(notlocal.isoformat())
+
+>>>>> sample >>> pacific time zone vs local
+
+# Create the timezone object
+sm = tz.gettz('Pacific/Apia')
+
+# Pull out the start of the first trip
+local = onebike_datetimes[0]['start']
+
+# What time was it in Samoa?
+notlocal = local.astimezone(sm)
+
+# Print them out and see the difference
+print(local.isoformat())
+print(notlocal.isoformat())
+
+
+>>>>>>>>Daylight saving time
+
+forward in the spring
+back in the fall
+
+
+
+2017-03-12 01:59:59 springs forward 2017-03-12 03:00:00
+
+spring_ahead_159am = datetime(2017,3,12,1,59,59)
+spring_ahead_159am=isoformat()
+
+spring_ahead_3am=datetime(2017,3,12,3,0,0)
+spring_ahead_3am.isoformat()
+
+(spring_ahead_3am - spring_ahead_159am).total_seconds()
+
+EST = timezone(timedelta(hours=-5))
+EDT = timezone(timedelta(hours=-4))
+
+
+
+
+
+
+
+
+
+
+
+
+
+

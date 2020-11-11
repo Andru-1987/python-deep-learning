@@ -1,0 +1,118 @@
+def foo():
+	a=5
+	def bar():
+		print(a)
+	return bar
+
+func=foo()
+
+func()
+
+output : 5
+
+you would think a would not be observable outside of the scope of foo
+
+closures
+
+func.__closure__
+
+python attached any non local variable to the function object.
+
+the variables get stored in the func.__closure__ object as a tuple
+
+func.__closure__[0].cell_contents
+
+allows you to access the value of the variable a
+
+A nested function is a function defined inside of another function.
+
+def parent():
+	def child():
+		pass
+	return child()
+
+a nonlocal variable is any variable that get defined in the parent function but get used in the child function.
+
+def parent(arg_1, arg_2):
+	value=22
+	my_dict = {'chocolate':'yummy'}
+	def child():
+		print(2*value)
+		print(my['chocolate'])
+		print(arg_1 + arg_2)
+	return child
+
+new_function=parent(3,4)
+
+print(cell.cell_contents for cell in new_function.__closure__])
+
+
+
+
+Why does this matter?
+functions as objects
+nested functions
+non local scope
+closures
+
+>>>>> sample  >>> check if a closure exists
+
+def return_a_func(arg1, arg2):
+  def new_func():
+    print('arg1 was {}'.format(arg1))
+    print('arg2 was {}'.format(arg2))
+  return new_func
+    
+my_func = return_a_func(2, 17)
+
+# Show that my_func()'s closure is not None
+print(my_func.__closure__ is not None)
+
+print(len(my_func.__closure__) == 2)
+
+# Get the values of the variables in the closure
+closure_values = [
+  my_func.__closure__[i].cell_contents for i in range(2)
+]
+print(closure_values == [2, 17])
+
+Closures keep your values safe
+
+
+>>>>>Sample >>> updating a function  by redefining the function as a closure
+
+def my_special_function():
+  print('You are running my_special_function()')
+  
+def get_new_func(func):
+  def call_func():
+    func()
+  return call_func
+
+new_func = get_new_func(my_special_function)
+
+# Redefine my_special_function() to just print "hello"
+def my_special_function():
+ print('hello')
+
+new_func()
+
+
+>>>> sample >>> delete the special function
+
+def my_special_function():
+  print('You are running my_special_function()')
+  
+def get_new_func(func):
+  def call_func():
+    func()
+  return call_func
+
+new_func = get_new_func(my_special_function)
+
+# Delete my_special_function()
+del my_special_function
+
+new_func()
+
+

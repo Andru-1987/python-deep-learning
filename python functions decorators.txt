@@ -1,0 +1,224 @@
+functions are just another type of object
+
+a function can be assigned to a variable
+
+def my_function():
+	print('hello')
+
+x=my_function
+
+print(type(x))
+x()
+
+you can add a function to a list or a dictionary
+
+list_of_functions[my_function, open, print]
+
+list_of_functions[2]('I am printing with an element of a list!')
+
+dict_of_functions={
+'func1':my_function,
+'func2':open,
+'func3':print
+}
+
+>>>>>passing a function as an argument
+
+
+def has_docstring(funct):
+   """Check to see if the function func has a docstring
+
+	Args:
+		func(callable): A function
+	Returns:
+		bool
+"""
+
+	return func.__doc__ is not None
+
+def no():
+	return 42
+
+def yes():
+	""" return the value 42
+"""
+	return 42
+
+has_docstring(no)
+output:false
+has_docstring(yes)
+output:true
+
+
+>>>>>> Nested functions
+
+def foo():
+	x=[3,6,9]
+	def bar(y):
+		print(y)
+
+	for value in x:
+		bar(x)
+
+
+def get_function():
+	def print_me(s):
+		print(s)
+
+	return print_me
+
+new_func=get_function()
+new_func('This is a sentence')
+
+
+>>>> sample >>> function as a dictionary item
+
+# Add the missing function references to the function map
+function_map = {
+  'mean': mean,
+  'std': std,
+  'minimum': minimum,
+  'maximum': maximum
+}
+
+data = load_data()
+print(data)
+
+func_name = get_user_input()
+print(func_name)
+# Call the chosen function and pass "data" as an argument
+function_map[func_name](data)
+
+
+>>>> sample >>> nested functions
+
+
+def create_math_function(func_name):
+  if func_name == 'add':
+    def add(a, b):
+      return a + b
+    return add
+  elif func_name == 'subtract':
+    # Define the subtract() function
+    def subtract(a,b):
+      return a-b
+    return subtract
+  else:
+    print("I don't know that one")
+    
+add = create_math_function('add')
+print('5 + 2 = {}'.format(add(5, 2)))
+
+subtract = create_math_function('subtract')
+print('5 - 2 = {}'.format(subtract(5, 2)))
+
+
+>>>>>>>>>>Scope
+
+x=7
+y=200
+print(x)
+
+def foo():
+	x=42
+	print(x)
+	print(y)
+
+output 42
+output 200
+
+if the intreper can not find the variable in the local scope than it expands its search to the global scope
+
+nonlocal means that python searchs the global scope first before searching the local scope
+
+x=7
+
+def foo():
+	global x
+	x=42
+	print(x)
+
+foo()
+print(x)
+
+output 42
+output 42
+
+def foo():
+	x=10
+	def bar():
+		nonlocal x
+		x=200
+		print(x)
+
+	bar()
+	print(x)
+
+
+output:200
+output:200
+
+
+>>>>>sample >>> global variable
+
+call_count = 0
+
+def my_function():
+  # Use a keyword that lets us update call_count 
+  global call_count
+  call_count += 1
+  
+  print("You've called my_function() {} times!".format(
+    call_count
+  ))
+  
+for _ in range(20):
+  my_function()
+
+>>>>>sample >>> nonlocal variable
+
+def read_files():
+  file_contents = None
+  
+  def save_contents(filename):
+    # Add a keyword that lets us modify file_contents
+    nonlocal file_contents
+    if file_contents is None:
+      file_contents = []
+    with open(filename) as fin:
+      file_contents.append(fin.read())
+      
+  for filename in ['1984.txt', 'MobyDick.txt', 'CatsEye.txt']:
+    save_contents(filename)
+    
+  return file_contents
+
+print('\n'.join(read_files()))
+
+>>>> sample >>> global variable
+
+def wait_until_done():
+  def check_is_done():
+    # Add a keyword so that wait_until_done() 
+    # doesn't run forever
+    global done
+    if random.random() < 0.1:
+      done = True
+      
+  while not done:
+    check_is_done()
+
+done = False
+wait_until_done()
+
+print('Work done? {}'.format(done))
+
+>>>>>>>>>>>>>>>Closures
+
+
+
+
+
+
+
+
