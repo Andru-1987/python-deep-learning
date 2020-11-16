@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added super bowl prediction creating a  probable profile of a winner
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Superbowel.ipynb
+
 * I added general social survey
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/General%20Social%20Survey.ipynb
