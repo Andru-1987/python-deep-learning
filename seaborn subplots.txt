@@ -1,0 +1,3 @@
+https://jakevdp.github.io/PythonDataScienceHandbook/04.08-multiple-subplots.html
+
+plt.axes also takes an optional argument that is a list of four numbers in the figure coordinate system. These numbers represent [left, bottom, width, height] in the figure coordinate system, which ranges from 0 at the bottom left of the figure to 1
