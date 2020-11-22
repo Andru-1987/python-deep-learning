@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added Trump tweets
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Trump%20tweets.ipynb
+
 * I added super bowl prediction creating a  probable profile of a winner
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Superbowel.ipynb
