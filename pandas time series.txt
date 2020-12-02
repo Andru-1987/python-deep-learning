@@ -19,6 +19,7 @@ plt.show()
 data={'time':['2020-04-01','2020-04-02','2020-04-03','2020-04-04'],'data_values':[100,150,400,200]}
 data=pd.DataFrame(data)
 data2={'time':['2020-04-01','2020-04-02','2020-04-03','2020-04-04'],'data_values':[45,98,200,300]}
+
 data2=pd.DataFrame(data2)
 data.set_index('time')
 data2.set_index('time')
@@ -27,47 +28,6 @@ print(data)
 fig, axs = plt.subplots(2,1, figsize=(5,10))
 data.plot(x='time',y='data_values',ax=axs[0])
 data2.plot(x='time', y='data_values',ax=axs[1])
-plt.show()
-
-
->>Shaping data
-
-array.T.shape (transpose the data)
-array.reshape([-1,1]).shape (-1 will automatically fill the axis with the remaining values)
-
-model=LinearSVC()
-model.fit(X,y)
-model.coef
-
-predictions=model.predict(X_Test)
-
-array=np.array([1,2,3,4,5,6])
-array=array.reshape(2,3)
-print(array)
-
->>iris prediction
-
-from sklearn.svm import LinearSVC
-
-# Construct data for the model
-X = data[["petal length (cm)","petal width (cm)"]]
-y = data[['target']]
-
-# Fit the model
-model = LinearSVC()
-model.fit(X, y)
-
-# Create input array
-X_predict = targets[['petal length (cm)', 'petal width (cm)']]
-
-# Predict with the model
-predictions =model.predict(X_predict)
-print(predictions)
-
-# Visualize predictions and actual values
-plt.scatter(X_predict['petal length (cm)'], X_predict['petal width (cm)'],
-            c=predictions, cmap=plt.cm.coolwarm)
-plt.title("Predicted class values")
 plt.show()
 
 
@@ -308,106 +268,905 @@ print("Correlation of stocks and interest rates: ", correlation)
 plt.scatter(returns['SP500'],returns['US10Y'])
 plt.show()
 
+>>>>>>>>>>>>>>>>Spectrogram
 
->> linear regression is known as OLS ordinary least squares
-It minimizes distances to a sloping regression line
+fourier transforms
+fast or slow moving waves
+fft show a series of fast and slow wave osciliations in a time series.
 
-import statsmodel.api as sm
+short-time fourier transform is calculating a fft over a time frame then sliding the window over by one
 
-sm.OLS(y,x).fit()
+The spectrogram is the square of each sfft
+
+we can calculate the stft with librosa
+
+the sound frequencies are converted in to decibels which normalizes the average values of all the frequencies
+
+we can visualize it with specshow() function
+
+from librosa.core import stft, amplitude_to_db
+from librosa.display import specshow
+
+HOP_LENGTH = 2**4
+SIZE_WINDOW= 2**7
+
+#calculate the short fast fourier transform
+
+audio_spec = stft(audio, hop_length=HOP_LENGTH, n_fft=SIZE_WINDOW)
+
+#convert into decibels
+spec_db=amplitude_to_db(audio_spec)
+
+#visualize
+specshow(spec_db, sr=sfreq, x_axis='time',
+	y_axis='hz', hop_length=HOP_LENGTH)
+
+bandwidths=lr.feature.spectral_bandwidth(S=spec)[0]
+centroids=lr.feature.spectral_centroid(S=spec)[0]
+
+ax= spectshow(spec, x_axis='time', y_axis='hz', hop_length=HOP_LENGTH)
+ax.plot(times_spec, centroids)
+ax.fill_between(times_spec, centroids-bandwidths/2, centroids+bandwidths/2, alpha=0.5)
 
 
-coef is the slope of the equation, const is the intercept, R-squared is the line fit to the data.
-if the slope is positive then the correlation is positive
+each spectral has different patterns
+we can use these patterns to distinquish spectrals from one another
 
-correlation= square root (R squared)
+for example spectral bandwidth and spectral centroids describe where most of the energy is at each moment in time.
 
-R-squared measures how closely the data fit the regression line, so the R-squared in a simple regression is related to the correlation between the two variables. In particular, the magnitude of the correlation is the square root of the R-squared and the sign of the correlation is the sign of the regression coefficient.
+centroids_all=[]
+bandwidths_all=[]
 
-Most linear regressions contain a constant term which is the intercept (the a in the regression yt=a+ßxt+?t). To include a constant using the function OLS(), you need to add a column of 1's to the right hand side of the regression.
+for spec in spectrograms:
+	bandwidths=lr.feature.spectral_bandwidth(S=lr.db_to_amplitude(spec))
+	centroids=lr.feature.spectral_centroid(S=lr.db_to_amplitude(spec))
+	bandwidths_all.append(np.mean(bandwidths))
+	centroids_all.appen(np.mean(centroids))
 
->> correlation and ols
+#input matrix
 
-# Import the statsmodels module
-import statsmodels.api as sm
+X= np.column_stack([means,stds,maxs,tempo_mean,tempo_max,tempo_std, bandwidths_all, centroids_all])
 
-# Compute correlation of x and y
-correlation = x.corr(y)
-print("The correlation between x and y is %4.2f" %(correlation))
 
-# Convert the Series x to a DataFrame and name the column x
-dfx = pd.DataFrame(x, columns=['x'])
 
-# Add a constant to the DataFrame dfx
-dfx1 = sm.add_constant(dfx)
+>>>> sample  >>>  short term fourier transform heart beat audio
+#Spectral engineering is one of the most common techniques in machine learning for time series data
 
-# Regress y on dfx1
-result = sm.OLS(y,dfx1).fit()
+# Import the stft function
+from librosa.core import stft
 
-plt.scatter(x,y)
+# Prepare the STFT
+HOP_LENGTH = 2**4
+spec = stft(audio, hop_length=HOP_LENGTH, n_fft=2**7)
+
+>>> sample >>> convert the spectral to decibals
+
+# Convert into decibels
+spec_db = amplitude_to_db(spec)
+
+# Compare the raw audio to the spectrogram of the audio
+fig, axs = plt.subplots(2, 1, figsize=(10, 10), sharex=True)
+axs[0].plot(time, audio)
+
+specshow(spec_db, sr=sfreq, x_axis='time', y_axis='hz', hop_length=HOP_LENGTH)
 plt.show()
 
-# Print out the results and look at the relationship between R-squared and the correlation above
-print(result.summary())
+#the heartbeats come in pairs as seen by the vertical lines in the spectrogram
 
 
->>auto correlation
-Momentum or trend following - positive correlation
-Traders use autocorrelation to make money
+>>>>>>>sample >>> calculate the bandwidths and centroids
 
-df.index=pd.to_datetime(df.index)
-df=df.resample(rule='M', how='last')
-df['Return']=df['Price'].pct_change()
-autocorrelation=df['Return'].autocorr()
-print('The autocorrelation is", autocorrelation)
+# By computing the spectral features, you have a much better idea of what's going on. 	
 
->>auto correlation and pct_change
+import librosa as lr
+from librosa.core import amplitude_to_db
+from librosa.display import specshow
 
-# Convert the daily data to weekly data
-MSFT = MSFT.resample(rule='W', how='last')
+# Calculate the spectral centroid and bandwidth for the spectrogram
+bandwidths = lr.feature.spectral_bandwidth(S=spec)[0]
+centroids = lr.feature.spectral_centroid(S=spec)[0]
 
-# Compute the percentage change of prices
-returns = MSFT.pct_change()
 
-# Compute and print the autocorrelation of returns
-autocorrelation = returns['Adj Close'].autocorr()
-print("The autocorrelation of weekly returns is %4.2f" %(autocorrelation))
+# Convert spectrogram to decibels for visualization
+spec_db = amplitude_to_db(spec)
 
->>autocorrelate using diff
-
-print(daily_rates)
-# Compute the daily change in interest rates 
-import matplotlib.pyplot as plt
-
-daily_diff = daily_rates.diff()
-
-X=daily_rates['US10Y'].rolling(100).mean().tolist()
-Y=pd.to_datetime(daily_rates.index)
-
-plt.scatter(X,Y)
+# Display these features on top of the spectrogram
+fig, ax = plt.subplots(figsize=(10, 5))
+ax = specshow(spec_db, x_axis='time', y_axis='hz', hop_length=HOP_LENGTH)
+ax.plot(times_spec, centroids)
+ax.fill_between(times_spec, centroids - bandwidths / 2, centroids + bandwidths / 2, alpha=.5)
+ax.set(ylim=[None, 6000])
 plt.show()
-print(daily_diff)
-
-# Compute and print the autocorrelation of daily changes
-autocorrelation_daily = daily_diff['US10Y'].autocorr()
-
-The autocorrelation as a function of lag implies that it can be forecast
-non zero autocorrelation imply that it can be forecast
 
 
-The next correlation can be derived from the previous two values
+#You've spent this lesson engineering many features from the audio data - some contain information about how the audio changes in time
 
-from statsmodels.graphics.tsaplots import plot_acf
+#Combine all of them into an array that can be fed into the classifier, and see how it does.
 
-plot_acf(x, lags=20, alpha=0.05)
+>>> sample build the final array for the classifier
 
-The argument alpha sets the width of the confidence interval
+# Loop through each spectrogram
+bandwidths = []
+centroids = []
 
-confidence bands are wider if the alpha is lower or your have few observations
+for spec in spectrograms:
+    # Calculate the mean spectral bandwidth
+    this_mean_bandwidth = np.mean(lr.feature.spectral_bandwidth(S=spec))
+    # Calculate the mean spectral centroid
+    this_mean_centroid = np.mean(lr.feature.spectral_centroid(S=spec))
+    # Collect the values
+    bandwidths.append(this_mean_bandwidth)  
+    centroids.append(this_mean_centroid)
 
-Under some simplifying assumptions, 95% confidence bands are +/- 2 divided by sqrt(number of observations)
+# Create X and y arrays
+X = np.column_stack([means, stds, maxs, tempo_mean, tempo_max, tempo_std, bandwidths, centroids])
+y = labels.reshape([-1, 1])
 
-if alpha is set to 1 then no confidence bads will be plotted
+# Fit the model and score on testing data
+percent_score = cross_val_score(model, X, y, cv=5)
+print(np.mean(percent_score))
+
+output .48
+
+#To improve the accuracy, you want to find the right features that provide relevant information and also build models on much larger data
+
+>>>>>>>Regression
+
+regression model predict continueous models
+
+regression: a process that results in a formal model of the data
+correlation: a statistic that describe the data.  how two features correlate between each other.
+
+down or up together or an inverse relationship
+
+timeseries often have patterns that change over time
+
+two timeseries that seem correlated at one moment may not remain so over time
+
+fig, axs=plt.subplots(1,2)
+
+axs[0].plot(x,c='k',lw=3,alpha=.2)
+axs[0].plot(y)
+axs[0].set(xlabel='time',title='X values=time')
+
+#encode time as acolor in a scatterplot
+
+axs[1].scatter(x_long,y_long, c=np.arange(len(x_long)),cmap='viridis')
+axs[1].set(xlabel='x',ylabel='y',title='Color=time')
+
+>>>>>regression models
+
+from sklearn.linear_model import LinearRegression
+model=LinearRegression()
+model.fit(X,y)
+model.predict(X)
+
+>>>>>Ridge (see introductory course on skilearn)
+
+alphas=[.1,1e2,1e3]
+
+ax.plot(y_test,color='k', alpha=.3,lw=3)
+
+for ii, alpha in enumerate(alphas):
+	y_predicted=Ridge(alpha=alpha).fit(X_train,y_train).predict(X_test)
+	ax.plot(y_predict, c=cmap(ii/len(alphas)))
+
+ax.legend(['True values','Model 1', 'Model 2', 'Model 3'])
+ax.set(xlabel='Time')
+
+>>>>>Scoring a regression model
+
+Correlation (r)
+Coefficient of Determination(R2)
+
+
+Coefficient of Determination R2
+1- error(model)/variance(testdata)
+
+Error is actual - predicted of the model
+
+Variance is the mean squared distance of the data from their mean
+(x-x_mean) ** 2 / n
+
+or
+
+np.var(versicolor_petal_length)
+
+
+deviations = np.mean(y_data) - y_data
+
+VAR = np.sum(np.square(deviations))
+
+R-Squared : what fraction of variation is linear
+
+
+from sklearn.metrics import r2_score
+print(r2_score(y_predicted, y_test))
+
+
+>>>>>>Sample >>> plot the prices for Ebay and Yhoo over time
+
+# Plot the raw values over time
+print(prices.columns)
+prices.plot()
+plt.show()
+
+>>>> SAMPLE >>> plot a scatter plot for ebay and yahoo prices
+
+# Scatterplot with one company per axis
+prices.plot.scatter('EBAY', 'YHOO')
+plt.show()
+
+>>>> sample >>> plot the scatter plot with color showing the price index
+# Scatterplot with color relating to time
+prices.plot.scatter('EBAY', 'YHOO', c=prices.index, 
+                    cmap=plt.cm.viridis, colorbar=False)
+plt.show()
+
+The prices.index are dates.   The color changes over time.
+
+<<<<<sample >>> add a ridge regressor and do 3 fold cross validation to check the accuracy.
+
+
+from sklearn.linear_model import Ridge
+from sklearn.model_selection import cross_val_score
+
+# Use stock symbols to extract training data
+X = all_prices[['EBAY','NVDA','YHOO']]
+y = all_prices[['AAPL']]
+
+# Fit and score the model with cross-validation
+scores = cross_val_score(Ridge(), X, y, cv=3)
+print(scores)
+
+If Measure of fit of the model is a small value that means model is well fit to the data.
+
+If Measure of magnitude of coefficient is a small value that means model is not overfit.
+
+>>>>>sample >>> calculating the R2 factor
+
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+
+# Split our data into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y, 
+                                                    train_size=.8, shuffle=False, random_state=1)
+
+# Fit our model and generate predictions
+model = Ridge()
+model.fit(X_train,y_train)
+predictions = model.predict(X_test)
+score = r2_score(y_test, predictions)
+print(score)
+
+output: -5.70939901949
+
+ebay, nvda, yhoo are not linear predicters for apple prices
+
+>>>>>sample  >> y_test is falling then predicted apple price is climbing
+
+# Visualize our predictions along with the "true" values, and print the score
+fig, ax = plt.subplots(figsize=(15, 5))
+ax.plot(y_test, color='k', lw=3)
+ax.plot(predictions, color='r', lw=2)
+plt.show()
+
+
+The poor r2 score reflects a deviation between the predicted and true time series values.
+
+
+>>>>>>>>>>>> cleaning and improving the data
+
+time data errors often happens because of human error, machine sensor malfunctions, and database failures.
+
+
+interpolation is using time to fill in missing data
+
+you can use time to assist in interpolation
+
+interpolation means using known values on either side of a gap in the data to make assumptions about what missing
+
+#create a boolean mask to find where the missing values are
+
+missing= prices.isna()
+
+#create a list of interpolated missing values
+prices_interp = prices.interpolate('linear')
+
+ax=prices_interp.plot(c='r')
+prices.plot(c='k',ax=ax, lw=2)
+
+>>>>>> another way to fix missing data is to transform it so it more better behaved
+
+1. smooth the data
+2. use more complex transformations
+
+a common transformation is to standardize the mean and variance over time
+
+1. convert the dataset so each point represents the % change over a previous window
+2. this makes timepoints more comparable to one another if absolute values of data change a lot
+
+
+
+
+def percent_change(values):
+	"""Calculates the % change between the last value and the mean of previous values"""
+
+	previous_values=values[:-1]
+	last_value=values[-1]
+	percent_change=(last_value-np.mean(previous_values))/np.mean(previous_values)
+	return percent_change
+
+
+>>> pass the percent_change function as a input to rolling prices
+
+fig,axs=plt.subplots(1,2,figsize=(10,5))
+ax=prices.plot(ax=axs[0])
+
+ax=prices.rolling(window=20).aggregate(percent_change).plot(ax=axs[1])
+ax.legend_.set_visible(False)
+
+#periods of high or low changes are easier to spot.
+
+>>>>>>>>Outliers
+
+outliers are datapoints that are significantly statistically different from the dataset
+
+they have negative effects on the predictive power of your model, biasing it away from its true value
+
+One solution: remove or replace outliers with a more representative vlaue
+
+** there can be legitimate extreme values
+
+fig, axs = plt.subplots(1,2, figsize=(10,5))
+
+for data, ax in zip([prices,prices_perc_change],axs):
+	this_mean=data.mean()
+	this.std=data.std()
+
+	data.plot(ax=ax)
+	ax.axhline(this_mean+this_std*3, ls='--',c='r')
+	ax.axhline(this_mean-this_std*3, ls='--',c='r')
+
+
+find price outside of 3 std range from the mean
+
+#replace the outliers with the median
+
+prices_outlier_centered=prices_outlier_perc - prices_outlier_perc.mean()
+
+std=prices_outlier_perc.std()
+
+outliers=np.abs(prices_outlier_centered)>(std*3)
+
+prices_outlier_fixed=prices_outlier_centered.copy()
+prices_outlier_fixed[outliers]=np.nanmedian(prices_outlier_fixed)
+
+fig,axs = plt.subplots(1,2,figsize=(10,5))
+prices_outlier_centered.plot(ax=axs[0])
+prices_outlier_fixed.plot(ax=axs[1])
+
+
+>>>>>>>sample  >>>>  visualize missing values in continueous data
+
+# Visualize the dataset
+prices.plot(legend=False)
+plt.tight_layout()
+plt.show()
+
+# Count the missing values of each time series
+missing_values = prices.isna().sum()
+print(missing_values)
+
+>>>> sample >>> interpolate
+
+# Create a function we'll use to interpolate and plot
+def interpolate_and_plot(prices, interpolation_type):
+
+    # Create a boolean mask for missing values
+    missing_values = prices.isna()
+
+    # Interpolate the missing values
+    prices_interp = prices.interpolate(interpolation_type)
+
+    # Plot the results, highlighting the interpolated values in black
+    fig, ax = plt.subplots(figsize=(10, 5))
+    prices_interp.plot(color='k', alpha=.6, ax=ax, legend=False)
+    
+    # Now plot the interpolated values on top in red
+    prices_interp[missing_values].plot(ax=ax, color='r', lw=3, legend=False)
+    plt.show()
+
+
+# Interpolate using the latest non-missing value
+interpolation_type = 'zero' #'linear' or 'quadratic'
+interpolate_and_plot(prices, interpolation_type)
+
+
+>>>>> sample >>> rolling percent change
+
+# Your custom function
+def percent_change(series):
+    # Collect all *but* the last value of this window, then the final value
+    previous_values = series[:-1]
+    last_value = series[-1]
+
+    # Calculate the % difference between the last value and the mean of earlier values
+    percent_change = (last_value - np.mean(previous_values)) / np.mean(previous_values)
+    return percent_change
+
+# Apply your custom function and plot
+prices_perc = prices.rolling(20).aggregate(percent_change)
+prices_perc.loc["2014":"2015"].plot()
+plt.show()
+
+>>>>>> sample >>> apply  replace_outliers
+
+def replace_outliers(series):
+    # Calculate the absolute difference of each timepoint from the series mean
+    absolute_differences_from_mean = np.abs(series - np.mean(series))
+
+    # Calculate a mask for the differences that are > 3 standard deviations from the mean
+    this_mask = absolute_differences_from_mean > (np.std(series) * 3)
+    
+    # Replace these values with the median accross the data
+    series[this_mask] = np.nanmedian(series)
+    return series
+
+# Apply your preprocessing function to the timeseries and plot the results
+prices_perc = prices_perc.apply(replace_outliers)
+prices_perc.loc["2014":"2015"].plot()
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>creating features over time
+
+extract features as they change over time
+
+feats=prices.rolling(20).aggregate([np.std,np.max]).dropna()
+print(feats.head())
+
+
+
+rolling is a rolling window
+
+AIG: std, amax
+ABt: std, amax
+
+always plot properties of your features
+it will help you spot noise data and outliers
+
+>>>>>>>>>partial function
+
+lets you define a new function with parts of the old one
+
+
+from functools import partial
+
+mean_over_first_axis = partial(np.mean, axis=0)
+
+print(mean_over_first_axis(a))
+
+#the mean function always operates on the first axis
+
+percentiles give fine grained summaries of your data
+
+print(np.percentile(np.linespace(0,200),q=20))
+
+percentiles first input is an array
+q, the second input is an integer between 0 and 100
+
+returns the values of the first input as a percentile of the second input
+
+
+data = np.linspace(0,100)
+
+percentile_funcs= [partial(np.percentile, q=ii) for ii in [20,40,60]]
+
+percentiles = [i_func(data) for i_func in percentile_funcs]
+print(percentiles)
+
+output: [20,40,60]
+
+data.rolling(20).aggregrate(percentiles)
+
+>>>>>>>>>>>>>>>>>>Calculating date-based features >>>>>>>>>>
+
+statistical features: are numerical features like mean and standard deviation.
+human features like days of the week, holidays
+these features can span multiple years.
+
+
+#ensure index is datetime
+prices.index=pd.to_datetime(prices.index)
+
+#extract datetime features
+
+day_of_week_num = prices.index.weekday
+print(day_of_week_num[:10])
+output:[0 1 2 3 4 0 1 2 3 4]
+
+day_of_week = prices.index.weekday_name
+print(day_of_week[:10])
+output:['Monday','Tuesday'...'Friday']
+
+
+>>>>>>>sample >>> rolling window  >>> visualize min, max,mean, std for ebay
+
+# Define a rolling window with Pandas, excluding the right-most datapoint of the window
+prices_perc_rolling = prices_perc.rolling(20, min_periods=5, closed='right')
+
+# Define the features you'll calculate for each window
+features_to_calculate = [np.min, np.max, np.mean, np.std]
+
+# Calculate these features for your rolling window object
+features = prices_perc_rolling.aggregate(features_to_calculate)
+
+# Plot the results
+ax = features.loc[:"2011-01"].plot()
+prices_perc.loc[:"2011-01"].plot(ax=ax, color='k', alpha=.2, lw=3)
+ax.legend(loc=(1.01, .6))
+plt.show()
+
+
+>>>> percentiles and partial functions
+
+# Import partial from functools
+from functools import partial
+percentiles = [1, 10, 25, 50, 75, 90, 99]
+
+# Use a list comprehension to create a partial function for each quantile
+percentile_functions = [partial(np.percentile, q=percentile) for percentile in percentiles]
+
+# Calculate each of these quantiles on the data using a rolling window
+prices_perc_rolling = prices_perc.rolling(20, min_periods=5, closed='right')
+features_percentiles = prices_perc_rolling.aggregate(percentile_functions)
+
+# Plot a subset of the result
+ax = features_percentiles.loc[:"2011-01"].plot(cmap=plt.cm.viridis)
+ax.legend(percentiles, loc=(1.01, .5))
+plt.show()
+
+
+# Extract date features from the data, add them as columns
+prices_perc['day_of_week'] = prices_perc.index.dayofweek
+prices_perc['week_of_year'] = prices_perc.index.weekofyear
+prices_perc['month_of_year'] = prices_perc.index.month
+
+# Print prices_perc
+print(prices_perc)
+
+
+>>>>>>>>>>>>>>>Feature extraction
+
+time series has a linear flow with relationships between the data
+
+information in the past can help predict what happens in the future
+
+often the features best-suited to predict a timeseries are previous values of the same timeseries
+
+the smoothness of the data help determine how correlated a timepoint is with its neighboring timepoints
+
+the amount of auto-correlation in data will impact your models
+
+data= pd.Series()
+
+shifts=[0,1,2,3,4,5,6,7]
+
+many_shifts={'lag_{}'.format(ii): data.shift(ii) for ii in shifts}
+
+many_shifts=pd.DataFrame(many_shifts)
+
+model=Ridge()
+model.fit(many_shifts,data)
+
+
+fig,ax = plt.subplots()
+ax.bar(many_shifts.columns, model_coef_)
+ax.set(xlabel='Coefficient name', ylabel='Coefficient value')
+
+plt.setp(ax.get_xticklabels(), rotation=45, horizontalalignment='right')
+
+
+>>>>  Sample >>> time shifted features
+In machine learning for time series, it's common to use information about previous time points to predict a subsequent time point.
+
+# These are the "time lags"
+shifts = np.arange(1, 11).astype(int)
+
+print(prices_perc)
+# Use a dictionary comprehension to create name: value pairs, one pair per shift
+shifted_data = {"lag_{}_day".format(day_shift): prices_perc.shift(day_shift) for day_shift in shifts}
+
+# Convert into a DataFrame for subsequent use
+prices_perc_shifted = pd.DataFrame(shifted_data)
+
+# Plot the first 100 samples of each
+ax = prices_perc_shifted.iloc[:100].plot(cmap=plt.cm.viridis)
+prices_perc.iloc[:100].plot(color='r', lw=2)
+ax.legend(loc='best')
+plt.show()
+
+
+# Replace missing values with the median for each column
+X = prices_perc_shifted.fillna(np.nanmedian(prices_perc_shifted))
+y = prices_perc.fillna(np.nanmedian(prices_perc))
+
+# Fit the model
+model = Ridge()
+model.fit(X, y)
+
+def visualize_coefficients(coefs, names, ax):
+    # Make a bar plot for the coefficients, including their names on the x-axis
+    ax.bar(names, coefs)
+    ax.set(xlabel='Coefficient name', ylabel='Coefficient value')
+    
+    # Set formatting so it looks nice
+    plt.setp(ax.get_xticklabels(), rotation=45, horizontalalignment='right')
+    return ax
+
+# Visualize the output data up to "2011-01"
+fig, axs = plt.subplots(2, 1, figsize=(10, 5))
+y.loc[:'2011-01'].plot(ax=axs[0])
+
+# Run the function to visualize model's coefficients
+visualize_coefficients(model.coef_, prices_perc_shifted.columns, ax=axs[1])
+plt.show()
+
+Increase the data window from 20 to 40
+
+As you can see here, by transforming your data with a larger window, you've also changed the relationship between each timepoint and the ones that come just before it. This model's coefficients gradually go down to zero, which means that the signal itself is smoother over time.
+
+
+>>>>>>>>>>>Cross validating time series data
+
+KFold is the most common cross validation
+
+from sklearn.model_selection import KFold
+
+cv=KFold(n_splits=5)
+for tr,tt in cv.split(X,y):
+
+always visualize your models behavior during cross validation
+
+fig, axs = plt.subplots(2,1)
+
+axs[0].scatter(tt,[0]*len(tt),marker='_',s=2,lw=40)
+axs[0].set(ylim=[-.1,.1],title='Test set indices (color=CV loop)', xlabel='Index of raw data')
+
+axs[1].plot(model.predict(X[tt]))
+axs[1].set(title='Test set predictions on each CV loop', xlabel('Prediction index')
+
+
+from sklearn.model_selection import ShuffleSplit
+
+cv=ShuffleSplit(n_splits=3)
+for tr,tt in cv.split(X,y):
+
+
+>>>>>>>>>time series cv iterator  (use only the past to validate)
+
+1. generally you should not use datapoints in the future to predict data in the past
+
+2. Always use training data from the past to predict the future
+
+from sklearn.model_selection import TimeSeriesSplit
+cv=TimeSeriesSplit(n_splits=10)
+
+fig,ax=plt.subplots(figsize=(10,5))
+
+for ii,(tr,tt) in enumerate(cv.split(X,y)):
+	l1=ax.scatter(tr,[ii]*len(tr), c=[plt.cm.coolwarm(.1)],marker='_',lw=6)
+
+	l2=ax.scatter(tt,[ii]*len(tt), c=[plt.cm.coolwarm(.9)],marker='_',lw=6)
+
+	ax.set(ylim[10,-1],title='TimeSeriesSplit behavior', xlabel='data index', ylabel='CV iteration')
+	ax.legend([l1,l2],['Training','Validation'])
+
+
+only the past is use to validate the data
+
+def myfunction(estimator, X,y):
+	y_pred=estimator.predict(X)
+	my_custom_score=my_custom_function(y_pred,y)
+	return my_custom_score
+
+def my_pearsonr(est,X,y):
+	y_pred=est.predict(X).squeeze()
+	my_corrcoef_matrix=np.corrcoef(y_pred,y.squeeze())
+	my_corrcoef = my_corrcoef[1,0]
+	return my_corrcoef
+
+
+
+
+>>>>Sample  >>>> Shufflesplit   >>> visualization by time
+
+# Import ShuffleSplit and create the cross-validation object
+from sklearn.model_selection import ShuffleSplit
+cv = ShuffleSplit(n_splits=3, random_state=1)
+
+# Iterate through CV splits
+results = []
+
+for tr, tt in cv.split(X, y):
+    # Fit the model on training data
+    model.fit(X[tr], y[tr])
+    
+    # Generate predictions on the test data, score the predictions, and collect
+    prediction = model.predict(X[tt])
+    score = r2_score(y[tt], prediction)
+    results.append((prediction, score, tt))
+
+# Custom function to quickly visualize predictions
+visualize_predictions(results)
+
+https://goodboychan.github.io/chans_jupyter/python/datacamp/time_series_analysis/machine_learning/2020/06/18/02-Validating-and-Inspecting-Time-Series-Models.html
+
+def visualize_predictions(results):
+    fig, axs = plt.subplots(2, 1, figsize=(10, 10), sharex=True)
+
+    # Loop through our model results to visualize them
+    for ii, (prediction, score, indices) in enumerate(results):
+        # Plot the predictions of the model in the order they were generated
+        offset = len(prediction) * ii
+        axs[0].scatter(np.arange(len(prediction)) + offset, prediction, 
+                       label='Iteration {}'.format(ii))
+
+        # Plot the predictions of the model according to how time was ordered
+        axs[1].scatter(indices, prediction)
+    axs[0].legend(loc="best")
+    axs[0].set(xlabel="Test prediction number", title="Predictions ordered by test prediction number")
+    axs[1].set(xlabel="Time", title="Predictions ordered by time")
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>Sample >>>> using KFold
+
+from sklearn.model_selection import KFold
+
+# Create KFold cross-validation object
+from sklearn.model_selection import KFold
+cv = KFold(n_splits=10, shuffle=False, random_state=1)
+
+# Iterate through CV splits
+results = []
+for tr, tt in cv.split(X, y):
+    # Fit the model on training data
+    model.fit(X[tr],y[tr])
+    
+    # Generate predictions on the test data and collect
+    prediction = model.predict(X[tt])
+    results.append((prediction, tt))
+    
+# Custom function to quickly visualize predictions
+visualize_predictions(results)
+
+#This time, the predictions generated within each CV loop look 'smoother' than they were before - they look more like a real time series because you didn't shuffle the data
+
+
+>>>>>>>>>>Sample  >>> Timeseries Split
+
+# Import TimeSeriesSplit
+from sklearn.model_selection import TimeSeriesSplit
+
+# Create time-series cross-validation object
+cv = TimeSeriesSplit(n_splits=10)
+
+# Iterate through CV splits
+fig, ax = plt.subplots()
+for ii, (tr, tt) in enumerate(cv.split(X, y)):
+    # Plot the training data on each iteration, to see the behavior of the CV
+    ax.plot(tr, ii + y[tr])
+
+ax.set(title='Training data on each CV iteration', ylabel='CV iteration')
+plt.show()
+
+#Note that the size of the training set grew each time when you used the time series cross-validation object
+
+
+>>>>>>>>>>>>>Stationary and stability
+
+a stationary time series is one that does not change their statistical properties over time.
+
+most time series are non-stationary to some extent
+
+it has the same mean, standard deviation, and trends
+
+cross validation to quantify parameter stability
+
+calculate model parameter on each iteration
+
+assess parameter stability across all cv split
+
+bootstrapping is a way to estimate the confidence using the mean of a group of numbers
+
+1. take a random sample of data with replacement
+2. calculate the mean of the sample
+3. repeat the process many times
+4. caclulate the percentiles of the result
+
+the result is a 95% confidence interval of the mean of each coefficent
+
+from sklearn.utils import resample
+
+n_boots=100
+
+bootstrap_means=np.zeros(n_boots, n_coefficients)
+for ii in range(n_boots):
+	random_sample=resample(cv_coefficients)
+	bootstrap_means[ii]=random_sample.mean(axis=0)
+
+percentiles=np.percentiles(bootstrap_means,(2.5,97.5),axis=0)
+
+fig,ax=plt.subplots()
+
+ax.scatter(many_shifts.columns,percentiles[0], marker='_',s=200)
+ax.scatter(many_shifts.columns,percentiles[1], marker='_',s=200)
+
+this gives an idea of the variability of the mean across all cross validation iterations
+
+>>>>>>>>>>>>Assessing model performance stability
+
+if your using the TimeSeriesSplit, you can plot the models score over time.
+
+This is helpful to find certain regions of time that hurt the score
+
+it is also import to find non-stationary signals
+
+
+def my_corrcoef(est,X,y):
+	"""return the correlation coefficient between model predictions and a validation set"""
+	return np.corrcoef(y,est,predict(X))[1,0]
+
+first_indices=[data.index[tt[0]] for tr,tt in cv.split(X,y)]
+
+cv_scores=cross_val_score(model, X,y,cv=cv, scoring=my_corrcoef)
+cv_scores=pd.Series(cv_scores, index=first_indices)
+
+
+cv.split rturns a ndarray train set indices and test ndarray set indices
+
+find the beginning of each validation block using a list comprehension
+
+collect the score and convert them into a pandas series
+
+visualize the results as a timeseries
+
+fig, axs=plt.subplots(2,1, figsize=(10,5), sharex=True)
+
+cv_scores_mean=cv_scores.rolling(10, min_periods=1).mean()
+
+cv_scores.plot(ax=axs[0])
+axs[0].set(title='Validation scores (correlation)', ylim=[0,1])
+
+data.plot(ax=axs[1])
+axs[1].set(title='Validation data')
+
+>>>>>>>restrict to the latest time points to be used in training
+
+window=100
+
+cv=TimeSeries(n_splits=10, max_train_size=window)
+
+
+>>>>>>>>>>>>>Sample >>> boot strap the data  >> build the function
+
+from sklearn.utils import resample
+
+def bootstrap_interval(data, percentiles=(2.5, 97.5), n_boots=100):
+    """Bootstrap a confidence interval for the mean of columns of a 2-D dataset."""
+    # Create our empty array to fill the results
+    bootstrap_means = np.zeros([n_boots, data.shape[-1]])
+    for ii in range(n_boots):
+        # Generate random indices for our data *with* replacement, then take the sample mean
+        random_sample = resample(data)
+        bootstrap_means[ii] = random_sample.mean(axis=0)
+        
+    # Compute the percentiles of choice for the bootstrapped means
+    percentiles = np.percentile(bootstrap_means, percentiles, axis=0)
+    return percentiles
+
+
 
 
 

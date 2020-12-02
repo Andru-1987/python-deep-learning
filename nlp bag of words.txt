@@ -1,0 +1,634 @@
+bag of words is a method for finding topics in text
+
+need to first create tokens using tokenization
+
+count up all the tokens
+
+the frequent a word, the more important it might be
+
+lower case all the words in the text
+
+from nltk.tokenize import word_tokenize
+
+from collections import Counter
+
+Counter(word_tokenize("""The cat is in the box.  The cat likes the box.  The box is over the cat"""))
+
+counter.most_common(2)
+
+result is a series of tuples
+
+
+>>>>>Sample  >>> find the top 10 most common words in an article to discover the topic
+
+# Import Counter
+from collections import Counter
+
+# Tokenize the article: tokens
+tokens = word_tokenize(article)
+
+# Convert the tokens into lowercase: lower_tokens
+lower_tokens = [token.lower() for token in tokens]
+
+# Create a Counter with the lowercase tokens: bow_simple
+bow_simple = Counter(lower_tokens)
+
+# Print the 10 most common tokens
+print(bow_simple.most_common(10))
+
+
+>>>>>>>>>>>>>>>>Simple Text preprocessing
+
+helps for making better input data
+
+when performing machine learning or other statistical methods
+
+other common techniquest are lemmatization or stemming
+1. shorten the words to their root stems
+2. remove stop words, punctuation or unwanted tokens
+
+input: Cats, dogs, and birds are common pets. So are fish.
+
+output: cat, dog, bird, common, pet, fish
+
+
+from ntlk.corpus import stopwords
+
+text="""The cat is in the box.  The cat likes the box.  The box is over the cat"""
+
+
+tokens=[w for w in word_tokenizer(text.lower()) if w.isalpha()]
+
+no_stops=[t for t in tokens if t not in stopwords.words('english')]
+
+Counter(no_stop).most_common(2)
+
+
+>>>sample  >>> lematize
+
+
+# Import WordNetLemmatizer
+from nltk.stem import WordNetLemmatizer
+
+# Retain alphabetic words: alpha_only
+alpha_only = [t for t in lower_tokens if t.isalpha()]
+
+# Remove all stop words: no_stops
+no_stops = [t for t in alpha_only if t not in english_stops]
+
+# Instantiate the WordNetLemmatizer
+wordnet_lemmatizer = WordNetLemmatizer()
+
+# Lemmatize all tokens into a new list: lemmatized
+lemmatized = [wordnet_lemmatizer.lemmatize(t) for t in no_stops]
+
+# Create the bag-of-words: bow
+bow = Counter(lemmatized)
+
+# Print the 10 most common tokens
+print(bow.most_common(10))
+
+
+>>>>>>>>>>>>>>gensim nlp library
+
+
+popular open-solurce nlp library
+uses top academic models to perform complex tasks
+
+perform topic identification and document comparison
+
+a vector is a multi dimensional representation of a word.  it is trained from a large corpus of words
+
+male-female: king and queen, man and woman
+verb tense: walking and walked,swimming and swam
+country-capital: spain and madrid, italy and rome
+
+we can find comparisons between the words dependant on how near or far the words are.
+
+
+from gensim.corpora.dictionary import Dictionary
+from nltk.tokenize import word_tokenize
+
+tokenized_docs=[ word_tokenize(doc.lower()) for doc in sentences]
+dictionary=Dictionary(tokenized_docs)
+print('This will create an id for each token in the corpus')
+#print(dictionary.token2id)
+corpus = [dictionary.doc2bow(doc) for doc in tokenized_docs]
+#print(corpus)
+print("Each document is converted into a bag of words indicating the frequency of each token")
+
+The tuple list has the first element as the token id and the second element in the tuple is the frequency
+
+>>>>sample >>> create a corpus
+
+# Import Dictionary
+from gensim.corpora.dictionary import Dictionary
+
+# Create a Dictionary from the articles: dictionary
+dictionary = Dictionary(articles)
+
+# Select the id for "computer": computer_id
+computer_id = dictionary.token2id.get("computer")
+
+# Use computer_id with the dictionary to print the word
+print(dictionary.get(computer_id))
+
+# Create a MmCorpus: corpus
+corpus = [dictionary.doc2bow(article) for article in articles]
+
+# Print the first 10 word ids with their frequency counts from the fifth document
+print(corpus[4][:10])
+
+>>>>sample >>> get the top 5 words in the corpus
+
+# Save the fifth document: doc
+doc = corpus[4]
+
+# Sort the doc for frequency: bow_doc
+bow_doc = sorted(doc, key=lambda w: w[1], reverse=True)
+
+# Print the top 5 words of the document alongside the count
+for word_id, word_count in bow_doc[:5]:
+    print(dictionary.get(word_id), word_count)
+    
+# Create the defaultdict: total_word_count
+total_word_count = defaultdict(int)
+for word_id, word_count in itertools.chain.from_iterable(corpus):
+    total_word_count[word_id] += word_count
+    
+# Create a sorted list from the defaultdict: sorted_word_count
+sorted_word_count = sorted(total_word_count.items(), key=lambda w: w[1], reverse=True) 
+
+# Print the top 5 words across all documents alongside the count
+for word_id, word_count in sorted_word_count[:5]:
+    print(dictionary.get(word_id),word_count)
+
+>>>>>>>>>>>>>>>>tf-idf
+
+term frequency - inverse document frequency
+
+allows you to determine the most important words in each document.
+
+each corpus may have shared words beyond just stop words
+
+some words should be downweight
+
+ensures common words don't show up as key words
+
+j is the row and i is the column
+
+weight (i,j) = tf(i,j) * log(N/df(i))
+
+weight(i,j) tf-idf weight for token i in the document j
+
+tf(i,j) = number of occurrences of token i in the document j
+
+df(i)= number of documents that contain token i
+
+N= total number of documents
+
+
+the weight will be low if the term does not appear often in the document because the tf variable will be low.  the weight will be low if the log is near zero meaning (N/df(i)) is close to 1. log of 1 is 0
+
+
+from gensim.models.tfidfmodel import TfidfModel
+
+tfidf=TfidfModel(corpus)
+
+>>>>sample >>> get calculate the tfidf weights
+
+# Create a new TfidfModel using the corpus: tfidf
+tfidf = TfidfModel(corpus)
+
+# Calculate the tfidf weights of doc: tfidf_weights
+tfidf_weights = tfidf[doc]
+
+# Print the first five weights
+print(tfidf_weights[:5] )
+
+# Sort the weights from highest to lowest: sorted_tfidf_weights
+sorted_tfidf_weights = sorted(tfidf_weights, key=lambda w: w[1], reverse=True)
+
+# Print the top 5 weighted words
+for term_id, weight in sorted_tfidf_weights[:5]:
+    print(dictionary.get(term_id), weight)
+
+print(doc)
+
+>>>>>>>>>>>>>>>>Named Entity
+
+NER nlp to identify people, place, organizations
+date, states works of art
+
+answering who, what, when and where
+
+named_entity=[(entity.text,entity.label_) for entity in doc.ents]
+print(named_entity)
+
+def find_persons(text):
+    # Create Doc object
+    doc2 = nlp(text)
+  
+    # Identify the persons
+    persons = [ent.text for ent in doc2.ents if ent.label_ == 'PERSON']
+  
+    # Return persons
+    return persons
+
+persons=find_persons(paragraph)
+print(persons)
+
+PERSON, DATE, WORK_OF_ART, ORG, GPS,CARDINAL
+GPE: country city states
+LAW
+LANGUAGE
+
+use to extract facts
+
+CoreNLP integrates with nltk
+CoreNLP runs on java
+
+>>>>>>>>using nltk for Name Entity Recognition
+
+sentence="""In New York, I like to ride the Metro to visit MOMA and some restaurants rated well by Ruth Reichl"""
+
+tokenized_sent=nltk.word_tokenize(sentence)
+tagged_sent=nltk.pos_tag(tokenized_sent)
+
+nouns
+pronouns
+adjectives
+verbs
+
+NNP - proper noun singular
+PRP - proper noun
+VB - verb
+DT - determinant
+
+
+print(nltk.ne_chunk(tagged_sent))
+
+returns the sentence as a tree
+
+
+>>>>Sample  >>> 1. create sentences 2. tokenize, 3. parts of speech 4. chunk sentences.  5. output where chunk label is NE
+
+# Tokenize the article into sentences: sentences
+sentences = nltk.sent_tokenize(article)
+print(sentences)
+
+# Tokenize each sentence into words: token_sentences
+token_sentences = [nltk.word_tokenize(sent) for sent in sentences]
+#print(token_sentences)
+
+# Tag each tokenized sentence into parts of speech: pos_sentences
+pos_sentences = [nltk.pos_tag(sent) for sent in token_sentences] 
+
+print(pos_sentences)
+
+# Create the named entity chunks: chunked_sentences
+chunked_sentences = nltk.ne_chunk_sents(pos_sentences,binary=True)
+
+# Test for stems of the tree with 'NE' tags
+for sent in chunked_sentences:
+    for chunk in sent:
+        if hasattr(chunk, "label") and chunk.label()== "NE":
+            print(chunk)
+
+# Create the defaultdict: ner_categories
+ner_categories = defaultdict(int)
+
+# Create the nested for loop
+for sent in chunked_sentences:
+    for chunk in sent:
+        if hasattr(chunk, 'label'):
+            ner_categories[chunk.label()] += 1
+            
+# Create a list from the dictionary keys for the chart labels: labels
+labels = list(ner_categories)
+print(labels)
+
+# Create the defaultdict: ner_categories
+ner_categories = defaultdict(int)
+
+# Create the nested for loop
+for sent in chunked_sentences:
+    for chunk in sent:
+        if hasattr(chunk, 'label'):
+            ner_categories[chunk.label()] += 1
+            
+# Create a list from the dictionary keys for the chart labels: labels
+labels = list(ner_categories.keys())
+
+# Create a list of the values: values
+values = [ner_categories.get(v) for v in labels]
+
+# Create the pie chart
+plt.pie(values, labels=labels, autopct='%1.1f%%', startangle=140)
+
+# Display the chart
+plt.show()
+
+['\ufeffThe taxi-hailing company Uber brings into very sharp focus the question of whether corporations can be said to have a moral character.', 'If any human being were to behave with the single-minded and ruthless greed of the company, we would consider them sociopathic.', 'Uber wanted to know as much as possible about the people who use its service, and those who don’t.', 'It has an arrangement with unroll.me, a company which offered a free service for unsubscribing from junk mail, to buy the contacts unroll.me customers had had with rival taxi companies.', 'Even if their email was notionally anonymised, this use of it was not something the users had bargained for.', 'Beyond that, it keeps track of the phones that have been used to summon its services even after the original owner has sold them, attempting this with Apple’s phones even thought it is forbidden by the company.', 'Uber has also tweaked its software so that regulatory agencies that the company regarded as hostile would, when they tried to hire a driver, be given false reports about the location of its cars.', 'Uber management booked and then cancelled rides with a rival taxi-hailing company which took their vehicles out of circulation.', 'Uber deny this was the intention.', 'The punishment for this behaviour was negligible.', 'Uber promised not to use this “greyball” software against law enforcement – one wonders what would happen to someone carrying a knife who promised never to stab a policeman with it.', 'Travis Kalanick of Uber got a personal dressing down from Tim Cook, who runs Apple, but the company did not prohibit the use of the app.', 'Too much money was at stake for that.', 'Millions of people around the world value the cheapness and convenience of Uber’s rides too much to care about the lack of drivers’ rights or pay.', 'Many of the users themselves are not much richer than the drivers.', 'The “sharing economy” encourages the insecure and exploited to exploit others equally insecure to the profit of a tiny clique of billionaires.', 'Silicon Valley’s culture seems hostile to humane and democratic values.', 'The outgoing CEO of Yahoo, Marissa Mayer, who is widely judged to have been a failure, is likely to get a $186m payout.', 'This may not be a cause for panic, any more than the previous hero worship should have been a cause for euphoria.', 'Yet there’s an urgent political task to tame these companies, to ensure they are punished when they break the law, that they pay their taxes fairly and that they behave responsibly.']
+
+[['\ufeffThe', 'taxi-hailing', 'company', 'Uber', 'brings', 'into', 'very', 'sharp', 'focus', 'the', 'question', 'of', 'whether', 'corporations', 'can', 'be', 'said', 'to', 'have', 'a', 'moral', 'character', '.'], ['If', 'any', 'human', 'being', 'were', 'to', 'behave', 'with', 'the', 'single-minded', 'and', 'ruthless', 'greed', 'of', 'the', 'company', ',', 'we', 'would', 'consider', 'them', 'sociopathic', '.'], ['Uber', 'wanted', 'to', 'know', 'as', 'much', 'as', 'possible', 'about', 'the', 'people', 'who', 'use', 'its', 'service', ',', 'and', 'those', 'who', 'don', '’', 't', '.'], ['It', 'has', 'an', 'arrangement', 'with', 'unroll.me', ',', 'a', 'company', 'which', 'offered', 'a', 'free', 'service', 'for', 'unsubscribing', 'from', 'junk', 'mail', ',', 'to', 'buy', 'the', 'contacts', 'unroll.me', 'customers', 'had', 'had', 'with', 'rival', 'taxi', 'companies', '.'], ['Even', 'if', 'their', 'email', 'was', 'notionally', 'anonymised', ',', 'this', 'use', 'of', 'it', 'was', 'not', 'something', 'the', 'users', 'had', 'bargained', 'for', '.'], ['Beyond', 'that', ',', 'it', 'keeps', 'track', 'of', 'the', 'phones', 'that', 'have', 'been', 'used', 'to', 'summon', 'its', 'services', 'even', 'after', 'the', 'original', 'owner', 'has', 'sold', 'them', ',', 'attempting', 'this', 'with', 'Apple', '’', 's', 'phones', 'even', 'thought', 'it', 'is', 'forbidden', 'by', 'the', 'company', '.'], ['Uber', 'has', 'also', 'tweaked', 'its', 'software', 'so', 'that', 'regulatory', 'agencies', 'that', 'the', 'company', 'regarded', 'as', 'hostile', 'would', ',', 'when', 'they', 'tried', 'to', 'hire', 'a', 'driver', ',', 'be', 'given', 'false', 'reports', 'about', 'the', 'location', 'of', 'its', 'cars', '.'], ['Uber', 'management', 'booked', 'and', 'then', 'cancelled', 'rides', 'with', 'a', 'rival', 'taxi-hailing', 'company', 'which', 'took', 'their', 'vehicles', 'out', 'of', 'circulation', '.'], ['Uber', 'deny', 'this', 'was', 'the', 'intention', '.'], ['The', 'punishment', 'for', 'this', 'behaviour', 'was', 'negligible', '.'], ['Uber', 'promised', 'not', 'to', 'use', 'this', '“', 'greyball', '”', 'software', 'against', 'law', 'enforcement', '–', 'one', 'wonders', 'what', 'would', 'happen', 'to', 'someone', 'carrying', 'a', 'knife', 'who', 'promised', 'never', 'to', 'stab', 'a', 'policeman', 'with', 'it', '.'], ['Travis', 'Kalanick', 'of', 'Uber', 'got', 'a', 'personal', 'dressing', 'down', 'from', 'Tim', 'Cook', ',', 'who', 'runs', 'Apple', ',', 'but', 'the', 'company', 'did', 'not', 'prohibit', 'the', 'use', 'of', 'the', 'app', '.'], ['Too', 'much', 'money', 'was', 'at', 'stake', 'for', 'that', '.'], ['Millions', 'of', 'people', 'around', 'the', 'world', 'value', 'the', 'cheapness', 'and', 'convenience', 'of', 'Uber', '’', 's', 'rides', 'too', 'much', 'to', 'care', 'about', 'the', 'lack', 'of', 'drivers', '’', 'rights', 'or', 'pay', '.'], ['Many', 'of', 'the', 'users', 'themselves', 'are', 'not', 'much', 'richer', 'than', 'the', 'drivers', '.'], ['The', '“', 'sharing', 'economy', '”', 'encourages', 'the', 'insecure', 'and', 'exploited', 'to', 'exploit', 'others', 'equally', 'insecure', 'to', 'the', 'profit', 'of', 'a', 'tiny', 'clique', 'of', 'billionaires', '.'], ['Silicon', 'Valley', '’', 's', 'culture', 'seems', 'hostile', 'to', 'humane', 'and', 'democratic', 'values', '.'], ['The', 'outgoing', 'CEO', 'of', 'Yahoo', ',', 'Marissa', 'Mayer', ',', 'who', 'is', 'widely', 'judged', 'to', 'have', 'been', 'a', 'failure', ',', 'is', 'likely', 'to', 'get', 'a', '$', '186m', 'payout', '.'], ['This', 'may', 'not', 'be', 'a', 'cause', 'for', 'panic', ',', 'any', 'more', 'than', 'the', 'previous', 'hero', 'worship', 'should', 'have', 'been', 'a', 'cause', 'for', 'euphoria', '.'], ['Yet', 'there', '’', 's', 'an', 'urgent', 'political', 'task', 'to', 'tame', 'these', 'companies', ',', 'to', 'ensure', 'they', 'are', 'punished', 'when', 'they', 'break', 'the', 'law', ',', 'that', 'they', 'pay', 'their', 'taxes', 'fairly', 'and', 'that', 'they', 'behave', 'responsibly', '.']]
+
+output
+[[('\ufeffThe', 'JJ'), ('taxi-hailing', 'JJ'), ('company', 'NN'), ('Uber', 'NNP'), ('brings', 'VBZ'), ('into', 'IN'), ('very', 'RB'), ('sharp', 'JJ'), ('focus', 'VB'), ('the', 'DT'), ('question', 'NN'), ('of', 'IN'), ('whether', 'IN'), ('corporations', 'NNS'), ('can', 'MD'), ('be', 'VB'), ('said', 'VBD'), ('to', 'TO'), ('have', 'VB'), ('a', 'DT'), ('moral', 'JJ'), ('character', 'NN'), ('.', '.')], [('If', 'IN'), ('any', 'DT'), ('human', 'JJ'), ('being', 'VBG'), ('were', 'VBD'), ('to', 'TO'), ('behave', 'VB'), ('with', 'IN'), ('the', 'DT'), ('single-minded', 'JJ'), ('and', 'CC'), ('ruthless', 'JJ'), ('greed', 'NN'), ('of', 'IN'), ('the', 'DT'), ('company', 'NN'), (',', ','), ('we', 'PRP'), ('would', 'MD'), ('consider', 'VB'), ('them', 'PRP'), ('sociopathic', 'JJ'), ('.', '.')], [('Uber', 'NNP'), ('wanted', 'VBD'), ('to', 'TO'), ('know', 'VB'), ('as', 'RB'), ('much', 'JJ'), ('as', 'IN'), ('possible', 'JJ'), ('about', 'IN'), ('the', 'DT'), ('people', 'NNS'), ('who', 'WP'), ('use', 'VBP'), ('its', 'PRP$'), ('service', 'NN'), (',', ','), ('and', 'CC'), ('those', 'DT'), ('who', 'WP'), ('don', 'VBP'), ('’', 'JJ'), ('t', 'NN'), ('.', '.')], [('It', 'PRP'), ('has', 'VBZ'), ('an', 'DT'), ('arrangement', 'NN'), ('with', 'IN'), ('unroll.me', 'JJ'), (',', ','), ('a', 'DT'), ('company', 'NN'), ('which', 'WDT'), ('offered', 'VBD'), ('a', 'DT'), ('free', 'JJ'), ('service', 'NN'), ('for', 'IN'), ('unsubscribing', 'VBG'), ('from', 'IN'), ('junk', 'NN'), ('mail', 'NN'), (',', ','), ('to', 'TO'), ('buy', 'VB'), ('the', 'DT'), ('contacts', 'NNS'), ('unroll.me', 'JJ'), ('customers', 'NNS'), ('had', 'VBD'), ('had', 'VBN'), ('with', 'IN'), ('rival', 'JJ'), ('taxi', 'NN'), ('companies', 'NNS'), ('.', '.')], [('Even', 'RB'), ('if', 'IN'), ('their', 'PRP$'), ('email', 'NN'), ('was', 'VBD'), ('notionally', 'RB'), ('anonymised', 'VBN'), (',', ','), ('this', 'DT'), ('use', 'NN'), ('of', 'IN'), ('it', 'PRP'), ('was', 'VBD'), ('not', 'RB'), ('something', 'NN'), ('the', 'DT'), ('users', 'NNS'), ('had', 'VBD'), ('bargained', 'VBN'), ('for', 'IN'), ('.', '.')], [('Beyond', 'NN'), ('that', 'IN'), (',', ','), ('it', 'PRP'), ('keeps', 'VBZ'), ('track', 'NN'), ('of', 'IN'), ('the', 'DT'), ('phones', 'NNS'), ('that', 'WDT'), ('have', 'VBP'), ('been', 'VBN'), ('used', 'VBN'), ('to', 'TO'), ('summon', 'VB'), ('its', 'PRP$'), ('services', 'NNS'), ('even', 'RB'), ('after', 'IN'), ('the', 'DT'), ('original', 'JJ'), ('owner', 'NN'), ('has', 'VBZ'), ('sold', 'VBN'), ('them', 'PRP'), (',', ','), ('attempting', 'VBG'), ('this', 'DT'), ('with', 'IN'), ('Apple', 'NNP'), ('’', 'NNP'), ('s', 'VBP'), ('phones', 'NNS'), ('even', 'RB'), ('thought', 'VBD'), ('it', 'PRP'), ('is', 'VBZ'), ('forbidden', 'VBN'), ('by', 'IN'), ('the', 'DT'), ('company', 'NN'), ('.', '.')], [('Uber', 'NNP'), ('has', 'VBZ'), ('also', 'RB'), ('tweaked', 'VBN'), ('its', 'PRP$'), ('software', 'NN'), ('so', 'IN'), ('that', 'DT'), ('regulatory', 'JJ'), ('agencies', 'NNS'), ('that', 'IN'), ('the', 'DT'), ('company', 'NN'), ('regarded', 'VBD'), ('as', 'IN'), ('hostile', 'NN'), ('would', 'MD'), (',', ','), ('when', 'WRB'), ('they', 'PRP'), ('tried', 'VBD'), ('to', 'TO'), ('hire', 'VB'), ('a', 'DT'), ('driver', 'NN'), (',', ','), ('be', 'VB'), ('given', 'VBN'), ('false', 'JJ'), ('reports', 'NNS'), ('about', 'IN'), ('the', 'DT'), ('location', 'NN'), ('of', 'IN'), ('its', 'PRP$'), ('cars', 'NNS'), ('.', '.')], [('Uber', 'NNP'), ('management', 'NN'), ('booked', 'VBD'), ('and', 'CC'), ('then', 'RB'), ('cancelled', 'VBD'), ('rides', 'NNS'), ('with', 'IN'), ('a', 'DT'), ('rival', 'JJ'), ('taxi-hailing', 'JJ'), ('company', 'NN'), ('which', 'WDT'), ('took', 'VBD'), ('their', 'PRP$'), ('vehicles', 'NNS'), ('out', 'IN'), ('of', 'IN'), ('circulation', 'NN'), ('.', '.')], [('Uber', 'NNP'), ('deny', 'NN'), ('this', 'DT'), ('was', 'VBD'), ('the', 'DT'), ('intention', 'NN'), ('.', '.')], [('The', 'DT'), ('punishment', 'NN'), ('for', 'IN'), ('this', 'DT'), ('behaviour', 'NN'), ('was', 'VBD'), ('negligible', 'JJ'), ('.', '.')], [('Uber', 'NNP'), ('promised', 'VBD'), ('not', 'RB'), ('to', 'TO'), ('use', 'VB'), ('this', 'DT'), ('“', 'NN'), ('greyball', 'NN'), ('”', 'NNP'), ('software', 'NN'), ('against', 'IN'), ('law', 'NN'), ('enforcement', 'NN'), ('–', 'NNP'), ('one', 'NN'), ('wonders', 'VBZ'), ('what', 'WDT'), ('would', 'MD'), ('happen', 'VB'), ('to', 'TO'), ('someone', 'NN'), ('carrying', 'VBG'), ('a', 'DT'), ('knife', 'NN'), ('who', 'WP'), ('promised', 'VBD'), ('never', 'RB'), ('to', 'TO'), ('stab', 'VB'), ('a', 'DT'), ('policeman', 'NN'), ('with', 'IN'), ('it', 'PRP'), ('.', '.')], [('Travis', 'NNP'), ('Kalanick', 'NNP'), ('of', 'IN'), ('Uber', 'NNP'), ('got', 'VBD'), ('a', 'DT'), ('personal', 'JJ'), ('dressing', 'VBG'), ('down', 'RP'), ('from', 'IN'), ('Tim', 'NNP'), ('Cook', 'NNP'), (',', ','), ('who', 'WP'), ('runs', 'VBZ'), ('Apple', 'NNP'), (',', ','), ('but', 'CC'), ('the', 'DT'), ('company', 'NN'), ('did', 'VBD'), ('not', 'RB'), ('prohibit', 'VB'), ('the', 'DT'), ('use', 'NN'), ('of', 'IN'), ('the', 'DT'), ('app', 'NN'), ('.', '.')], [('Too', 'RB'), ('much', 'JJ'), ('money', 'NN'), ('was', 'VBD'), ('at', 'IN'), ('stake', 'NN'), ('for', 'IN'), ('that', 'DT'), ('.', '.')], [('Millions', 'NNS'), ('of', 'IN'), ('people', 'NNS'), ('around', 'IN'), ('the', 'DT'), ('world', 'NN'), ('value', 'NN'), ('the', 'DT'), ('cheapness', 'NN'), ('and', 'CC'), ('convenience', 'NN'), ('of', 'IN'), ('Uber', 'NNP'), ('’', 'NNP'), ('s', 'VBD'), ('rides', 'NNS'), ('too', 'RB'), ('much', 'RB'), ('to', 'TO'), ('care', 'VB'), ('about', 'IN'), ('the', 'DT'), ('lack', 'NN'), ('of', 'IN'), ('drivers', 'NNS'), ('’', 'NNP'), ('rights', 'NNS'), ('or', 'CC'), ('pay', 'NN'), ('.', '.')], [('Many', 'JJ'), ('of', 'IN'), ('the', 'DT'), ('users', 'NNS'), ('themselves', 'PRP'), ('are', 'VBP'), ('not', 'RB'), ('much', 'RB'), ('richer', 'JJR'), ('than', 'IN'), ('the', 'DT'), ('drivers', 'NNS'), ('.', '.')], [('The', 'DT'), ('“', 'JJ'), ('sharing', 'VBG'), ('economy', 'NN'), ('”', 'JJ'), ('encourages', 'VBZ'), ('the', 'DT'), ('insecure', 'NN'), ('and', 'CC'), ('exploited', 'VBD'), ('to', 'TO'), ('exploit', 'VB'), ('others', 'NNS'), ('equally', 'RB'), ('insecure', 'VBP'), ('to', 'TO'), ('the', 'DT'), ('profit', 'NN'), ('of', 'IN'), ('a', 'DT'), ('tiny', 'JJ'), ('clique', 'NN'), ('of', 'IN'), ('billionaires', 'NNS'), ('.', '.')], [('Silicon', 'NNP'), ('Valley', 'NNP'), ('’', 'NNP'), ('s', 'JJ'), ('culture', 'NN'), ('seems', 'VBZ'), ('hostile', 'JJ'), ('to', 'TO'), ('humane', 'NN'), ('and', 'CC'), ('democratic', 'JJ'), ('values', 'NNS'), ('.', '.')], [('The', 'DT'), ('outgoing', 'VBG'), ('CEO', 'NNP'), ('of', 'IN'), ('Yahoo', 'NNP'), (',', ','), ('Marissa', 'NNP'), ('Mayer', 'NNP'), (',', ','), ('who', 'WP'), ('is', 'VBZ'), ('widely', 'RB'), ('judged', 'VBN'), ('to', 'TO'), ('have', 'VB'), ('been', 'VBN'), ('a', 'DT'), ('failure', 'NN'), (',', ','), ('is', 'VBZ'), ('likely', 'JJ'), ('to', 'TO'), ('get', 'VB'), ('a', 'DT'), ('$', '$'), ('186m', 'CD'), ('payout', 'NN'), ('.', '.')], [('This', 'DT'), ('may', 'MD'), ('not', 'RB'), ('be', 'VB'), ('a', 'DT'), ('cause', 'NN'), ('for', 'IN'), ('panic', 'NN'), (',', ','), ('any', 'DT'), ('more', 'JJR'), ('than', 'IN'), ('the', 'DT'), ('previous', 'JJ'), ('hero', 'NN'), ('worship', 'NN'), ('should', 'MD'), ('have', 'VB'), ('been', 'VBN'), ('a', 'DT'), ('cause', 'NN'), ('for', 'IN'), ('euphoria', 'NN'), ('.', '.')], [('Yet', 'RB'), ('there', 'EX'), ('’', 'NNP'), ('s', 'VBD'), ('an', 'DT'), ('urgent', 'JJ'), ('political', 'JJ'), ('task', 'NN'), ('to', 'TO'), ('tame', 'VB'), ('these', 'DT'), ('companies', 'NNS'), (',', ','), ('to', 'TO'), ('ensure', 'VB'), ('they', 'PRP'), ('are', 'VBP'), ('punished', 'VBN'), ('when', 'WRB'), ('they', 'PRP'), ('break', 'VBP'), ('the', 'DT'), ('law', 'NN'), (',', ','), ('that', 'IN'), ('they', 'PRP'), ('pay', 'VBP'), ('their', 'PRP$'), ('taxes', 'NNS'), ('fairly', 'RB'), ('and', 'CC'), ('that', 'IN'), ('they', 'PRP'), ('behave', 'VBP'), ('responsibly', 'RB'), ('.', '.')]]
+
+
+
+>>>>>>spacy a library for natural language processing
+
+import spacy
+
+nlp=spacy.load('en')
+
+nlp.entity
+
+
+doc=nlp("""Berlin is the capital of Germany; and the residence of Chancellor Angela Merkel.""")
+
+doc.ents
+
+output: Berlin, Germany, Angela Merkel
+
+print(doc.ents[0], doc.ents[0].label_)
+
+
+>>>> Sample >>> spacy to parse entities
+
+# Import spacy
+import spacy
+
+# Instantiate the English model: nlp
+nlp = spacy.load('en',tagger=False, parser=False, matcher=False)
+
+# Create a new document: doc
+doc = nlp(article)
+
+# Print all of the found entities and their labels
+for ent in doc.ents:
+    print(ent.label_, ent.text)
+
+
+>>>>> Multilingual NER with polyglot
+
+nlp library which use word vectors
+
+gensim nlp
+
+polygot supports a 130 languages
+
+transliteration is swapping characters from one language to another
+
+Spanish NER with polyglot
+
+from polyglot.text import Text
+
+text="""El presidente de la Generalitat de Cataluna,
+Carles Puigdemont, ha afirmado hoy a la alcaldesa de Madrid, Manuel Carmena, que en su etapa de alcalde de Girona (de julio de 2011 a enero de 2016) hjzo una gran promocion de madrid""""
+
+ptext=Text(text)
+
+conda install -c syllabs_admin polyglot
+
+ptext.entities
+
+
+>>>>>>> sample >>>> load the text and print the entities
+
+# Create a new text object using Polyglot's Text class: txt
+
+txt = Text(article)
+
+# Print each of the entities found
+for ent in txt.entities:
+    print(ent)
+    
+print(type(ent))
+# Print the type of ent
+print(type(txt.entities))
+
+
+polyglot.text.Chunk
+
+>>>> sample >> join the entities elements into a string and a entity tag tuple
+
+# Create the list of tuples: entities
+entities = [(ent.tag, ' '.join(ent)) for ent in txt.entities]
+
+# Print entities
+print(entities)
+
+>>>>sample >> find specific entities in the text
+
+# Initialize the count variable: count
+count = 0
+
+# Iterate over all the entities
+for ent in txt.entities:
+    # Check whether the entity contains 'Márquez' or 'Gabo'
+    if ("Márquez" in ent) or ("Gabo" in ent):
+        # Increment count
+        count+=1
+
+# Print count
+print(count)
+
+# Calculate the percentage of entities that refer to "Gabo": percentage
+percentage = count / len(txt.entities)
+print(percentage)
+
+>>>>>>>>classifying fake news
+
+training data
+label or outcome to learn
+
+classification problem
+intelligent hypothesis
+use language to find features.
+
+
+
+based on the movie Plot predict if it is sci-fi or action
+
+supervised learning steps
+1. collect and preprocess the data
+2. determine a label
+3. split data into training and testing sets
+4. extract features from text to help predict the label
+5. evaluate trained model using the test set
+
+y=df['SciFile]
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+
+
+X=df['Comment']
+
+df['IsSafety']=0
+df['IsSafety']=[1 if item=='Safety' else 0  for item in df['Label']]
+y=df['IsSafety']
+
+X_train,X_test,y_train,y_test= train_test_split(X,y,test_size=0.33, random_state=42)
+
+>>>>sample  >>> Count vectorizer a binary classification
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+
+# Print the head of df
+print(df.head())
+
+# Create a series to store the labels: y
+y = df.label
+
+# Create training and test sets
+X_train, X_test, y_train, y_test = train_test_split(df["text"],y,test_size=.33,random_state=53)
+
+# Initialize a CountVectorizer object: count_vectorizer
+count_vectorizer = CountVectorizer(stop_words='english')
+
+# Transform the training data using only the 'text' column values: count_train 
+count_train = count_vectorizer.fit_transform(X_train.values)
+
+# Transform the test data using only the 'text' column values: count_test 
+count_test = count_vectorizer.transform(X_test.values)
+
+# Print the first 10 features of the count_vectorizer
+print(count_vectorizer.get_feature_names()[:10])
+
+
+>>>>>>>tfidfVectorizer
+
+creating tf-idf vectors for your documents.
+
+# Import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Initialize a TfidfVectorizer object: tfidf_vectorizer
+tfidf_vectorizer = TfidfVectorizer(stop_words='english',max_df=0.7)
+
+# Transform the training data: tfidf_train 
+tfidf_train = tfidf_vectorizer.fit_transform(X_train.values)
+
+# Transform the test data: tfidf_test 
+tfidf_test = tfidf_vectorizer.transform(X_test.values)
+
+# Print the first 10 features
+print(tfidf_vectorizer.get_feature_names()[:10])
+
+# Print the first 5 vectors of the tfidf training data
+print(tfidf_train.A[:5])
+
+>>>>> sample count tfidvectorizer equals count vectorizer
+
+# Create the CountVectorizer DataFrame: count_df
+count_df = pd.DataFrame(count_train.A, columns=count_vectorizer.get_feature_names())
+
+# Create the TfidfVectorizer DataFrame: tfidf_df
+tfidf_df = pd.DataFrame(tfidf_train.A,columns=tfidf_vectorizer.get_feature_names())
+
+# Print the head of count_df
+print(count_df.head())
+
+# Print the head of tfidf_df
+print(tfidf_df.head())
+
+# Calculate the difference in columns: difference
+difference = set(tfidf_df.columns) - set(count_df.columns)
+print(difference)
+
+# Check whether the DataFrames are equal
+print(count_df.equals(tfidf_df))
+
+output: False
+
+>>>>>>>>>>>>>>>>naive bayes classifier
+
+naive bayes model
+commonly used for testing nlp classification problems
+basis in probability
+
+given a particular piece of data, how likely is a particular outcome?
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
+
+nb_classifier=MultinomialNB()
+nb_classifier.fit(count_train, y_train)
+pred=nb_classifier.predict(count_test)
+
+print(metrics.accuracy_score(y_test,pred))
+
+metrics.confusion_matrix(y_test,pred, labels=[0,1])
+
+>>>>>>> sample >>>>  multinomialNB classification
+
+# Import the necessary modules
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
+
+# Instantiate a Multinomial Naive Bayes classifier: nb_classifier
+nb_classifier=MultinomialNB()
+
+# Fit the classifier to the training data
+nb_classifier.fit(count_train, y_train)
+
+# Create the predicted tags: pred
+pred=nb_classifier.predict(count_test)
+
+# Calculate the accuracy score: score
+score = metrics.accuracy_score(y_test,pred)
+print(score)
+
+# Calculate the confusion matrix: cm
+cm = metrics.confusion_matrix(y_test,pred, labels=['FAKE','REAL'])
+print(cm)
+
+>>>>>>sample using tfidf train data
+
+# Create a Multinomial Naive Bayes classifier: nb_classifier
+nb_classifier=MultinomialNB()
+
+# Fit the classifier to the training data
+nb_classifier.fit(tfidf_train, y_train)
+
+# Create the predicted tags: pred
+pred=nb_classifier.predict(tfidf_test)
+
+# Calculate the accuracy score: score
+score = metrics.accuracy_score(y_test,pred)
+print(score)
+
+# Calculate the confusion matrix: cm
+cm = metrics.confusion_matrix(y_test,pred, labels=['FAKE','REAL'])
+print(cm)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
