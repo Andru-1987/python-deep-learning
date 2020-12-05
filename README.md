@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added the pima dibetes dimension reduction
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Pimas%20Diabetes%20Dimension%20Reduction.ipynb
+
 * I added Army AUNR dimensional reduction
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/ANSUR%202%20-%20Army%20-%20Dimension%20reduction.ipynb
