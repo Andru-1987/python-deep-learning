@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added passenger prediction using LSTM one day back prediction
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20passenger%201%20day%20back%20prediction.ipynb
+
 * I added the pima diabetes dimension reduction
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Pimas%20Diabetes%20Dimension%20Reduction.ipynb
