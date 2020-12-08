@@ -1,7 +1,7 @@
 # python-deep-learning
 python deep learning notebooks
 
-* I added the pima dibetes dimension reduction
+* I added the pima diabetes dimension reduction
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Pimas%20Diabetes%20Dimension%20Reduction.ipynb
 
