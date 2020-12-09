@@ -1,0 +1,1238 @@
+df.shape
+each row should be an observation
+
+remove columns with vary little variance
+user pd.describe()
+
+the column generation had a std of 0 and min and max values that were the same.  you can drop the generation column.
+
+pd.describe(exclude='number')
+
+describes only non numeric columns
+
+>>>>sample >>>> combine list of column names
+
+# Remove the feature without variance from this list
+number_cols = ['HP', 'Attack', 'Defense']
+
+# Leave this list as is for now
+non_number_cols = ['Name', 'Type', 'Legendary']
+
+print(pokemon_df.columns)
+# Sub-select by combining the lists with chosen features
+df_selected = pokemon_df[number_cols + non_number_cols]
+
+# Prints the first 5 lines of the new dataframe
+print(df_selected.head())
+
+print(df_selected.describe(exclude='number'))
+
+#remove the columns with almost all similarities
+
+
+>>>>>>>>>>>>>>>Reducing dimensionality
+
+your dataset will be less complex
+your dataset will require less disk space
+
+training will require less computation time
+you will have less of chance of overfitting.
+
+decide on which features are important
+
+dropping a column
+insurance_df.drop('favorite color', axis=1)
+
+>>>>>>>>>>>>>>Exploring the dataset
+
+sns.pairplot(ansur_df, hue='gender', diag_kind='hist')
+
+it provides an one by one comparison of all numeric columns in the dataframe as a scatter plot
+
+removing features with very little information prevents information loss.
+
+Extract new features from the existing features
+
+pca
+
+
+>>>>>>>sample using pairplot
+
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(ansur_df_1,hue='Gender', kind='reg', diag_kind='hist')
+
+# Show the plot
+plt.show()
+
+
+>>>>>>sample >>> remove stature_m
+#US Army ANSUR body measurement dataset
+
+print(ansur_df_1.columns)
+# Remove one of the redundant features
+reduced_df = ansur_df_1.drop('stature_m', axis=1)
+
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(reduced_df, hue='Gender')
+
+# Show the plot
+plt.show()
+
+
+
+Index(['Gender', 'footlength', 'headlength', 'n_legs'], dtype='object')
+
+>>>>sample remove n_legs which has low variance
+
+# Remove the redundant feature
+reduced_df = ansur_df_2.drop('n_legs', axis=1)
+
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(reduced_df, hue='Gender', diag_kind='hist')
+
+# Show the plot
+plt.show()
+
+>>>>>>>>>>>>>>>>>>>t-SNE visualization
+
+
+t-SNE is a way to visual high dimensional data using feature extraction
+
+t-SNE maximize distance in 2 dimensional space that are different in high dimensional space
+
+items that are close to each other may cluster
+
+non_numericnon_numeric=['BMI_class','Height_class','Gender','Component','Branch']
+
+df_numeric=df.drop(non_numeric,axis=1)
+
+df_numeric.shape
+
+from sklearn.manifold import TSNE
+
+
+m=TSNE(learning_rate=50)
+
+learning rates 10 to 1000 range
+
+tnse_features = m.fit_transform(df_numeric)
+tsne_features[1:4,:]
+
+sns.scatterplot(x='x',y='y', hue='BMI_class', data=df)
+
+plt.show()
+
+
+bmi_class: Overweight, normal, underweight
+
+
+Over weight 25 to 29.9
+Normal weight 18.5 to 24.9
+Under weight 18.5 or less
+
+weight in lbs * 703/ heightin**2
+
+
+Tall >5'9
+Normal >5'4 to <5'9
+short <5'4
+
+>>>>> Sample tsne  higher dimensional view of the data
+
+# Non-numerical columns in the dataset
+non_numeric = ['Branch', 'Gender', 'Component']
+
+# Drop the non-numerical columns from df
+df_numeric = df.drop(non_numeric, axis=1)
+
+# Create a t-SNE model with learning rate 50
+m = TSNE(learning_rate=50)
+
+# Fit and transform the t-SNE model on the numeric dataset
+tsne_features = m.fit_transform(df_numeric)
+print(tsne_features.shape)
+
+# Color the points according to Army Component
+sns.scatterplot(x="x", y="y", hue="Component", data=df)
+
+# Show the plot
+plt.show()
+
+>>>>>>>>The curse of dimensionality
+
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+
+svc= SVC()
+
+svc.fit(X_train, y_train)
+print(accuracy_score(y_test,svc.predict(X_test))
+
+print(accuracy_score(y_train, svc.predict(X_train))
+
+
+features: city, price, n_floors, n_bathrooms, surface_m2
+
+increase the number of observations to ensure generalization.  otherwise the model memorize the smaller training set overfitting and it does not generalize well.
+
+observations should increase exponentially with the number of features
+
+this is called the curse of dimensionality
+
+
+>>>>Sample load and split train and test
+
+# Import train_test_split()
+from sklearn.model_selection import train_test_split
+
+# Select the Gender column as the feature to be predicted (y)
+y = ansur_df['Gender']
+
+# Remove the Gender column to create the training data
+X = ansur_df.drop('Gender', axis=1)c
+
+# Perform a 70% train and 30% test data split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.3)
+
+print("{} rows in test set vs. {} in training set. {} Features.".format(X_test.shape[0], X_train.shape[0], X_test.shape[1]))
+
+
+>>>> sample >>> fit and predict using svc
+
+# Import SVC from sklearn.svm and accuracy_score from sklearn.metrics
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+
+# Create an instance of the Support Vector Classification class
+svc = SVC()
+
+# Fit the model to the training data
+svc.fit(X_train, y_train)
+
+# Calculate accuracy scores on both train and test data
+accuracy_train = accuracy_score(y_train, svc.predict(X_train))
+accuracy_test = accuracy_score(y_test, svc.predict(X_test))
+
+print("{0:.1%} accuracy on test set vs. {1:.1%} on training set".format(accuracy_test, accuracy_train))
+
+output: 49.7% accuracy
+
+
+>>>>>>>>>>>>>>>>>features with missing values or little variance
+
+from sklearn.feature_selection import VarianceThreshold
+
+sel = VarianceThreshold(threshold=1)
+sel.fit(ansur_df)
+
+mask=sel.get_support()
+print(mask)
+
+reduced_df=ansur_df.loc[:,mask]
+
+print(reduced_df.shape)
+
+
+>>>>>>>normalize the variance
+
+sel=VarianceThreshold(threshold=0.005)
+set.fit(ansur_df / ansur_df.mean())
+
+
+>>>>>>missing values >>>>>>>>>.repairing
+
+df.isna().sum()
+
+df.isna().sum()/len(df)
+
+mask=df.isna().sum()/len(df)<0.3
+
+reduced_df=df.loc[:,mask]
+
+reduced_df.head()
+
+
+>>>>>sample  >>> create boxplot
+
+# Create the boxplot
+head_df.boxplot()
+
+
+>>>>>>sample >>> boxplot >> normalize >> print the variance
+
+# Normalize the data
+normalized_df = head_df / head_df.mean()
+
+# Print the variances of the normalized data
+print(normalized_df.var())
+plt.show()
+
+
+>>>>>sample >>> remove columns with low variance
+
+from sklearn.feature_selection import VarianceThreshold
+
+# Create a VarianceThreshold feature selector
+sel = VarianceThreshold(threshold=0.001)
+
+# Fit the selector to normalized head_df
+sel.fit(head_df / head_df.mean())
+
+# Create a boolean mask
+mask = sel.get_support()
+
+# Apply the mask to create a reduced dataframe
+reduced_df = head_df.loc[:, mask]
+
+print("Dimensionality reduced from {} to {}.".format(head_df.shape[1], reduced_df.shape[1]))
+
+>>>>sample remove the missing values using a mask
+
+# Create a boolean mask on whether each feature less than 50% missing values.
+mask = school_df.isna().sum() / len(school_df) < 0.5
+
+# Create a reduced dataset by applying the mask
+reduced_df = school_df.loc[:,mask]
+
+print(school_df.shape)
+print(reduced_df.shape)
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>Pairwise correlation
+
+sns.pairplot(ansur, hue=gender)
+
+strength of correlation coefficient
+
+r=-1 and r=0  and r=1
+
+
+-1 is perfectly negative correlation
+1 is perfectly postive correlation
+0 is no correlation
+
+weights_df_corr()
+
+the dialog tells us that each feature is perfectly correlated to itself
+
+visual the correlation using the seaborn heatmap
+
+cmap=sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
+
+sns.heatmap(weights_df.corr(), center=0, cmap=cmap, linewidths=1,
+annot=True, fmt=".2f")
+
+>>> remove the diagonal feature referencing itself
+
+corr= weights_df.corr()
+
+mask=np.triu(np.ones_like(corr,dtype=bool))
+
+remove
+SubjectNumericRace
+DODRace
+
+
+>>>>sample >>> create a heatmap of the correlation
+
+# Create the correlation matrix
+corr = ansur_df.corr()
+
+# Draw the heatmap
+sns.heatmap(corr,  cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f")
+plt.show()
+
+
+>>>>sample >>> add a mask
+
+# Create the correlation matrix
+corr = ansur_df.corr()
+
+# Generate a mask for the upper triangle
+mask = np.triu(np.ones_like(corr, dtype=bool))
+
+
+sns.heatmap(corr,  cmap=cmap, center=0, linewidths=1, annot=True, fmt=".2f",mask=mask)
+plt.show()
+
+>>>>> removing highly correlated features
+
+
+-1 and 1 and 0
+
+drop features that are close to 1 or -1
+
+cervical height and suprastermale height
+chest height and suprastermale height
+chest height and cericale height
+
+
+corr_df=chest_df.corr().abs()
+mask=np.triu(np.ones_like(corr_df,dtype=bool))
+
+
+tri_df=corr_matrix.mask(mask)
+
+to_drop=[c for c in tri_df.columns if any(tri_df[c]>0.95)]
+
+print(to_drop)
+
+reduced_df=chest_df.drop(to_drop,axis=1)
+
+
+>>>>> sample >>> dropping highly correlated features from the dataframe
+
+# Calculate the correlation matrix and take the absolute value
+corr_matrix = ansur_df.corr().abs()
+
+# Create a True/False mask and apply it
+mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+tri_df = corr_matrix.mask(mask)
+
+# List column names of highly correlated features (r > 0.95)
+to_drop = [c for c in tri_df.columns if any(tri_df[c] >  0.95)]
+
+# Drop the features in the to_drop list
+reduced_df = ansur_df.drop(to_drop, axis=1)
+
+print("The reduced dataframe has {} columns.".format(reduced_df.shape[1]))
+
+
+>>>>>predict gender
+
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.3)
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+
+X_train_std= scaler.fit_transform(X_train)
+
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
+
+lr=LogisticRegression()
+lr.fit(X_train_std, y_train)
+
+X_test_std= scaler.transform(X_test)
+
+y_pred=lr.predict(X_test_std)
+print(accurancy_score(y_test, y_pred))
+
+print(lr.coef_)
+
+output: array[[-3, 0.14, 7.46, 1.22, 0.87]])
+
+coefficients close to zero will contribute little to the end result
+
+print(dict(zip(X.column, abs(lr.coef_[0]))))
+
+{'chestdepth': 3.0,
+'handlength':0.14,
+'neckcircumference':7.46,
+'shoulderlength':1.22,
+'earlength':0.87
+}
+
+remove handlength
+
+>>>>>>>>>>>>>>>>>>>Recursive Feature Elimination
+
+from sklearn.feature_selection import RFE
+
+rfe=RFE(estimator=LogisticRegression(), n_features_to_select=2, verbose=1)
+
+scaler = StandardScaler()
+X_train_std= scaler.fit_transform(X_train)
+
+rfe.fit(X_train_std, y_train)
+
+X.columns[rfe.support_]
+
+print(dict(zip(X.columns,rfe.ranking_)))
+
+high values mean the feature was dropped early on
+
+
+>>>>> Sample >>> test features contribution using logistic regression
+#Pima Indians diabetes dataset to predict whether a person has diabetes using logistic regression
+
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train)
+
+# Fit the logistic regression model on the scaled training data
+lr=LogisticRegression()
+lr.fit(X_train, y_train)
+
+# Scale the test features
+X_test_std = scaler.transform(X_test)
+
+# Predict diabetes presence on the scaled test set
+y_pred = lr.predict(X_test_std)
+
+# Prints accuracy metrics and feature coefficients
+print("{0:.1%} accuracy on test set.".format(accuracy_score(y_test, y_pred))) 
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+
+79.6% accuracy on test set.
+{'pregnant': 0.04, 'glucose': 1.23, 'diastolic': 0.03, 'triceps': 0.24, 'insulin': 0.19, 'bmi': 0.38, 'family': 0.34, 'age': 0.34}
+
+
+>>>sample >>> remove diastolic
+
+# Remove the feature with the lowest model coefficient
+X = diabetes_df[['pregnant', 'glucose',  'triceps', 'insulin', 'bmi', 'family', 'age']]
+
+# Performs a 25-75% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Scales features and fits the logistic regression model
+lr.fit(scaler.fit_transform(X_train), y_train)
+
+# Calculates the accuracy on the test set and prints coefficients
+acc = accuracy_score(y_test, lr.predict(scaler.transform(X_test)))
+print("{0:.1%} accuracy on test set.".format(acc)) 
+print(dict(zip(X.columns, abs(lr.coef_[0]).round(2))))
+
+
+
+>>>>Sample >>> RFE  >>> dropping feature columns
+
+# Create the RFE with a LogisticRegression estimator and 3 features to select
+rfe = RFE(estimator=LogisticRegression(), n_features_to_select=2, verbose=1)
+
+# Fits the eliminator to the data
+rfe.fit(X_train, y_train)
+
+# Print the features and their ranking (high = dropped early on)
+print(dict(zip(X.columns, rfe.ranking_)))
+
+# Print the features that are not eliminated
+print(X.columns[rfe.support_])
+
+# Calculates the test set accuracy
+acc = accuracy_score(y_test, rfe.predict(X_test))
+print("{0:.1%} accuracy on test set.".format(acc)) 
+
+# Create the RFE with a LogisticRegression estimator and 3 features to select
+rfe = RFE(estimator=LogisticRegression(), n_features_to_select=2, verbose=1)
+
+# Fits the eliminator to the data
+rfe.fit(X_train, y_train)
+
+# Print the features and their ranking (high = dropped early on)
+print(dict(zip(X.columns, rfe.ranking_)))
+
+# Print the features that are not eliminated
+print(X.columns[rfe.support_])
+
+# Calculates the test set accuracy
+acc = accuracy_score(y_test, rfe.predict(X_test))
+print("{0:.1%} accuracy on test set.".format(acc)) 
+ 
+
+{'pregnant': 5, 'glucose': 1, 'diastolic': 6, 'triceps': 3, 'insulin': 4, 'bmi': 1, 'family': 2, 'age': 1}
+Index(['glucose', 'bmi', 'age'], dtype='object')
+80.6% accuracy on test set.
+
+
+diastolic and pregnant dropped early
+
+tricept and bmi
+insulin and glucose
+
+>>>>>>>>>>>>>>>>>Random forest classifer
+
+ensemble of multiple decision trees 
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+rf=RandomForestClassifier()
+rf.fit(X_train, y_train)
+
+print(rf.feature_importances_)
+print(sum(rf.feature_importances_))
+
+#always sum to 1
+
+
+mask=rf.feature_importances_ > 0.1
+
+print(mask)
+
+X_reduced=X.loc[:,mask]
+print(X_reduced.columns)
+
+>>>>>drop the least 10 important features at a cycle
+
+rfe=RFE(esimator=RandomForestClassifier(),
+n_features_to_select=6, step=10, verbose=1)
+
+#drop the least 10 important features at a cycle
+
+print(X.columns[rfe.support_])
+
+#contains the remaining features in the model
+
+>>>>>sample >>> use a randomforestclassifier to determine feature importance
+
+# Perform a 75% training and 25% test data split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.25, random_state=0)
+
+# Fit the random forest model to the training data
+rf = RandomForestClassifier(random_state=0)
+rf.fit(X_train, y_train)
+
+# Calculate the accuracy
+acc = accuracy_score(y_test, rf.predict(X_test))
+
+# Print the importances per feature
+print(dict(zip(X.columns, rf.feature_importances_.round(2))))
+
+# Print accuracy
+print("{0:.1%} accuracy on test set.".format(acc))
+
+
+{'pregnant': 0.09, 'glucose': 0.21, 'diastolic': 0.08, 'triceps': 0.11, 'insulin': 0.13, 'bmi': 0.09, 'family': 0.12, 'age': 0.16}
+77.6% accuracy on test set.
+
+
+>>>>>>>sample >>>>> measure feature importances
+
+# Create a mask for features importances above the threshold
+mask = rf.feature_importances_>0.15
+
+# Prints out the mask
+print(mask)
+
+mask = rf.feature_importances_ > 0.15
+
+# Apply the mask to the feature dataset X
+reduced_X = X.loc[:,mask]
+
+# prints out the selected column names
+print(reduced_X.columns)
+
+output:  'glucose', 'age'
+
+>>>>>>>sample >>> RFE
+
+# Wrap the feature eliminator around the random forest model
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, step=2, verbose=1)
+
+# Fit the model to the training data
+rfe.fit(X_train, y_train)
+
+# Create a mask using an attribute of rfe
+mask = rfe.support_
+
+# Apply the mask to the feature dataset X and print the result
+reduced_X = X.loc[:, mask]
+print(reduced_X.columns)
+
+output: Index(['glucose', 'insulin'], dtype='object')
+
+
+>>>>>>Linear regressor
+linear moe
+x1,x2,x3 target y 
+where y is a contineous value
+
+normal distribution
+
+the coefficients determine the affect the feature has on the target
+
+
+from sklearn.linear_model import LinearRegression
+
+lr=LinearRegression()
+lr.fit(X_train, y_train)
+
+print(lr.coef_)
+
+print(lr.intercept_)
+
+r2 tells us the variance of prediction and whether the data is linear or non linear
+
+the model tries to fit through the data by minimizing the loss function  (MSE)
+
+mse or mean square error creates the linear line through your data.  r2 tells you if the linear regressor is linear or non linear.  regularization helps reduce overfit of the data by smoothing your distribution to look more guassian.
+
+regularization will try to keep the model simple by keeping the coefficients low
+
+if the model is too low it might overfit, if the model is too high it might become inaccurate
+
+
+la = Lasso()
+la.fit(X_train, y_train)
+
+print(la.coef_)
+
+change the alpha
+la=Lasso(alpha=0.05)
+
+output: [4.91 1.76 0]
+
+
+>>>>> sample >>> regularize and lasso
+
+
+# Set the test size to 30% to get a 70-30% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.30, random_state=0)
+
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train,y_train)
+
+# Create the Lasso model
+la = Lasso()
+
+# Fit it to the standardized training data
+la.fit(X_train_std,y_train)
+
+
+print(la.coef_)
+
+>>> sample >>> using R2 to determine the number of ignored features
+
+# Transform the test set with the pre-fitted scaler
+X_test_std = scaler.transform(X_test)
+
+# Calculate the coefficient of determination (R squared) on X_test_std
+r_squared = la.score(X_test_std, y_test)
+print("The model can predict {0:.1%} of the variance in the test set.".format(r_squared))
+
+# Create a list that has True values when coefficients equal 0
+zero_coef = la.coef_ == 0
+
+# Calculate how many features have a zero coefficient
+n_ignored = sum(zero_coef)
+print("The model has ignored {} out of {} features.".format(n_ignored, len(la.coef_)))
+
+>>>>>>>>combining features
+
+
+from sklearn.linear_model import Lasso
+
+la=Lasso(alpha=0.05)
+la.fit(X_train, y_train)
+
+print(la.coef_)
+
+print(la.score(X_test,y_test))
+
+>>>>>lassoCV
+
+from sklearn.linear_model import LassoCV
+
+lcv=LassoCV()
+
+lcv.fit(X_train, y_train)
+print(lcv.alpha_)
+
+mask= lcv.coef_ !=0
+print(mask)
+
+reduced_X=X.loc[:,mask]
+
+
+>>>>Combining feature selectors
+
+Random forest is a combination of decision trees
+It is based on the idea that a combination of models can combine to form a strong one
+
+
+from sklearn.linear_model import LassoCV
+
+lcv=LassoCV()
+
+lcv.fit(X_train, y_train)
+lcv.score(X_test, y_test)
+
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor
+
+rfe_rf= RFE(estimator=RandomForestRegressor(),
+	n_features_to_select =66, step =5, verbose=1)
+
+rfe_rf.fit(X_train, y_train)
+
+rf_mask=rfe_rf.support_
+
+
+from sklearn.ensemble import GradientBoostingRegressor
+
+rfe_gb= RFE(estimator=GradientBoostingRegressor(),
+	n_features_to_select =66, step =5, verbose=1)
+
+rfe_gb.fit(X_train, y_train)
+
+gb_mask=rfe_rg.support_
+
+votes=np.sum([lcv_mask, rf_mask, gb_mask],axis=0)
+print(votes)
+
+mask=votes>=2
+
+reduced_X = X.loc[:,mask]
+
+
+>>>>>Sample >>>> lassoCV  >>>
+
+from sklearn.linear_model import LassoCV
+
+# Create and fit the LassoCV model on the training set
+lcv = LassoCV()
+lcv.fit(X_train,y_train)
+print('Optimal alpha = {0:.3f}'.format(lcv.alpha_))
+
+# Calculate R squared on the test set
+r_squared = lcv.score(X_test,y_test)
+print('The model explains {0:.1%} of the test set variance'.format(r_squared))
+
+# Create a mask for coefficients not equal to zero
+lcv_mask = lcv.coef_!=0
+print('{} features out of {} selected'.format(sum(lcv_mask), len(lcv_mask)))
+
+X.loc[:,lcv_mask].columns
+
+
+Output: Optimal alpha = 0.089
+The model explains 88.2% of the test set variance
+26 features out of 32 selected
+
+['acromialheight', 'bideltoidbreadth', 'buttockcircumference', 'buttockpopliteallength', 'chestcircumference', 'chestheight', 'earprotrusion', 'footbreadthhorizontal',
+       'forearmcircumferenceflexed', 'handlength', 'headbreadth', 'heelbreadth', 'hipbreadth', 'interscyeii', 'lateralfemoralepicondyleheight', 'lateralmalleolusheight', 'radialestylionlength',
+       'shouldercircumference', 'shoulderelbowlength', 'thighcircumference', 'thighclearance', 'verticaltrunkcircumferenceusa', 'waistcircumference', 'waistdepth', 'wristheight', 'BMI'],
+      dtype='object')
+
+>>>>>sample >>>> RFE  >>> GradientBoostRegressor
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(), 
+             n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_gb.score(X_test,y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+gb_mask = rfe_gb.support_!=0
+print(X.loc[:,gb_mask].columns) 
+
+
+Index(['bideltoidbreadth', 'buttockcircumference', 'chestcircumference', 'forearmcircumferenceflexed', 'hipbreadth', 'lateralmalleolusheight', 'shouldercircumference', 'thighcircumference',
+       'waistcircumference', 'BMI'],
+      dtype='object')
+
+>>>> sample >>>> rfe with RandomForestRegressor
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor
+
+# Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step
+rfe_rf = RFE(estimator=RandomForestRegressor(), 
+             n_features_to_select=10, step=3, verbose=1)
+rfe_rf.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_rf.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array to gb_mask
+rf_mask = rfe_rf.support_
+
+>>>>sample sum the masks
+
+# Sum the votes of the three models
+votes = np.sum([lcv_mask,rf_mask,gb_mask],axis=0)
+print(votes)
+
+meta_mask = votes>=2
+print(meta_mask)
+
+X_reduced = X.loc[:,meta_mask]
+print(X_reduced.columns)
+
+# Plug the reduced dataset into a linear regression pipeline
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.3, random_state=0)
+lm.fit(scaler.fit_transform(X_train), y_train)
+r_squared = lm.score(scaler.transform(X_test), y_test)
+print('The model can explain {0:.1%} of the variance in the test set using {1:} features.'.format(r_squared, len(lm.coef_)))
+
+
+Index(['chestcircumference', 'forearmcircumferenceflexed', 'hipbreadth', 'thighcircumference', 'waistcircumference', 'wristheight', 'BMI'], dtype='object')
+
+
+
+In [1]:
+
+
+>>>>>>>>Feature Extraction
+
+feature extraction are new features resulting from the combinations of existing features.
+
+df_body['BMI']=df['Weight kg']/df_body['Height m']**2
+
+weight and height are obsolete
+
+leg_df['leg mm']=leg_df[['right leg mm','left leg mm']].mean(axis=1)
+
+>>>>>> pca
+
+scaler = StandardScaler()
+
+df_std=pd.DataFrame(scaler.fit_transform(df), columns=df.columns)
+
+footlength and handlength
+
+people with big feet tend to have big hands
+
+principal components
+
+>>>> sample >>> combine quantity and revenue into price and drop the columns
+
+# Calculate the price from the quantity sold and revenue
+sales_df['price'] = sales_df['revenue']/sales_df['quantity']
+
+# Drop the quantity and revenue features
+reduced_df = sales_df.drop(['quantity','revenue'], axis=1)
+
+print(reduced_df.head())
+
+>>>> sample >>> add three columns into a new column and drop them
+
+# Calculate the mean height
+height_df['height'] = height_df[['height_1','height_2','height_3']].mean(axis=1)
+
+print(height_df.columns)
+# Drop the 3 original height features
+reduced_df = height_df.drop(['height_1','height_2','height_3'], axis=1)
+
+print(reduced_df.head())
+
+
+>>>>>>>>>>>>>Principal component analysis
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+std_df = scaler.fit_transform(df)
+
+from sklearn.decomposition import PCA
+
+pca=PCA()
+print(pca.fit_transform(std_df))
+
+pca.fit(std_df)
+
+print(pca.explained_variance_ratio_)
+
+
+
+>>>> sample  >>> standard scaler
+
+from sklearn.preprocessing import StandardScaler
+
+# Create the scaler and standardize the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+
+>>>> sample >>> pca fit transform
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Create the scaler and standardize the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Create the PCA instance and fit and transform the data with pca
+pca = PCA()
+pc = pca.fit_transform(ansur_std)
+
+# This changes the numpy array output back to a dataframe
+pc_df = pd.DataFrame(pc, columns=['PC 1', 'PC 2', 'PC 3', 'PC 4'])
+
+
+sns.pairplot(data=pc_df)
+plt.show()
+
+>>>>>sample >>> pca component
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Scale the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Apply PCA
+pca = PCA()
+pca.fit(ansur_std)
+
+# Inspect the explained variance ratio per component
+print(pca.explained_variance_ratio_)
+
+print(pca.explained_variance_ratio_.cumsum())
+
+
+
+
+[0.61449404 0.19893965 0.06803095 0.03770499 0.03031502 0.0171759
+ 0.01072762 0.00656681 0.00634743 0.00436015 0.0026586  0.00202617
+ 0.00065268]
+
+
+>>>>>>>>>>>>>>>>PCA applications
+
+one downside to pca is the remaining components can be hard to intrept.
+
+print(pca.components_)
+
+this tells to what extent the component is affected by a feature
+
+PC 1 = 0.71x hand length + 0.71 foot length
+PC 2 = -071 x hand length + 0.71 x foot length
+
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.pipeline import Pipeline
+
+pipe=Pipeline([
+	('scaler',StandardScaler()),
+	('reducer',PCA())])
+
+pc=pipe.fit_transform(ansur_df)
+print(pc[:,2])
+
+ansur_categories['PC 1'] = pc[:,0]
+ansur_categories['PC 2'] = pc[:,1]
+
+
+sns.scatterplot(data=ansur_categories,
+x='PC 1', y='PC 2', hue='Height_class', alpha=0.4)
+
+
+>>>> Add a classifier to the pipeline
+pipe=Pipeline([
+	('scaler',StandardScaler()),
+	('reducer',PCA(n_components=3)),
+	('classifier', RandomForestClassifier())
+])
+
+
+pipe.fit(X_train,y_train)
+print(pipe.steps[1])
+
+print(pipe.steps[1][1].explained_variance_ratio_.cumsum())
+
+
+print(pipe.score(X_test,y_test))
+
+
+>>>> sample >>> build the pca pipeline
+
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=2))])
+
+# Fit it to the dataset and extract the component vectors
+pipe.fit(poke_df)
+vectors = pipe.steps[1][1].components_.round(2)
+
+# Print feature effects
+print('PC 1 effects = ' + str(dict(zip(poke_df.columns, vectors[0]))))
+print('PC 2 effects = ' + str(dict(zip(poke_df.columns, vectors[1]))))
+
+>>>>sample pca pipeline
+
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+                 ('reducer', PCA(n_components=2))])
+
+# Fit the pipeline to poke_df and transform the data
+pc = pipe.fit_transform(poke_df)
+
+print(pc)
+
+[[-1.5563747  -0.02148212]
+ [-0.36286656 -0.05026854]
+ [ 1.28015158 -0.06272022]
+ ...
+ [ 2.45821626 -0.51588158]
+ [ 3.5303971  -0.95106516]
+ [ 2.23378629  0.53762985]]
+
+Index(['HP', 'Attack', 'Defense', 'Sp. Atk', 'Sp. Def', 'Speed'], dtype='object')
+
+poke_cat_df['PC 1'] = pc[:, 0]
+poke_cat_df['PC 2'] = pc[:, 1]
+
+print(poke_cat_df.head())
+
+# Use the Type feature to color the PC 1 vs PC 2 scatterplot
+sns.scatterplot(data=poke_cat_df, 
+                x='PC 1', y='PC 2', hue='Type')
+plt.show()
+
+>>>>sample >>> pipeline with pca and randomforest classifier
+
+# Build the pipeline
+pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('reducer', PCA(n_components=2)),
+        ('classifier',  RandomForestClassifier(random_state=0))])
+
+
+# Fit the pipeline to the training data
+pipe.fit(X_train,y_train)
+
+# Prints the explained variance ratio
+print(pipe.steps[1][1].explained_variance_ratio_)
+
+# Score the accuracy on the test set
+accuracy = pipe.score(X_test,y_test)
+
+# Prints the model accuracy
+print('{0:.1%} test set accuracy'.format(accuracy))
+
+
+[0.45624044 0.17767414 0.12858833]
+95.0% test set accuracy
+
+>>>>>>>>>>>Principal component selection
+
+pipe= Pipeline([
+('scaler', StandardScaler()),
+('reducer',PCA(n_components=0.9))])
+
+#explains 90% of the variance
+
+pipe.fit(poke_df)
+
+print(len(pipe.steps[1][1].components_))
+
+There is no right answer to the number of components i should keep. It depends on how much information you are willing to lose to reduce complexity
+
+var=pipe.steps[1][1].explain_variance_ratio_
+
+plt.plot(var)
+
+plt.xlabel('Principal component index')
+plt.ylabel('Explained variance ratio')
+plt.show()
+
+X=pca.inverse_transform(pc)
+
+moves from principal component space back to feature space.
+
+2914 grayscale values
+62x47 pixels=2914 grayscale values
+
+test
+(15,2914)
+15 pictures
+training
+(1333,2914)
+1333 images
+
+pipe= Pipeline([
+('scaler', StandardScaler()),
+('reducer',PCA(n_components=290))])
+
+pipe.fit(X_train)
+
+pc=pipe.fit_transform(X_test)
+
+print(pc.shape)
+15,290
+
+10 fold number reduction in features
+
+X_rebuilt=pipe.inverse_transform(pc)
+print(X_rebuilt.shape)
+
+img_plotter(X_rebuilt)
+
+
+>>>> sample >>> pipeline
+
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.8))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+print('{} components selected'.format(len(pipe.steps[1][1].components_)))
+
+11 components selected
+
+.9 n_components requires 23 components selected
+
+>>> sample pipeline  >>>> variance elbow
+
+# Pipeline a scaler and pca selecting 10 components
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=10))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+
+# Plot the explained variance ratio
+plt.plot(pipe.steps[1][1].explained_variance_ratio_)
+
+plt.xlabel('Principal component index')
+plt.ylabel('Explained variance ratio')
+plt.show()
+
+>>>> sample >>> hand written numbers
+
+plot_digits(X_test)
+
+print(X_test.shape)
+(16,784)
+
+
+>>>>>> sample >>> pc transform
+
+# Transform the input data to principal components
+pc = pipe.transform(X_test)
+
+
+# Prints the number of features per dataset
+print("X_test has {} features".format(X_test.shape[1]))
+print("pc has {} features".format(pc.shape[1]))
+
+X_test has 784 features
+pc has 78 features
+
+# Inverse transform the components to original feature space
+X_rebuilt = pipe.inverse_transform(pc)
+
+# Prints the number of features
+print("X_rebuilt has {} features".format(X_rebuilt.shape[1]))
+
+X_rebuilt has 784 features
+
+# Plot the reconstructed data
+plot_digits(X_rebuilt)
+
+
+
+
+
+
+
+

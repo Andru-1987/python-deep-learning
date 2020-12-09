@@ -71,8 +71,9 @@ number of units sold
 
 complexities:
 discounts (discounted sales price)
-credit sales 
+credit sales (where the income is not received up front)
 
+sales mix
 
 >>>cost of goods sold (cogs)
 1. total fixed costs
@@ -84,6 +85,117 @@ what does gross profit tells
 
 profit margin %
 Gross Profit Margin = Gross Profit / SalesValue
+
+
+fixed costs are costs independent of units produced
+
+variable costs per unit are costs incurred per unit produced.
+
+variable costs are incurred only if the unit is produced
+
+gp_margin
+profit margin(%)
+
+analyze the profitability of our core product
+
+if your core product is not profitable how will you pay admin or other expenses or taxes or dividends
+
+The gross profit can be used to calculate the break even point.
+
+>>>>>>>>>>>>>>>>Break even point
+
+Break even is where total cost and total revenue are equal.
+
+break_even = fixed_costs / (sales price - variable_costs)
+
+
+>>>> sample  >>> forecasting sales 
+T-Z has launched a new range of T-Shirts linked to a celebrity meme for 40 USD per T-Shirt. They have excess stock of Celebshirt1 on their shelves, and in expectation of the release of Celebshirt2 in February, they have announced a 40% discount on Celebshirt1 in February.
+For this exercise, prices are in USD, and unit amounts are total units sold in the respective month. The following variables have been defined for you:
+sales_price = 40
+units_january = 500
+units_february = 700
+The January sales only include sales of Celebshirt1. 
+The February sales include sales of Celebshirt1 and Celebshirt2, at a ratio of 45:55.
+
+
+# Set variables units sold and sales price of the T-shirts (basic and custom)
+
+salesprice_basic = 15
+salesprice_custom = 25
+
+# Calculate the combined sales price taking into account the sales mix
+average_sales_price = (salesprice_basic * 0.6) + (salesprice_custom * .4)
+
+# Calculate the total sales for next month
+sales_USD = forecast_units * average_sales_price
+
+# Print the total sales
+print("Next month's forecast sales figure is {:.2f} USD.".format(sales_USD))
+
+>>>> sample >>> january and february sales
+
+# Forecast the sales of January
+sales_january = units_january * sales_price
+
+# Forecast the discounted price
+dsales_price = 40*.60
+
+# Forecast the sales of February
+sales_february = (40 * units_february * 0.55) + (dsales_price * .45 * units_february)
+
+# Print the forecast sales for January and February
+print("The forecast sales for January and February are {} and {} USD respectively.".format(sales_january, sales_february))
+
+The forecast sales for January and February are 20000 and 20440.0 USD respectively.
+
+
+>>>>>>Sample >>>> fixed costs
+Material costs to produce one T-shirt is 8 USD. Labor costs are 2 USD per shirt.
+
+The costs to rent a machine that produces these shirts is 1300 USD per month, regardless of the amount of shirts produced
+
+# Set the variables for fixed costs and variable costs
+fixed_costs = 1300 
+print(variables)
+variable_costs_per_unit = material_costs_per_unit + labor_costs_per_unit
+
+# Calculate the cogs for January and February
+cogs_jan = (units_jan * variable_costs_per_unit) + fixed_costs
+cogs_feb = (units_feb * variable_costs_per_unit) + fixed_costs
+
+
+>>>>>> sample >>> calculate cogs per month >>>  cost per unit
+
+# From previous step
+fixed_costs = machine_rental 
+variable_costs_per_unit = material_costs_per_unit + labor_costs_per_unit
+cogs_jan = (units_jan * variable_costs_per_unit) + fixed_costs
+cogs_feb = (units_feb * variable_costs_per_unit) + fixed_costs
+
+# Calculate the unit cost for January and February
+unit_cost_jan = cogs_jan / units_jan
+unit_cost_feb = cogs_feb / units_feb
+
+# Print the January and February cost per unit
+print("The cost per unit for January and February are {} and {} USD respectively.".format(unit_cost_jan, unit_cost_feb))
+
+>>>>>sample >>>> number of units to break even
+
+# Calculate the break-even point (in units) for Wizit
+break_even = fixed_costs/(sales_price - variable_costs_per_unit)
+print(variables)
+# Print the break even point in units
+print("The break even point is {} units.".format(break_even))
+
+# Forecast the gross profit for January and February
+gross_profit_jan = (sales_price*units_jan) - cogs_jan
+gross_profit_feb = (sales_price*units_feb) - cogs_feb
+
+# Print the gross profit for January and February
+print("The gross profit for January and February are {} and {} USD respectively.".format(gross_profit_jan, gross_profit_feb))
+
+
 
 
 
