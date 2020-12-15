@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added multinomialnb and kNearestNeighbor UFO sightings predictor
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/UFO%20.ipynb
+
 * I added passenger prediction using LSTM one day back prediction
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20passenger%201%20day%20back%20prediction.ipynb
