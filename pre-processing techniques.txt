@@ -1,0 +1,878 @@
+df.describe()
+
+removing missing data
+
+df.dropna()
+
+df.drop(['col1'],axis=1)
+
+print(df[df['b']==7])
+
+print(df['B'].isnull().sum())
+
+print(df[df['B'].notnull()])
+
+
+>>>>>sample >>> find the number nulls in the category_desc column
+
+# Check how many values are missing in the category_desc column
+print(volunteer['category_desc'].isnull().sum())
+
+# Subset the volunteer dataset
+volunteer_subset = volunteer[volunteer['category_desc'].notnull()]
+
+# Print out the shape of the subset
+print(volunteer_subset.shape)
+
+
+>>>>>>>>>>>>Working with data types
+
+how to convert data types in the dataset
+
+print(volunteer.dtypes)
+
+
+object
+int64
+float64
+datetime64 or timedelta
+
+df['C']=df['C'].,astype('float')
+
+>>>>>sample >>>> converting to int
+
+ # Print the head of the hits column
+print(volunteer["hits"].dtypes)
+
+# Convert the hits column to type int
+volunteer["hits"] = volunteer['hits'].astype(int)
+
+# Look at the dtypes of the dataset
+print(volunteer.dtypes)
+
+
+>>>>>>>>>>>>>>>Training and test sets
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, x_train, y_test=train_test_split(X,y)
+
+75% and 25% by default
+
+Stratifed sampling
+100 samples, 80% class 1 and 20% class 2
+
+Training set: 75 samples, 60 class 1 and 15 class 2
+Test set: 25 samples, 20 class 1 and 5 class 2
+
+y['labels'].value_counts()
+
+
+>>>>>>>>Sample  value_counts()
+
+volunteer['category_desc'].value_counts()
+
+Strengthening Communities    307
+Helping Neighbors in Need    119
+Education                     92
+Health                        52
+Environment                   32
+Emergency Preparedness        15
+Name: category_desc, dtype: int64
+
+>>>>>> sample >>> train_test_split using stratify
+
+
+# Create a data with all columns except category_desc
+volunteer_X = volunteer.drop(['category_desc'], axis=1)
+
+# Create a category_desc labels dataset
+volunteer_y = volunteer[['category_desc']]
+
+# Use stratified sampling to split up the dataset according to the volunteer_y dataset
+X_train, X_test,y_train,y_test = train_test_split(volunteer_X, volunteer_y, stratify=volunteer_y)
+
+# Print out the category_desc counts on the training y labels
+print(y_train['category_desc'].value_counts())
+
+
+y_train output
+
+Strengthening Communities    230
+Helping Neighbors in Need     89
+Education                     69
+Health                        39
+Environment                   24
+Emergency Preparedness        11
+Name: category_desc, dtype: int64
+
+
+>>>>>>>>Standardizing data
+
+standardization is technique for taking contineously distributed data and make it look normally distributed
+
+Log normalization and feature scaling
+
+applied to contineous numerical data
+
+model in linear space
+
+dataset features have high variance
+
+dataset features are contineous and on different scales
+
+>>>>>>> sample >>> knn k nearest neighbor
+
+# Split the dataset and labels into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y)
+
+# Fit the k-nearest neighbors model to the training data
+knn.fit(X_train,y_train)
+
+# Score the model on the test data
+print(knn.score(X_test,y_test))
+
+
+>>>>>>>>>>>>>>>Log normalization
+
+log normalization can be helpful if you have a column with high variance
+
+applies log transformation
+
+natural log using the contant _e_ = 2.718
+
+log 30 is 3.4
+
+because 3.4 ** 2.718 = 30 or 3.4**_e_=30
+
+captures relative changes and captures the magnitude of change and keeps everything in positive space
+
+Log normalization reduces the variance in the model
+
+print(df.var())
+
+col1: 0.12858
+col2  1691.72167
+
+import numpy as np
+df['log_column2']= np.log(df['col2'])
+print(df)
+
+log_2 has scaled down the values
+
+
+>>>>o sample >>> log normalization
+
+# Print out the variance of the Proline column
+print(wine['Proline'].var())
+
+# Apply the log normalization function to the Proline column
+wine['Proline_log'] = np.log(wine['Proline'])
+
+
+# Check the variance of the normalized Proline column
+print(wine['Proline_log'])
+
+
+>>>>>> scaling data for feature comparison
+
+1. features on different scales
+2. model with linear characteristics
+3. center features around 0 and transform to unit variance
+4. transforms to approximately normal distribution
+
+variance is low in the column but differs across columns
+
+from sklearn.preprocessing import StandardScaler
+
+scaler=StandardScaler()
+df_scaled = pd.DataFrame(scaler.fit_transform(df),
+columns=df.columns)
+
+
+print(df_scaled)
+
+print(df.var())
+
+The variance on each column is the same
+
+
+>>>>  sample standardscaler normalization
+
+# Import StandardScaler from scikit-learn
+from sklearn.preprocessing import StandardScaler
+
+
+# Create the scaler
+ss = StandardScaler()
+
+# Take a subset of the DataFrame you want to scale 
+wine_subset = wine[['Ash','Alcalinity of ash','Magnesium']]
+
+# Apply the scaler to the DataFrame subset
+wine_subset_scaled = ss.fit_transform(wine_subset)
+
+
+>>>>o sample >>> log normalization
+
+# Print out the variance of the Proline column
+print(wine['Proline'].var())
+
+# Apply the log normalization function to the Proline column
+wine['Proline_log'] = np.log(wine['Proline'])
+
+
+# Check the variance of the normalized Proline column
+print(wine['Proline_log'])
+
+
+>>>>>> scaling data for feature comparison
+
+1. features on different scales
+2. model with linear characteristics
+3. center features around 0 and transform to unit variance
+4. transforms to approximately normal distribution
+
+variance is low in the column but differs across columns
+
+from sklearn.preprocessing import StandardScaler
+
+scaler=StandardScaler()
+df_scaled = pd.DataFrame(scaler.fit_transform(df),
+columns=df.columns)
+
+
+print(df_scaled)
+
+print(df.var())
+
+The variance on each column is the same
+
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+
+X_train,y_train, X_test,y_test = train_test_split(X,y)
+
+knn=KNeighborsClassifier()
+knn.fit(X_train, y_train)
+knn.score(X_test,y_test)
+
+
+>>>>>sample >>> knn
+
+# Split the dataset and labels into training and test sets
+X_train, X_test, y_train, y_test = train_test_split(X,y)
+
+# Fit the k-nearest neighbors model to the training data
+knn.fit(X_train,y_train)
+
+# Score the model on the test data
+print(knn.score(X_test, y_test))
+
+>>>>>>>sample >>> apply standard scaler fit_transform
+
+# Create the scaling method.
+ss = StandardScaler()
+
+# Apply the scaling method to the dataset used for modeling.
+X_scaled = ss.fit_transform(X)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y)
+
+# Fit the k-nearest neighbors model to the training data.
+knn.fit(X_train,y_train)
+
+# Score the model on the test data.
+print(knn.score(X_test,y_test))
+
+
+>>>>>>>>>>>Feature Engineering
+
+creation of new features based on existing features
+insight into relationships between features
+extract and expand data
+dataset-dependent
+
+>>>>>>>Encoding categorical variables
+
+the classifiers require numeric input
+
+encoding is required
+
+fav_color=blue,green,orange, green
+
+>>>>encode binary as 1 and 0
+
+users['sub_enc']=users['subscribed'].apply(lambda val: 1 if val=='y' else 0)
+
+>>>>>>>Label encoding
+
+from sklearn.preprocessing import LabelEncoder
+
+le=LabelEncoder()
+users['sub_enc_le']=le.fit_tranform(user['subscribed'])
+
+>>>>>>one hot-encoding
+
+pd.get_dummies(users['fav_colors'])
+
+>>>>>>>>>>>>>>>>>Sample  >>> label encoder
+
+# Set up the LabelEncoder object
+enc = LabelEncoder()
+
+# Apply the encoding to the "Accessible" column
+hiking['Accessible_enc'] = enc.fit_transform(hiking['Accessible'])
+
+# Compare the two columns
+print(hiking[['Accessible', 'Accessible_enc']].head())
+
+>>>>>>>>Sample >>> get_dummies
+
+# Transform the category_desc column
+category_enc = pd.get_dummies(volunteer['category_desc'])
+
+# Take a look at the encoded columns
+print(category_enc.head())
+
+
+>>>>>Engineering numerical features
+
+
+columns=['day1','day2','day3']
+df['mean']=df.apply(lambda row: row[columns].mean(), axis=1)
+
+print(df)
+
+
+>>>>> Dates
+
+df['date_converted']=pd.to_datetime(df['date'])
+
+df['month']=df['date_converted'].apply(lambda row: row.month)
+
+>>>>> sample  >>> creating an average column
+
+# Create a list of the columns to average
+run_columns = ['run1', 'run2', 'run3', 'run4', 'run5']
+
+#running_times_5k.columns
+
+
+# Use apply to create a mean column
+running_times_5k["mean"] = running_times_5k.apply(lambda x: x[run_columns].mean(), axis=1)
+
+# Take a look at the results
+print(running_times_5k["mean"])
+
+>>>> sample >>> extract the month
+
+# First, convert string column to date column
+volunteer["start_date_converted"] = pd.to_datetime(volunteer["start_date_date"])
+
+# Extract just the month from the converted column
+volunteer["start_date_month"] = volunteer["start_date_converted"].apply(lambda row: row.month)
+
+# Take a look at the converted and new month columns
+print(volunteer[["start_date_converted", "start_date_month"]].head())
+
+
+>>>>>>>Feature engineering from text
+
+
+import re
+
+my_string="temperature: 75.6 F"
+
+pattern=re.compile("\d+\.\d+")
+
+look for the float value in the string
+\d digits
+\. decimal period
+
+temp = re.match(pattern, my_string)
+
+print(float(temp.group(0))
+
+Vectorize the text
+
+tfidf vector term frequency inverse document frequency
+
+put weights on words that are more significant
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+print(documents.head())
+
+
+tfidf_vec = TfidfVectorizer()
+text_tfidf = tfidf_vec.fit_transform(documents)
+
+naives bayes classifier
+each feature is independent of others
+
+
+>>>>> sample >>> extract miles from a string
+
+# Write a pattern to extract numbers and decimals
+def return_mileage(length):
+    pattern = re.compile("\d+\.\d+")
+    
+    # Search the text for matches
+    mile = re.match(pattern,length)
+    
+    # If a value is returned, use group(0) to return the found value
+    if mile is not None:
+        return float(mile.group(0))
+        
+# Apply the function to the Length column and take a look at both columns
+hiking["Length_num"] = hiking['Length'].apply(lambda row: return_mileage(row))
+print(hiking[["Length", "Length_num"]].head())
+
+>>>>> sample >>> vectorize text
+
+# Take the title text
+title_text = volunteer['title']
+
+# Create the vectorizer method
+tfidf_vec = TfidfVectorizer()
+
+# Transform the text into tf-idf vectors
+text_tfidf = tfidf_vec.fit_transform(title_text)
+print(text_tfidf)
+
+>>>>>>sample >>>> naive bayes
+
+# Split the dataset according to the class distribution of category_desc
+print(text_tfidf)
+y = volunteer["category_desc"]
+X_train, X_test, y_train, y_test = train_test_split(text_tfidf.toarray(), y, stratify=y)
+
+# Fit the model to the training data
+nb.fit(X_train,y_train)
+
+# Print out the model's accuracy
+print(nb.score(X_test,y_test))
+
+
+>>>>>>>>>>>>>>Feature selection
+
+removing unnecessary features that might create noise
+remove correlated features
+remove duplicate features
+
+it is an iterative process
+
+depends on the end goal
+
+the feature move to together 
+use pearson correlation coefient (-1 and 1)
+
+df.corr()
+
+
+>>>>>>sample >>> df.corr  >>> drop columns
+
+# Create a list of redundant column names to drop
+to_drop = ["category_desc", "locality", "region", "postalcode", "vol_requests"]
+
+# Drop those columns from the dataset
+volunteer_subset = volunteer.drop(to_drop, axis=1)
+
+# Print out the head of the new dataset
+print(volunteer_subset.head())
+
+volunteer.corr()
+
+
+>>>>>sample >>> drop columns with corr > .75
+
+import numpy as np
+# Print out the column correlations of the wine dataset
+print(wine.corr())
+
+corr=wine.corr()
+
+m = ~(corr.mask(np.eye(len(corr), dtype=bool)).abs() > 0.75).any()
+
+raw = corr.loc[m, m]
+print(raw)
+
+# Take a minute to find the column where the correlation value is greater than 0.75 at least twice
+to_drop = "Flavanoids"
+
+# Drop that column from the DataFrame
+wine = wine.drop(to_drop, axis=1)
+
+>>>>>>>>>>>>>>>Selecting features using text vectors
+
+looking at word weights
+print(tfidf_vec.vocabulary_)
+
+word weight and index of te word
+
+3 is the third row
+get the data and the indices
+text_tfidf[3].data
+text_tfidf[3].indices
+
+vocab= {v:k for k,v in tfidf_vec.vocabulary_.items()}
+
+reverses the indice and the word
+
+combine the vocabulary with the word vectorized weights
+
+zipped_row=dict(zip(text_tfidf[3].indices,
+text_tfidf[3].data))
+
+for index,item in zipped_row.items():
+    print(vocab.get(index),item)
+
+now you can see word importance
+
+
+# Add in the rest of the parameters
+def return_weights(vocab, original_vocab, vector, vector_index, top_n):
+    zipped = dict(zip(vector[vector_index].indices, vector[vector_index].data))
+    
+    # Let's transform that zipped dict into a series
+    zipped_series = pd.Series({vocab[i]:zipped[i] for i in vector[vector_index].indices})
+    
+    # Let's sort the series to pull out the top n weighted words
+    zipped_index = zipped_series.sort_values(ascending=False)[:top_n].index
+    return [original_vocab[i] for i in zipped_index]
+
+original_vocab=tfidf_vec.vocabulary_
+
+# Print out the weighted words
+print(return_weights(vocab,original_vocab, text_tfidf, 8, 3))
+
+
+def words_to_filter(vocab, original_vocab, vector, top_n):
+    filter_list = []
+    for i in range(0, vector.shape[0]):
+    
+        # Here we'll call the function from the previous exercise, and extend the list we're creating
+        filtered = return_weights(vocab, original_vocab, vector, i, top_n)
+        filter_list.extend(filtered)
+    # Return the list in a set, so we don't get duplicate word indices
+    return set(filter_list)
+
+# Call the function to get the list of word indices
+filtered_words = words_to_filter(vocab, tfidf_vec.vocabulary_, text_tfidf, 3)
+
+# By converting filtered_words back to a list, we can use it to filter the columns in the text vector
+filtered_text = text_tfidf[:, list(filtered_words)]
+
+
+# Split the dataset according to the class distribution of category_desc
+train_X, test_X, train_y, test_y = train_test_split(filtered_text.toarray(), y, stratify=y)
+
+# Fit the model to the training data
+nb.fit(train_X, train_y)
+
+# Print out the model's accuracy
+print(nb.score(test_X, test_y))
+
+the set remove the duplicate word weights
+
+
+>>>>>>>>>>>>>Dimension reduction
+
+Principal component analysis
+
+linear transformation to uncorrelated space
+
+from sklearn.decomposition import PCA
+pca=PCA()
+df_pca=pca.fit_transform(df)
+
+print(df_pca)
+
+end of preprocessing journey
+
+
+>>>>>>>>>sample >>>> pca
+
+
+from sklearn.decomposition import PCA
+# Set up PCA and the X vector for diminsionality reduction
+pca = PCA()
+wine_X = wine.drop("Type", axis=1)
+
+# Apply PCA to the wine dataset X vector
+transformed_X = pca.fit_transform(wine_X)
+
+# Look at the percentage of variance explained by the different components
+print(pca.explained_variance_ratio_)
+
+
+>>>>>>> sample >>>> pca transform >>> knn.fit and score
+
+
+# Split the transformed X and the y labels into training and test sets
+X_wine_train, X_wine_test, y_wine_train, y_wine_test = train_test_split(transformed_X,y)
+
+# Fit knn to the training data
+knn.fit(X_wine_train,y_wine_train)
+
+# Score knn on the test data and print it out
+knn.score(X_wine_test,y_wine_test)
+
+
+>>>>>>>>>UFO preprocessing
+
+
+missing data: dropna() and notnull()
+type: astype()
+
+train_test_split(X,y,stratify=y)
+
+
+>>>>>>> sample change the data types for two features
+
+# Check the column types
+print(ufo.dtypes)
+
+# Change the type of seconds to float
+ufo["seconds"] = ufo["seconds"].astype(float)
+
+# Change the date column to type datetime
+ufo["date"] = pd.to_datetime(ufo["date"])
+
+# Check the column types
+print(ufo[["seconds","date"]].dtypes)
+
+>>>>> sample  >>> find no missing
+
+# Check how many values are missing in the length_of_time, state, and type columns
+print(ufo[["length_of_time", "state", "type"]].isnull().sum())
+
+# Keep only rows where length_of_time, state, and type are not null
+ufo_no_missing = ufo[ufo["length_of_time"].notnull() & 
+          ufo["state"].notnull() & 
+          ufo["type"].notnull()]
+
+# Print out the shape of the new dataset
+print(ufo_no_missing.shape)
+
+output:
+length_of_time    143
+state             419
+type              159
+
+
+>>>>>>> categorical variables
+
+pd.get_dummies
+
+standardization
+var()
+np.log()
+
+>>>>>> sample >>>> return minutes
+
+def return_minutes(time_string):
+
+    # Use \d+ to grab digits
+    pattern = re.compile(r"\d+")
+    
+    # Use match on the pattern and column
+    num = re.match(pattern, time_string)
+    if num is not None:
+        return int(num.group(0))
+        
+# Apply the extraction to the length_of_time column
+ufo["minutes"] = ufo["length_of_time"].apply(lambda x: return_minutes(x))
+
+# Take a look at the head of both of the columns
+print(ufo[["minutes","length_of_time"]].head())
+
+
+output:
+minutes   length_of_time
+2    None  about 5 minutes
+4    None       10 minutes
+7    None        2 minutes
+8    None        2 minutes
+9    None        5 minutes
+In [1]:
+;
+
+>>>>> sample >>> ufo var
+
+print(ufo.var())
+
+seconds    424087.417474
+lat            39.757593
+long          379.590986
+minutes       117.546372
+dtype: float64
+
+
+# Check the variance of the seconds and minutes columns
+print(ufo.var())
+
+# Log normalize the seconds column
+ufo["seconds_log"] = np.log(ufo["seconds"])
+
+# Print out the variance of just the seconds_log column
+print(ufo["seconds_log"].var())
+
+
+>>>>>>>>>>>>>>Engineering new features
+
+Month of the sighting
+description and vectorize
+
+.month and .hour
+
+regex
+
+
+>>>>>>>Sample  >>>> encode country and type
+
+# Use Pandas to encode us values as 1 and others as 0
+ufo["country_enc"] = ufo["country"].apply(lambda x: 1 if x=="us" else 0)
+
+# Print the number of unique type values
+print(len(ufo['type'].unique()))
+
+# Create a one-hot encoded set of the type values
+type_set = pd.get_dummies(ufo['type'])
+
+# Concatenate this set back to the ufo DataFrame
+ufo = pd.concat([ufo, type_set], axis=1)
+
+
+>>>>> sample >>>> set the month and year of the date
+
+# Look at the first 5 rows of the date column
+print(ufo['date'].head())
+
+# Extract the month from the date column
+ufo["month"] = ufo["date"].apply(lambda x: x.month)
+
+# Extract the year from the date column
+ufo["year"] = ufo["date"].apply(lambda x:x.year)
+
+# Take a look at the head of all three columns
+print(ufo[["date","month","year"]].head())
+
+
+>>>>Feature selection and modeling
+
+* redundant features
+* text vector
+* know your dataset
+
+
+# Check the correlation between the seconds, seconds_log, and minutes columns
+print(ufo[['seconds','seconds_log','minutes']].corr())
+
+seconds      1.000000     0.853371  0.980341
+seconds_log  0.853371     1.000000  0.824493
+minutes      0.980341     0.824493  1.000000
+
+# Make a list of features to drop
+to_drop = ['seconds','minutes','city','country']
+
+# Drop those features
+ufo_dropped = ufo.drop(to_drop,axis=1)
+
+# Let's also filter some words out of the text vector we created
+filtered_words = words_to_filter(vocab, vec.vocabulary_, desc_tfidf, 4)
+
+>>>> sample  one hot encoding
+The y labels are the encoded country column, where 1 is us and 0 is ca
+
+# Take a look at the features in the X set of data
+print(X.columns)
+print(y)
+# Split the X and y sets using train_test_split, setting stratify=y
+train_X, test_X, train_y, test_y = train_test_split(X,y)
+
+# Fit knn to the training sets
+knn.fit(train_X,train_y)
+
+# Print the score of knn on the test sets
+print(knn.score(test_X,test_y))
+
+>>>>>>>sample  use a list of filter words
+
+# Use the list of filtered words we created to filter the text vector
+filtered_text = desc_tfidf[:, list(filtered_words)]
+print(filtered_text)
+
+# Split the X and y sets using train_test_split, setting stratify=y 
+train_X, test_X, train_y, test_y = train_test_split(filtered_text.toarray(), y, stratify=y)
+
+# Fit nb to the training sets
+nb.fit(train_X,train_y)
+
+# Print the score of nb on the test sets
+print(nb.score(test_X,test_y))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
