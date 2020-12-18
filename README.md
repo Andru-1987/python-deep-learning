@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added credit card default prediction using keras
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Card%20Default%20usings%20Keras%20Default%20Prediction.ipynb
+
 * I added multinomialnb and kNearestNeighbor UFO sightings predictor
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/UFO%20.ipynb
