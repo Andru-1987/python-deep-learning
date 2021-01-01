@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added hyper parameter tuning for credit card default and built a mlpclassifier to predict
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Card%20Defaults%20-%20hyperparameter.ipynb
+
 * I added candy power ranking using keras linear predictor
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Candy%20Power%20Ranking.ipynb
