@@ -1,0 +1,965 @@
+# Import the modules from skimage
+from skimage import data, color
+
+# Load the rocket image
+rocket = data.rocket()
+
+# Convert the image to grayscale
+gray_scaled_rocket = color.rgb2gray(rocket)
+
+# Show the original image
+show_image(rocket, 'Original RGB image')
+
+# Show the grayscale image
+show_image(gray_scaled_rocket, 'Grayscale image')
+
+
+>>>>>>>>numpy for images
+
+flipping
+extracting and analyzing features
+
+
+madrid_image = plt.imread('madrid.jpeg')
+
+type(madrid_image)
+
+output:ndarray object
+
+red=image[:,:,0]
+green=image[:,:,1]
+blue=image[:,:,2]
+
+plt.imshow(red,cmap="gray")
+plt.('Red')
+plt.axis('off')
+plt.show()
+
+
+you can see the intensities of each color
+
+madrid_image.shape
+
+(426,640,3)
+
+madrid_image.size
+
+vertically_flipped=np.flipud(madrid_image)
+
+show_image(vertically_flipped,'Vertically flipped image')
+
+horizontal flip
+
+horizontal_flipped-np.fliplr(madrid_image)
+
+show_image(horizontally_flipped,'Horizontally flipped image')
+
+a histogram is a visual representation of the intensity of each color intensity
+
+histograms are used to transform images
+1. analysis
+2. thresholding
+3. brightness and contrast
+4. equalizing
+
+red=image[:,:,0]
+plt.hist(red.ravel(),bins=256)
+
+
+ravel returns a contguous flatten array
+
+
+>>>>sample
+
+
+# Flip the image vertically
+seville_vertical_flip = np.flipud(flipped_seville)
+
+# Flip the image horizontally
+seville_horizontal_flip = np.fliplr(seville_vertical_flip)
+
+# Show the resulting image
+show_image(seville_horizontal_flip, 'Seville')
+
+>>>> sample red histogram
+
+# Obtain the red channel
+red_channel = image[:, :, 0]
+
+# Plot the red histogram with bins in a range of 256
+plt.hist(red_channel.ravel(), bins=256)
+
+# Set title and show
+plt.title('Red Histogram')
+plt.show()
+
+
+>>>>>>>>>>>>>>>Thresholding
+
+thresholding is partitioning an image into a foreground and background making them black and white
+
+255(white) if pixel > thresh value
+
+0 black if pixel < thresh value
+
+thresholding is use during
+1. object detection
+2. face detection
+etc
+
+convert to grayscal
+
+thresh=127
+
+binary= image > thresh
+
+show_image(image,'Original)
+show_image(binary,'Thresholded')
+
+inverted_binary = image <=thresh
+
+>>>>>>>> Categories
+
+global or histogram based: good for uniform backgrounds
+
+local or adaptive: for uneven background illumination
+
+>>>>>> all threshold
+
+from skimage.filters import try_all_threshold
+
+fig, ax = try_all_threshold(image, verbose=False)
+
+show_plot(fig,ax)
+
+>>>>>>>>>>>>finding the optimal thresh value
+
+from skimage.filters import threshold_otsu
+
+#obtain the optimal threshold value
+thresh=threshold_otsu(red)
+?
+print(thresh)
+#apply the thresholding to the image
+binary_global = red> thresh
+?
+plt.imshow(binary_global,cmap='gray')
+plt.title('Thresholded')
+plt.show()
+
+output:
+threshold=123
+
+>>>>>>>>>>>>>>>>>Local threshold
+
+use when the background is uneven
+
+block size to surround each pixel
+
+from skimage.filters import threshold_local
+
+block_size=35
+
+local_tresh= threshold_local(text_image, block_size,offset=10)
+
+
+>>>>>>>> sample  >>> otsu to gray scale
+
+# Import the otsu threshold function
+from skimage.filters import threshold_otsu
+
+# Make the image grayscale using rgb2gray
+chess_pieces_image_gray = rgb2gray(chess_pieces_image)
+
+# Obtain the optimal threshold value with otsu
+thresh = threshold_otsu(chess_pieces_image_gray)
+
+# Apply thresholding to the image
+binary = chess_pieces_image_gray > thresh
+
+# Show the image
+show_image(binary, 'Binary image')
+
+>>>>>> sample >>> otsu to image >> global thresh
+
+# Import the otsu threshold function
+c
+
+# Obtain the optimal otsu global thresh value
+global_thresh = threshold_otsu(page_image)
+
+# Obtain the binary image by applying global thresholding
+binary_global = page_image > global_thresh
+
+# Show the binary image obtained
+show_image(binary_global, 'Global thresholding')
+
+>>>>> sample >>> local thresh
+
+# Import the local threshold function
+from skimage.filters import threshold_local
+
+# Set the block size to 35
+block_size = 35
+
+# Obtain the optimal local thresholding
+local_thresh = threshold_local(page_image, block_size, offset=10)
+
+# Obtain the binary image by applying local thresholding
+binary_local = page_image > local_thresh
+
+# Show the binary image
+show_image(binary_local, 'Local thresholding')
+
+
+>>>>>> sample  >>> all threshold
+
+# Import the try all function
+from skimage.filters import try_all_threshold
+
+# Import the rgb to gray convertor function 
+from skimage.color import rgb2gray
+
+# Turn the fruits_image to grayscale
+grayscale = rgb2gray(fruits_image)
+
+# Use the try all method on the resulting grayscale image
+fig, ax = try_all_threshold(grayscale, verbose=False)
+
+# Show the resulting plots
+plt.show()
+
+
+>>>>> sample >>> optimum threshold
+
+# Import threshold and gray convertor functions
+from skimage.filters import threshold_otsu
+from skimage.color import rgb2gray
+
+# Turn the image grayscale
+gray_tools_image = rgb2gray(tools_image)
+
+# Obtain the optimal thresh
+thresh = threshold_otsu(gray_tools_image)
+
+# Obtain the binary image by applying thresholding
+binary_image = gray_tools_image > thresh
+
+# Show the resulting binary image
+show_image(binary_image, 'Binarized image')
+
+
+>>>>>>>>>>>>>>>>Filtering
+
+contrast
+morphology
+
+filter: enhancing an image
+emphasize or remove features
+smoothing
+sharpening
+
+neighborhoods are blocks of pixels
+
+with filtering we can detect edges
+
+sobel is a common edge detection algorithm
+
+>>>>>>edge detection with sobel
+
+from skimage.filters import sobel
+
+image_coins=plt.imread('coins.jpg')
+plt.imshow(image_coins)
+edge=sobel=sobel(image_coins)
+
+
+
+>>>>>>>> Function plot_comparision
+
+def plot_comparision(original,filtered, title_filtered):
+        fig, (ax1,ax2) = plt.subplots(ncols=2, figsize=(8,6), sharex=True, sharey=True)
+        
+        ax1.imshow(original,cmap=plt.cm.gray)
+        ax1.set_title('original')
+        ax1.axis('off')
+
+        ax2.imshow(filtered,cmap=plt.cm.gray)
+        ax2.set_title(title_filtered)
+        ax2.axis('off')
+
+
+>>>>>>>>>>gaussian smoothing
+
+original vs blurred with gaussian filter
+
+reduces contrast
+
+from skimage.filters import gaussian
+
+gaussian_image = gaussian(amsterdam_pic, multichannel=True)
+
+
+>>>>>>>> sobel edge detection
+
+# Import the color module
+from skimage import color
+
+# Import the filters module and sobel function
+from skimage.filters import sobel
+
+# Make the image grayscale
+soaps_image_gray = color.rgb2gray(soaps_image)
+
+# Apply edge detection filter
+edge_sobel = sobel(soaps_image_gray)
+
+# Show original and resulting image to compare
+show_image(soaps_image, "Original")
+show_image(edge_sobel, "Edges with Sobel")
+
+>>>>>> guassian image
+
+# Import Gaussian filter 
+from skimage.filters import gaussian
+
+# Apply filter
+gaussian_image = gaussian(building_image, multichannel=True)
+
+# Show original and resulting image to compare
+show_image(building_image, "Original")
+show_image(gaussian_image, "Reduced sharpness Gaussian")
+
+
+>>>>>>>>>>>>>>> Contrast enhancement
+
+from skimage import exposure
+
+when we improve the contrast the details become more visible
+
+contrast is the measure of the dynamic range
+
+contrast is the difference between the maximum and minimum pixel intensity
+
+>>>> enhance contrast
+
+1. contrast stretching
+2. histogram equalization
+
+types:
+histogram equalization
+adaptive histogram equalization
+limited adaptive histogram equalization
+
+
+from skimage import exposure
+
+image_eq= exposure.equalize_hist(image)
+
+>>> sample >>> histogram of the chest xray
+
+# Import the required module
+from skimage import exposure
+
+# Show original x-ray image and its histogram
+show_image(chest_xray_image, 'Original x-ray')
+
+plt.title('Histogram of image')
+plt.hist(chest_xray_image.ravel(), bins=256)
+plt.show()
+
+# Use histogram equalization to improve the contrast
+xray_image_eq =  exposure.equalize_hist(chest_xray_image)
+
+# Show the resulting image
+show_image(xray_image_eq, 'Resulting image')
+
+
+>>>>> sample adaptive contrast
+
+# Import the necessary modules
+from skimage import data, exposure
+
+# Load the image
+original_image = data.coffee()
+
+# Apply the adaptive equalization on the original image
+adapthist_eq_image = exposure.equalize_adapthist(original_image, clip_limit=0.03)
+
+# Compare the original image to the equalized
+show_image(original_image)
+show_image(adapthist_eq_image, '#ImageProcessingDatacamp')
+
+
+>>>>>>>>>>> transformations
+
+1. preparing images for classification machine learning models
+
+2. optimization and compression of images
+
+3. save images with same proportions
+
+
+from skimage.transform import rotate
+
+image_rotated = rotate(image, -90)
+
+rescaling
+
+from skimage.transform import rescale
+
+image_rescaled=rescale(image,1/4, anti_aliasing=True, multichannel=True
+
+alias makes the pixel look like waves
+
+anti alias makes the image softer
+
+
+from skimage.transform import resize
+
+height=400
+width=600
+
+image_resize=resize(image,(height,width), anti-aliasing=True)
+
+#set proportional height so its 4 times its size
+
+height=image.shape[0]/4
+width=image.shape[1]/4
+
+image_resized=resize(image,(height,width), anti-aliasing=True)
+
+>>>>>>sample resize and rotate
+
+from skimage.transform import rotate, rescale
+
+# Rotate the image 90 degrees clockwise 
+rotated_cat_image = rotate(image_cat, -90)
+
+# Rescale with anti aliasing
+rescaled_with_aa = rescale(rotated_cat_image, 1/4, anti_aliasing=True, multichannel=True)
+
+# Rescale without anti aliasing
+rescaled_without_aa = rescale(rotated_cat_image, 1/4, anti_aliasing=False, multichannel=True)
+
+# Show the resulting images
+show_image(rescaled_with_aa, "Transformed with anti aliasing")
+show_image(rescaled_without_aa, "Transformed without anti aliasing")
+
+
+>>>>>>> sample >>> 3x rocket
+
+# Import the module and function to enlarge images
+from skimage.transform import rescale
+
+# Import the data module
+from skimage import data
+
+# Load the image from data
+rocket_image = data.rocket()
+
+# Enlarge the image so it is 3 times bigger
+enlarged_rocket_image = rescale(rocket_image, 3, anti_aliasing=True, multichannel=True)
+
+# Show original and resulting image
+show_image(rocket_image)
+show_image(enlarged_rocket_image, "3 times enlarged image")
+
+
+>>>>>> sample 1/2 the image rescaling
+
+# Import the module and function
+from skimage.transform import resize
+
+# Set proportional height so its half its size
+height = int(dogs_banner.shape[0] / 2)
+width = int(dogs_banner.shape[1] / 2)
+
+# Resize using the calculated proportional height and width
+image_resized = resize(dogs_banner, (height,width),
+                       anti_aliasing=True)
+
+# Show the original and rotated image
+show_image(dogs_banner, 'Original')
+show_image(image_resized, 'Resized image')
+
+
+>>>>>>>>>>> Morphology
+
+binary images can be distorted by thresholding images.
+
+morphological filtering account for form in the image.
+
+types:
+dilation: adds pixels to boundaries
+erosion: removes pixels on the object boundaries
+
+shapes: squares, diamond, cross
+
+from skimage import morphology
+
+square=morphology.square(4)
+
+rectangle = morphology.rectangle(4,2)
+
+>>>>>>erosion
+
+from skimage import morphology
+
+selem = rectangle(12,6)
+
+erode_image = morphology.binary_erosion(image_horse, selem=selem)
+
+>>>>>>dilation
+
+dilated_image = morphology.binary_dilation(binary_global)
+
+
+>>>>> sample >>> erosion
+
+#erosion is useful for removing minor white noise
+
+# Import the morphology module
+from skimage import morphology
+
+# Obtain the eroded shape 
+eroded_image_shape = morphology.binary_erosion(upper_r_image) 
+
+# See results
+show_image(upper_r_image, 'Original')
+show_image(eroded_image_shape, 'Eroded image')
+
+>>> sample >> dilation
+
+# Import the module
+from skimage import morphology
+
+# Obtain the dilated image 
+dilated_image = morphology.binary_dilation(world_image)
+
+# See results
+show_image(world_image, 'Original')
+show_image(dilated_image, 'Dilated image')
+
+>>>>>>>>>>>>>>Image restoration
+
+Inpainting is reconstructing lost parts of images
+
+looking at the non-damaged regions
+
+Damaged pixels set as a mask
+
+mask are pixels with values that are zero
+
+from skimage.restoration import inpaint
+
+mask = get_mask(defect_image)
+
+restored_image = inpaint.inpaint_biharmonic(defect_image, mask, multichannel=True)
+
+show_image(restored_image)
+
+def get_mask(image):
+	mask=np.zeros(image.shape[:-1])
+	
+	mask[101:106,0:240]=1
+	mask[152:154,0:60]=1
+	mask[154:156,100:120]=1
+	mask[155:156,120:140]=1
+
+	mask[212:217,0:150]=1
+	mask[217:222,150:256]=1	
+	return mask
+
+
+>>>> repair a defective image
+
+# Import the module from restoration
+from skimage.restoration import inpaint
+
+# Show the defective image
+show_image(defect_image, 'Image to restore')
+
+# Apply the restoration function to the image using the mask
+restored_image = inpaint.inpaint_biharmonic(defect_image, mask,multichannel=True)
+show_image(restored_image)
+
+>>>>>> removing a logo
+
+# Initialize the mask
+mask = np.zeros(image_with_logo.shape[:-1])
+
+# Set the pixels where the logo is to 1
+mask[210:272, 360:425] = 1
+
+# Apply inpainting to remove the logo
+image_logo_removed = inpaint.inpaint_biharmonic(image_with_logo,
+                                  mask,
+                                  multichannel=True)
+
+# Show the original and logo removed images
+show_image(image_with_logo, 'Image with logo')
+show_image(image_logo_removed, 'Image with logo removed')
+
+
+>>>>>>>>>>>>>Noise
+
+images are signals
+
+noise is the result of errors in image processing that do not reflect the true intensities.
+
+
+from skimage.util import random_noise
+
+noisy_image = random_noise(dog_image)
+
+randomly distributed noise
+
+Denoising the image
+1. total variation filter (tv)
+2. bilateral filtering (replace each pixel with a value of weighted values preserving edges)
+3. wavelet denoising
+
+from skimage.restoration import denoise_tv_chambolle
+
+denoise_image = denoise_tv_chambolle(noisy_image, weight=0.1, multichannel=True)
+
+
+>>>>>bilateral
+
+from skimage.restoration import denoise_bilateral
+
+denoised_image=denoise_bilateral(noisy_image,multichannel=True)
+
+
+>>>> sample >>> add noise
+
+# Import the module and function
+from skimage.util import random_noise
+
+# Add noise to the image
+noisy_image = random_noise(fruit_image)
+
+# Show original and resulting image
+show_image(fruit_image, 'Original')
+show_image(noisy_image, 'Noisy image')
+
+
+>>>>> sample denoised with tv chambolle
+
+# Import the module and function
+from skimage.restoration import denoise_tv_chambolle
+
+# Apply total variation filter denoising
+denoised_image = denoise_tv_chambolle(noisy_image, 
+                                      multichannel=True)
+
+# Show the noisy and denoised images
+show_image(noisy_image, 'Noisy')
+show_image(denoised_image, 'Denoised image')
+
+>>>>> sample denoised >>> bilateral
+
+# Import bilateral denoising function
+from skimage.restoration import denoise_bilateral
+
+# Apply bilateral filter denoising
+denoised_image = denoise_bilateral(landscape_image, 
+                                   multichannel=True)
+
+# Show original and resulting images
+show_image(landscape_image, 'Noisy image')
+show_image(denoised_image, 'Denoised image')
+
+
+>>>>>>>Super pixels and segmentation
+
+break the image into segments
+
+super pixels create segments in the image of pixels with similar pixel color ranges.
+
+super pixels have similar levels of grayscale
+
+super pixels have been applied to image tracking
+
+super pixels are represented as boundarie
+
+unsupervised segmentation
+1. simple linear iterative clustering (slic)
+
+
+from skimage.segmentation import slic
+from skimage.color import label2rgb
+
+segments= slic(coins_image,n_segments=600)
+
+segmented_image=label2rgb(segments,coins_image,kind='avg')
+
+
+>>>>>> Sample >>>> face reduced to 400 super pixels
+
+# Import the slic function from segmentation module
+from skimage.segmentation import slic
+
+# Import the label2rgb function from color module
+from skimage.color import label2rgb
+
+# Obtain the segmentation with 400 regions
+segments=slic(face_image,n_segments=400)
+
+# Put segments on top of original image to compare
+segmented_image = label2rgb(segments, face_image, kind='avg')
+
+# Show the segmented image
+show_image(segmented_image, "Segmented image, 400 superpixels")
+
+
+>>>>>>>>>>>>find contours
+
+1. represents the boundaries of the objects
+
+measure size
+classify shapes
+determine the number of objects
+
+we can obtain a binary image applying thresholding or using edge detection
+
+preparing the image
+1. transform the image to 2d grayscale
+
+image=color.rgb2gray(image)
+
+thresh=threshold_otsu(image)
+
+threshholded_image=image>thresh
+
+use find_contours()
+
+from skimage import measure
+
+contours=measure.find_contours(threshold_image,0.8)
+
+the closer the level value is to 1 the more sensitive the it is to finding the boundary
+
+for contour in contours:
+    print(contour.shape)
+
+
+>>>>>>>> sample >>> horse contours
+
+# Import the modules
+from skimage import data, measure
+
+# Obtain the horse image
+horse_image = data.horse()
+
+# Find the contours with a constant level value of 0.8
+contours = measure.find_contours(horse_image, 0.8)
+
+# Shows the image with contours found
+show_image_contour(horse_image, contours)
+
+>>>>>>> sample >>> contours dice
+
+# Make the image grayscale
+image_dices = color.rgb2gray(image_dices)
+
+# Obtain the optimal thresh value
+thresh = filters.threshold_otsu(image_dices)
+
+# Apply thresholding
+binary = image_dices > thresh
+
+# Find contours at a constant value of 0.8
+contours = measure.find_contours(binary, 0.8)
+
+# Show the image
+show_image_contour(image_dices, contours)
+
+>>>>sample >>> count dots
+
+# Create list with the shape of each contour
+shape_contours = [cnt.shape[0] for cnt in contours]
+
+# Set 50 as the maximum size of the dots shape
+max_dots_shape = 50
+
+# Count dots in contours excluding bigger than dots size
+dots_contours = [cnt for cnt in contours if np.shape(cnt)[0] < max_dots_shape]
+
+# Shows all contours found 
+show_image_contour(binary, contours)
+
+# Print the dice's number
+print("Dice's dots number: {}. ".format(len(dots_contours)))
+
+>>>>>>>>>>>edges
+
+reduces information
+
+edges with canny
+
+from skimage.feature import canny
+
+dominos_grayscale_image=rgb2gray(dominos_image)
+
+fig,ax=plt.subplots(figsize=(20,12))
+
+ax.imshow(dominos_grayscale_image)
+plt.show()
+
+canny_edges=canny(dominos_grayscale_image,sigma=0.5)
+
+sigma removes noise
+
+guassian filter function
+
+the lower the sigma value the less the guassian filter applies to the image
+
+
+>>> sample >>> canny for edge detection
+
+# Import the canny edge detector 
+from skimage.feature import canny
+
+# Convert image to grayscale
+grapefruit = color.rgb2gray(grapefruit)
+
+# Apply canny edge detector
+canny_edges = canny(grapefruit)
+
+# Show resulting image
+show_image(canny_edges, "Edges with Canny")
+
+
+>>>>>>>> right around the corner
+
+corner detection
+
+a corner is the intersection of two edges
+
+match points between corners of an image.
+
+
+from skimage.feature import corner_harris
+
+image=rgb2gray(image)
+
+measure_image = corner_harris(image)
+
+coords = corner_peaks(corner_harris(image), min_distance=5)
+
+print("A total of ", len(coords), "corners were detected")
+
+
+ax.plot(coords[:,1],coords[:,0],'+r',markersize=15)
+
+
+>>>>> sample corner
+
+
+# Import the corner detector related functions and module
+from skimage.feature import corner_harris, corner_peaks
+
+# Convert image from RGB-3 to grayscale
+building_image_gray = color.rgb2gray(building_image)
+
+# Apply the detector  to measure the possible corners
+measure_image = corner_harris(building_image_gray)
+
+# Find the peaks of the corners using the Harris detector
+coords = corner_peaks(measure_image, min_distance=2)
+
+# Show original and resulting image with corners detected
+show_image(building_image, "Original")
+show_image_with_corners(building_image, coords)
+
+# Find the peaks with a min distance of 2 pixels
+coords_w_min_2 = corner_peaks(measure_image, min_distance=2)
+print("With a min_distance set to 2, we detect a total", len(coords_w_min_2), "corners in the image.")
+
+# Find the peaks with a min distance of 40 pixels
+coords_w_min_40 = corner_peaks(measure_image, min_distance=40)
+print("With a min_distance set to 40, we detect a total", len(coords_w_min_40), "corners in the image.")
+
+output:
+With a min_distance set to 2, we detect a total 98 corners in the image.
+With a min_distance set to 40, we detect a total 36 corners in the image.
+
+>>>>>>>>>>>>>Face detection
+
+from skimage.feature import Cascade
+
+trained_file=data.lbp_frontal_face_cascade_filename()
+
+detector = Cascade(trained_file)
+
+search for a face
+the window will have a minimum size
+
+detected = detector.detect_multi_scale(img=image,  
+	scale_factor=1.2, 
+	step_ratio=1,
+	min_size=(10,10),
+	max_size=(200,200))
+
+
+def show_detected_face(result, detected, title="Face image"):
+    plt.imshow(result)
+    img_desc=plt.gca()
+    plt.set_cmap('gray')
+    plt.title(title)
+    plt.axis('off')
+
+    for patch in detected:
+        img_desc.add_patch(
+            patches.Rectangle(
+                (patch['c'],patch['r']),patch['width'],patch['height'],\
+                fill=False,color='r',linewidth=2))
+    plt.show()
+
+
+	
+r is the row position of the top left corner
+c is the column position fo the top left corner
+width: width of the rectangle
+height: height of the rectangle
+
+
+>>>>> sample >>> face detection
+
+print(type(data))
+# Load the trained file from data
+trained_file = data.lbp_frontal_face_cascade_filename()
+
+# Initialize the detector cascade
+detector = Cascade(trained_file)
+
+# Detect faces with min and max size of searching window
+detected = detector.detect_multi_scale(img = night_image,
+                                       scale_factor=1.2,
+                                       step_ratio=1,
+                                       min_size=(10,10),
+                                       max_size=(200,20))
+
+# Show the detected faces
+show_detected_face(night_image, detected)
+
+
+>>>>>> sample  face detection using segments
+
+# Obtain the segmentation with default 100 regions
+segments = slic(profile_image)
+
+# Obtain segmented image using label2rgb
+segmented_image = label2rgb(segments, profile_image, kind='avg')
+
+# Detect the faces with multi scale method
+detected = detector.detect_multi_scale(img=segmented_image, 
+                                       scale_factor=1.2, 
+                                       step_ratio=1, 
+                                       min_size=(10, 10), max_size=(1000, 1000))
+
+# Show the detected faces
+show_detected_face(segmented_image, detected)
+
