@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* i added face recognition and edge detection using open cv
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Face%20recognition%20-%20edge%20detection.ipynb
+
 * I added hyper parameter tuning for credit card default and built a mlpclassifier to predict
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Card%20Defaults%20-%20hyperparameter.ipynb
