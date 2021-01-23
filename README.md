@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added a credit card approval using a logistic regression pipeline
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Card%20Approval%20Logistic%20Regression.ipynb
+
 * i added face recognition and edge detection using open cv
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Face%20recognition%20-%20edge%20detection.ipynb
