@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added an airline comfort rating a logistic regression pipeline
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Airline%20Comfort%20Ratings.ipynb
+
 * I added a credit card approval using a logistic regression pipeline
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Card%20Approval%20Logistic%20Regression.ipynb
