@@ -15,8 +15,9 @@ percentiles
 3. Assign a label to each group
 
 
+#four groups of equal sizes called quartiles
 
-spend_quartiles = pd.qcut(data['Spend'], q=4, labels=range(1,5))  #four groups of equal sizes called quartiles
+spend_quartiles = pd.qcut(data['Spend'], q=4, labels=range(1,5))  
 
 
 >>assigning labels

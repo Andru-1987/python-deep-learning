@@ -1,0 +1,380 @@
+components of a data platform
+
+ingest using singer
+
+deploy spark transformation pipelines
+
+test your code automatically
+
+apply common data cleaning operations
+
+gain insights by combining data with pyspark
+
+operational systems:
+1. messaging services
+2. payment systems
+3. google analytics
+4. crm
+5. clickstream
+6. location services
+
+data lake
+1. organized by zones
+(operational data is the landing zone)
+2. services to clean (clean zone)
+3. business zone
+
+extract transform and load
+
+>>>>>>>>>>>>Singer
+
+1. connecting to multiple data sources
+2. open source
+
+communicates using json
+
+tap and targets
+
+1. schema
+2. state
+3. record
+
+import singer
+singer.write_schema(schema=json_schema,
+	stream_name='DC_employees',
+	key_properties=["id"]
+
+import json
+
+json.dumps(json_schema['properties']['age'])
+
+with open('foo.json', mode='w') as fh:
+	json.dump(obj=json_schema, fp=fh)
+
+#writes the json-serialized object to the open file handle
+
+>>>>> sample >>> json.dump
+
+# Import json
+import json
+
+database_address = {
+  "host": "10.0.0.5",
+  "port": 8456
+}
+
+# Open the configuration file in writable mode
+with open("database_config.json", mode='w') as fh:
+  # Serialize the object in this file handle
+  json.dump(obj=database_address, fp=fh) 
+
+
+>>>>>>>>> sample singer write_schema
+
+# Complete the JSON schema
+schema = {'properties': {
+    'brand': {'type': 'string'},
+    'model': {'type': 'string'},
+    'price': {'type': 'number'},
+    'currency': {'type': 'string'},
+    'quantity': {'type': 'integer', 'minimum': 1},  
+    'date': {'type': 'string', 'format': 'date'},
+    'countrycode': {'type': 'string', 'pattern': "^[A-Z]{2}$"}, 
+    'store_name': {'type': 'string'}}}
+
+
+# Write the schema
+singer.write_schema(stream_name='products', schema=schema, key_properties=[])
+
+
+>>>>>>>>>>>ingestion pipeline with Singer
+
+columns=("id","name","age","has_children")
+
+users={
+(1,"adrian",32,False),
+(2,"ruanne",28,True)
+}
+
+
+singer.write_record(stream_name="DC_employees",
+record=dict(zip(columns,users.pop())))
+
+fixed_dict = {"type":"RECORD","stream":"DC_employees"}
+
+record_msg={**fixed_dict,"record":dict(zip(columns, users.pop()))}
+
+print(json.dumps(record_msg))
+
+** unpacks the dictionary
+
+
+import singer
+
+singer.write_schema(stream_name="foo", schema=...)
+
+singer.write_records(stream_name="foo", records=...)
+
+>>>>>>>>>>introduction to pipes
+
+python my_tap.py | target-csv
+
+python my_tap.py | target-csv --config userconfig.cfg
+
+>>>>>>>>>>>>>keeping track with state messages
+
+last_update_on
+
+extract after last_update_on
+
+update after tap
+
+singer.write_state(value={"max-last-updated-on": some_variable})
+
+
+You’re running a Singer tap daily at midnight, to synchronize changes between databases. Your tap, called tap-mydelta, extracts only the records that were updated in this database since your last retrieval. To do so, your tap keeps state: it keeps track of the last record it reported on, which can be derived from the table’s last_updated_on field.
+
+>>>> sample >> get from local host rest end point
+
+endpoint = "http://localhost:5000"
+
+# Fill in the correct API key
+api_key = "scientist007"
+
+# Create the web API’s URL
+authenticated_endpoint = "{}/{}".format("http://localhost:5000", api_key)
+
+print(authenticated_endpoint)
+
+# Get the web API’s reply to the endpoint
+api_response = requests.get(authenticated_endpoint).json()
+pprint.pprint(api_response)
+
+output:
+
+<script.py> output:
+    http://localhost:5000/scientist007
+    {'apis': [{'description': 'list the shops available',
+               'url': '<api_key>/diaper/api/v1.0/shops'},
+              {'description': 'list the items available in shop',
+               'url': '<api_key>/diaper/api/v1.0/items/<shop_name>'}]}
+    {'apis': [{'url': '<api_key>/diaper/api/v1.0/shops', 'description': 'list the shops available'}, {'url': '<api_key>/diaper/api/v1.0/items/<shop_name>', 'description': 'list the items available in shop'}]}
+
+/shops
+items/<shop_name>
+
+
+>>>> sample get a list of shops
+
+# Create the API’s endpoint for the shops
+shops_endpoint = "{}/{}/{}/{}".format(endpoint, api_key, "diaper/api/v1.0", "shops")
+
+shops = requests.get(shops_endpoint).json()
+print(shops)
+
+{'shops': ['Aldi', 'Kruidvat', 'Carrefour', 'Tesco', 'DM']}
+
+items_endpoint = "{}/{}/{}/{}/{}".format(endpoint, api_key, "diaper/api/v1.0", "items","Aldi")
+items = requests.get(items_endpoint).json()
+
+
+{'items': [{'countrycode': 'BE', 'brand': 'Diapers-R-Us', 'model': '6months', 'price': 6.8, 'currency': 'EUR', 'quantity': 40, 'date': '2019-02-03'}]}
+
+
+
+dm
+
+{'items': [{'brand': 'Huggies',
+            'countrycode': 'DE',
+            'currency': 'EUR',
+            'date': '2019-02-01',
+            'model': 'newborn',
+            'price': 6.8,
+            'quantity': 40},
+           {'brand': 'Huggies',
+            'countrycode': 'AT',
+            'currency': 'EUR',
+            'date': '2019-02-01',
+            'model': 'newborn',
+            'price': 7.2,
+            'quantity': 40}]}
+
+
+>>>>>> sample  >>> extract the schema
+
+
+# Use the convenience function to query the API
+tesco_items = retrieve_products("Tesco")
+
+singer.write_schema(stream_name="products", schema=schema,
+                    key_properties=[])
+
+
+# Write a single record to the stream, that adheres to the schema
+singer.write_record(stream_name="products", 
+            record={**tesco_items[0], 'store_name': "Tesco"})
+
+
+>>>>>>>>>>>>>sample  write the store_name to the database
+
+
+# Use the convenience function to query the API
+tesco_items = retrieve_products("Tesco")
+
+singer.write_schema(stream_name="products", schema=schema,
+                    key_properties=[])
+
+# Write a single record to the stream, that adheres to the schema
+singer.write_record(stream_name="products", 
+                    record={**tesco_items[0], "store_name": "Tesco"})
+
+for shop in requests.get(SHOPS_URL).json()["shops"]:
+    # Write all of the records that you retrieve from the API
+    singer.write_records(
+      stream_name="products", # Use the same stream name that you used in the schema
+      records=({**tesco_items[0], "store_name": shop}
+               for item in retrieve_products(shop))
+    )  
+
+>>>>>> tap to drain
+
+tap-marketing-api | target-csv --config data_lake.conf
+
+
+>>>>>>>>>>> spark 
+
+1. spark sql
+2. spark streaming
+3. MLlib
+4. GraphX
+
+api is pyspark
+
+data processing at scale
+interactive analytics
+
+validate hypothesis
+machine learning and score models
+
+spark is not used for little data
+
+prices.csv
+
+ratings.csv
+
+from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.getOrCreate()
+
+prices-spark.read.
+options(header="true").
+csv('mnt/data_lake/landing/prices.csv")
+
+prices.show()
+
+
+from pprint import pprint
+
+pprint(prices.dtypes)
+
+
+schema=StructType(
+StructField("store",StringType(),nullable=False),
+
+StructField("price",FloatType(), nullable=False)
+
+StructField("date",DateType(),nullable=False
+)
+
+
+prices-spark.read.
+options(header="true").
+schema(schema).
+csv('mnt/data_lake/landing/prices.csv")
+
+
+
+# Read a csv file and set the headers
+df = (spark.read
+      .options(header=True)
+      .csv("/home/repl/workspace/mnt/data_lake/landing/ratings.csv"))
+
+df.show()
+
+brand
+model
+absorption_rate
+comfort
+
+ham or spam csv
+
+https://raw.githubusercontent.com/stedy/Machine-Learning-with-R-datasets/master/sms_spam.csv
+
+
+>>>>>>>>>>>>>> read.csv
+
+# Read a csv file and set the headers
+df = (spark.read
+      .options(header=True)
+      .csv("/home/repl/workspace/mnt/data_lake/landing/ratings.csv"))
+
+df.show()
+
+>>>>>schema
+
+# Define the schema
+schema = StructType([
+  StructField("brand", StringType(), nullable=False),
+  StructField("model", StringType(), nullable=False),
+  StructField("absorption_rate", ByteType(), nullable=True),
+  StructField("comfort", ByteType(), nullable=True)
+])
+
+better_df = (spark
+             .read
+             .options(header="true")
+             # Pass the predefined schema to the Reader
+             .schema(schema)
+             .csv("/home/repl/workspace/mnt/data_lake/landing/ratings.csv"))
+pprint(better_df.dtypes)
+
+
+>>>>>>>>>>>cleaning data
+
+handling invalid rows
+
+prices=(spark.read
+	.options(header='true',mode'DROPMALFORMED')
+	.csv('landing/prices.csv'))
+
+the significance of null
+1. keep the row
+2. fill the blanks with null
+
+prices.fillna(25, subset=['quantity']).show()
+
+
+>>>>>>>badly chosen placeholders
+
+employees= spark.read.options(header='true').
+schema(schema).csv('employees.csv')
+
+>>>> replace with condition in the when function
+
+from pyspark.sql.functions import col, when
+from datetime import date, timedelta
+
+one_year_from_now = date.today().replace(year=date.today().year+1)
+better_frame = employees.withColumn('end_date',
+	when(col('end_date')> one_year_from_now,None).otherwise(col('end_date')))
+
+better_frame.show()
+
+
+
+
+
+
+
+
+

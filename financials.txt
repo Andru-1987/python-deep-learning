@@ -196,6 +196,144 @@ gross_profit_feb = (sales_price*units_feb) - cogs_feb
 print("The gross profit for January and February are {} and {} USD respectively.".format(gross_profit_jan, gross_profit_feb))
 
 
+>>>>>>>>>>>>>>>>Working with raw datasets
+
+balance sheet
+
+revenue
+cost of revenue
+gross profit
+operating expenses
+reserrhc and development
+sales, general and administration
+net income
+
+
+>>>>> filtering for two rows
+
+interesting_metrics=['Gross profit','Net income']
+
+filter =income_statement_df.metric.isin(interesting_metrics)
+
+filtered_income_statement=income_statement_df[filter]
+
+print(filtered_income_statement.head())
+
+>>>> more of the same
+
+# Choose some interesting metrics
+interesting_metrics = ['Operating income', 'Net income', 'Cost of revenue', 'Gross profit']
+
+# Filter for rows containing these metrics
+filtered_income_statement = income_statement[income_statement.metric.isin(interesting_metrics)]
+
+# See the result
+print(filtered_income_statement)
+
+>>>>> sample  >>> filter a row and insert a column
+
+revenue_metric = ['Revenue']
+
+# Filter for rows containing the revenue metric
+filtered_income_statement = income_statement[income_statement.metric.isin(revenue_metric)]
+
+# Get the number of columns in filtered_income_statement
+n_cols = len(filtered_income_statement.columns)
+
+# Insert a column in the correct position containing the column 'Forecast'
+filtered_income_statement.insert(n_cols, 'Forecast',13000) 
+
+# See the result
+print(filtered_income_statement)
+
+
+>>>>>>>>>>>>>>>>balance sheet >>>>>>>
+
+Assets
+Liabilities
+Capital (Equity)
+
+
+There are four types of financial statements
+1. Income Statement
+2. Balance Sheet
+3. Cash Flow Statement
+4. Statement of Shareholder's Equity
+
+Assets are economic resource and it can be used to make money
+
+Liability = economic obligation to pay for something
+
+equity = assets - liabilities
+
+house_cost =100000
+down_payment = 20000
+
+financing the rest as a mortgage
+
+mortgage =80000
+
+total_equity = house_cost - mortgage
+
+if your house value remains constant
+
+owners_equity = assets - liabilities
+
+Balance Sheet
+
+	Assets
+	a. bank
+	b. debtors
+
+	Equity
+
+	Liabilities
+	a. loans
+	b. creditors
+
+	Total Equity and liabilities
+
+
+Income Sales are record and also recorded as a credit under the Debtors item in the balance sheet as an accounts receivable.
+
+If we sell our credit we can buy our credit as well.  Operating expense are recorded on the income statment and also recorded as a liability creditors on the balance sheet.
+
+
+>>>> sample
+
+# Create the list for sales, and empty lists for debtors and credits
+sales = [500, 350, 700]
+debtors = [] 
+credits = []
+
+# Create the statement to append the calculated figures to the debtors and credits lists
+for mvalue in sales: 
+    credits.append(mvalue * 0.6)
+    if month > 0:
+        debtors.append(credits[month] + credits[month-1]) 
+    else:
+        debtors.append(credits[month])
+    month += 1
+# Print the result
+print("The ‘Debtors’ are {}.".format(debtors))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
