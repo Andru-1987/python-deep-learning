@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added baseball stats using a heatmap to analyze the logistic regression predictions
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Baseball%20stats.ipynb
+
 * I added an airline comfort rating a logistic regression pipeline
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Airline%20Comfort%20Ratings.ipynb
