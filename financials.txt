@@ -319,27 +319,157 @@ print("The ‘Debtors’ are {}.".format(debtors))
 
 
 
+>>>>>>>>>>>>>> bad debts
+
+# Calculate the bad debts for February
+bad_debts_feb = 500*0.3
+
+# Calculate the feb debtors amount
+debtors_feb = (debtors_jan - bad_debts_feb)
+
+# Print the debtors for January and the bad debts and the debtors for February
+print("The debtors are {} in January, {} in February. February's bad debts are {} USD.".format(debtors_jan, debtors_feb, bad_debts_feb))
 
 
+>>>>>>>>> calculating accounts payable
+
+# Set the cost per unit
+unit_cost = .25
+
+# Create the list for production units and empty list for creditors
+production = [1000,1200]
+creditors = []
+
+# Calculate the accounts payable for January and February
+for mvalue in production: 
+    creditors.append(mvalue * unit_cost * 0.5)
+    
+# Print the creditors balance for January and February
+print("The creditors balance for January and February are {} and {} USD.".format(creditors[0],creditors[1]))
+
+>>>>>>>>>>>>>>Balance sheet efficiency ratios
+
+receivables (debtors)
+payables (creditors)
+
+time
+
+a company creates a sale but gets paid later.  the company creates an asset called debtors.
+
+or
+
+a company buys something and does not settle payment now, but will pay later.  A liability is created called creditors.
+
+>>>>>> The debtor days ratio
+1. calculates on the average the number of days it takes to receive payments from debtors
+
+2. The lower the debtor days ratio the better
+
+companies rely on savings or debt during the waiting period of time.
+
+debtor days = ending balance debtors / sales * days in financial year
+
+ddays_ratio = (debtors_end/sales_tot) * 365
+
+>>>>>>>>>> days payable outstanding (DPO ratio)
+
+1. calculates how many days to pay creditors
+
+2. the higher the ratio the better
 
 
+dpo = ending balance creditors/ total cost of Goods Sold * days in financial year
+
+dpo = (creditors_end/cogs_tot) * 365
 
 
+>>>> debtors ratio
+
+# Create the variables
+debtors_end = 650
+sales_tot = 12500
+
+# Calculate the debtor days variable
+ddays_ratio = (debtors_end/sales_tot) * 365
+
+# Print the result
+print("The debtor days ratio is {}.".format(ddays_ratio))
 
 
+>>>>>> days payable outstanding
+
+# Get the variables
+#total cogs for the period
+cogs_tot = 4000
+#closing payables balance
+creditors_end = 650
+
+# Calculate the days payable outstanding
+dpo = (creditors_end/cogs_tot)*365
+
+# Print the days payable outstanding
+print("The days payable outstanding is {}.".format(dpo))
 
 
+>>>>>>>>> balance sheet efficiency ratios
+
+Days in inventory
+
+how much stock is too little, and how much is too much
+
+inventory needs to be sold
+
+how many days to sell inventory
+
+the consumer could go to a competitor
+
+Days in inventory ratio:
+dii=average inventory/total cost of goods sold *  days in financial year
+
+>>>>>>>>>>>>asset turnover ratio
+
+assets needed to make sales
+
+assets compared to sales generated
+
+asset turnover = sales / total average assets
+
+production companies need high levels of assets to generate profit
+
+tech startup do not need a high investment of assets
 
 
+>>>>>>> days in inventory 
+
+# Calculate the dii ratio 
+dii_ratio = (av_inv/cogs_tot)*365
+
+# Print the result
+print("The DII ratio is {}.".format(dii_ratio))
+
+Metric	Variable			Value
+Total COGS		cogs_tot	4000
+Average Inventory	av_inv		1900
+Total Sales		sales_tot	10000
+Opening balance Assets	ob_assets	2000
+Closing balance Assets	cb_assets	7000
 
 
+>>>>>> Asset turn over ratio
 
+# Calculate the DII Ratio
+dii_ratio = (av_inv/cogs_tot)*365
 
+# Print the result
+print("The DII ratio is {}.".format(dii_ratio))
 
+# Calculate the Average Assets
+av_assets = (ob_assets + cb_assets)/2
 
+# Calculate the Asset Turnover Ratio
+at_ratio = av_assets/cogs_tot
 
-
-
-
+# Print the Asset Turnover Ratio
+print("The asset turnover ratio is {}.".format(at_ratio))
 
 

@@ -701,6 +701,29 @@ pl.fit(X_train, train['IsSafety'])
 
 prediction = pl.predict(input_text)
 print("Predict if the comment is safety related", prediction)
+
+
+
+model = Pipeline([
+    ('parser', HTMLParser()),
+    ('text_union', FeatureUnion(
+        transformer_list = [
+            ('entity_feature', Pipeline([
+                ('entity_extractor', EntityExtractor()),
+                ('entity_vect', CountVectorizer()),
+            ])),
+            ('keyphrase_feature', Pipeline([
+                ('keyphrase_extractor', KeyphraseExtractor()),
+                ('keyphrase_vect', TfidfVectorizer()),
+            ])),
+        ],
+        transformer_weights= {
+            'entity_feature': 0.6,
+            'keyphrase_feature': 0.2,
+        }
+    )),
+    ('clf', LogisticRegression()),
+])
     
 
 

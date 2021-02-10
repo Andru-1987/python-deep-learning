@@ -1,0 +1,252 @@
+>>>>>>>bash operator
+BashOperators are used to execute any bash commands that could be run in a bash shell.
+
+the task id is an unique identifier
+
+dag inherits from the base operator class
+
+bash_command is the bash commands to be operated as a string.
+
+bash_task=BashOperator(
+	task_id="greet_world",
+	dag=dag,
+	bash_command='echo "Hello,world!"'
+)
+
+>>>>>>>>Python Operator
+
+from airflow.operators.python_operator import PythonOperator
+from my_library import my_magic_function
+
+python_task = PythonOperator(
+	dag=dag,
+	task_id='perform_magic',
+	python_callable=my_magic_function,
+	op_kwargs={"snowflake":"*","amount":42}
+)
+
+>>>>>>>>  running pyspark with bash operator
+spark_master=(
+	"spark://",
+	"spark_standalone_cluster_ip"
+	":7077")
+
+command=(
+	"spark-submit "
+	"--master {master} "
+	"--py-files package1.zip "
+	"/path/to/app.py"
+).format(master=spark_master)
+
+BashOperator(bash_command=command, _)
+
+>>>>> running pyspark with SSHOperator
+
+from airflow.contrib.operators\
+	.ssh_operator import SSHOperator
+
+task=SSHOperator(
+	task_id="ssh_spark_submit",
+	daq=daq,
+	command=command,
+	sssh_conn_id="spark_master_ssh"
+)
+
+
+>>>>> SparkSubmitOperator
+
+from airflow.contrib.operators \
+	.spark_submit_operator \
+	import SparkSubmitOperator
+
+spark_task=SparkSubmitOperator(
+	task_id='spark_submit_id',
+	dag=dag,
+	application='/path/toapp.py',
+	py_files='package1.zip',
+	conn_id='spark_default'
+)
+
+>>>>>>>> creating the Dag object
+
+Directed Acyclic Graph (DAG).
+
+When thinking about a workflow, you should think of individual tasks that can be executed independently. This is also a very resilient design, as each task could be retried multiple times if an error occurs.
+
+# Create a DAG object
+dag = DAG(
+  dag_id='optimize_diaper_purchases',
+  default_args={
+    # Don't email on failure
+    'email_on_failure': False,
+    # Specify when tasks should have started earliest
+    'start_date': datetime(2019, 6, 25)
+  },
+  # Run the DAG daily
+  schedule_interval='@daily')
+
+
+config = os.path.join(os.environ["AIRFLOW_HOME"], 
+                      "scripts",
+                      "configs", 
+                      "data_lake.conf")
+
+ingest = BashOperator(
+  # Assign a descriptive id
+  task_id="ingest_data", 
+  # Complete the ingestion pipeline
+   bash_command='tap-marketing-api | target-csv --config %s' % config,
+  dag=dag)
+
+
+This bash operator will indeed call our ingestion pipeline. 
+
+# Import the operator
+from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
+
+# Set the path for our files.
+entry_point = os.path.join(os.environ["AIRFLOW_HOME"], "scripts", "clean_ratings.py")
+dependency_path = os.path.join(os.environ["AIRFLOW_HOME"], "dependencies", "pydiaper.zip")
+
+with DAG('data_pipeline', start_date=datetime(2019, 6, 25),
+         schedule_interval='@daily') as dag:
+  	# Define task clean, running a cleaning job.
+    clean_data = SparkSubmitOperator(
+        application=entry_point, 
+        py_files=dependency_path,
+        task_id='clean_data',
+        conn_id='spark_default')
+
+
+>>>>>>>sample Python operator
+
+spark_args = {"py_files": dependency_path,
+              "conn_id": "spark_default"}
+# Define ingest, clean and transform job.
+with dag:
+    ingest = BashOperator(task_id='Ingest_data', bash_command='tap-marketing-api | target-csv --config %s' % config)
+    clean =  SparkSubmitOperator(application=clean_path, task_id='clean_data', **spark_args)
+    insight =  SparkSubmitOperator(application=transform_path, task_id='show_report', **spark_args)
+    
+    # set triggering sequence
+    ingest >> clean >> insight
+
+>>>>>>> deploying airflow
+
+installing and configuring airflow
+
+install on linux
+
+export AIRFLOW_HOME=~/airflow
+
+pip install apache-airflow
+
+airflow initdb
+
+executor = SequentialExecutor
+
+airflow /
+	connections
+	dags
+	logs
+	plugins
+	pools
+	script
+	tests
+	variables
+	airflow.cfg
+	readme.md
+	requirements.txt
+	unittests.cfg
+	unittests.db
+
+
+from airflow.models import DagBag
+
+def test_dagbag_import():
+	dagbag=DagBag()
+
+	number_of_failures = len(dagbag.import_errors)
+	assert number_of_failures==0,
+	"There should be no DAG failures. Got: %s" % dagbag.import_errors
+
+
+>>> how to get dags uploaded to the server
+
+dag.py to the airflow repo  >>>> copy unpacked artifact to the airflow server
+
+
+airflow.cfg
+
+[core]
+# The home folder for airflow, default is ~/airflow
+airflow_home = /home/repl/workspace/airflow
+
+# The folder where your airflow pipelines live, most likely a
+# subfolder in a code repository
+# This path must be absolute
+dags_folder = /home/repl/workspace/airflow/dags
+
+# The folder where airflow should store its log files
+# This path must be absolute
+base_log_folder = /home/repl/workspace/airflow/logs
+
+# Airflow can store logs remotely in AWS S3, Google Cloud Storage or Elastic Search.
+# Users must supply an Airflow connection id that provides access to the storage
+# location. If remote_logging is set to true, see UPDATING.md for additional
+# configuration requirements.
+remote_logging = False
+remote_log_conn_id =
+remote_base_log_folder =
+encrypt_s3_logs = False
+
+# Logging level
+logging_level = INFO
+fab_logging_level = WARN
+
+# Logging class
+# Specify the class that will specify the logging configuration
+# This class has to be on the python classpath
+# logging_config_class = my.path.default_local_settings.LOGGING_CONFIG
+logging_config_class =
+
+# Log format
+log_format = [%%(asctime)s] {%%(filename)s:%%(lineno)d} %%(levelname)s - %%(message)s
+
+>>>>>>>>>> Celery Executor
+
+The CeleryExecutor is a good choice for distributing tasks across multiple worker machines. 
+
+
+>>>>>>>>>>> Greetings DAG
+
+
+dag = DAG(
+    "cleaning",
+    default_args=default_args,
+    user_defined_macros={"env": Variable.get("environment")},
+    schedule_interval="0 5 */2 * *"
+)
+
+
+def say(what):
+    print(what)
+
+
+with dag:
+    say_hello = BashOperator(task_id="say-hello", bash_command="echo Hello,")
+    say_world = BashOperator(task_id="say-world", bash_command="echo World")
+    shout = PythonOperator(task_id="shout",
+                           python_callable=say,
+                           op_kwargs={'what': '!'})
+
+    say_hello >> say_world >> shout
+
+
+
+
+
+
+
+
+
