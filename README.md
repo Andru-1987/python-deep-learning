@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added Bangladesh well switch using ols and glm
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Bangladesh%20well%20switch%20(GLM).ipynb
+
 * I added baseball stats using a heatmap to analyze the logistic regression predictions
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Baseball%20stats.ipynb
