@@ -1,0 +1,233 @@
+how to fit a glm in python
+
+import statsmodels.api as sm
+
+support for formulas
+
+import statsmodels.formula.api as smf
+
+use glm() directly
+
+from statsmodels.formula.api import glm
+
+
+model_glm = glm(formula = 'Salary ~ Experience',
+                data = salary,
+                family = sm.families.Gaussian()).fit()
+
+# View model coefficients
+print(model_glm.params)
+
+
+glm.summary() --> summarize the model
+
+glm.predict() --> make predictions
+
+>>>>>>>>>>>>>>>>>  Salary prediction based on education
+
+print("the scatter plot represents the mean age by income")
+grouped= df.groupby('AGE')
+mean_income_by_age=grouped['REALINC'].mean()
+
+df2=pd.DataFrame()
+df2['AGE']=np.linspace(18,85)
+df2['AGE2']=df2['AGE']**2
+df2['EDUC']=12
+df2['EDUC2']=df2['EDUC']**2
+
+df3=pd.DataFrame()
+df3['AGE']=np.linspace(18,85)
+df3['AGE2']=df3['AGE']**2
+df3['EDUC']=16
+df3['EDUC2']=df3['EDUC']**2
+
+df4=pd.DataFrame()
+df4['AGE']=np.linspace(18,85)
+df4['AGE2']=df4['AGE']**2
+df4['EDUC']=18
+df4['EDUC2']=df4['EDUC']**2
+
+#print("Max real income",df["REALINC"].max())
+#print(df.describe())
+results= smf.ols("REALINC ~ EDUC+EDUC2+AGE+AGE2", data=df).fit()
+
+print("Make predictions using the prediction dataframe")
+pred12=results.predict(df2)
+pred16=results.predict(df3)
+pred18=results.predict(df4)
+
+plt.plot(df2['AGE'],pred12,label='High school')
+plt.plot(df2['AGE'],pred16,label='Bachelor')
+plt.plot(df2['AGE'],pred18,label='Masters')
+plt.plot(mean_income_by_age,'o',alpha=0.5)
+plt.xlabel('Age')
+plt.ylabel('Income')
+plt.legend()
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>>> Describe the model
+
+formula based:
+
+from statsmodel.formula.api import glm
+model=glm(formula,data,family)
+
+array based:
+import statsmodels.api as sm
+X=sm.add_constant(X)
+model=sm.glm(y,X,family)
+
+the course will use the formula based method.
+
+formula argument:
+	response~explanatory variable(s)
+		output~input(s)
+
+formula='y~x1+x2'
+
+C(x1) : categorical variables
+-1: remove intercept
+
+x1:x2: an interaction term between x1 and x2
+
+x1*x2" an interaction term between x1 and x2 and the individual variables
+
+np.log(x1) apply vectorized functions to model variables
+
+>>>>>>>>>>>>>>>>>>. Family Argument
+
+Gaussian (link=sm.families.links.identity) -> default family
+Binomial (link=sm.families.links.logit)
+1. probit, cauchy, log, cloglog
+Poisson (link=sm.families.links.log)
+1. identity and sqrt
+
+print(model_GLM.summary())
+includes confidence intervals and p scores
+coef includes the intercept and coefficient values for the generalized polynomial
+
+>>>>>>>>>>>>>>> coefficients
+
+
+model_GLM.params   prints the regression coefficients
+
+model_GLM.conf_int() prints confidence intervals
+
+model_GLM.conf(alpha=0.05,cols=None)   alpha is the confidence percent.
+
+
+>>>>>>>>>>>>>> predictions
+
+model_GLM.predict(test_data)
+
+
+>>>>>>>>>>>>>>>sample data
+
+The dataset which you will use is on the contamination of groundwater with arsenic in Bangladesh where we want to model the household decision on switching the current well.
+
+switch: 1 if the change of the current well occurred; 0 otherwise
+arsenic: The level of arsenic contamination in the well
+distance: Distance to the closest known safe well
+education: Years of education of the head of the household
+
+http://www.stat.columbia.edu/~gelman/arm/examples/
+http://www.stat.columbia.edu/~gelman/arm/examples/arsenic/arsenic_chap5.R
+
+
+>>>> sample >> setup the formula
+
+
+model_formula='switch ~ distance'
+
+
+link_function = sm.families.links.logit()
+model_family = sm.families.Binomial(link = link_function)
+
+
+wells_fit = glm(formula = model_formula, 
+                 data = df, 
+                 family = model_family).fit()
+
+
+# View the results of the wells_fit model
+print(wells_fit.summary())
+
+# Extract coefficients from the fitted model wells_fit
+intercept, slope = wells_fit.params
+
+# Print coefficients
+print('Intercept =', intercept)
+print('Slope =', slope)
+
+# Extract and print confidence intervals
+print(wells_fit.conf_int())
+
+
+>>>>>>>>>>>>>>>>>>>>logistic regression
+
+binary response data: two class category 0 or 1
+
+examples:
+credit scoring -> default/non-default
+passing a test -> pass/fail
+fraud detection -> fraud/non-fraud
+choice of a product -> product abc/product xyz
+
+
+binary data can appear in two forms: ungrouped and grouped
+
+ungrouped: single event, flip of a coin, two possible outcomes 0 or 1  Bernoulli(p) or Binomial(n=1,p)
+
+grouped occurs with multiple events occurring at the same time, flipping multiple coins, number of successes in a given n number of trials  
+
+binomial(n,p)
+
+>>>>>>>>>>>>>Odds and odds ratio
+
+odds = event occurring/ event not occurring
+
+odds ratio = odd1/odd2
+
+for example
+
+win win win lose
+
+odds = win win win/lose  3 to 1
+
+odds are not probabilities
+
+probabilities are frequencies
+
+odds = probability / (1-probability)
+
+probability = odds/(1- odds)
+
+
+step 1. probability model
+
+E(y) = u = P(y=1) = B0 + b1x1
+
+step 2. logistic function
+
+f(z) = 1/ ( 1+ exp(-z))
+
+
+u= 1/ (1+exp(-(b0+b1x1))= exp(b0+b1x1)/1+exp(b0+b1x1)
+
+1-u = 1/(1+exp(b0+b1x1))
+
+odds= u/(1-u) = exp(B0+b1x1)
+
+log transformation -> logistic regression
+
+	logit(u) =log(u/1-u) = B0 + b1x1
+
+
+
+
+
+
+
+
+
