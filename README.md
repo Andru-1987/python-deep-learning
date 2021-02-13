@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added crab satelite ~ weight and width ols and glm
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Crab%20Weight~Sat%20OLS%20and%20GLM.ipynb
+
 * I added Bangladesh well switch using ols and glm
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Bangladesh%20well%20switch%20(GLM).ipynb
