@@ -3,7 +3,7 @@ python deep learning notebooks
 
 * I added Olympic history using heatmpa
 
-
+https://github.com/dnishimoto/python-deep-learning/blob/master/Olympics%20events.ipynb
 
 * I added liver disease analysis using glm
 
