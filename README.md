@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added Olympic history using heatmpa
+
+
+
 * I added liver disease analysis using glm
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Indian%20Liver%20Patient%20.ipynb
