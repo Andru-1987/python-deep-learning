@@ -1,0 +1,180 @@
+index objects adn labeled data
+
+dataframe is composed of
+1. series: 1d array with index
+2. dataframe is a 2d array with series as columns
+
+import pandas as pd
+prices=[10.70, 10.86, 10.74, 10.71, 10.79]
+shares=pd.Series(prices)
+
+print(shares)
+
+days=['Mon','Tues','Wed','Thur','Fri']
+
+shares=pd.Series(prices,index=days)
+
+print(shares.index)
+
+print(shares.index[2]) #slice the 3rd element of the series
+print(shares.index[:2]) #slice from the beginning forward 2
+print(shares.index[:-2])  #slice from the last value left 2
+
+share.index.name='Weekday'
+
+index entries are immutable
+
+shares.index=['Mon','Tues','Wed','Thur','Fri']
+
+the index can be override all at once
+
+
+unemployment.info() shows the index is an RangeIndex from 0 to 33119
+
+unemployment = pd.read_csv('unemployment.csv', index_col='Zip')
+
+>>>>>>>> sample   >>> index name as month
+
+# Create the list of new indexes: new_idx
+new_idx = [sales.upper() for sales in sales.index]
+
+# Assign new_idx to sales.index
+sales.index = new_idx
+
+sales.index.name="Month"
+# Print the sales DataFrame
+print(sales)
+
+
+# Assign the string 'MONTHS' to sales.index.name
+sales.index.name="MONTHS"
+
+# Print the sales DataFrame
+print(sales)
+
+# Assign the string 'PRODUCTS' to sales.columns.name
+sales.columns.name="PRODUCTS"
+
+# Print the sales dataframe again
+print(sales)
+
+PRODUCTS  eggs  salt  spam
+MONTHS                    
+JAN         47  12.0    17
+FEB        110  50.0    31
+MAR        221  89.0    72
+APR         77  87.0    20
+MAY        132   NaN    52
+JUN        205  60.0    55
+
+
+>>>>>>> SAMPLE
+
+ # Generate the list of months: months
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+
+# Assign months to sales.index
+sales.index=months
+sales.index.name="MONTHS"
+
+# Print the modified sales DataFrame
+print(sales)
+
+>>>>>>>>>>>>>>>>>>>>Hierarchial index
+
+import pandas as pd
+
+stocks=pd.read_csv('datasets/stocks.csv')
+print(stocks)
+
+Date
+Close
+Volume
+Symbol
+
+both the date and the Symbol are repetitious
+
+stocks= stocks.set_index(['Symbol','Date'])
+
+stocks = stocks.sort_index()
+
+stocks.loc[('CSCO', '2016-10-04')]
+
+stocks.loc['AAPL']
+
+stocks.loc['CSCO':'MSFT']
+
+stocks.loc[(['AAPL','MSFT'],'2016-10-05'),:] #all columns
+
+stocks.loc[(['AAPL','MSFT'],'2016-10-05'),'Close'] #only the close column
+
+stocks.loc[ slice(None), slice('2016-10-03','2016-10-04')),:]
+
+>>>>> sample
+
+# Print sales.loc[['CA', 'TX']]
+print(sales.loc[['CA','TX']])
+
+# Print sales['CA':'TX']
+print(sales['CA':'TX'])
+
+eggs  salt  spam
+state month                  
+CA    1        47  12.0    17
+      2       110  50.0    31
+TX    1       132   NaN    52
+      2       205  60.0    55
+             eggs  salt  spam
+state month                  
+CA    1        47  12.0    17
+      2       110  50.0    31
+NY    1       221  89.0    72
+      2        77  87.0    20
+TX    1       132   NaN    52
+      2       205  60.0    55
+
+>>>>>> sort_index()
+
+# Set the index to be the columns ['state', 'month']: sales
+sales = sales.set_index(['state', 'month'])
+
+# Sort the MultiIndex: sales
+sales = sales.sort_index()
+
+# Print the sales DataFrame
+print(sales)
+
+eggs  salt  spam
+state month                  
+CA    1        47  12.0    17
+      2       110  50.0    31
+NY    1       221  89.0    72
+      2        77  87.0    20
+TX    1       132   NaN    52
+      2       205  60.0    55
+
+>>>>> loc
+
+# Set the index to the column 'state': sales
+sales = sales.set_index('state')
+
+# Print the sales DataFrame
+print(sales)
+
+# Access the data from 'NY'
+print(sales.loc['NY'])
+
+NY         1   221  89.0    72
+NY         2    77  87.0    20
+
+
+>>>>>>>>>>>>sample slicing
+
+# Look up data for NY in month 1 in sales: NY_month1
+NY_month1 = sales.loc[('NY',1)]
+
+# Look up data for CA and TX in month 2: CA_TX_month2
+CA_TX_month2 = sales.loc[(['CA','TX'],2),:]
+
+# Access the inner month index and look up data for all states in month 2: all_month2
+all_month2 = sales.loc[(slice(None),2),:]
