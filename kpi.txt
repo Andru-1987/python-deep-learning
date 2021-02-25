@@ -1,0 +1,163 @@
+import pandas as pd
+
+customer_demographics=pd.read_csv('customer_demographics.csv')
+
+uid
+reg_date
+device
+gender
+country
+age
+
+
+#customer actions
+customer_subscriptions=pd.read_csv('customer_subscriptions.csv')
+
+print(customer_subscriptions.head())
+
+uid
+lapse_date
+subscription_date
+price
+
+KPI : conversion rate
+
+importance across different user groups
+
+sub_data_demo=customer_demographics.merge(
+	customer_subscriptions,
+	how='inner',
+	on=['uid']
+	)
+
+
+
+>>>>>>> sample
+
+# Import pandas 
+import pandas as pd
+
+# Load the customer_data
+customer_data = pd.read_csv('customer_data.csv')
+
+# Load the app_purchases
+app_purchases = pd.read_csv('inapp_purchases.csv')
+
+# Print the columns of customer data
+print(customer_data.columns)
+
+# Print the columns of app_purchases
+print(app_purchases.columns)
+
+
+Index(['uid', 'reg_date', 'device', 'gender', 'country', 'age'], dtype='object')
+
+Index(['date', 'uid', 'sku', 'price'], dtype='object')
+
+# Merge on the 'uid' field
+uid_combined_data = app_purchases.merge(customer_data, on=['uid'], how='inner')
+
+# Examine the results 
+print(uid_combined_data.head())
+print(len(uid_combined_data))
+
+
+date_x       uid            sku  price      date_y device gender country  age
+0  2017-07-10  41195147  sku_three_499    499  2017-06-26    and      M     BRA   17
+1  2017-07-15  41195147  sku_three_499    499  2017-06-26    and      M     BRA   17
+2  2017-11-12  41195147   sku_four_599    599  2017-06-26    and      M     BRA   17
+3  2017-09-26  91591874    sku_two_299    299  2017-01-05    and      M     TUR   17
+4  2017-12-01  91591874   sku_four_599    599  2017-01-05    and      M     TUR   17
+9006
+In [1]:
+
+
+# Merge on the 'uid' and 'date' field
+uid_date_combined_data = app_purchases.merge(customer_data, on=['uid', 'date'], how='inner')
+
+# Examine the results 
+print(uid_date_combined_data.head())
+print(len(uid_date_combined_data))
+
+
+ uid             sku  price device gender country  age
+0  2016-03-30  94055095    sku_four_599    599    iOS      F     BRA   16
+1  2015-10-28  69627745     sku_one_199    199    and      F     BRA   18
+2  2017-02-02  11604973  sku_seven_1499    499    and      F     USA   16
+3  2016-06-05  22495315    sku_four_599    599    and      F     USA   19
+4  2018-02-17  51365662     sku_two_299    299    iOS      M     TUR   16
+
+>>>>>>>>>>>>. exploratory analysis of kpi
+
+1. most companies will have many kpis
+2. each serves a different purpose
+
+#axis=0 is columns
+#as_index will use group labels as index
+
+sub_data_grp=sub_data_deep.groupby(by=['country','device'], axis=0, as_index=False)
+
+sub_data_grp.mean()
+or
+sub_data_grp.agg('mean')
+or
+sub_data_grp.agg(['mean','median'])
+or
+sub_data_grp.agg({'price':['mean','median','max'],
+	'age':['mean','median','max']
+	})
+
+def truncate_mean(data):
+	top_val=data.quantile(.9)
+	bot_val=data.quantile(.1)
+	trunc_data=data[(data<=top_val) & (data>=bot_val)]
+	mean=trunc_data.mean()
+	return (mean)
+
+
+sub_data_grp.agg({'age':[truncated_mean]})
+
+
+>>>>>> sample
+
+# Calculate the mean and median purchase price 
+purchase_price_summary = purchase_data.price.agg(['mean', 'median'])
+
+# Examine the output 
+print(purchase_price_summary)
+
+mean      406.772596
+median    299.000000
+
+# Calculate the mean and median of price and age
+purchase_summary = purchase_data.agg({'price': ['mean', 'median'], 'age': ['mean', 'median']})
+
+# Examine the output 
+print(purchase_summary)
+
+             price        age
+mean    406.772596  23.922274
+median  299.000000  21.000000
+
+
+Notice how the mean is higher than the median? This suggests that we have some users who are making a lot of purchases!
+
+# Group the data 
+grouped_purchase_data = purchase_data.groupby(by = ['device', 'gender'])
+
+# Aggregate the data
+purchase_summary = grouped_purchase_data.agg({'price': ['mean', 'median', 'std']})
+
+# Examine the results
+print(purchase_summary)
+
+
+price                   
+                     mean median         std
+device gender                               
+and    F       400.747504    299  179.984378
+       M       416.237308    499  195.001520
+iOS    F       404.435330    299  181.524952
+       M       405.272401    299  196.843197
+
+
