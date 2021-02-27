@@ -1,7 +1,7 @@
 # python-deep-learning
 python deep learning notebooks
 
-* I added Olympic history using heatmpa
+* I added Olympic history using heatmap
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Olympics%20events.ipynb
 
