@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added a Random Forest Classifer for playing tennis based on the weather
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Random%20Forest%20Tennis.ipynb
+
 * I added Olympic history using heatmap
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Olympics%20events.ipynb
