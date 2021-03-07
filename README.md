@@ -1,6 +1,11 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added a Happiness and Depression logistic Regression
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Happiness%20and%20Depression%20Logistic%20Regression.ipynb
+
+
 * I added a Random Forest Classifer for playing tennis based on the weather
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Random%20Forest%20Tennis.ipynb
