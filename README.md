@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added college admittance for Graduate school using support vector machine
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/College%20Graduate%20Admission%20SVC.ipynb
+
 * I added a Happiness and Depression logistic Regression
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Happiness%20and%20Depression%20Logistic%20Regression.ipynb
