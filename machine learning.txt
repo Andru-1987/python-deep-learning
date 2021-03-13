@@ -1,0 +1,308 @@
+machine learning
+1. predict future events
+2. infer the causes of events and behavior
+3. infer patterns
+
+
+ability to learn without explicitly programmed
+apply learned patterns to new data
+
+
+machine learning is a statistical representation of a real-world process based on data
+
+ AI is concerned with intelligence in computers, while data science is about using data for insights. However, there is overlap, it's usually machine learning!
+
+
+>>>>>>>>>>>> Concepts
+1. reinforcement learning
+2. supervised learning
+3. unsupervised learning
+
+
+data
+1. training data
+2. training a model
+
+
+labels can be numbers or categories
+features are different information for predicting the outcome
+
+we can find relationships between features
+
+in unsupervised learning the training data only has features no labels
+1. anomaly detection
+2. clustering
+
+
+we can get categories from unsupervised learning
+finding its own patterns
+
+
+unsupervised learning
+
+1. in reality data doesn't always come with labels.
+a. requires manual labor to label
+b. labels are unknown
+
+the model finds its own patterns
+
+>>>>>>> machine learning work flow
+
+square feet
+neighborhood
+year
+sale price
+target is sales price
+
+1. extract features
+2. split dataset (split and train)
+3. train model
+4. predict and evaluate
+
+evaluation
+a. what is the average error the predictions
+b. what percent of apartments did the model predict within a 10% margin
+
+Is performance good enough?
+
+>>>>>>>>>>>>>>supervised learning
+
+supervised learning: classification and regression. classification assigns a category with an observation. we feed the model observations.
+
+
+college acceptance using a support vector machine
+
+regression - assigning a contineous variable
+
+unsupervised learning: 
+
+
+linear regression applied to temperature.
+1. The higher the humidity the lower the temperature
+
+
+>>>>>>>>>>>>>>unsupervised learning
+
+unsupervised learning has no target column
+
+tries to detect patterns
+
+1. clustering
+2. association
+3. anamoly detection
+
+dog and cat images
+clustering:
+dogs and cats
+or
+black and white and grey and brown
+origins of the dogs
+
+k Means
+1. number of clusters to find
+
+dBScan (density-based spatial clustering of applications with noise)
+1. number of clusters is not needed
+2. what constitutes a cluster
+
+anomaly detection is about detecting outliers
+
+outliers may be an error
+
+some anomaly detection use cases
+1. discover devices that fail faster or last longer
+2. discover fraudsters that manage trick the system
+3. discover which patients that resist a fatal disease
+
+association
+1. finding items that are grouped together
+2. what things go together because of likely behavior
+
+
+>>>>>>> evaluating performance
+
+overfitting
+1. performs great on training data
+2. performs poorly on test data
+
+accuracy is not always the best feature
+
+the confusion matrix is the better metric for determining accuracy
+
+sensitivity = true positives/ (true positives + false negatives)
+
+* rather mark legitimate transactions as suspicious than authorize fraudulent transactions
+
+>>>>>> specificity
+
+specificity = true negatives/ (true negatives + false positives)
+
+>>>>>>>>>evaluating regression
+1. distance between the points and mean
+
+>>>>>>> improving performance
+
+1. is the performance good enough
+2. dimensional reduction (remove features)
+3. hyperparameter tuning
+4. irrelevance where some features don't carry useful information
+5. correlation where some features carry similar information
+
+
+hyperparameter tuning
+1. depending on the dataset the parameters change
+
+SVM
+1. kernel: linear or poly
+2. C
+3. degree
+4. gamma
+5. shrinking
+6. coef0
+7. tol
+
+
+ensemble methods
+
+1. combines several outputs into a final output by averaging
+
+
+>>>>>>>>>>>>>>>>>>>deep learning
+
+1. uses neural networks
+2. special area of machine learning
+3. requires more data
+4. best when inputs are images or text
+
+
+
+
+suppose you want to predict box office revenue
+
+you have box office revenue to budget
+
+
+budget  -> neuron -> box office revenue
+
+
+more complex networks
+
+Inputs: budget, advertising, star power, timing
+
+output: box office revenue
+
+the hidden layer: spend, awareness, and distribution
+
+Neural network map relationships between variable to the desired output.
+
+Deep learning is a network with thousands of neurons
+
+deep learning can solve complex problems
+
+machine learning is used when datasets are small.  when datasets are large then use deep learning.   What is a small dataset
+
+access to processing power
+
+lack of domain knowledge
+
+deep learning does well with natural language processing and computer vision
+
+the translation business is a 40 billion dollar industry. not everone is speaking english
+
+nmt uses a large neural network
+1. encoder
+2. decoder
+
+>>>>>>>>>>computer vision
+
+help computers see and understand the content of images
+
+image data is made up of pixels
+color has 3 channels : red, green, blue
+
+facial recognition
+self driving vehicles
+automatic detection of tumors
+
+>>>>>>>>>>>>>> natural language processing
+
+the ability for computers to understand the meaning of human language
+
+bag of words: word and count
+
+2-gram  counting sequences of words
+
+word counts don't help us consider synonyms
+
+example: sky-blue, aqua, cerulean
+
+>>>>>>>  word embeddings
+grouping together similar words
+
+features have a mathematical meaning
+
+king - man + woman = queen
+
+language translation
+
+https://towardsdatascience.com/neural-machine-translation-with-python-c2f0a34f7dd
+
+deep learning is preferred for nlp and vision problems because of their complexity
+
+deep learning is good at automatic feature extraction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

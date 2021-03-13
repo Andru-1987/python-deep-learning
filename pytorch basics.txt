@@ -1,0 +1,23 @@
+https://medium.com/@BhashkarKunal/pytorch-tutorial-from-basic-to-advance-level-a-numpy-replacement-and-deep-learning-framework-that-a3c8dcf9a9d4
+
+1. a pytorch variable is a wrapper around a pytorch tensor, and represents a node in a computational graph
+
+2. if x is a variable x.data is the value
+
+3. Autograd is a PyTorch package for the differentiation for all operations on Tensors
+
+tensors have a gradient
+use mean_f.backward() to calculate the gradients
+
+raw data can be accessed by data and flattened
+
+prediction = (net(X_tensor).data).float()
+prediction=(prediction.numpy().flatten())
+data.Sales.plot()
+plt.plot(prediction)
+
+https://github.com/vinhkhuc/PyTorch-Mini-Tutorials/blob/master/5_convolutional_net.py
+
+lstm
+
+https://github.com/vinhkhuc/PyTorch-Mini-Tutorials/blob/master/6_lstm.py

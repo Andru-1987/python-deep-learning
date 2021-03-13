@@ -1,0 +1,1109 @@
+
+input_layer=torch.tensor([2.,1.])
+weight_1 = torch.tensor([[0.45,0.32],
+[-0.12,0.29]])
+hidden_layer=torch.matmul(input_layer, weight_1)
+
+weight_2 = torch.tensor([[0.48,-0.12],
+[0.64,0.91]])
+
+output_layer=torch.matmul(hidden_layer, weight_2)
+
+>>>> dimensions separated by a hyper plane
+
+activation functions:
+1.sigmoid 1/(1+e**-x)
+2. tanh tanh(x)
+3. relu max(0,x)
+4. leaky relu max(0.1x,x)
+5. maxout (max(w1t+b1w2tx+b2)
+6. elu x >=0 or alpha(e**x-1) for x<0
+
+neural networks can deal with non linear datasets
+
+
+relu -> retified linearu unit -> most popular
+
+it does not change the positive attributes and zeros out the negative attributes
+
+
+import torch.nn as nn
+
+relu=nn.ReLU()
+tensor_1=torch.tensor([2.,4.])
+print(relu(tensor_1))
+tensor_2=torch.tensor([[2.,4.],[1.2,0]])
+print(relu(tensor_2))
+
+
+
+>>>>>> sample >>> input layer and two hidden layers and a output layer
+
+input_layer=torch.tensor([[ 0.0401, -0.9005,  0.0397, -0.0876]])
+
+weight_1=torch.tensor([[-0.1094, -0.8285,  0.0416, -1.1222],
+        [ 0.3327, -0.0461,  1.4473, -0.8070],
+        [ 0.0681, -0.7058, -1.8017,  0.5857],
+        [ 0.8764,  0.9618, -0.4505,  0.2888]])
+
+
+weight_2=torch.tensor([[ 0.6856, -1.7650,  1.6375, -1.5759],
+        [-0.1092, -0.1620,  0.1951, -0.1169],
+        [-0.5120,  1.1997,  0.8483, -0.2476],
+        [-0.3369,  0.5617, -0.6658,  0.2221]])
+
+
+weight_3=torch.tensor([[ 0.8824,  0.1268,  1.1951,  1.3061],
+        [-0.8753, -0.3277, -0.1454, -0.0167],
+        [ 0.3582,  0.3254, -1.8509, -1.4205],
+        [ 0.3786,  0.5999, -0.5665, -0.3975]])
+
+
+# Calculate the first and second hidden layer
+hidden_1 = torch.matmul(input_layer, weight_1)
+hidden_2 = torch.matmul(hidden_1, weight_2)
+
+# Calculate the output
+print(torch.matmul(hidden_2, weight_3))
+
+# Calculate weight_composed_1 and weight
+weight_composed_1 = torch.matmul(weight_1, weight_2)
+weight = torch.matmul(weight_composed_1, weight_3)
+
+# Multiply input_layer with weight
+print(torch.matmul(input_layer, weight))
+
+
+tensor([[0.2655, 0.1311, 3.8221, 3.0032]])
+tensor([[0.2655, 0.1311, 3.8221, 3.0032]])
+
+
+>>>>>>>> apply relu to the hidden layers
+
+
+# Apply non-linearity on hidden_1 and hidden_2
+hidden_1_activated = relu(torch.matmul(input_layer, weight_1))
+hidden_2_activated = relu(torch.matmul(hidden_1_activated, weight_2))
+print(torch.matmul(hidden_2_activated, weight_3))
+
+# Apply non-linearity in the product of first two weights. 
+weight_composed_1_activated = relu(torch.matmul(weight_1, weight_2))
+
+# Multiply `weight_composed_1_activated` with `weight_3
+weight = torch.matmul(weight_composed_1_activated, weight_3)
+
+# Multiply input_layer with weight
+print(torch.matmul(input_layer, weight))
+
+>>>>>> building the network
+
+# Instantiate ReLU activation function as relu
+relu = nn.ReLU()
+
+# Initialize weight_1 and weight_2 with random numbers
+weight_1 = torch.rand(4, 6)
+weight_2 = torch.rand(6, 2)
+
+# Multiply input_layer with weight_1
+hidden_1 = torch.matmul(input_layer, weight_1)
+
+# Apply ReLU activation function over hidden_1 and multiply with weight_2
+hidden_1_activated = relu(hidden_1)
+print(torch.matmul(hidden_1_activated, weight_2)) 
+
+tensor([[0., 0.]])
+
+
+>>>>>>>>>>>>>>Loss functions >>>>>>>>>>>>>>>>>
+
+1. initialize the neural networks with random weights
+2. do a forward pass
+3. calculate loss function yielding a single number
+4. calculate the gradients
+5. change the weights based on gradients
+
+for regression : least squared loss
+for classification : softmax cross-entropy loss
+
+>>>>>>>>>>softmax cross-entropy loss
+
+cat 3.2
+car 5.1
+frog -1.7
+
+probabilities must be >=0
+unnormalized probabilities
+cat 24.5
+car 164.0
+frog 0.18
+
+sum is 188
+
+probablies must sum to 1
+normalized probablities
+cat .13  (24/188)
+car .87  (164/188)
+frog 0.00  (.18/188)
+
+
+calculate the cross entropy loss
+
+cat L = -ln(0.13) = 2.0404
+car L = -ln(0.87) = .13826
+frog L = -ln(.18) = 1.714
+
+
+logits = torch.tensor([[3.2,5.1,-1.7]])
+ground_truth = torch.tensor([0]) #first class cat
+
+criterion = nn.CrossEntropyLoss()
+
+loss=criterion(logits, ground_truth)
+print(loss)
+
+tensor (2.0404)
+
+#CrossEntropyLoss includes cross entropy and softmax together
+
+logits = torch.tensor([[10.2,5.1,-1.7]])
+
+tensor(0.0061)
+
+logits = torch.tensor([[-10.2,5.1,-1.7]])
+
+tensor(15.1011)
+
+
+>>>>>> sample cross entropy loss
+
+The tensors for logits must have two dimensions
+
+
+# Initialize the scores and ground truth
+logits = torch.tensor([[-1.2, 0.12, 4.8]])
+ground_truth = torch.tensor([2])
+
+# Instantiate cross entropy loss
+criterion = nn.CrossEntropyLoss()
+
+# Compute and print the loss
+loss = criterion(logits,ground_truth)
+print(loss)
+
+
+tensor(0.0117)
+
+
+>>>>>>> sample loss for a tensor whose value is 111
+
+# Import torch and torch.nn
+import torch
+import torch.nn as nn
+
+# Initialize logits and ground truth
+logits = torch.rand(1,1000)
+ground_truth = torch.tensor([111])
+
+# Instantiate cross-entropy loss
+criterion=nn.CrossEntropyLoss()
+
+# Calculate and print the loss
+loss = criterion(logits,ground_truth)
+print(loss)
+
+tensor(6.8696)
+
+
+>>>>>>preparing a dataset in pytorch
+
+MNIST (70,000 hand written digits)
+28x28 images 
+and CIFAR-10 (50,000 images with labels)
+32x32 red green and blue
+
+
+conda install -c pytorch torchvision
+
+import torchvision
+import torch.utils.data
+import torchvision.transforms as transforms
+
+transform=transforms.Compose(
+    [transforms.ToTensor(),
+        transforms.Normalize(
+                    (0.4914,0.48216,0.44653),
+                    (0.24703,0.24349,0.26159)
+                            )])
+
+#mean and std of each of the channels
+
+
+trainset=torchvision.datasets.CIFAR10(root='./data',train=True, download=True, transform=transform)
+
+testset=torchvision.datasets.CIFAR10(root='./data',train=False, download=True, transform=transform)
+
+
+testloader=torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
+
+print(testloader.dataset.test_data.shape, trainload.dataset.train_data.shape)
+
+
+>>>>>>>> sample  MNIST
+
+# Transform the data to torch tensors and normalize it 
+transform = transforms.Compose([transforms.ToTensor(),
+								transforms.Normalize((0.1307), ((0.3081)))])
+
+# Prepare training set and testing set
+trainset = torchvision.datasets.MNIST('mnist', train=True, 
+									  download=True, transform=transform)
+testset = torchvision.datasets.MNIST('mnist', train=False,
+			   download=True, transform=transform)
+
+# Prepare training loader and testing loader
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=32,
+                                          shuffle=True, num_workers=0)
+testloader = torch.utils.data.DataLoader(testset, batch_size=32,
+										 shuffle=False, num_workers=0) 
+
+
+
+
+>>>>>>>   torch.utils.data.DataLoader
+
+# Compute the shape of the training set and testing set
+trainset_shape = trainloader.dataset.train_data.shape
+testset_shape = testloader.dataset.test_data.shape
+
+# Print the computed shapes
+print(trainset_shape, testset_shape)
+
+# Compute the size of the minibatch for training set and testing set
+trainset_batchsize = trainloader.batch_size
+testset_batchsize = testloader.batch_size
+
+# Print sizes of the minibatch
+print(trainset_batchsize, testset_batchsize)
+
+torch.Size([60000, 28, 28]) torch.Size([10000, 28, 28])
+32 32
+
+
+>>>>> steps
+1. prepare the dataloaders
+2. build a neural network with random numbers
+
+Loop over:
+1. do a forward pass
+2. calculate the loss function, the number tell you how well the neural network is doing with the training set
+3. calculate the gradient
+4. change the weights based on the gradients
+a. weight-=weight_gradient * learning rate
+
+gradient is the steepness of the function
+
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
+class Net(nn.Module):
+	def __init__(self):
+		super(Net,self).__init__()
+		self.fc1=nn.Linear(32*32*3,500) #input layer of 32x32 pixel by 3 color channels with 500 neurons in the hidden layer
+		self.fc2=nn.Linear(500,10)
+#10 output classes
+
+	def forward(self,x):
+		x=F.relu(self.fc1(x))
+		return self.fc2(x)
+
+net=Net()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(net.parameters(), lr=3e-4)
+
+correct,total=0,0
+predictions=[]
+for epoch in range(10):
+    for i, data in enumerate(trainloader,0):
+        inputs,labels=data
+        inputs=inputs.view(-1,32*32*3)
+
+        optimizer.zero_grad()
+
+        print("epoch",epoch)
+        
+        outputs=net(inputs)
+        loss=criterion(outputs,labels)
+        loss.backward()
+        optimizer.step()  #adjust weights
+
+        __,predicted=torch.max(outputs.data,1)
+        predictions.append(outputs)
+        total+=labels.size(0)
+        correct+=(predicted==labels).sum().item()
+
+print("The training set accuracy of the network is %d %%" % (100*correct/total))
+
+
+
+correct,total=0,0
+predictions=[]
+for epoch in range(10):
+    for i, data in enumerate(testloader,0):
+        inputs,labels=data
+        inputs=inputs.view(-1,32*32*3)
+        outputs=net(inputs)
+        __,predicted=torch.max(outputs.data,1)
+        total += labels.size(0)
+        correct+=(predicted==labels).sum().item()
+
+print("The testing set accuracy of the network is %d %%" % (100*correct/total))
+
+
+
+>>>>>> sample 
+
+# Define the class Net
+class Net(nn.Module):
+    def __init__(self):    
+    	# Define all the parameters of the net
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(28 * 28 * 1, 200)
+        self.fc2 = nn.Linear(200, 10)
+
+    def forward(self, x):    
+    	# Do the forward pass
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Instantiate the Adam optimizer and Cross-Entropy loss function
+model = Net()   
+optimizer = optim.Adam(model.parameters(), lr=3e-4)
+criterion = nn.CrossEntropyLoss()
+  
+for batch_idx, data_target in enumerate(train_loader):
+    data = data_target[0]
+    target = data_target[1]
+    data = data.view(-1, 28 * 28)
+    optimizer.zero_grad()
+
+    # Complete a forward pass
+    output = model(data)
+
+    # Compute the loss, gradients and change the weights
+    loss = criterion(output,target)
+    loss.backward()
+    optimizer.step()
+
+# Set the model in eval mode
+model.eval()
+
+for i, data in enumerate(test_loader, 0):
+    inputs, labels = data
+    
+    # Put each image into a vector
+    inputs = inputs.view(-1, 28*28)
+    
+    # Do the forward pass and get the predictions
+    outputs = model(inputs)
+    _, outputs = torch.max(outputs.data, 1)
+    total += labels.size(0)
+    correct += (outputs == labels).sum().item()
+print('The testing set accuracy of the network is: %d %%' % (100 * correct / total))
+
+
+>>>>>>>>>>>>>Convolution operator
+
+1. do you need to consider all the relations between the features
+
+2. Fully connect neural networks are big and so very computationally inefficient
+
+3. they have so many parameters and so overfit
+
+convolutions
+1.slide over it and apply filter at each location. given the filter is 5x5x3
+2. dot product
+
+the convolution layer contains multiple activation maps
+
+padding allows the activation map to be the size of the image
+
+>>>> two ways to use convolution neural networks
+
+******oop (torch.nn)*****
+in_channels (int) = number of channels in input
+
+out_channels(int0 number of channels produced by the convolution
+
+kernel_size(int or tuple) size of the convolving kernel
+
+stride(int or tuple,optional) stride of the convolution. default=1
+
+padding(int or tuple,optional) 
+
+******functional(torch.nn.functional)*****
+
+inptu - input tensor of shape
+
+weight - filters of shape
+
+stride - the stride of the convolving kernel
+
+padding - implicit zero paddings on both sides of the input.
+
+
+
+>>>> object oriented
+
+import torch
+import torch.nn
+
+image = torch.rand(16,3,32,32)
+conv_filter = torch.nn.Conv2d(in_channels=3,
+	out_channels=1, kernel_size=5,
+	stride=1, padding=0)
+
+output_feature = conv_filter(image)
+
+print(output_feature)
+
+
+>>>>>>> functional
+
+import torch
+import torch.nn.functional as F
+
+
+image = torch.rand(16,3,32,32)
+filter = torch.rand(1,3,5,5)
+
+out_feat_F = F.conv2d(image, filter, stride=1,
+padding=0)
+
+print(out_feat_F.shape)
+
+torch.Size([10, 6, 28, 28])
+
+>>>>>>>> sample oop
+
+Create 10 images with shape (1, 28, 28).
+Build 6 convolutional filters of size (3, 3) with stride set to 1 and padding set to 1.
+Apply the filters in the image and print the shape of the feature map.
+
+
+
+# Create 10 random images of shape (1, 28, 28)
+images = torch.rand(10,1,28,28)
+
+# Build 6 conv. filters
+conv_filters = torch.nn.Conv2d(in_channels=1, out_channels=6, kernel_size=3, stride=1,padding=1)
+
+# Convolve the image with the filters 
+output_feature = conv_filters(images)
+print(output_feature.shape)
+
+>>> sample function
+
+# Create 10 random images
+image = torch.rand(10,1,28,28)
+
+# Create 6 filters
+filters = torch.rand(6, 1, 3, 3)
+
+# Convolve the image with the filters
+output_feature =  F.conv2d(image, filters, stride=1,
+padding=1)
+print(output_feature.shape)
+
+torch.Size([10, 6, 28, 28])
+
+
+>>>>>>>>>pooling operators
+
+pooling is a way of feature selection
+
+pooling lowers the spatial dimension
+
+224x224x64 pool -> 112x112x64
+
+max pool with stride=2
+
+3,1,3,5
+6,0,7,9
+3,2,1,4
+0,2,4,3
+
+
+3,1,6,0 ->6
+3,5,7,9 ->9
+3,2,0,2 ->3
+1,4,4,3 ->4
+
+pool output
+6,9
+3,4
+
+average-pooling
+2.5 (10/4),6 (24/4)
+1.75 (7/4),3 (12/4)
+
+
+
+dimensions: minimium size, height, depth, width
+
+
+import torch
+import torch.nn
+
+im = torch.Tensor([[[[3,1,3,5],[6,0,7,9],[3,2,1,4],[0,2,4,3]]]])
+
+max_pooling = torch.nn.MaxPool2d(2)
+output_features=max_pooling(im)
+print(output_features)
+
+
+
+import torch
+import torch.nn.functional as F
+
+
+im = torch.Tensor([[[[3,1,3,5],[6,0,7,9],[3,2,1,4],[0,2,4,3]]]])
+
+
+output_feature_F=F.max_pool2d(im,2)
+print(output_feature_F)
+
+
+tensor([[[[6.,9.],[3.,4.]]]])
+
+
+output_feature_F=F.avg_pool2d(im,2)
+print(output_feature_F)
+
+tensor([[[[2.5.,6.],[1.75.,3.]]]])
+
+
+>>>>>>> sample max pooling
+
+# Build a pooling operator with size `2`.
+max_pooling = torch.nn.MaxPool2d(2)
+# Apply the pooling operator
+output_feature = max_pooling(im)
+
+# Use pooling operator in the image
+output_feature_F = F.max_pool2d(im,2)
+
+# print the results of both cases
+print(output_feature)
+print(output_feature_F)
+
+tensor([[[[8., 5., 9.],
+          [9., 2., 6.],
+          [2., 9., 8.]]]])
+tensor([[[[8., 5., 9.],
+          [9., 2., 6.],
+          [2., 9., 8.]]]])
+
+
+>>>>> sample >>> avg pooling
+
+avg_pooling = torch.nn.AvgPool2d(2)
+# Apply the pooling operator
+output_feature = avg_pooling(im)
+
+# Use pooling operator in the image
+output_feature_F = F.avg_pool2d(im,2)
+
+# print the results of both cases
+print(output_feature)
+print(output_feature_F)
+
+tensor([[[[ 3.7500,  0.5000,  5.0000],
+          [ 3.5000, -1.0000,  3.7500],
+          [-0.2500,  4.2500,  0.5000]]]])
+tensor([[[[ 3.7500,  0.5000,  5.0000],
+          [ 3.5000, -1.0000,  3.7500],
+          [-0.2500,  4.2500,  0.5000]]]])
+
+
+
+>>>>>>>>>>>>>Convolutional neural networks
+cnn resurgence in 2012
+alexnet
+
+
+
+convolution->max pooling->max ppoling ->hidden ->hidden->max pooling ->dense->dense->dense
+
+
+output of 1000 different classes
+
+class AlexNet(nn.Module):
+
+	def __init__(self, num_classes=1000):
+		super(AlexNet, self).__init__()
+		
+		self.conv1=nnConv2d(3,64,kernel_size=11, stride=4, padding=2)
+		self.relu=nn.ReLU(inplace=True)
+		self.maxpool=nn.MaxPool2d(kernel_size=3,stride=2)
+		self.conv2=nn.Conv2d(64,192,kernel_size=5,padding=2)
+		self.conv3=nn.Conv2d(192,384,kernel_size=3,padding=1)
+		self.conv4=nn.Conv2d(384,256,kernel_size=3,padding=1)
+		self.conv5=nn.Conv2d(256,256,kernel_size=3,padding=1)
+self.avgpool=nn.AdaptiveAvgPool2d((6,6))
+		self.fc1=nn.Linear(256*6*6,4096)
+		self.fc2=nn.Linear(4096,4096)
+		self.fc3=nn.Linear(4096,num_classes)
+
+	def forward(self, x):
+		x=self.relu(self.conv1(x))
+		x=self.maxpool(x)
+		x=self.relu(self.conv2(x))
+		x=self.maxpool(x)
+		x=self.relu(self.conv3(x))
+		x=self.relu(self.conv4(x))
+		x=self.relu(self.conv5(x))
+		x=self.maxpool(x)
+		x=self.avgpool(x)
+		x=x.view(x.size(0),256*6*6)
+		x=self.relu(self.fc1(x))
+		x=self.relu(self.fc2(x))
+		x=self.relu(self.fc3(x))
+		return x
+
+net=AlexNet()
+
+
+>>>>>>MNIST convolution network
+
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        
+        # Instantiate two convolutional layers
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=5, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=5, out_channels=10, kernel_size=3, padding=1)
+        
+        # Instantiate the ReLU nonlinearity
+        self.relu = nn.ReLU()
+        
+        # Instantiate a max pooling layer
+        self.pool = nn.MaxPool2d(2, 2)
+        
+        # Instantiate a fully connected layer
+        self.fc = nn.Linear(7 * 7 * 10, 10)
+
+    def forward(self, x):
+
+        # Apply conv followd by relu, then in next line pool
+        x = self.relu(self.conv1(x))
+        x = self.pool(x)
+
+        # Apply conv followd by relu, then in next line pool
+        x = self.relu(self.conv2(x))
+        x = self.pool(x)
+
+        # Prepare the image for the fully connected layer
+        x = x.view(-1,7 * 7 * 10)
+
+        # Apply the fully connected layer and return the result
+        return self.fc(x)
+
+
+>>>>>> 32x32 convolution network
+
+class Net(nn.Module):
+    def __init__(self,num_classes=10):
+        super(Net, self).__init__()
+        
+        # Instantiate two convolutional layers
+        self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, padding=1)
+        
+        # Instantiate the ReLU nonlinearity
+        self.relu = nn.ReLU()
+        
+        # Instantiate a max pooling layer
+        self.pool = nn.MaxPool2d(2, 2)
+        
+        # Instantiate a fully connected layer
+        self.fc = nn.Linear(128*4*4, num_classes)  #fully connect layer  = units of the last layer   4= 32/2*3 where 2 is the pool and 3 is the kernel
+
+	def forward(self, x):
+		x=self.pool(F.relu(self.conv1(x)))
+		x=self.pool(F.relu(self.conv2(x)))
+		x=self.pool(F.relu(self.conv3(x)))
+		x=x.view(-1,128*4*4)
+		return self.fc(x)
+
+net = Net()
+criterion=nn.CrossEntropyLoss()
+optimizer=optim.Adam(net.parameters(), lr=3e-4)
+
+
+for epoch in range(10)
+	for i, data in enumerate(trainloader,0):
+		inputs,labels=data
+
+		optimizer.zero_grad()
+
+		outputs=net(inputs)
+		loss=criterion(outputs,labels)
+		loss.backward() #gradient
+		optimizer.step() #update weights
+
+print('Finished Training')
+
+
+correct,total=0,0
+predictions=[]
+net.eval()
+for epoch in range(10):
+    for i, data in enumerate(testloader,0):
+        inputs,labels=data
+        outputs=net(inputs)
+        __,predicted=torch.max(outputs.data,1)
+        predictions.append(outputs)
+        total += labels.size(0)
+        correct+=(predicted==labels).sum().item()
+
+print("The testing set accuracy of the network is %d %%" % (100*correct/total))
+
+>>>>>>>> sample  >>>> see which images were correctly identified
+
+# Iterate over the data in the test_loader
+for i, data in enumerate(test_loader):
+  
+    # Get the image and label from data
+    image,label = data
+    
+    # Make a forward pass in the net with your image
+    output = net(image)
+    
+    # Argmax the results of the net
+    _, predicted = torch.max(output.data, 1)
+    if predicted == label:
+        print("Yipes, your net made the right prediction " + str(predicted))
+    else:
+        print("Your net prediction was " + str(predicted) + ", but the correct label is: " + s
+
+
+>>>>>>>>>>>>>>>The sequential module
+
+
+
+class AlexNet(nn.Module):
+
+	def __init__(self, num_classes=1000):
+		super(AlexNet, self).__init__()
+		
+self.features=nn.Sequential(
+		Conv2d(3,64,kernel_size=11, stride=4, padding=2),
+		nn.MaxPool2d(kernel_size=3,stride=2),
+		nn.Conv2d(64,192,kernel_size=5,padding=2),
+                nn.Conv2d(192,384,kernel_size=3,padding=1),
+		nn.Conv2d(384,256,kernel_size=3,padding=1),
+                nn.Conv2d(256,256,kernel_size=3,padding=1),
+                nn.MaxPool2d(kernel_size=3,stride=2),)
+
+
+self.avgpool=nn.AdaptiveAvgPool2d((6,6))
+self.classifer=nn.Sequential(
+		nn.Dropout(),
+		nn.Linear(256*6*6,4096),
+		nn.Dropout(),
+		nn.Linear(4096,4096),
+		nn.RelU(inplace=True),
+		self.fc3=nn.Linear(4096,num_classes)
+,)
+
+
+	def forward(self,x):
+		x=self.features(x)
+		x=self.avgpool(x)
+		x=x.view(x.size(0),256*6*6)
+		x=self.classifier(x)
+		return x
+
+
+
+
+>>>>>>> sample >>>> sequential
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        
+        # Declare all the layers for feature extraction
+               self.features = nn.Sequential(nn.Conv2d(in_channels=1, out_channels=5, kernel_size=3, padding=1), 
+                                      nn.ReLU(inplace=True),
+                                      nn.Conv2d(in_channels=5, out_channels=10, kernel_size=3, padding=1),
+                                      nn.MaxPool2d(2, 2), nn.ReLU(inplace=True),
+                                      nn.Conv2d(in_channels=10, out_channels=20, kernel_size=3, padding=1),
+                                      nn.ReLU(inplace=True),
+                                      nn.Conv2d(in_channels=20, out_channels=40, kernel_size=3, padding=1), 
+                                      nn.MaxPool2d(2, 2), nn.ReLU(inplace=True),)
+
+
+        self.classifier = nn.Sequential(nn.Linear(7 * 7 * 40, 1024), nn.ReLU(inplace=True),
+                                       	nn.Linear(1024, 2048), nn.ReLU(inplace=True),
+                                        nn.Linear(2048, 10))
+
+
+    def forward(self, x):
+      
+        # Apply the feature extractor in the input
+        x = self.features(x)
+        
+        # Squeeze the three spatial dimensions in one
+        x = x.view(-1, 7 * 7 * 40)
+        
+        # Classify the images
+        x = self.classifier(x)
+        return x
+
+
+>>>>>>>>> detecting overfitting
+1. high variance case
+2. low training error
+
+large gap between the variance an error this is called overfitting called high variance.
+
+
+create a validation set
+
+1. training set
+2. validation set
+3. testing test (used only once)
+
+training sets and validation set should not overlap each other
+
+indices=np.arange(50000)
+np.random.shuffle(indices)
+
+trainloader=torch.utils.data.DataLoader(trainset, batch_size=1, shuffle=False, num_workers=2,
+sampler=torch.utils.data.SubsetRandomSampler(indices[:45000])
+
+)
+
+valloader=torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=2,
+,sampler=torch.utils.data.SubsetRandomSampler(indices[45000:50000])
+)
+
+
+>>>>>>> sampler  build the validation
+
+# Shuffle the indices
+indices = np.arange(60000)
+np.random.shuffle(indices)
+
+# Build the train loader
+train_loader = torch.utils.data.DataLoader(datasets.MNIST('mnist', download=True, train=True,
+                     transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])),
+                     batch_size=64, shuffle=False, sampler=torch.utils.data.SubsetRandomSampler(indices[:55000]))
+
+# Build the validation loader
+val_loader = torch.utils.data.DataLoader(datasets.MNIST('mnist', download=True, train=True,
+                   transform=transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])),
+                   batch_size=64, shuffle=False, sampler=torch.utils.data.SubsetRandomSampler(indices[55000:]))
+
+
+
+>>>>>>> regularization techniques
+
+
+l2-regularization
+
+optimizer = optim.Adam(net.parameters(), lr=3e=4, weight_decay=0.0001)
+
+
+Dropout to reduce the complexity of the network
+
+self.classifier = nn.Sequential(
+	nn.Dropout(p=0.5),
+	nn.Linear(256*6*6, 4096),
+	nn.ReLU(inplace=True),
+	nn.Dropout(p=0.5)
+	nn.Linear(4096,4096),
+	nn.ReLU(inplace=True),
+	nn.Linear(4096,num_classes),
+)
+
+
+>>>>>> batch regularization
+
+1. computes the mean and variance for each feature
+
+2. normalizes the features
+
+3. scale and shift
+
+always train large neural networks using batch normalization.
+
+self.bn = nn.BatchNorm2d(num_features=64, eps=1e-05, momentum=0.9)
+
+
+>>>>>>>>>>early stopping
+
+1. stop training when no more improvement is occuring or loss has plateau
+
+hyperparameters
+1. train many networkss with different hyperparameters and test them in the validation set.  Then use the best performing net in the validation set to know the expected accuracy of the network in the new data.
+
+
+model.train()
+
+model.eval()
+
+>>>>> sample
+
+# Instantiate the network
+model = Net()
+
+# Instantiate the cross-entropy loss
+criterion = CrossEntropyLoss()
+
+# Instantiate the Adam optimizer
+optimizer = optimum.Adam(model.parameters(), lr=3e-4, weight_decay=0.0001)
+
+
+
+class Net(nn.Module):
+    def __init__(self):
+        
+        # Define all the parameters of the net
+        self.classifier = nn.Sequential(
+            nn.Linear(28*28, 200),
+            nn.ReLU(inplace=True),
+            nn.Dropout(p=0.5),
+            nn.Linear(200,500),
+            nn.ReLU(inplace=True),
+            nn.Linear(500,10))
+
+    def forward(self, x):
+    
+    	# Do the forward pass
+        return self.classifier(x)
+
+
+>>>> batch normalization
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        
+        # Implement the sequential module for feature extraction
+        self.features = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=10, kernel_size=3, stride=1, padding=1),
+            nn.MaxPool2d(2, 2), nn.ReLU(inplace=True), nn.BatchNorm2d(10),
+            nn.Conv2d(in_channels=10, out_channels=20, kernel_size=3, stride=1, padding=1),
+            nn.MaxPool2d(2, 2), nn.ReLU(inplace=True), nn.BatchNorm2d(20))
+        
+        # Implement the fully connected layer for classification
+        self.fc = nn.Linear(in_features=7*7*20, out_features=10)
+
+
+
+>>>>>>>>>>>>>Transfer Learning
+
+the deeper you progress in the cnn network the more abstract the features become.
+
+1. Decision layers
+2. parts of an object (wheel or eye)
+3. simple geometrical shapes (circle or squares)
+4. edges
+5. image
+
+from 5 to 1
+
+the low level features are very general and largely data dependant
+
+the decision layers are fully connected layer for applying rules to determine outcomes.
+
+transfer learning uses weights on very training weights of large datasets then training the network on small numbers of images.
+
+
+freeze most of the layer to prevent overfitting
+
+
+?>>>>>>>>>>>>>>>>>>>>>>>finetuning
+
+model=Net()
+
+model.load_state_dict(torch.load('cifar10_net_path'))
+
+
+#freeze all the layers bar the final one
+
+for param in model.parameters():
+	param.requires_grad=False
+
+model.fc=nn.Linear(4*4*1024,100)
+
+model.train()
+
+>>>>>>>>>>>>>>Torch vision
+
+import torchvision
+
+
+model=torchvision.models.resnet18(pretrained=True)
+
+model.fc=nn.Linear(512, num_classes)
+
+
+>>>>>>>> sample
+
+# Create a new model
+model = Net()
+
+# Change the number of out channels
+model.fc = nn.Linear(7 * 7 * 512, 26)
+
+# Train and evaluate the model
+model.train()
+train_net(model, optimizer, criterion)
+print("Accuracy of the net is: " + str(model.eval()))
+
+Accuracy of the net is: 0.57
+
+
+>>>>>> sample load from a pretrained network
+
+# Create a model using
+model = Net()
+
+# Load the parameters from the old model
+model.load_state_dict(torch.load('my_net.pth'))
+
+# Change the number of out channels
+model.fc = nn.Linear(7 * 7 * 512, 26)
+
+# Train and evaluate the model
+model.train()
+train_net(model, optimizer, criterion)
+print("Accuracy of the net is: " + str(model.eval()))
+
+Accuracy of the net is: 0.84
+
+
+>>>>>>>>>resnet18
+
+# Import the module
+import torchvision
+
+# Download resnet18
+model = torchvision.models.resnet18(pretrained=True)
+
+# Freeze all the layers bar the last one
+for param in model.parameters():
+    param.requires_grad=False
+
+# Change the number of output units
+model.fc = nn.Linear(512, 7)
+

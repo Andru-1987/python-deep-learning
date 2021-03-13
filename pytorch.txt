@@ -169,8 +169,3 @@ hidden_1 = torch.matmul(input_layer, weight_1)
 output_layer = torch.matmul(hidden_1, weight_2)
 print(output_layer)
 
-
-
-
-
-
