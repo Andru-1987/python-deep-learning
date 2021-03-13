@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added shampoo sales using rolling window and pytorch conv1d
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Pytorch%20Shampoo%20sales%20conv1d.ipynb
+
 * I added college admittance for Graduate school using support vector machine
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/College%20Graduate%20Admission%20SVC.ipynb
