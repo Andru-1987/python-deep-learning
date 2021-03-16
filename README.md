@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added Google timeseries analysis
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Google%20timeseries.ipynb
+
 * I added shampoo sales using rolling window and pytorch conv1d
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Pytorch%20Shampoo%20sales%20conv1d.ipynb
