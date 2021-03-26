@@ -1,0 +1,1385 @@
+points of time or periods in time
+
+import pandas as pd
+from datatime import datetime
+
+time_stamp=pd.Timestamp(datetime(2017,1,1))
+
+pd.Timestamp('2017-01-01')=time_stamp
+
+times_stamp.year
+time_stamp.weekday_name
+
+period=pd.Period('2017-01')
+
+convert pd.Period() to pd.Timestamp() and back
+
+period.asfreq(0)
+
+period+=2
+
+pd.Timestamp('2017-01-03','M')+1
+
+index= pd.date_range(start='2017-1-1',periods=12,freq='M')
+
+ns = nanoseconds
+
+
+data=np.random.random(size=(12,2))
+df=pd.DataFrame(data=data,index=index).info
+
+frequencies
+
+Period
+Hour	H	.second .minute .hour
+Day	D	.day .month .quarter .year
+Week	W	.weekday
+Month	M	.dayofweek
+Quarter	Q	.weekofyear
+Year	A	.dayofyear
+
+
+>>>> sample date_range 7 days
+
+# Create the range of dates here
+seven_days = pd.date_range(start='2017-1-1',periods=7,freq='D')
+
+# Iterate over the dates and print the number and name of the weekday
+for day in seven_days:
+    print(day.dayofweek, day.weekday_name)
+
+
+6 Sunday
+0 Monday
+1 Tuesday
+2 Wednesday
+3 Thursday
+4 Friday
+5 Saturday
+
+>>>>>>> indexing and resampling time series
+
+time series transformation
+1. parsing string dates and convert to datetime64
+2. selecting and slicing for specific subperiods
+3. setting and changing DateTimeIndex frequency
+a. upsampling involves increasing the time frequency
+b. downsampling involves decreasing the time frequency and involves aggregating data
+
+df=df.set_index('Date',inplace=True)
+
+inplace : don't create copy
+
+>>>>>>> partial string indexing
+
+print(df.loc['2020-03-16','Open'])
+
+.asfreq('D)
+* convert DateTimeIndex to calendar day frequency
+
+print(df.asfreq('D').head(100))
+
+missing data is displayed as nan
+
+.asfreq('B')
+* convert DateTimeIndex to business day frequency
+
+google[google.price.isnull()]
+
+#select missing price values
+
+
+
+>>>> sample >> indexing using date
+
+data = pd.read_csv('nyc.csv')
+
+# Inspect data
+print(data.info())
+
+# Convert the date column to datetime64
+data['date']=pd.to_datetime(data['date'])
+
+# Set date column as index
+data.set_index('date',inplace=False)
+
+# Inspect data 
+print(data.head())
+
+# Plot data
+data.plot(subplots=True)
+plt.show()
+
+<<<<<<< sample >>> slice the data by year
+and reset the index then rename the column and concatenate the amount into a prices dataframe
+
+# Create dataframe prices here
+prices = pd.DataFrame()
+
+# Select data for each year and concatenate with prices here 
+for year in ['2013','2014','2015']:
+    price_per_year = yahoo.loc[year, ['price']].reset_index(drop=True)
+    price_per_year.rename(columns={'price': year}, inplace=True)
+    prices = pd.concat([prices, price_per_year], axis=1)
+
+# Plot prices
+prices.plot()
+plt.show()
+
+#Reset the index, or a level of it. Reset the index of the DataFrame, and use the default one instead. If the DataFrame has a MultiIndex, this method can remove one or more levels.
+
+
+>>>>>>>> sample  carbon monoxide concentration in nyc
+
+Chicago        1898 non-null float64
+Los Angeles    1898 non-null float64
+New York       1898 non-null float64
+
+
+# Inspect data
+print(co.info())
+
+# Set the frequency to calendar daily
+co = co.asfreq('D')
+
+# Plot the data
+co.plot(subplots=True)
+plt.show()
+
+
+# Set frequency to monthly
+co = co.asfreq('M')
+
+# Plot the data
+co.plot(subplots=True)
+plt.show()
+
+>>>>>>>>>> Lags and changes and returns for stock price series
+
+1. move data across time
+2. shift or lag values back or forward back in time.
+3. get the difference in value for a given time period
+4. compute the percent change any number of periods
+
+google=pd.read_csv('google.csv',parse_dates=['date'], index_col='date')
+
+google.info()
+
+>>>>>>>> .shift(): Moving data between past & future
+
+.shift()
+* defaults to periods=1
+1 period into future
+
+google['shifted']=google.price.shift()
+
+
+df['shifted']=df.Open.shift()
+print(df)
+
+>>>>> .shift () lag
+
+.shift(periods=-1)
+* lagged data
+* 1 period back in time
+
+google['lagged']=google.price.shift(periods=-1)
+
+calculating one-period percent change
+
+google['change']=google.price.div(google.shifted)
+
+Xt/Xt-1
+
+google['return'] = google.change.sub(1).mul(100)
+
+
+.diff() built in time-series change
+
+google['diff'] = google.price.diff()
+
+
+.pct_change : built in time-series % change
+
+google['pct_change'] = google.priced.pct_change().mul(100)
+
+google['return_3d'] = google.price.pct_change(period=3).mul(100)
+
+
+>>>>> sample shift and lag
+
+# Import data here
+google = pd.read_csv('google.csv',parse_dates=['Date'], index_col='Date')
+
+# Set data frequency to business daily
+google = google.asfreq('B')
+
+# Create 'lagged' and 'shifted'
+google['lagged'] = google.Close.shift(periods=-90)
+google['shifted'] = google.Close.shift(periods=90)
+
+# Plot the google price series
+
+google.plot()
+
+>>>>>> sample returns daily, monthly, and yearly
+
+# Create daily_return
+print(google.columns)
+google['daily_return'] = google.Close.pct_change()
+
+# Create monthly_return
+google['monthly_return'] = google.Close.pct_change(periods=30)
+
+# Create annual_return
+google['annual_return'] = google.Close.pct_change(periods=360)
+
+# Plot the result
+
+google.plot(subplots=True)
+plt.show()
+
+
+
+plt.show()
+
+>>>>>> sample change in price  >>> 30 days
+
+# Created shifted_30 here
+yahoo['shifted_30'] = yahoo.price.shift(30)
+
+# Subtract shifted_30 from price
+yahoo['change_30'] = yahoo.price.sub(yahoo.shifted_30)
+
+# Get the 30-day price difference
+yahoo['diff_30'] = yahoo.price.diff(30)
+
+# Inspect the last five rows of price
+print(yahoo.tail())
+
+# Show the value_counts of the difference between change_30 and diff_30
+print(yahoo.change_30.sub(yahoo.diff_30).value_counts())
+
+>>>> sample see the stock growth over the sp500
+
+# Create tickers
+tickers = ['MSFT', 'AAPL']
+
+# Import stock data here
+stocks = pd.read_csv('msft_aapl.csv', parse_dates=['date'], index_col='date')
+
+# Import index here
+sp500 = pd.read_csv('sp500.csv', parse_dates=['date'], index_col='date')
+
+# Concatenate stocks and index here
+data = pd.concat([stocks, sp500], axis=1).dropna()
+
+# Normalize data
+normalized = data.div(data.iloc[0]).mul(100)
+
+# Subtract the normalized index from the normalized stock prices, and plot the result
+normalized[tickers].sub(normalized['SP500'], axis=0).plot()
+plt.show()
+
+>>>>>> normalize the data
+compare=compare.div(compare.iloc[0]).mul(100)
+
+
+
+
+>>>>> compare stock growth
+
+# Import stock prices and index here
+stocks = pd.read_csv('nyse.csv',parse_dates=['date'],index_col='date')
+dow_jones = pd.read_csv('dow_jones.csv',parse_dates=['date'],index_col='date')
+
+# Concatenate data and inspect result here
+data = pd.concat([stocks,dow_jones],axis=1)
+print(data)
+
+# Normalize and plot your data here
+data=data.div(data.iloc[0]).mul(100)
+data.plot()
+plt.show()
+
+>>>>>>> resampling  >>> changing the time series frequency
+
+DateTimeIndex : set & change freq using .asfreq()
+
+frequency conversion affects the data
+1. upsampling : fill or interpolate missing data
+2. downsampling: aggregate existing data
+
+.asfreq
+.reindex()
+
+
+dates = pd.date_range(start='2016', periods=4, freq='Q')
+
+data=range(1,5)
+
+quarterly = pd.Series(data=data, index=dates)
+print(quarterly)
+
+monthly=quarterly.asfreq('M')
+
+upsampling creates missing values
+
+monthly = monthly.to_frame('baseline')
+
+monthly['ffill'] = quarterly.asfreq('M', method='ffill')
+monthly['bfill'] = quarterly.asfreq('M', method='bfill')
+monthly['value']=quarterly.asfreq('M',fill_value=0)
+
+
+ffill is forward fill the nan
+bfill is backward fill the nan
+fill_value=0 is fill nan with 0
+
+dates = pd.date_range(start='2016',
+	periods=12,
+	freq='M')
+
+
+quarterly.reindex(dates)
+
+
+
+
+>>>> sample  asfreq with bfill and ffil
+
+create a summaried datetimeindex of quarterly
+then create a series by monthly. assign the data value of 1 and 2 to the two monthly dates
+
+reindex the monthly series with the weekly dates for the start and end month.
+
+# Set start and end dates
+start = '2016-1-1'
+end = '2016-2-29'
+
+# Create monthly_dates here
+monthly_dates = pd.date_range(start=start, end=end, freq='M')
+
+# Create monthly here
+monthly = pd.Series(data=[1,2], index=monthly_dates)
+print(monthly)
+
+# Create weekly_dates here
+weekly_dates = pd.date_range(start=start, end=end, freq='W')
+
+# Print monthly, reindexed using weekly_dates
+print(monthly.reindex(weekly_dates))
+print(monthly.reindex(weekly_dates, method='bfill'))
+print(monthly.reindex(weekly_dates, method='ffill'))
+
+
+>>>>> sample   asfreq and bfill
+
+# Import data here
+data = pd.read_csv('unemployment.csv', parse_dates=['date'], index_col='date')
+
+# Show first five rows of weekly series
+print(data.asfreq('W').head())
+
+# Show first five rows of weekly series with bfill option
+print(data.asfreq('W', method='bfill').head())
+
+# Create weekly series with ffill option and show first five rows
+weekly_ffill = data.asfreq('W', method='ffill')
+print(weekly_ffill.head())
+
+# Plot weekly_fill starting 2015 here 
+weekly_ffill.loc['2015':].plot()
+plt.show()
+
+>>>>>>>>>>>>>>>>>resample method
+
+resample() follows a method similar to groupby()
+
+#groups data witin resampling period and applies one or several methods to each group
+
+new data determined by offset - start, end, etc
+
+upsampling to fill from existing or interpolate values
+
+unemployment data is reported the first day of the calendar month
+1. date
+2. unrate
+
+unrate=pd.read_csv('unrate.csv', parse_dates['Date'], index_col='Date')
+
+unrate.info()
+
+
+Resample period & frequency offsets
+M - calendar month end
+MS  calendar month start
+BM  business month end
+BMS - business month start
+
+upsampling there will be more resampling periods than data points. (fill or interpolate)
+
+downsampling there are more data points than resampling periods. (aggregate)
+
+unrate.asfreq('MS').info()
+
+returns a datetimeindex
+
+unrate.resample('MS')
+
+returns a DatetimeIndexResampler
+
+.resample() returns data only when calling another method
+
+
+both approaches yield the same data
+
+gdp_1= gdp.resample('MS').ffill().add_suffix('_ffill')
+
+gdp_2=gdp.resample('MS').interpolate().add_suffix('_inter')
+
+
+
+pd.concat([df1,df2],axis=1) 
+
+concatenates horizontally the row index
+
+
+>>>>> sample ffill versus interpolated
+
+# Inspect data here
+print(monthly.info())
+
+# Create weekly dates
+weekly_dates = pd.date_range(
+    start=monthly.index.min(),
+    end=monthly.index.max(),
+    freq="W"
+)
+
+# Reindex monthly to weekly data
+weekly = monthly.reindex(weekly_dates)
+
+# Create ffill and interpolated columns
+weekly['ffill'] =weekly.ffill()
+weekly['interpolated'] = weekly.UNRATE.interpolate()
+
+# Plot weekly
+
+weekly.plot()
+plt.show()
+
+>>>>>> sample interpolate unemployment vs GDP
+
+# Import & inspect data here
+data = pd.read_csv('debt_unemployment.csv',parse_dates=['date'],index_col='date')
+print(data.info())
+
+# Interpolate and inspect here
+interpolated = data.interpolate()
+print(interpolated.info())
+
+# Plot interpolated data here
+
+interpolated.plot(secondary_y='Unemployment')
+plt.show()
+
+>>>>>>downsampling & aggregation
+
+how to reduce the frequency of your time series
+
+hour to day
+day to month
+
+
+how to represent the existing values at the new date
+1. mean, median, last value
+
+ozone=pd.read_csv('ozone.csv',
+	parse_dates=['date'],
+	index_col='date')
+
+ozone.info()
+
+ozone=ozone.resample('D').asfreq()
+
+ozone=ozone.resample('M').mean().head()
+
+ozone=ozone.resample('M").median().head()
+ozone=ozone.resample('M).agg(['mean','std']).head()
+
+ozone=ozone.loc['2016':]
+ax=ozone.plot()
+monthly=ozone.resample('M').mean()
+monthly.add_suffix('_monthly').plot(ax=ax)
+
+
+>>>>> sample   >>> weekly, monthly, and yearly
+
+# Import and inspect data here
+ozone = pd.read_csv('ozone.csv', parse_dates=['date'], index_col='date')
+ozone.info();
+
+# Calculate and plot the weekly average ozone trend
+ozone.resample('W').mean().plot();
+plt.show()
+
+# Calculate and plot the monthly average ozone trend
+ozone.resample('M').mean().plot();
+plt.show();
+
+# Calculate and plot the annual average ozone trend
+ozone.resample('A').mean().plot();
+plt.show();
+
+>>>>> sample >>> monthly average
+
+# Import and inspect data here
+stocks = pd.read_csv('stocks.csv',parse_dates=['date'],index_col='date')
+
+print(stocks.info())
+
+monthly_average = stocks.resample('M').mean()
+
+monthly_average.plot(subplots=True)
+plt.show()
+
+>>>>>>> plot the gdp growth with the dija prices
+
+# Import and inspect gdp_growth here
+gdp_growth = pd.read_csv('gdp_growth.csv',parse_dates=['date'],index_col='date')
+
+
+# Import and inspect djia here
+djia = pd.read_csv('djia.csv',parse_dates=['date'],index_col='date')
+
+
+# Calculate djia quarterly returns here 
+djia_quarterly = djia.resample('QS').first()
+djia_quarterly_return = djia_quarterly.pct_change().mul(100)
+
+# Concatenate, rename and plot djia_quarterly_return and gdp_growth here 
+data = pd.concat([gdp_growth,djia_quarterly_return],axis=1).plot()
+
+plt.show()
+
+>>>>>>>sample squeeze
+squeeze removes single dimension entries from the shape of the array
+
+# Import data here
+sp500 = pd.read_csv('sp500.csv',parse_dates=['date'],index_col='date')
+
+sp500.info()
+
+# Calculate daily returns here
+daily_returns = sp500.squeeze().pct_change().mul(100)
+
+# Resample and calculate statistics
+stats = daily_returns.resample('M').agg(['mean','median','std'])
+
+# Plot stats here
+stats.plot()
+plt.show()
+
+
+>>>>>>>>>>>.Rolling windows functions with pandas
+
+windows operate on sub periods of your time series
+
+calculate metrics for sub periods inside the window
+
+create a new time series of metrics
+1. rolling: same size, sliding (this video)
+2. expanding: contain all prior values
+
+data.rolling(window=30).mean()
+#last 30 business days
+
+
+data.rolling(window='30D').mean()
+#last 30 calendar days
+
+
+r90=data.rolling(window='90D').mean()
+
+google.join(r90.add_suffix('_mean_90')).plot()
+
+
+r360=data.rolling(window='360D').mean()
+
+nio_rolling_360=nio.rolling(window=360).mean()
+nio=nio.join(nio_rolling_360.add_suffix('_Mean_360')) #.add_suffix('_mean_360')
+
+watch the 90 day average versus the 360 day average
+
+r360=data['price'].rolling(window='360D').mean()
+
+data['mean360']=r360
+
+data.plot()
+
+
+r90 = data.price.rolling('90D').agg(['mean','std'])
+
+r90.plot(subplots=True)
+
+rolling=data.google.rolling('360D')
+q10= rolling.quantile(0.1).to_frame('q10')
+median=rolling.median().to_frame('median')
+q90= rolling.quantile(0.9).to_frame('q90)
+
+pd.concat([q10,median,q90], axis=1).plot()
+
+
+>>> sample 90 day vs 360 day moving average
+
+# Import and inspect ozone data here
+data = pd.read_csv('ozone.csv',parse_dates=['date'],index_col='date')
+print(data.info())
+
+# Calculate 90d and 360d rolling mean for the last price
+data['90D'] = data.Ozone.rolling(window='90D').mean()
+data['360D'] = data.Ozone.rolling(window='360D').mean()
+
+# Plot data
+data.plot()
+plt.show()
+
+>>>>>>> 360 rolling window
+
+# Import and inspect ozone data here
+data = pd.read_csv('ozone.csv',parse_dates=['date'],index_col='date').dropna()
+
+# Calculate the rolling mean and std here
+rolling_stats = data.Ozone.rolling(window=360).agg(['mean','std'])
+
+# Join rolling_stats with ozone data
+stats = pd.concat([data,rolling_stats],axis=1)
+
+# Plot stats
+stats.plot()
+plt.show()
+
+>>>>>> add quantile (10%, 50%, 90%)
+
+# Resample, interpolate and inspect ozone data here
+data = data.resample('D').interpolate()
+
+data.info()
+
+# Create the rolling window
+rolling = data.rolling(window=360)['Ozone']
+
+# Insert the rolling quantiles to the monthly returns
+data['q10'] = rolling.quantile(0.1).to_frame('q10)')
+data['q50'] = rolling.quantile(0.5).to_frame('q50')
+data['q90'] = rolling.quantile(0.9).to_frame('q90')
+
+# Plot the data
+data.plot()
+plt.show()
+
+>>>>>> expanding window functions with pandas
+
+.expanding()
+1. cumsum()
+2. cumprod()
+3. cummin()
+4. cummax()
+
+
+df=pd.DataFrame({'data':range(5)})
+df['expanding sum']=df.data.expanding().sum()
+df['cumulative sum']=df.data.cumsum()
+
+
+#period return
+pr= data.sp500.pct_change()
+pr_plus_one = pr.add(1)
+cumulative_return = pr_plus_one.cumprod().sub(1)
+cumulative_return.mul(100).plot()
+
+data['running_min']= data.SP500.expanding().min()
+data['running_max']=data.SP500.expanding().max()
+
+
+def multi_period_return(period_returns):
+	return np.prod(period_returns + 1) -1
+
+pr=data.SP500.pct_change()
+r=pr.rolling('360D').apply(multi_period_return)
+data['Rolling 1yr Return']=r.mul(100)
+
+data.plot(subplots=True)
+
+
+>>>>>> sample Cumsum
+
+# Calculate differences
+differences = data.diff().dropna()
+print(differences)
+
+# Select start price
+start_price = data.first('D')
+
+# Calculate cumulative sum
+cumulative_sum = start_price.append(differences).cumsum()
+
+# Validate cumulative sum equals data
+print(cumulative_sum.equals(data))
+
+The .cumsum() method allows you to reconstruct the original data from the differences.
+
+
+>>>>>> sample returns on investing a 1000 dollars
+
+# Define your investment
+investment = 1000
+
+# Calculate the daily returns here
+returns = data.pct_change()
+
+# Calculate the cumulative returns here
+returns_plus_one = returns.add(1)
+cumulative_return = returns_plus_one.cumprod()
+
+# Calculate and plot the investment return here 
+cumulative_return.mul(investment).plot()
+plt.show()
+
+>>>> rolling returns for multiple years
+
+# Import numpy
+import numpy as np
+
+# Define a multi_period_return function
+def multi_period_return(period_returns):
+    return np.prod(period_returns + 1) - 1
+    
+# Calculate daily returns
+daily_returns = data.pct_change()
+
+# Calculate rolling_annual_returns
+rolling_annual_returns = daily_returns.rolling('360D').apply(multi_period_return)
+
+# Plot rolling_annual_returns
+rolling_annual_returns.mul(100).plot();
+plt.show()
+
+>>>>>>price simulation
+
+1. daily stock returns are hard to predict
+2. models often assume they are random in nature
+3. numpy allows you to generate random numbers
+
+.cumprod from random returns to prices
+
+generate random returns in the bell shaped distribution
+
+random selected actual sp500 returns
+
+to generate random numbers
+
+from numpy.random import normal, seed
+from scipy.stats import norm
+
+seed(42)
+
+random_returns= normal(loc=0, scale=0.01, size=1000)
+
+sns.distplot(random_returns, fit=norm, kde=False)
+
+
+>>>>> create a random price path
+
+return_series=pd.Series(random_returns)
+random_prices=return_series.add(1).cumprod().sub(1)
+random_prices.mul(100).plot()
+
+data['returns']=data.SP500.pct_change()
+
+
+>>>>>> random select from the sp500 dataset
+
+from numpy.random import choice
+
+sample= data.returns.dropna()
+n_obs = data.returns.count()
+
+random_walk = choice(sample, size=n_obs)
+
+random_walk = pd.Series(random_walk, index=sample.index)
+random_walk.head()
+
+start = sp500['Open'].first('D')
+
+sp500_random = start.append(random_walk.add(1))
+sp500_random.head()
+
+
+>>>>>>>> sample 2500 random prices
+
+# Set seed here
+seed(42)
+
+# Create random_walk
+random_walk = normal(loc=.001, scale=.01, size=2500)
+
+# Convert random_walk to pd.series
+random_walk = pd.Series(random_walk)
+
+# Create random_prices
+random_prices = random_walk.add(1).cumprod()
+
+>>>> sample plot random walk distribution
+
+# Set seed here
+
+seed(42)
+# Calculate daily_returns here
+daily_returns = fb.pct_change().dropna()
+
+# Get n_obs
+n_obs = daily_returns.count()
+
+# Create random_walk
+random_walk = choice(daily_returns,size=n_obs)
+
+# Convert random_walk to pd.series
+random_walk = pd.Series(random_walk)
+
+# Plot random_walk distribution
+plt.clf()
+sns.distplot(random_walk)
+plt.show()
+
+>>>>> sample random walk and random price
+
+# Select fb start price here
+start = fb.price.first('D')
+
+# Add 1 to random walk and append to start
+random_walk = random_walk.add(1)
+random_price = start.append(random_walk)
+
+# Calculate cumulative product here
+random_price = random_price.cumprod()
+
+# Insert into fb and plot
+fb['random'] = random_price
+fb.plot()
+plt.show()
+
+
+>>>> relationships between time series correlation
+
+correlation is the linear relationship between two variables
+
+correlation is import for prediction and risk management
+
+correlation coefficient looks at the pairwise movement of two variables around their averages
+
+covariant
+
+varies between -1 and 1
+
+data=pd.read_csv('assets.csv', parse_dates=['date'],index_col='date')
+
+data=data.dropna().info()
+
+daily_returns = data.pct_change()
+
+sns.jointplot(x='sp500', y='nasdaq', data=data_returns)
+
+
+the closer the pearson coefficient is to 1 the more correlated the data
+
+sns.jointplot(x='sp500', y='bonds', data=data_returns)
+
+
+>>>>>> calculating correlation
+
+correlations = returns.corr()
+
+sns.heatmap(correlations,annot=True)
+
+
+>>>>> sample
+aapl
+amzn
+ibm
+wmt
+xom
+
+# Inspect data here
+print(data.info())
+
+# Calculate year-end prices here
+annual_prices = data.resample('A').last()
+
+# Calculate annual returns here
+annual_returns = annual_prices.pct_change()
+
+# Calculate and print the correlation matrix here
+correlations = annual_returns.corr()
+print(correlations)
+
+# Visualize the correlations as heatmap here
+
+sns.heatmap(correlations,annot=True)
+
+plt.show()
+
+apple and ibm correlate the highest
+
+>>>>>>>>>>>>>>>select index components
+
+case study
+1. components weighted by market capitalization
+2. capitalization = share price * number of shares => market value
+
+
+listing
+1.stock symbol
+2. company name
+3. last sale
+4. market capitalization
+5. ipo year
+6. sector
+7. industry
+
+nyse = pd.read_excel('listings.xlsx' sheetname='nyse', na_values='n/a')
+
+nyse.set_index('Stock Symbol', inplace=True)
+
+nyse.dropna(subset=['Sector'], inplace=True)
+
+nyse['Market Capitalization'] /=1e6 #in million usd
+
+components = nyse.groupby(['Sector'])['Market Capitalization'].nlargest(1)
+
+tickers = components.index.get_level_values('Stock Symbol')
+
+columns=['Company Name','Market Capitalization', 'Last Sale']
+
+component_info= nyse.loc[tickers, columns]
+pd.options.display.float_format='{:.2f}'.format
+
+
+data=pd.read_csv('stocks.csv', parse_dates=['Date'], index_col='Date').loc[:,tickers.tolist()]
+
+data.info()
+
+>>>>> sample   set_index and filter
+
+# Inspect listings
+print(listings.info())
+
+# Move 'stock symbol' into the index
+listings.set_index('Stock Symbol')
+
+# Drop rows with missing 'sector' data
+listings.dropna(subset=['Sector'],inplace=True)
+
+# Select companies with IPO Year before 2019
+listings = listings[listings['IPO Year']<2019]
+
+# Inspect the new listings data
+print(listings)
+
+# Show the number of companies per sector
+print(listings.groupby('Sector').size())
+
+Sector
+Basic Industries         104
+Capital Goods            143
+Consumer Durables         55
+Consumer Non-Durables     89
+Consumer Services        402
+Energy                   144
+Finance                  351
+Health Care              445
+Miscellaneous             68
+Public Utilities         104
+Technology               386
+Transportation            58
+
+
+>>>>>>> sample  get the largest market stock capitalization per sector
+
+# Select largest company for each sector
+components = listings.groupby('Sector')['Market Capitalization'].nlargest(1)
+
+# Print components, sorted by market cap
+print(components)
+
+# Select stock symbols and print the result
+tickers = components.index.get_level_values('Stock Symbol')
+print(tickers)
+
+# Print company name, market cap, and last price for each component 
+info_cols =['Company Name','Market Capitalization', 'Last Sale']
+print(listings.loc[tickers,info_cols])
+
+Company Name  Market Capitalization  Last Sale
+Stock Symbol                                                                      
+Stock Symbol                                                                      
+AAPL                                  Apple Inc.             740,024.47     141.05
+AMZN                            Amazon.com, Inc.             422,138.53     884.67
+MA                       Mastercard Incorporated             123,330.09     111.22
+AMGN                                  Amgen Inc.             118,927.21     161.61
+UPS                  United Parcel Service, Inc.              90,180.89     103.74
+GS               Goldman Sachs Group, Inc. (The)              88,840.59     223.32
+RIO                                Rio Tinto Plc              70,431.48      38.94
+TEF                                Telefonica SA              54,609.81      10.84
+EL            Estee Lauder Companies, Inc. (The)              31,122.51      84.94
+ILMN                              Illumina, Inc.              25,409.38     173.68
+PAA           Plains All American Pipeline, L.P.              22,223.00      30.72
+CPRT                                Copart, Inc.              13,620.92      29.65
+
+
+>>>>>  plot the returns
+
+Calculate the price return for the index components by dividing the last row of stock_prices by the first, subtracting 1 and multiplying by 100. Assign the result to price_return.
+
+# Print tickers
+print(tickers)
+
+# Import prices and inspect result
+stock_prices = pd.read_csv('stock_prices.csv', parse_dates=['Date'], index_col='Date')
+print(stock_prices.info())
+
+# Calculate the returns
+price_return = stock_prices.iloc[-1].div(stock_prices.iloc[0]).sub(1).mul(100)
+
+# Plot horizontal bar chart of sorted price_return   
+price_return.sort_values().plot(kind='barh', title='Stock Price Returns')
+plt.show()
+
+
+price_return.AAPL    278.868171
+AMGN    153.309078
+AMZN    460.022405
+CPRT    204.395604
+EL      215.162752
+GS       38.346429
+ILMN    319.116203
+MA      302.063863
+PAA      19.592593
+RIO     -31.358201
+TEF     -67.775832
+UPS      97.043658
+
+>>>>>>> build the value weighted index
+
+1. number of shares
+2. stock price series
+
+aggregate market value per period
+
+normalize the index to start at 100
+
+components
+1. stock symbol
+2. company name
+3. market capitalization
+4. last price
+
+shares= components['Market Capitalization'].div(components['Last Sale'])
+
+stock_prices = pd.read_csv('stock_prices.csv', parse_dates=['Date'], index_col='Date')
+
+
+Market capitalization = Number of shares * share price
+
+market_cap_series = data.mul(no_shares)
+
+using the first day of the month with the last day of the month for the ticker symbols
+
+
+market_cap_series.first('D').append(market_cap_series.last('D'))
+
+agg_mcap= market_cap_series.sum(axis=1) #sum each row for total market cap
+agg_mcap(title='Aggregate Market Cap')
+
+
+index= agg_mcap.div(agg_mcap.iloc[0]).mul(100) #divide by 1st value
+index.plot(title='Market-Cap Weighted Index')
+
+
+>>>>> sample
+
+tickers=['RIO', 'ILMN', 'CPRT', 'EL', 'AMZN', 'PAA', 'GS', 'AMGN', 'MA', 'TEF', 'AAPL', 'UPS']
+
+
+components = listings.loc[tickers, ['Market Capitalization', 'Last Sale']]
+
+# Print the first rows of components
+print(components.head())
+
+Market Capitalization  Last Sale
+Stock Symbol                                  
+RIO                    70431.476895      38.94
+ILMN                   25409.384000     173.68
+CPRT                   13620.922869      29.65
+EL                     31122.510011      84.94
+AMZN                  422138.530626     884.67
+
+# Select components and relevant columns from listings
+components = listings.loc[tickers, ['Market Capitalization', 'Last Sale']]
+
+# Print the first rows of components
+print(components.head())
+
+# Calculate the number of shares here
+no_shares = components['Market Capitalization'].div(components['Last Sale'])
+
+# Print the sorted no_shares
+print(no_shares.sort_values(ascending=False))
+
+Stock Symbol
+AAPL    5246.540000
+TEF     5037.804990
+RIO     1808.717948
+MA      1108.884100
+UPS      869.297154
+AMGN     735.890171
+PAA      723.404994
+AMZN     477.170618
+CPRT     459.390316
+GS       397.817439
+EL       366.405816
+ILMN     146.300000
+
+>>>>>>>> sample get the first price and last price and plot it on a horzontal bar chart
+
+
+# Select the number of shares
+no_shares = components['Market Capitalization'].div(components['Last Sale'])
+print(no_shares.sort_values())
+
+# Create the series of market cap per ticker
+market_cap = stock_prices.mul(no_shares)
+
+# Select first and last market cap here
+first_value = market_cap.iloc[0]
+last_value = market_cap.iloc[-1]
+
+
+# Concatenate and plot first and last market cap here
+pd.concat([first_value,last_value],axis=1).plot(kind='barh')
+plt.show()
+
+?>>>>>  normalize the market cap per trade day
+
+# Aggregate and print the market cap per trading day
+raw_index = market_cap_series.sum(axis=1)
+print(raw_index)
+
+# Normalize the aggregate market cap here 
+index = raw_index.div(raw_index.iloc[0]).mul(100)
+print(index)
+
+# Plot the index here
+index.plot(title='Market-Cap Weighted Index')
+plt.show()
+
+Market capitalization series
+
+AAPL           AMGN           AMZN         CPRT            EL  ...             MA           PAA            RIO            TEF            UPS
+Date                                                                              ...                                                                          
+2010-01-04  160386.7278   42475.580670   63893.145750  2090.225938   8892.669154  ...   28476.143688  19531.934838  101342.466626  143829.332465   50575.708420
+2010-01-05  160701.5202   42107.635585   64270.110538  2090.225938   8859.692631  ...   28398.521801  19748.956336  102916.051241  143728.576365   50662.638135
+2010-01-06  158130.7156   41791.202811   63105.814230  2081.038131   8885.341038  ...   28343.077596  19741.722286  106063.220471  142217.234868   50288.840359
+2010-01-07  157815.9232   41408.539922   62032.180340  2067.256422   8998.926841  ...   28154.567299  19502.998638  106081.307650  139799.088473   49906.349611
+2010-01-08  158865.2312   41776.485008   63711.820915  2076.444228   9035.567423  ...   28165.656140  19568.105088  107256.974316  138892.283574   52305.609756
+2010-01-11  157501.1308   41960.457550   62180.103232  2067.256422   9119.840760  ...   27699.924818  19531.934838  106316.440983  135869.600580   54609.247214
+2010-01-12  155664.8418   41231.926281   60767.678202  2053.474713   9079.536120  ...   27688.835977  19206.402591  103169.271754  134862.039582   54244.142410
+2010-01-13  157868.3886   41599.871367   61607.498490  2035.099100   9152.817284  ...   28409.610642  19314.913340  105773.825599  136272.624980   53957.274349
+2010-01-14  156976.4768   41327.592003   60767.678202  2053.474713   9141.825109  ...   28886.430805  19358.317639  107546.369188  135768.844481   54070.282979
+2010-01-15  154353.2068   41393.822119   60667.472373  2021.317390   9116.176702  ...   29119.296466  19850.233035  105647.215343  132947.673686   53835.572747
+2010-01-19  161173.7088   42350.479341   60891.742563  2039.693003   9160.145400  ...   29363.250968  20248.105782  108432.640983  135315.442031   54113.747837
+
+[1761 rows x 12 columns]
+
+
+>>>>>>>>>>>>>evaluating index performance
+
+index return
+1. total index return
+2. contribution by component
+
+performance vs benchmark
+1. total period return
+2. rolling returns for sub periods
+
+agg_market_cap = market_cap_series.sum(axis=1)
+index=agg_market_cap.div(agg_market_cap.iloc[0]).mul(100)
+index.plot(title='Market-Cap Weighted Index')
+
+agg_market_cap.iloc[-1] - agg_market_cap.iloc[0]
+
+change = market_cap_series.first('D').append(market_cap_series.last('D'))
+change.diff().iloc[-1].sort_values()
+
+>>>>> market-cap based weights
+
+market_cap = components['Market Capitalization']
+
+weights = market_cap.div(market_cap.sum())
+weights.sort_values().mul(100)
+
+#shows the percentage of the market capitalization
+
+index_return = (index.iloc[-1] / index.iloc[0] -1) * 100  
+
+about 14% 
+
+weights_returns=weights.mul(index_returns)
+
+weighted_returns.sort_values().plot(kind='barh')
+
+
+>>>>>>>>>>>Performance vs benchmark
+
+#convert the series to a dataframe
+
+data=index.to_frame('Index')
+
+data['SP500'] = pd.read_csv('sp500.csv', parse_dates=['Date'],index_col='Date')
+
+data.SP500 = data.SP500.div(data.SP500.iloc[0],axis=0).mul(100)
+
+def multi_period_return(r):
+	return(np.prod(r+1)-1)*100
+
+data.pct_change().rolling('30D'.apply(multi_period_return).plot()
+
+>>>>>>>>>returns using index returns and market capitalizations
+
+# Calculate and print the index return here
+index_return = (index.iloc[-1]/index.iloc[0] - 1) * 100
+print(index_return)
+
+# Select the market capitalization
+market_cap = components['Market Capitalization']
+
+# Calculate the total market cap
+total_market_cap = market_cap.sum()
+
+# Calculate the component weights, and print the result
+weights = market_cap.div(total_market_cap)
+print(weights.sort_values())
+
+# Calculate and plot the contribution by component
+weights.mul(index_return).sort_values().plot(kind='barh')
+plt.show()
+
+
+>>>>>>> Add a rolling 360D window
+
+# Inspect data
+print(data.info())
+print(data.head())
+
+# Create multi_period_return function here
+def multi_period_return(r):
+    return(np.prod(r+1)-1)*100
+
+# Calculate rolling_return_360
+rolling_return_360 = data.pct_change().rolling('360D').apply(multi_period_return)
+
+# Plot rolling_return_360 here
+rolling_return_360.plot()
+plt.show()
+
+
+>>>>>>index correlation
+
+daily return correlations
+calculate among all components
+visualize the result as a heatmap
+
+daily_returns = data.pct_change()
+correlations = daily_returns.cor()
+
+sns.heatmap(correlations, annot=True)
+plt.xticks(rotation=45)
+plt.title('Daily Return Correlations')
+
+
+correlations.to_excel(excel_writer='correlations.xls',
+	sheet_name='correlations',
+	startrow=1,
+	startcol=1)
+
+
+
+data.index=data.index.date
+
+with pd.ExcelWriter('stock_data.xlsx') as writer:
+	corr.to_excel(excel_writer=writer, sheet_name='correlations')
+	data.to_excel(excel_writer=writer, sheet_name='prices')
+	data.pct_change().to_excel(writer, sheet_name='returns')
+
+
+>>>>>> sample heatmap for correlations
+
+# Inspect stock_prices here
+print(stock_prices.info())
+
+# Calculate the daily returns
+returns = stock_prices.pct_change()
+
+# Calculate and print the pairwise correlations
+correlations = returns.corr()
+print(correlations)
+
+# Plot a heatmap of daily return correlations
+
+sns.heatmap(correlations, annot=True)
+plt.xticks(rotation=45)
+plt.title('Daily Return Correlations')
+plt.show()
+
+
+
+
+
+
+
+
+>>>>>>sample  >>> compare your index with the returns of the sp500
+
+# Convert index series to dataframe here
+data = index.to_frame('Index')
+
+# Normalize djia series and add as new column to data
+djia = djia.div(djia.iloc[0]).mul(100)
+data['DJIA'] = djia
+
+# Show total return for both index and djia
+print(data.iloc[-1].div(data.iloc[0]).sub(1).mul(100))
+
+# Plot both series
+data.plot()
+plt.show()
+
+
+>>>>>> to excel
+
+# Inspect index and stock_prices
+print(index)
+print(stock_prices)
+
+# Join index to stock_prices, and inspect the result
+data = index.join(stock_prices)
+
+
+# Create index & stock price returns
+returns = data.pct_change()
+
+# Export data and data as returns to excel
+with pd.ExcelWriter('data.xls') as writer:
+    data.to_excel(excel_writer=writer,sheet_name='data')
+    returns.to_excel(excel_writer=writer,sheet_name='returns')

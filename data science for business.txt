@@ -1,0 +1,270 @@
+what can data do
+1. describe the current state of an organization or process
+2. detect anomalous events
+3. diagnose the causes of events and behaviors
+4. predict future events
+
+why now
+1. we are collecting more data
+2. data is incredibly valuable for business
+
+data collection, experimentation and prediction, and exploration and visualization
+
+Applications of Data Science
+
+1. internet of things
+2. traditional machine learning
+3. deep learning
+
+fraud detection
+1. amount
+2. date
+3. type
+
+internet of things
+1. smart watches
+2. internet connected home security systems
+3. electronic toll collection systems
+4. building energy management systems
+
+deep learning
+1. requires more training data
+2. neurons work together
+3. used to solve complex problems
+a. image classification
+b. language learning/understanding
+
+
+>>>>> building a data science team
+
+data engineer
+a. information architects
+b. sql
+c. java, scala, python
+
+data analyst
+a. dashboard
+b. hypothesis testing
+c. data visualizing
+d. spreadsheet to analysis
+e. consume and summarize data
+
+data scientist
+a. predictions and extrapolations
+b. classifications
+c. stock price predictions
+d. image processing
+e. python or r
+
+isolate
+1. data, engineering, design & product
+embed
+1. part of squad
+2. gain experience on each business project
+hybrid
+
+
+>>>>>>>>>>>> data sources and collection
+
+common sources of data
+1. web events
+a. user_id
+b. event_name
+c. timestamp
+
+restrict access and audit logs
+
+anonymized data is sufficient for analysis
+
+General Data Projection Regulation (GDPR)
+a. applies to all data inside of the eu
+b. gives individuals control over their personal data
+c. regulates how long data can be stored
+d. mandates appropriate anonymization
+e. disclose data collection and gain consent
+
+2. customer data
+
+3. logistics data
+4. financial transactions
+
+>>>>>>>>>>>>>>solicited data
+
+create marketing collateral
+de-risk decision making
+monitor quality
+
+surveys
+customer reviews
+in-app questionaires
+focus groups
+
+types of solicited data
+qualitative: conversations, open-end questions
+quantative: multiple choice, rating scale (graph or chart)
+
+stated preference
+1. hypothetical
+2. subjective
+
+revealed preference
+1. actions
+2. purchase decisions
+
+best practices
+1. be specific about the question
+2. avoid loaded language
+3. calibrate your survey  (calibrate) (compare interest in product with another product)
+4. every question you ask will help you take a decisive action
+
+>>>>>>>>> collecting additional data
+
+a. apis (application programming interface)
+(twitter, wikipedia, yahoo, google maps)
+
+b. public records
+(data.gov, data.europa.eu)
+
+c. mechanical turk
+(asking humans to complete a task that we eventual plan on computerizing)
+(aws mturk)
+(label customer reviews, extract text from a form, highlight keys words in a sentence)
+
+>>>>>>>>> data storage and retrieval
+
+1. store the company data across many different computers
+a. cluster on premise
+2. cloud 
+a. pay another company to store data
+
+
+types of data storage
+1. email, text, video and audio, web pages, social media
+
+stored in a document database use nosql
+
+tabular and relational databases use sql
+
+storing the data is like building a library
+
+>>>>>>>>>Dashboards
+
+how analysis explore the data using dashboards
+
+timeseries tracks change over time
+
+with stack bars you can easily recognize trends
+1. categorical comparison (bar chart)
+2. comparison between the categories is over the same time period
+
+key indicator
+1. highlighting a single number
+
+powerbi tableau looker
+
+specify a use case
+
+
+>>>>>>>>>ad hoc analysis
+
+ad hoc request is a data request that is not repeated weekly or daily and it can come from many places
+
+include context
+be specific
+include a priority level and due date
+
+
+ticketing system:
+trello, jira, asana
+
+>>>>>>>>>> a/b testing
+
+control and variation
+
+1. picking a metric to track
+2. calculating a sample size
+3. running the experiment
+4. checking for significance
+
+sample size needs to be large enough so the selection is not due to random chance
+
+test sensitivity tells how small of chance in the test we are able to detect
+
+high sensitivity detects small differences
+low sensitivity detects large differences
+
+
+sensitivity that is meanful for the business model
+how does the change affect profits
+
+statistical significance then the results are not due to random chance
+
+what if the results aren't significant
+* difference is smaller than the threshold we chose
+* running our test longer won't help
+
+
+Increasing the minimum detectable difference makes our test less sensitive to changes in the purchase rate.
+
+As the overall chance of observing a successful purchase becomes more likely, it becomes easier to detect a difference in purchase rate.
+
+As the baseline conversion increases, it becomes easier to reach significance and the sample size decreases. The less sensitive our tests, the smaller the sample size we need. 
+
+
+>>>>>>>>>machine learning
+
+making predictions from data
+ml (labels and features)
+1. recommendation systems
+2. email subject optimization
+3. churn prediction
+
+customer: 1. likely to cancel or subscribe
+
+features: age, gender, date of last purchase, household dollars, profession, number of kids
+
+
+>>>>>> clustering
+
+divide the data into categories
+divide customers into segments
+anomaly detection
+unsupervised learning
+1. uses only features
+
+analyze the behavior of individual segments
+
+customer flight segmentation
+1. number of flights
+2. percent international
+3. advance planning
+4. percent business class
+
+
+>>>>>>>>>>>>>deep learning
+1. Is the training data complex
+2. Do we have a very large amount of training data
+3. Does the model need to be predictive or explanatory
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
