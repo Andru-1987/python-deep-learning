@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added Earthquake 5+ analysis
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Earthquakes%205%20plus.ipynb
+
 * I added Google timeseries analysis
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Google%20timeseries.ipynb
