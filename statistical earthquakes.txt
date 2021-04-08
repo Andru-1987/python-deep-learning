@@ -1,0 +1,474 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>Earthquake studies
+
+statistic inference is important to learn anything measureable
+
+parkfield is interesting to scientist
+
+earthquakes of 5 or higher in japan
+
+5 is a location parameter
+
+m`=m-mt ~ exponential -> where mt is the completion variable
+
+the gutenberg-richter law
+1. The magnitudes of earthquakes in a given region over a given time period are exponentially distributed.
+
+one parameter given by m mean - m t describes the earthquake magnitudes for a region.
+b=(m mean - m t) * ln 10
+
+mt=5
+
+b=(np.mean(magnitudes)-mt) * np.log(10)
+
+print(b)
+.9729
+
+
+a departure from exponentiality is called rolloff
+
+
+>>>>>>>>>>The completeness threshhold
+
+1. The magnitude mt above which all earthquakes in a region can be detected
+
+
+mags=df['mag']
+# Make the plot
+plt.plot(*dcst.ecdf(mags),marker='.',linestyle='none')
+
+# Label axes and show plot
+
+plt.xlabel('magnitude')
+plt.ylabel('ECDF')
+plt.title('2020-2021 Earthquakes mag 5+')
+plt.show()
+
+
+>>>>>> sample calculate b-value
+
+The b-value is a common metric for the seismicity of a region. 
+
+
+def b_value(mags,mt,perc=[2.5,97.5],n_reps=None):
+    """Compute the b-value and optionally its confidence interval."""
+    # Extract magnitudes above completeness threshold: m
+    m = mags[mags >= mt]
+
+    # Compute b-value: b
+    b = (np.mean(m)-mt) * np.log(10)
+
+    # Draw bootstrap replicates
+    if n_reps is None:
+        return b
+    else:
+        m_bs_reps = dcst.draw_bs_reps(m,np.mean,size=n_reps)
+
+        # Compute b-value from replicates: b_bs_reps
+        b_bs_reps = (m_bs_reps - mt) * np.log(10)
+
+        # Compute confidence interval: conf_int
+        conf_int = np.percentile(b_bs_reps,perc)
+    
+        return b, conf_int
+
+
+>>>>>>> sample >>> theortical 
+
+# Compute b-value and confidence interval
+b, conf_int = b_value(mags, mt, perc=[2.5, 97.5], n_reps=10000)
+
+# Generate samples to for theoretical ECDF
+m_theor = np.random.exponential(b/np.log(10), size=100000) + mt
+
+# Plot the theoretical CDF
+_ = plt.plot(*dcst.ecdf(m_theor))
+
+# Plot the ECDF (slicing mags >= mt)
+_ = plt.plot(*dcst.ecdf(mags[mags >= mt]), marker='.', linestyle='none')
+
+# Pretty up and show the plot
+_ = plt.xlabel('magnitude')
+_ = plt.ylabel('ECDF')
+_ = plt.xlim(2.8, 6.2)
+plt.show()
+
+# Report the results
+print("""
+b-value: {0:.2f}
+95% conf int: [{1:.2f}, {2:.2f}]""".format(b, *conf_int))
+
+
+b-value: 1.08
+95% conf int: [0.94, 1.23]
+
+
+Parkfield seems to follow the Gutenberg-Richter law very well. The b-value of about 1 is typical for regions along fault zones.
+
+
+>>>>>>>>>>>Timing of major earthquakes
+
+exponential model:  assumes earthquakes act like a poisson process
+
+gaussian model: earthquakes happen within a well-defined period of time
+
+times between earth quakes
+
+the time between earthquakes is exponentially distributed
+
+
+_ = plt.plot(*dcst.ecdf(time_gap, formal=True))
+_ = plt.xlabel('time between quakes (yr)')
+_ = plt.ylable('ECDF')
+
+mean_time_gap = np.mean(time_gap)
+std_time_gap=np.std(time_gap)
+
+# get alot of samples
+time_gap_exp = np.random.exponential(mean_time_gap, size=100000)
+
+time_gap_norm = np.random.normal(
+	mean_time_gap, std_time_gap, size=100000
+)
+
+_= plt.plot(*dcst.ecdf(time_gap_exp))
+_= plt.plot(*dcst.ecdf(time_gap_norm))
+
+seems to follow the gaussian model more closely than the exponential model
+
+>>>>>>> sample >>> guassian or exponentials distribution
+
+# Compute the mean time gap: mean_time_gap
+mean_time_gap = np.mean(time_gap)
+
+# Standard deviation of the time gap: std_time_gap
+std_time_gap = np.std(time_gap)
+
+# Generate theoretical Exponential distribution of timings: time_gap_exp
+time_gap_exp = np.random.exponential(mean_time_gap,size=10000)
+
+# Generate theoretical Normal distribution of timings: time_gap_norm
+time_gap_norm = np.random.normal(loc=mean_time_gap, scale=std_time_gap,size=10000)
+
+# Plot theoretical CDFs
+_ = plt.plot(*dcst.ecdf(time_gap_exp))
+_ = plt.plot(*dcst.ecdf(time_gap_norm))
+
+# Plot Parkfield ECDF
+_ = plt.plot(*dcst.ecdf(time_gap, formal=True, min_x=-10, max_x=50))
+
+# Add legend
+_ = plt.legend(('Exp.', 'Norm.'), loc='upper left')
+
+# Label axes, set limits and show plot
+_ = plt.xlabel('time gap (years)')
+_ = plt.ylabel('ECDF')
+_ = plt.xlim(-10, 50)
+plt.show()
+
+>>>>> include the 2.5, 50, and 97.5 percentile
+
+# Draw samples from the Exponential distribution: exp_samples
+exp_samples = np.random.exponential(mean_time_gap,size=100000)
+
+# Draw samples from the Normal distribution: norm_samples
+norm_samples = np.random.normal(mean_time_gap, std_time_gap,size=100000)
+
+# No earthquake as of today, so only keep samples that are long enough
+exp_samples = exp_samples[exp_samples > today - last_quake]
+norm_samples = norm_samples[norm_samples > today - last_quake]
+
+# Compute the confidence intervals with medians
+conf_int_exp = np.percentile(exp_samples, [2.5, 50, 97.5]) + last_quake
+conf_int_norm = np.percentile(norm_samples, [2.5, 50, 97.5]) + last_quake
+
+# Print the results
+print('Exponential:', conf_int_exp)
+print('     Normal:', conf_int_norm)
+
+
+output:
+
+Exponential: [2021.89695573 2038.23968084 2111.47477078]
+     Normal: [2021.95112731 2031.15893327 2046.63749396]
+
+
+The Gaussian model says the next earthquake is almost sure to be in the next few decades, but the Exponential model says we may very well have to wait longer.
+
+
+>>>>>>>>>>The parkfield prediction
+
+linear regression predicted parkfield earthquake in 1983
+
+it came in 2004
+
+>>>>>> hypothesis test that the nankai megathrust earthquakes are normal distributed
+
+hypothesis: The time between nankai trough earthquakes is normally distributed with a mean and standard deviation as calculated from the data
+
+at least as extreme as:
+
+the maximum distance between the [[theortical ecdf]] and the [[gaussian ecdf]] is call the kolmogorov-smirnov statistic
+
+the test statistic: kolmogorov-smirnov statistic
+
+at least as extreme as >= observed K-S statistic
+
+
+simulating the null hypothesis:
+1. draw and store 10,000 samples out of the theortical distribution
+2. draw n samples out of the theortical distribution
+3. compute the k-s statistic from the samples
+
+#generate samples from theortical distribution
+x_f = np.random.normal(mean_time_gap, std_time_gap, size=10000)
+
+#initialize k-s replicates
+reps=np.empty(1000)
+
+for i in range(1000):
+	x_sample=np.random.normal(mean_time_gap, std_time_gap, size=len(time_gap)
+	)
+	reps[i]=ks_stat(x_samp,x_f)
+
+p_val = np.sum(reps >= ks_stat(time_gap,x_f))/1000
+
+
+
+
+>>>> sample ks_stat
+
+def ks_stat(data1, data2):
+    # Compute ECDF from data: x, y
+    x,y=dcst.ecdf(data1)
+    
+    # Compute corresponding values of the target CDF
+    cdf = dcst.ecdf_formal(x,data2)
+
+    # Compute distances between concave corners and CDF
+    D_top = y - cdf
+
+    # Compute distance between convex corners and CDF
+    D_bottom = cdf - y + 1/len(data1)
+
+    return np.max((D_top, D_bottom))
+
+#This will allow you to draw K-S replicates for use in K-S tests
+
+def draw_ks_reps(n, f, args=(), size=10000, n_reps=10000):
+    # Generate samples from target distribution
+    x_f = f(*args,size=size)
+    
+    # Initialize K-S replicates
+    reps = np.empty(n_reps)
+    
+    # Draw replicates
+    for i in range(n_reps):
+        # Draw samples for comparison
+        x_samp = f(*args, size=n)
+        
+        # Compute K-S statistic
+        reps[i] = dcst.ks_stat(x_samp, x_f)
+
+    return reps
+
+
+# Draw target distribution: x_f
+x_f = np.random.exponential(mean_time_gap,size=10000)
+
+# Compute K-S stat: d
+d = dcst.ks_stat(time_gap,x_f)
+
+# Draw K-S replicates: reps
+reps = dcst.draw_ks_reps(len(time_gap), np.random.exponential, 
+                         args=(mean_time_gap,), size=10000, n_reps=10000)
+
+# Compute and print p-value
+p_val = np.sum(reps >= d) / 10000
+print('p =', p_val)
+
+output:
+p=0.2502
+
+not exponentially distributed
+
+
+>>>>>>>>>>>> variations in earthquake frequency and seismicity
+
+high pressure injecting of fluids may cause earthquakes
+
+waste water injection wells
+
+
+there seems to be a correlation between injection wells and earthquakes
+
+
+
+
+>>>>> sample time vs magnitude
+
+# Plot time vs. magnitude
+
+plt.plot(time,mags,marker='.',linestyle='none')
+# Label axes and show the plot
+plt.xlabel('time (year)')
+plt.ylabel('magnitude')
+plt.show()
+
+
+>>>> sample  
+
+To compare, compute the mean time between earthquakes of magnitude 3 and larger from 1980 through 2009 and also from 2010 through mid-2017. 
+
+# Compute mean interearthquake time
+mean_dt_pre = np.mean(dt_pre)
+mean_dt_post = np.mean(dt_post)
+
+# Draw 10,000 bootstrap replicates of the mean
+bs_reps_pre = dcst.draw_bs_reps(dt_pre,np.mean,size=10000)
+bs_reps_post = dcst.draw_bs_reps(dt_post,np.mean,size=10000)
+
+# Compute the confidence interval
+conf_int_pre = np.percentile(bs_reps_pre,[2.5,97.5])
+conf_int_post = np.percentile(bs_reps_post,[2.5,97.5])
+
+# Print the results
+print("""1980 through 2009
+mean time gap: {0:.2f} days
+95% conf int: [{1:.2f}, {2:.2f}] days""".format(mean_dt_pre, *conf_int_pre))
+
+print("""
+2010 through mid-2017
+mean time gap: {0:.2f} days
+95% conf int: [{1:.2f}, {2:.2f}] days""".format(mean_dt_post, *conf_int_post))
+
+
+output:
+
+1980 through 2009
+    mean time gap: 204.61 days
+    95% conf int: [138.45, 276.83] days
+
+
+2010 through mid-2017
+mean time gap: 1.12 days
+95% conf int: [0.97, 1.30] days
+
+>>>>>>>>>>.sample  >> test the null hypothesis that the pre and post are the same
+
+# Compute the observed test statistic
+mean_dt_diff = mean_dt_pre - mean_dt_post
+
+# Shift the post-2010 data to have the same mean as the pre-2010 data
+dt_post_shift = dt_post - mean_dt_post + mean_dt_pre
+
+# Compute 10,000 bootstrap replicates from arrays
+bs_reps_pre = dcst.draw_bs_reps(dt_pre,np.mean,size=10000)
+bs_reps_post = dcst.draw_bs_reps(dt_post_shift,np.mean,size=10000)
+
+# Get replicates of difference of means
+bs_reps =  bs_reps_pre-bs_reps_post
+
+# Compute and print the p-value
+p_val = np.sum(bs_reps >= mean_dt_diff) / 10000
+print('p =', p_val)
+
+output
+
+p = 0.0
+
+In 10,000 samples, not one had a test statistic greater than was was observed, reject the null hypothesis that pre and post are the same
+
+If the p-value is less than 0.05, we reject the null hypothesis that there's no difference between the means and conclude that a significant difference does exist. 
+
+If the p-value is larger than 0.05, we cannot conclude that a significant difference exists. 
+
+
+Below 0.05, significant. Over 0.05, not significant. 
+
+>>>>>>>>>>>>>>>> magnitudes in oklahoma
+
+verify the gutenberg-richter law holds before and after 2010
+b-value
+perform hypothesis test
+
+>>>>>> 1980 through 2009, 2010 through mid 2017
+
+
+# Get magnitudes before and after 2010
+mags_pre = mags[time < 2010]
+mags_post = mags[time >= 2010]
+
+# Generate ECDFs
+
+_ = plt.plot(*dcst.ecdf(mags_pre), marker='.',linestyle='none')
+
+_ = plt.plot(*dcst.ecdf(mags_post), marker='.',linestyle='none')
+
+# Label axes and show plot
+_ = plt.xlabel('magnitude')
+_ = plt.ylabel('ECDF')
+plt.legend(('1980 though 2009', '2010 through mid-2017'), loc='upper left')
+plt.show()
+
+Both curves seem to follow the Gutenberg-Richter Law
+
+>>>>> sample >>> b-value
+
+# Compute b-value and confidence interval for pre-2010
+b_pre, conf_int_pre = b_value(mags_pre,mt, perc=[2.5,97.5], n_reps=10000)
+
+# Compute b-value and confidence interval for post-2010
+b_post, conf_int_post = b_value(mags_post,mt, perc=[2.5,97.5], n_reps=10000)
+
+# Report the results
+print("""
+1980 through 2009
+b-value: {0:.2f}
+95% conf int: [{1:.2f}, {2:.2f}]
+
+2010 through mid-2017
+b-value: {3:.2f}
+95% conf int: [{4:.2f}, {5:.2f}]
+""".format(b_pre, *conf_int_pre, b_post, *conf_int_post))
+
+output:
+
+1980 through 2009
+b-value: 0.74
+95% conf int: [0.54, 0.97]
+
+2010 through mid-2017
+b-value: 0.62
+95% conf int: [0.60, 0.65]
+
+The confidence interval for the b-value for recent earthquakes is tighter than for earlier ones because there are many more recent ones. Still, the confidence intervals overlap, and we can perform a hypothesis test to see if we might get these results if the b-values are actually the same.
+
+
+>>>>>> sample
+
+
+# Only magnitudes above completeness threshold
+mags_pre = mags_pre[mags_pre >= mt]
+mags_post = mags_post[mags_post >= mt]
+
+# Observed difference in mean magnitudes: diff_obs
+diff_obs = np.mean(mags_post)-np.mean(mags_pre)
+
+# Generate permutation replicates: perm_reps
+perm_reps = dcst.draw_perm_reps(mags_post,mags_pre,dcst.diff_of_means,size=10000)
+
+# Compute and print p-value
+p_val = np.sum(perm_reps < diff_obs) / 10000
+print('p =', p_val)
+
+output:
+
+p = 0.1048 accept the null hypothesis and it is statistically significant
+
+
+A p-value around 0.1 suggests that the observed magnitudes are commensurate with there being no change in b-value after wastewater injection began
+
+
+
+
+

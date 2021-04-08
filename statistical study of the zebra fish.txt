@@ -1,0 +1,366 @@
+zebra fish
+melatonine
+1. wild type
+2. mutant
+
+
+The mutant fish are more active at night
+
+active bout: a period of time where a fish is consistently active.
+
+active bout length: number of consecutive minutes with activity
+
+probability distribution: a mathematical description of outcomes
+
+distributon types: uniform, binomial, poisson, normal, expoential
+
+poisson process: the timing of the next event is completely independent of when the previous event happened
+
+story of the exponential distribution: the waiting time between arrivals of a poisson process is exponentially distributed
+
+def ecdf(data):
+    """Compute ECDF for a one-dimensional array of measurements."""
+    # Number of data points: n
+    n =len(data)
+
+    # x-data for the ECDF: x
+    x = np.sort(data)
+
+    # y-data for the ECDF: y
+    y = np.arange(1,n+1) / n
+
+    return x, y
+
+x,y = ecdf(nuclear_incident_times)
+
+_=plt.plot(x,y, marker='.', linestyle='none')
+
+print('70% of events happened less than 100 days apart')
+
+this also could apply to accidents apart
+
+
+ecdf stands for empirical cumulative density function
+
+nuclear incidents are described by a poisson process.
+
+import dc_stat_think as dcst
+
+dcst.pearson_r
+pip install dc_stat_think
+
+
+x,y = dcst.ecdf(nuclear_incident_times)
+
+
+>>>>>>>> sample   widly vs mutate zebra fish
+
+# Import the dc_stat_think module as dcst
+import dc_stat_think as dcst
+
+# Generate x and y values for plotting ECDFs
+x_wt, y_wt = dcst.ecdf(bout_lengths_wt)
+x_mut,y_mut= dcst.ecdf(bout_lengths_mut)
+
+# Plot the ECDFs
+_ = plt.plot(x_wt, y_wt, marker='.', linestyle='none')
+_ = plt.plot(x_mut, y_mut, marker='.', linestyle='none')
+
+# Make a legend, label axes, and show plot
+_ = plt.legend(('wt', 'mut'))
+_ = plt.xlabel('active bout length (min)')
+_ = plt.ylabel('ECDF')
+plt.show()
+
+
+The bout lengths appear Exponentially distributed, which implies that exiting an active bout to rest is a Poisson process; the fish have no apparent memory about when they became active.
+
+
+>>>>>>>>>>> Confident intervals
+
+"exploratory data analysis can never be the whole story, but nothing else can serve as a foundation stone, as the first step." john turkey
+
+optimal parameter value
+
+optimal parameter: the values of the parameter of a probability distribution that best describes the data
+
+optimal parameter for expoential distribution: computed from the mean of the data
+
+
+nuclear incident data
+np.mean(nuclear_incident_times)
+
+87.140 days
+
+how confident are we in this value
+
+1. resample array of data
+
+bs_sample=np.random.choice(
+	nuclear_incident_times,
+	replace=True,
+	size=len(inter_times)
+)
+
+we get a slightly different value
+
+1. we build a bootstrap replicates
+2. the min and max of the bootstrap replicate is the confidence interval
+
+dcst.draw_bs_reps()
+
+bs_reps=dsct.draw_bs_reps(
+	nuclear_incident_times,np.mean,
+	size=10000
+)
+
+draws 10,000 replicates from the data
+
+The bootstrap confidence interval
+1. if we repeated measurements over and over again, p% of the observed values would lie within the p% confidence interval
+
+
+>>>>>> the bootstrap confidence interval
+
+np.percentile(bs_reps,[2.5,97.5])
+
+output array[73.31,102.39])
+
+
+
+>>>>>>> bootstrap confidence interval
+
+# Compute mean active bout length
+mean_wt = np.mean(bout_lengths_wt)
+mean_mut = np.mean(bout_lengths_mut)
+
+# Draw bootstrap replicates
+bs_reps_wt = dcst.draw_bs_reps(bout_lengths_wt, np.mean, size=10000)
+bs_reps_mut = dcst.draw_bs_reps(bout_lengths_mut, np.mean, size=10000)
+
+
+# Compute 95% confidence intervals
+conf_int_wt = np.percentile(bs_reps_wt, [2.5,97.5])
+conf_int_mut = np.percentile(bs_reps_mut, [2.5,97.5])
+
+# Print the results
+print("""
+wt:  mean = {0:.3f} min., conf. int. = [{1:.1f}, {2:.1f}] min.
+mut: mean = {3:.3f} min., conf. int. = [{4:.1f}, {5:.1f}] min.
+""".format(mean_wt, *conf_int_wt, mean_mut, *conf_int_mut))
+
+mean bout length
+
+wt:  mean = 3.874 min., conf. int. = [3.6, 4.1] min.
+    mut: mean = 6.543 min., conf. int. = [6.1, 7.0] min.
+
+
+the mutation zebra is more active for longer periods of time
+
+>>>>>>>>>>>>permutation and hypothesis tests
+
+
+wild type: no mutations
+heterozygote: mutation of one of two chromosomes
+mutant: mutation on both chromosomes
+
+    
+heterozygote effect is much smaller
+
+test the hypothesis that there is no difference between the wild zebra and the heterozygote zebra fist
+
+assessment of how reasonable the observed data are assuming a hypothesis is true
+
+p-value
+
+the probability of obtaining a value of your test statistic that is at least as extreme as what was observed, under the assumption the null hypothesis is true.
+
+>>>>>Test statistic
+
+1. a single number that can be computed from observed data and from data you simulate under the null hypothesis
+
+2.  serves as a basic of comparison
+
+simulate the data as if the null hypothesis were true.  for each of the simulated data compute the test statistic.  the p-value is where the test statistic is as extreme as the real data.
+
+null hypothesis: the active bout lengths of wild type and heterozygotic fish are identically distributed
+
+test statistics: difference in mean active bout length between heterozugotes and wild type
+
+at least as extreme as: test statistic is greater than or equal to what was observed.
+
+>>>>>Permutation test
+
+for each replicate:
+1. scramble labels of data points
+2. compute test statistic
+
+perm_reps=dcst.draw_perm_reps(
+	data_a,data_b, dcst.diff_of_means, size=10000
+)
+
+data_a and data_b are the two datasets that your are comparing in the hypothesis test
+
+p_val = np.sum(perm_reps >= diff_means_obs)/len(perm_reps)
+
+
+
+>>>>>> p-value test of the wild type same as heterozygote 
+
+# Compute the difference of means: diff_means_exp
+#print(len(bout_lengths_wt),len(bout_lengths_het))
+
+diff_means_exp = np.mean(bout_lengths_het) - np.mean(bout_lengths_wt)
+
+
+# Draw permutation replicates: perm_reps
+perm_reps = dcst.draw_perm_reps(bout_lengths_het, bout_lengths_wt, 
+                              dcst.diff_of_means, size=10000)
+
+# Compute the p-value: p-val
+p_val = np.sum(perm_reps >= diff_means_exp)/len(perm_reps)
+
+# Print the result
+print('p =', p_val)
+
+p = 0.0009
+
+heterozygote  zebra are the same as wild type
+
+>>>>>   boot strap the null hypothesis
+
+# Concatenate arrays: bout_lengths_concat
+bout_lengths_concat = np.concatenate((bout_lengths_wt, bout_lengths_het))
+# Compute mean of all bout_lengths: mean_bout_length
+mean_bout_length = np.mean(bout_lengths_concat)
+
+# Generate shifted arrays
+wt_shifted = bout_lengths_wt - np.mean(bout_lengths_wt) + mean_bout_length
+het_shifted = bout_lengths_het - np.mean(bout_lengths_het) + mean_bout_length
+
+
+# Compute 10,000 bootstrap replicates from shifted arrays
+bs_reps_wt = dcst.draw_bs_reps(wt_shifted, np.mean, size=10000)
+bs_reps_het = dcst.draw_bs_reps(het_shifted, np.mean, size=10000)
+
+# Get replicates of difference of means: bs_replicates
+bs_reps = bs_reps_het - bs_reps_wt
+
+# Compute and print p-value: p
+p = np.sum(bs_reps >= diff_means_exp) / len(bs_reps)
+print('p-value =', p)
+
+p-value = 0.0003
+
+>>>>>>>>>> Linear regression and pairs bootstrap
+the growth of bacteria is not linear, but if I apply log the plot is linear. 
+
+_ = plt.semilogy(t,bac_area, marker='.', linestyle='none')
+
+_ = plt.xlabel('time (hr)')
+_ = plt.ylabel('area (sq. um)')
+plt.show()
+
+linear regression with np.polyfit()
+
+
+slope, intercept = np.polyfit(t,bac_area,1)
+
+1 order for a linear regression, polynomial of degree 1
+
+t_theor = np.array([0,14])
+
+bac_area_theor=slope * t_theor + intercept
+
+_= plt.plot(t, bac_area, marker='.',linestyle='none')
+_= plt.plot(t_theor, back_area_theor)
+_= plt.xlabel('time (hr)')
+_= plt.ylabel('area (sq. um)')
+plt.show()
+
+slope, intercept = np.polyfit(t, np.log(bac_area),1)
+
+
+t_theor = np.array([0,14])
+
+bac_area_theor=np.exp(slope * t_theor + intercept)
+
+>>>>>>>>>>>>>Pairs bootstrap
+
+pairs bootstrap is a way to get confidence intervals for regression parameters
+
+1. resample data in pairs
+2. compute slope and intercept from the resample data
+
+3. compute confidence intervals from percentiles of bootstrap replicates
+
+slope_reps, int_reps = dcst.draw_bs_pairs_linreg(
+	x_data,y_data,size=10000)
+)
+
+slop_confidence_interval = np.percentile(slope_reps,[2.5,97.5])
+
+
+>>>>>>>>>> sample
+
+The time points, in units of hours, are stored in the numpy array t and the bacterial area, in units of square micrometers, is stored in bac_area.
+
+# Compute logarithm of the bacterial area: log_bac_area
+log_bac_area = np.log(bac_area)
+
+# Compute the slope and intercept: growth_rate, log_a0
+growth_rate, log_a0 = np.polyfit(t,log_bac_area,1)
+
+# Draw 10,000 pairs bootstrap replicates: growth_rate_bs_reps, log_a0_bs_reps
+
+growth_rate_bs_reps, log_a0_bs_reps =dcst.draw_bs_pairs_linreg(
+    t,log_bac_area, size=10000
+)
+    
+# Compute confidence intervals: growth_rate_conf_int
+growth_rate_conf_int = np.percentile(growth_rate_bs_reps,[2.5,97.5])
+
+# Print the result to the screen
+print("""
+Growth rate: {0:.4f} 1/hour
+95% conf int: [{1:.4f}, {2:.4f}] 1/hour
+""".format(growth_rate, *growth_rate_conf_int))
+
+
+output
+
+Growth rate: 0.2301 1/hour
+95% conf int: [0.2266, 0.2337] 1/hour
+
+
+# Plot data points in a semilog-y plot with axis labeles
+_ = plt.semilogy(t, bac_area, marker='.', linestyle='none')
+
+# Generate x-values for the bootstrap lines: t_bs
+t_bs = np.array([0, 14])
+
+# Plot the first 100 bootstrap lines
+for i in range(100):
+    y = np.exp(growth_rate_bs_reps[i] * t_bs + log_a0_bs_reps[i])
+    _ = plt.semilogy(t_bs, y, linewidth=0.5, alpha=0.05, color='red')
+    
+# Label axes and show plot
+_ = plt.xlabel('time (hr)')
+_ = plt.ylabel('area (sq. µm)')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
