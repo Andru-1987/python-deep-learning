@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I added probability analysis of class room size for different schools in 1938
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/School%20Size%20Probablity.ipynb
+
 * I added Earthquake 5+ analysis
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Earthquakes%205%20plus.ipynb
