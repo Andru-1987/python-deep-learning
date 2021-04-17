@@ -1,8 +1,11 @@
 # python-deep-learning
 python deep learning notebooks
 
+* I add meat consumption trends time series analysis
 
-* I added co2 timeseries analysis
+https://github.com/dnishimoto/python-deep-learning/blob/master/Meat%20volume%20timeseries.ipynb
+
+* I added co2 time series analysis
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/CO2%20timeseries%20analysis.ipynb
 
