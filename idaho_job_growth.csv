@@ -1,0 +1,165 @@
+Code,Industry,employment_2018,employment_2028
+00-0000,Total Employment,780222.00,875812.00
+10-1000,Goods Producing Industries,142189.00,167454.00
+Oct-00,Service Producing Industries,594235.00,663158.00
+00-0671,Self Employed & Unpaid Family,43798.00,45200.00
+10-1000,Goods Producing,142189.00,167454.00
+10-1100,Natural Resources & Mining,26626.00,28467.00
+11-0000,"Agriculture, Forestry, Fishing & Hunting",24456.00,26427.00
+11-1000,Crop Production,8241.00,8587.00
+Nov-00,Animal Production,10685.00,12594.00
+10-Nov,"Beef Cattle Ranching & Farming, Including Feedlots",2548.00,3341.00
+20-Nov,Dairy Cattle & Milk Production,7248.00,8324.00
+Nov-00,Other Animal Production,889.00,929.00
+Nov-00,Forestry & Logging,1323.00,1156.00
+Nov-00,"Fishing, Hunting & Trapping",73.00,84.00
+Nov-00,Support Activities for Agriculture & Forestry,4134.00,4006.00
+21-0000,Mining,2170.00,2040.00
+21-1000,Oil & Gas Extraction,25.00,20.00
+21-2000,Mining (except Oil & Gas),1913.00,1800.00
+21-3000,Support Activities for Mining,232.00,220.00
+10-1200,Construction,47785.00,61377.00
+23-6100,Residential Building Construction,6264.00,8707.00
+23-6200,Nonresidential Building Construction,5206.00,7420.00
+23-7000,Heavy & Civil Engineering Construction,5952.00,7087.00
+23-8000,Specialty Trade Contractors,30363.00,38163.00
+23-8100,Building Foundation and Exterior Contractor,7758.00,10527.00
+23-8200,Building Equipment Contractor,11019.00,12746.00
+23-8300,Building Finishing Contractor,6053.00,7443.00
+23-8900,Other Specialty Trade Contractor,5533.00,7447.00
+10-1300,Manufacturing,67778.00,77611.00
+31-0000,Manufacturing (part a),20443.00,22727.00
+31-1000,Food Manufacturing,18804.00,20677.00
+31-1400,Fruit & Vegetable Preserving & Specialty Food Mfg,6897.00,6697.00
+31-1500,Dairy Product Manufacturing,3960.00,4672.00
+31-1600,Animal Slaughtering & Processing,2610.00,3458.00
+31-1900,Other Food Manufacturing,5337.00,5850.00
+31-2000,Beverage & Tobacco Manufacturing,1046.00,1412.00
+31-3000,Textile Mills,38.00,32.00
+31-4000,Textile Product Mills,264.00,346.00
+31-5000,Apparel Manufacturing,234.00,200.00
+31-6000,Leather & Applied Product Manufacturing,57.00,60.00
+32-0000,Manufacturing (part b),16376.00,17738.00
+32-1000,Wood Product Manufacturing,6767.00,7658.00
+32-1100,Sawmills & Wood Preservation,1951.00,1973.00
+32-1900,Other Wood Product Manufacturing,4816.00,5685.00
+32-2000,Paper Manufacturing,1829.00,1748.00
+32-3000,Printing & Related Support Activities,1224.00,1060.00
+32-4000,Petroleum and Coal Products Manufacturing,42.00,58.00
+32-5000,Chemical Manufacturing,2974.00,3233.00
+32-6000,Plastics and Rubber Products Manufacturing,1967.00,2156.00
+32-7000,Nonmetallic Mineral Product Manufacturing,1573.00,1825.00
+33-0000,Manufacturing (part c),30959.00,37146.00
+33-1000,Primary Metal Manufacturing,521.00,222.00
+33-2000,Fabricated Metal Product Manufacturing,5807.00,6575.00
+33-3000,Machinery Manufacturing,3293.00,4108.00
+33-4000,Computer & Electronic Manufacturing,12694.00,13659.00
+33-4100,Computer and Peripheral Equipment Manufacturing,2248.00,1641.00
+33-4400,Semiconductor and Other Electronic Component Manufacturing,9395.00,10303.00
+33-4900,"All Other Computer and Electronics (4-dig 3342, 3343, 3345, 3346)",1051.00,3268.00
+33-5000,"Electrical Equipment, Appliance, and Component Manufacturing",1298.00,2633.00
+33-6000,Transportation Equipment Manufacturing,3555.00,5071.00
+33-7000,Furniture and Related Product Manufacturing,1826.00,2463.00
+33-9000,Miscellaneous Manufacturing,1965.00,2414.00
+Oct-00,Service Producing ,594235.00,663158.00
+Oct-00,"Trade, Transportation, and Utilities",141194.00,152759.00
+22-0000,Utilities,3665.00,3788.00
+42-0000,Wholesale Trade,29362.00,34980.00
+42-3000,"Merchant Wholesalers, Durable Goods",15394.00,21127.00
+42-4000,"Merchant Wholesalers, Nondurable Goods",12253.00,12353.00
+42-5000,Wholesale Electronic Markets and Agents and Brokers,1715.00,1500.00
+44-0000,Retail Trade,87130.00,90667.00
+44-1000,Motor Vehicle and Parts Dealers,13921.00,14420.00
+44-2000,Furniture and Home Furnishings Stores,2254.00,2350.00
+44-3000,Electronics and Appliance Stores,2349.00,2120.00
+44-4000,Building Material and Garden Equipment and Supplies Dealers,8744.00,10874.00
+44-5000,Food and Beverage Stores,14764.00,16745.00
+44-6000,Health and Personal Care Stores,3642.00,4121.00
+44-7000,Gasoline Stations,6786.00,7209.00
+44-8000,Clothing and Clothing Accessories Stores,4474.00,5074.00
+45-1000,"Sporting Goods, Hobby, Book, and Music Stores",4500.00,4279.00
+45-2000,General Merchandise Stores,17098.00,15006.00
+45-3000,Miscellaneous Store Retailers,5450.00,5735.00
+45-4000,Nonstore Retailers,3148.00,2734.00
+48-0000,Transportation and Warehousing,21037.00,23324.00
+48-1000,Air Transportation,1450.00,1860.00
+48-3000,Water Transportation,8.00,10.00
+48-4000,Truck Transportation,10043.00,10427.00
+48-5000,Transit and Ground Passenger Transport,2450.00,2653.00
+48-6000,Pipeline Transportation,51.00,50.00
+48-7000,Scenic and Sightseeing Transportation,60.00,62.00
+48-8000,Support Activities for Transportation,2153.00,2630.00
+49-2000,Couriers and Messengers,2778.00,3102.00
+49-3000,Warehousing and Storage,2044.00,2530.00
+Oct-00,Information,9625.00,9149.00
+51-1000,Publishing Industries (except Internet),2120.00,1492.00
+51-2000,Motion Picture and Sound Recording Industries,949.00,1052.00
+51-5000,Broadcasting (except Internet),1248.00,997.00
+51-7000,Telecommunications,2830.00,2430.00
+51-8000,"Data Processing, Hosting & Related Services",606.00,783.00
+51-9000,Other Information Services,1872.00,2394.00
+Oct-00,Financial Activities,33063.00,36943.00
+52-0000,Finance & Insurance,24787.00,27325.00
+52-1000,Monetary Authority - Central Bank,3.00,3.00
+52-2000,Credit Intermediation and Related Activities,12141.00,12556.00
+52-3000,"Securities, Commodity Contracts, and Other Financial Investments and Related Activities",2470.00,2533.00
+52-4000,Insurance Carriers and Related Activities,10085.00,12053.00
+52-5000,"Funds, Trusts, and Other Financial Vehicles",88.00,180.00
+53-0000,Real Estate & Rental & Leasing,8276.00,9618.00
+53-1000,Real Estate,6162.00,7204.00
+53-2000,Rental and Leasing Services,2050.00,2354.00
+53-3000,Lessors of Nonfinancial Intangible Assets (except Copyrighted Works),64.00,60.00
+Oct-00,Professional and Business Services,92476.00,104801.00
+54-1000,"Professional, Scientific, and Technical Services",38020.00,42858.00
+55-1000,Management of Companies and Enterprises,6785.00,7836.00
+56-1000,Administrative and Support Services,43904.00,48153.00
+56-2000,Waste Management and Remediation Service,3767.00,5954.00
+Oct-00,Educational and Health Services,162896.00,193490.00
+61-0000,Educational Services (private + state + local),61099.00,68003.00
+61-1005,Private Education Employment,7212.00,9137.00
+61-1105,Private Elementary & Secondary Schools,1333.00,2059.00
+61-1205,Private Junior Colleges,164.00,140.00
+61-1305,"Private Colleges, Universities & Professional Schools",3000.00,3265.00
+61-1405,Private Business Schools & Computer Management Training,140.00,180.00
+61-1505,Private Technical & Trade Schools,601.00,653.00
+61-1605,Private Other Schools & Instruction,1394.00,2016.00
+61-1705,Private Educational Support Services,580.00,824.00
+61-1002,State Education Employment,10562.00,10723.00
+61-1102,State Government Elementary & Secondary Schools,215.00,250.00
+61-1302,"State Government Colleges, Universitites & Professional Schools",10123.00,10221.00
+61-1502,State Government  Technical & Trade Schools,224.00,252.00
+61-1003,Local Education Employment,43325.00,48143.00
+61-1103,Local Government Elementary & Secondary Schools,39942.00,43849.00
+61-1203,Local Government Junior Colleges,1969.00,2494.00
+61-1303,"Local Government Colleges, Universities & Professional Schools",964.00,1325.00
+61-1703,Local Government Education Support Services,450.00,475.00
+62-0000,Health Care and Social Assistance,101797.00,125487.00
+62-1000,Ambulatory Health Care Services,39908.00,54150.00
+62-2000,Hospital Employment (private + state + local),31268.00,36864.00
+62-2005,Private Hospital Employment,24306.00,28435.00
+62-2002,State Hospital Employment,632.00,1131.00
+62-2003,Local Hospital Employment,6330.00,7298.00
+62-3000,Nursing and Residential Care Facilities,14935.00,16813.00
+62-4000,Social Assistance,15686.00,17660.00
+Oct-00,Leisure and Hospitality,80936.00,90098.00
+71-0000,"Arts, Entertainment & Recreation",13718.00,15578.00
+71-1000,"Performing Arts, Spectator Sports, and Related Industries",1555.00,1838.00
+71-2000,"Museums, Historical Sites, and Similar Institution",523.00,577.00
+71-3000,"Amusement, Gambling, and Recreation Industries",11640.00,13163.00
+72-0000,Accomodation & Food Services,67218.00,74520.00
+72-1000,Accommodation,10335.00,11617.00
+72-2000,Food Services and Drinking Places,56883.00,62903.00
+Oct-00,Other Services (except Government),19578.00,22106.00
+81-1000,Repair and Maintenance,8155.00,9151.00
+81-2000,Personal and Laundry Services,5360.00,6237.00
+81-3000,"Religious, Grantmaking, Civic, Professional, and Similar Organizations",5156.00,5746.00
+81-4000,Private Households,907.00,972.00
+Oct-00,Public Administration,54467.00,53812.00
+91-0000,Total Federal Government Employment,13086.00,12732.00
+49-1100,Federal Postal Service,2637.00,2442.00
+62-2001,Federal Hospitals,1439.00,1958.00
+99-9100,"Federal Government, excluding Postal Service",9010.00,8480.00
+92-0000,Total State Government Employment,25848.00,25166.00
+99-9200,"State Government, excluding Education & Hospitals",14767.00,14017.00
+93-0000,Total Local Government Employment,80388.00,85477.00
+99-9300,"Local Government, excluding Education & Hospitals",30690.00,31315.00
