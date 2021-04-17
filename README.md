@@ -1,6 +1,11 @@
 # python-deep-learning
 python deep learning notebooks
 
+
+* I added co2 timeseries analysis
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/CO2%20timeseries%20analysis.ipynb
+
 * I added probability analysis of class room size for different schools in 1938
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/School%20Size%20Probablity.ipynb
