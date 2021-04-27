@@ -1,0 +1,1019 @@
+time series are a fundamental way to store and analyze many types of data
+
+# Import pandas
+import pandas as pd
+
+# Read in the file content in a DataFrame called discoveries
+discoveries = pd.read_csv(url_discoveries)
+
+# Display the first five lines of the DataFrame
+print(discoveries.head())
+
+# Print the data type of each column in discoveries
+print(discoveries.dtypes)
+
+df=pd.read_csv('co2-concentration.csv',parse_dates=['Date'],index_col='Date')
+print(df.columns)
+plt.clf()
+fig,ax = plt.subplots(figsize=(12,4))
+df['CO2'].plot(ax=ax, color='blue',linewidth=3, fontsize=12)
+plt.style.use('fivethirtyeight')
+plt.ylabel('CO2',fontsize=16)
+plt.title('CO2 Levels over time')
+#plt.style.use('ggplot')
+plt.show()
+
+print(plt.style.available)
+
+'Solarize_Light2', '_classic_test_patch', 'bmh', 'classic', 'dark_background', 'fast', 'fivethirtyeight', 'ggplot', 'grayscale', 'seaborn', 'seaborn-bright', 'seaborn-colorblind', 'seaborn-dark', 'seaborn-dark-palette', 'seaborn-darkgrid', 'seaborn-deep', 'seaborn-muted', 'seaborn-notebook', 'seaborn-paper', 'seaborn-pastel', 'seaborn-poster', 'seaborn-talk', 'seaborn-ticks', 'seaborn-white', 'seaborn-whitegrid', 'tableau-colorblind10'
+
+
+# Import the matplotlib.pyplot sub-module
+import matplotlib.pyplot as plt
+
+# Use the ggplot style
+plt.style.use('ggplot')
+ax2 = discoveries.plot()
+
+# Set the title
+ax2.set_title('ggplot Style')
+plt.show()
+
+
+# Plot a line chart of the discoveries DataFrame using the specified arguments
+ax = discoveries.plot(color='blue', figsize=(8, 3), linewidth=2, fontsize=6)
+
+# Specify the title in your plot
+ax.set_title('Number of great inventions and scientific discoveries from 1860 to 1959', fontsize=8)
+
+# Show plot
+plt.show()
+
+
+>>>>>>>>>>>>>>>> stackoverflow
+
+
+
+using barh to plot different times by start and stop ranges
+https://stackoverflow.com/questions/50883054/how-to-create-a-historical-timeline-with-python/66739012#66739012
+
+event = data_set_adj['EnglishName']
+begin = data_set_adj['Start']
+end = data_set_adj['Finish']
+length =  data_set_adj['Length']
+dynasty = data_set_adj['Dynasty']
+dynasty_col = data_set_adj['Dynasty_col']
+
+dict_dynasty = dict(zip(dynasty.unique(), range(0,4*len(dynasty.unique()),4)))
+
+levels = np.tile([-1.2,1.2, -0.8, 0.8, -0.4, 0.4],
+                 int(np.ceil(len(begin)/6)))[:len(begin)]
+
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+plt.figure(figsize=(20,10))
+
+for x in range(len(dynasty)):   
+    plt.vlines(begin.iloc[x]+length.iloc[x]/2, dict_dynasty[dynasty.iloc[x]], dict_dynasty[dynasty.iloc[x]]+levels[x], color="tab:red")
+    plt.barh(dict_dynasty[dynasty.iloc[x]], (end.iloc[x]-begin.iloc[x]), color=dynasty_col.iloc[x], height =0.3 ,left=begin.iloc[x], edgecolor = "black", alpha = 0.5)
+    if x%2==0:
+        plt.text(begin.iloc[x] + length.iloc[x]/2, 
+                 dict_dynasty[dynasty.iloc[x]]+1.6*levels[x], event.iloc[x], 
+                 ha='center', fontsize = '8')
+    else:
+        plt.text(begin.iloc[x] + length.iloc[x]/2, 
+                 dict_dynasty[dynasty.iloc[x]]+1.25*levels[x], event.iloc[x], 
+                 ha='center', fontsize = '8')
+plt.tick_params(axis='both', which='major', labelsize=15)
+plt.tick_params(axis='both', which='minor', labelsize=20)
+plt.title('Chinese Dynasties', fontsize = '25')
+plt.xlabel('Year', fontsize = '20')
+ax = plt.gca()
+ax.axes.yaxis.set_visible(False)
+plt.xlim(900, 1915)
+plt.ylim(-4,28)
+
+
+>>>>> pair plots
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_theme('notebook', style='dark')
+plt.style.use("dark_background")
+df = sns.load_dataset('iris')
+g = sns.PairGrid(df)
+g.map_upper(sns.scatterplot, color='crimson')
+g.map_lower(sns.scatterplot, color='limegreen')
+g.map_diag(plt.hist, color='skyblue')
+plt.show()
+
+plt.tight_layout()
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>>> customizing
+
+slicing time series data
+
+discoveries['1960':'1970']
+discoveries['1950-01':'1950-12']
+discoveries['1950-01-01:'1950-12-31']
+
+df_subset=discoveries['1960':'1970']
+ax=df_subset.plot(color='blue', fontsize=14)
+plt.show()
+
+
+ax.axvline(x='1969-01-01',color='red',linestyle='--')
+ax.axhline(y=100,color='green',linestyle='--')
+ax.discoveries.plot(color='blue')
+ax.set_xlabel('Date')
+ax.set_ylabel('Number of great discoveries')
+ax.axvline('1969-01-01', color='red', linestyle='--')
+ax.axhline(4,color='green', linestyle='--')
+
+ax.axvspan('1964-01-01','1968-01-01', color='red', alpha=0.5)
+
+ax.axhspan(8,6, color='green', alpha=0.2)
+c
+
+>>> sample
+
+# Select the subset of data between 1945 and 1950
+discoveries_subset_1 = discoveries['1945':'1950']
+
+# Plot the time series in your DataFrame as a blue area chart
+ax = discoveries_subset_1.plot(color='blue', fontsize=15)
+
+# Show plot
+plt.show()
+
+# Select the subset of data between 1939 and 1958
+discoveries_subset_2 =discoveries['1939':'1958']
+
+# Plot the time series in your DataFrame as a blue area chart
+ax = discoveries_subset_2.plot(color='blue', fontsize=15)
+
+# Show plot
+plt.show()
+
+# Select the subset of data between 1939 and 1958
+discoveries_subset_2 =discoveries['1939':'1958']
+
+# Plot the time series in your DataFrame as a blue area chart
+ax = discoveries_subset_2.plot(color='blue', fontsize=15)
+
+# Show plot
+plt.show()
+
+
+# Plot your the discoveries time series
+ax = discoveries.plot(color='blue', fontsize=6)
+
+# Add a vertical red shaded region
+ax.axvspan('1900-01-01', '1915-01-01', color='red', alpha=0.3)
+
+# Add a horizontal green shaded region
+ax.axhspan(6, 8, color='green', alpha=0.3)
+
+plt.show()
+
+>>>>>>>>>>>>> cleaning your data
+
+finding missing values in a dataframe
+print(df.isnull)
+print(df.isnull().sum())
+
+shows as nan in the graph
+
+df-df.fillna(method='bfill') #back fill
+
+ffill #forward fill
+
+>>>> sample
+
+# Display first seven rows of co2_levels
+print(co2_levels.head(7))
+
+datestamp    co2
+0  1958-03-29  316.1
+1  1958-04-05  317.3
+2  1958-04-12  317.6
+3  1958-04-19  317.5
+4  1958-04-26  316.4
+5  1958-05-03  316.9
+6  1958-05-10    NaN
+
+# Set datestamp column as index
+co2_levels = co2_levels.set_index('datestamp')
+
+# Print out the number of missing values
+print(co2_levels.isnull().sum())
+
+co2    59
+
+# Impute missing values with the next valid observation
+co2_levels = co2_levels.fillna(method='bfill')
+
+# Print out the number of missing values
+print(co2_levels.isnull().sum())
+
+datestamp    0
+co2          0
+
+
+>>>>>>>>>>>>>> plot aggregates of your data
+
+moving average
+
+in the field of time series analysis, a moving average can be used fore many purposes: smoothing out short-term fluctuations, removing outliers, highlighting long-term trends or cycles
+
+co2_levels_mean = co2_levels.rolling(window=52).mean()
+
+ax= co2_levels_mean.plot()
+ax.set_xlabel('Date')
+ax.set_ylabel('The values of my Y axis')
+ax.set_title('52 weeks rolling mean of my time series.)
+
+
+co2_levels_mean = df.rolling(window=52)['CO2'].mean()
+co2_levels_mean.plot(ax=ax, color='red')
+
+
+co2_levels.index.year
+co2_levels.index.month
+
+index_month = co2_levels.index.month
+
+co2_levels_by_month = co2_levels.groupby(index_month).mean()
+
+co2_levels_by_month.plot()
+
+
+
+>>>>> sample  >>> show 2 std deviations above and below the co2 data
+
+# Compute the 52 weeks rolling mean of the co2_levels DataFrame
+ma = co2_levels.rolling(window=52).mean()
+
+# Compute the 52 weeks rolling standard deviation of the co2_levels DataFrame
+mstd = co2_levels.rolling(window=52).std()
+
+# Add the upper bound column to the ma DataFrame
+ma['upper'] = ma['co2'] + (2 * mstd['co2'])
+
+# Add the lower bound column to the ma DataFrame
+ma['lower'] = ma['co2'] - (2 * mstd['co2'])
+
+# Plot the content of the ma DataFrame
+ax = ma.plot(linewidth=0.8, fontsize=6)
+
+# Specify labels, legend, and show the plot
+ax.set_xlabel('Date', fontsize=10)
+ax.set_ylabel('CO2 levels in Mauai Hawaii', fontsize=10)
+ax.set_title('Rolling mean and variance of CO2 levels\nin Mauai Hawaii from 1958 to 2001', fontsize=10)
+plt.show()
+
+
+# Get month for each dates in the index of co2_levels
+index_month = co2_levels.index.month
+
+# Compute the mean CO2 levels for each month of the year
+mean_co2_levels_by_month = co2_levels.groupby(index_month).mean()
+
+# Plot the mean CO2 levels for each month of the year
+mean_co2_levels_by_month.plot(fontsize=6)
+
+# Specify the fontsize on the legend
+plt.legend(fontsize=10)
+
+# Show plot
+plt.show()
+
+
+>>>>>>>>>>> summarizing the values in your time series data
+
+1. what is the average value of this data
+2. what is the maximum value observed in this time series
+
+.describe()
+
+df[['CO2','adjusted CO2']].boxplot()
+
+helps you visualize the distribution of your data
+
+summarizing your data with histograms
+
+fig,ax = plt.subplots(figsize=(12,4))
+df[['CO2','adjusted CO2']].hist(ax=ax)
+plt.show()
+
+
+>>>> density plots
+
+df.plot(kind='density')
+
+>>>>>> sample
+
+# Print out summary statistics of the co2_levels DataFrame
+print(co2_levels.describe())
+
+# Print out the minima of the co2 column in the co2_levels DataFrame
+print(co2_levels['co2'].min())
+
+# Print out the maxima of the co2 column in the co2_levels DataFrame
+print(co2_levels['co2'].max())
+
+co2
+count  2284.000000
+mean    339.657750
+std      17.100899
+min     313.000000
+25%     323.975000
+50%     337.700000
+75%     354.500000
+max     373.900000
+313.0
+373.9
+
+
+# Generate a boxplot
+ax = co2_levels.boxplot()
+
+# Set the labels and display the plot
+ax.set_xlabel('CO2', fontsize=10)
+ax.set_ylabel('Boxplot CO2 levels in Maui Hawaii', fontsize=10)
+plt.legend(fontsize=10)
+plt.show()
+
+
+# Generate a histogram
+ax = co2_levels.plot(kind='hist',bins=50, fontsize=6)
+
+# Set the labels and display the plot
+ax.set_xlabel('CO2', fontsize=10)
+ax.set_ylabel('Histogram of CO2 levels in Maui Hawaii', fontsize=10)
+plt.legend(fontsize=10)
+plt.show()
+
+# Display density plot of CO2 levels values
+ax = co2_levels.plot(kind='density', linewidth=4, fontsize=6)
+
+# Annotate x-axis labels
+ax.set_xlabel('CO2', fontsize=10)
+
+# Annotate y-axis labels
+ax.set_ylabel('Density plot of CO2 levels in Maui Hawaii', fontsize=10)
+
+plt.show()
+
+
+>>>>>>>>>>>>>>>>>>>>autocorrelation and partial autocorrelation
+
+autocorrelation is measured as a correlation between a time series and a delayed copy of itself
+
+values are lagged by 3 time points
+
+it is used to find repetitive patterns or periodic signal in time series
+
+autocorrelation can be applied to any signal, not just time series.
+
+import matplotlib.pyplot as plt
+from statsmodels.graphics import tsaplots
+
+fig = tsaplots.plot_acf(co2_levels['co2'], lags=40)
+plt.show()
+
+
+>>>>>>> partial autocorrelation in a time series data
+1. contrary to autocorrelation, partial correlation removes the effect of previous time points.
+
+a partial autocorrelation function of order 3 returns the correlation between our time series and the lagged values of itself by 3 time points after removing all effects attributable to lags 1 and 2
+
+
+
+fig = tsaplots.plot_pacf(co2_levels['co2'], lags=40)
+plt.show()
+
+
+print('correlations close to 1 or -1 indicate there is strong correlation between the lag time series')
+
+beyond the blue areas then the correlations are statistically significant
+
+>>>> sample
+
+# Import required libraries
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+from statsmodels.graphics import tsaplots
+
+# Display the autocorrelation plot of your time series
+fig = tsaplots.plot_acf(co2_levels['co2'], lags=40)
+
+# Show plot
+plt.show()
+
+
+If autocorrelation values are close to 0, then values between consecutive observations are not correlated with one another. Inversely, autocorrelations values close to 1 or -1 indicate that there exists strong positive or negative correlations between consecutive observations, respectively.
+
+
+# Import required libraries
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+from statsmodels.graphics import tsaplots
+
+# Display the partial autocorrelation plot of your time series
+fig = tsaplots.plot_pacf(co2_levels['co2'], lags=40)
+
+# Show plot
+plt.show()
+
+If partial autocorrelation values are close to 0, then values between observations and lagged observations are not correlated with one another. Inversely, partial autocorrelations with values close to 1 or -1 indicate that there exists strong positive or negative correlations between the lagged observations of the time series.
+
+
+>>>>>>>>> seasonality trend and noise
+
+1. seasonality: does the data display a clear periodic pattern
+
+2. trend: does the data follow a consistent upward or downward slope
+
+3. noise: are their outlier points or missing values that are not consistent with the rest of the data.
+
+import statsmodels.api as sm
+from pylab import rcParams
+
+rcParams['figure.figsize']=11,9
+decomposition=sm.tsa.seasonal_decompose(
+	co2_levels['co2'])
+
+fig=decomposition.plot()
+
+plt.show()
+
+
+returns: residual, seasonal, trend, observed
+
+print(dir(decomposition))
+
+
+print(type(df.index))
+rcParams['figure.figsize']=11,9
+decomposition=sm.tsa.seasonal_decompose(x=df['CO2'],model='additive', extrapolate_trend='freq', period=1)
+decomposition.plot()
+plt.show()
+
+decomposition_seasonal=decomposition.seasonal
+ax= decomposition_seasonal.plot(figsize=(14,2))
+ax.set_xlabel('Date')
+ax.set_ylabel('Seasonality of time series')
+ax.set_title('Seasonal values of the time series')
+plt.show()
+
+
+>>>>>> sample
+
+# Import statsmodels.api as sm
+import statsmodels.api as sm
+
+# Perform time series decompositon
+decomposition = sm.tsa.seasonal_decompose(co2_levels['co2'])
+
+# Print the seasonality component
+print(decomposition.seasonal)
+
+datestamp
+1958-03-29    1.028042
+1958-04-05    1.235242
+1958-04-12    1.412344
+
+2001-10-13   -2.351296
+2001-10-20   -2.072159
+2001-10-27   -1.802325
+2001-11-03   -1.509391
+2001-11-10   -1.284167
+2001-11-17   -1.024060
+2001-11-24   -0.791949
+2001-12-01   -0.525044
+2001-12-08   -0.392799
+2001-12-15   -0.134838
+2001-12-22    0.116056
+2001-12-29    0.285354
+
+
+# Extract the trend component
+trend = decomposition.trend
+
+# Plot the values of the trend
+ax = trend.plot(figsize=(12, 6), fontsize=6)
+
+# Specify axis labels
+ax.set_xlabel('Date', fontsize=10)
+ax.set_title('Seasonal component the CO2 time-series', fontsize=10)
+plt.show()
+
+>>>>>>>>> case project - air passengers
+
+# Plot the time series in your dataframe
+ax = airline.plot(color='blue', fontsize=12)
+
+# Add a red vertical line at the date 1955-12-01
+ax.axvline('1955-12-01', color='red', linestyle='--')
+
+# Specify the labels in your plot
+ax.set_xlabel('Date', fontsize=12)
+ax.set_ylabel('Number of Monthly Airline Passengers', fontsize=12)
+plt.show()
+
+https://www.youtube.com/watch?v=uxxkG4uKThY
+
+# Print out the number of missing values
+print(airline.isnull().sum())
+
+# Print out summary statistics of the airline DataFrame
+print(airline.describe())
+
+# Display boxplot of airline values
+ax = airline.boxplot()
+
+# Specify the title of your plot
+ax.set_title('Boxplot of Monthly Airline\nPassengers Count', fontsize=20)
+plt.show()
+
+
+# Get month for each dates from the index of airline
+index_month = airline.index.month
+
+# Compute the mean number of passengers for each month of the year
+mean_airline_by_month = airline.groupby(index_month).mean()
+
+# Plot the mean number of passengers for each month of the year
+mean_airline_by_month.plot()
+plt.legend(fontsize=20)
+plt.show()
+
+
+# Import statsmodels.api as sm
+import statsmodels.api as sm
+
+# Perform time series decompositon
+decomposition = sm.tsa.seasonal_decompose(airline)
+
+# Extract the trend and seasonal components
+trend = decomposition.trend
+seasonal = decomposition.seasonal
+
+
+# Print the first 5 rows of airline_decomposed
+print(airline_decomposed.head(5))
+
+# Plot the values of the airline_decomposed DataFrame
+ax = airline_decomposed.plot(figsize=(12, 6), fontsize=15)
+
+# Specify axis labels
+ax.set_xlabel('Date', fontsize=15)
+plt.legend(fontsize=15)
+plt.show()
+
+>>>>>>>> working with more than one time series
+
+import matplotlib.pyplot as plt
+plt.style.use('fivethirtyeight')
+ax=df.plot.area(figsize=(12,4), fontsize=14)
+plt.show()
+
+>>>>>> sample
+
+# Read in meat DataFrame
+print(url_meat)
+meat = pd.read_csv(url_meat)
+
+# Review the first five lines of the meat DataFrame
+print(meat.head(5))
+
+# Convert the date column to a datestamp type
+meat['date'] = pd.to_datetime(meat['date'])
+
+# Set the date column as the index of your DataFrame meat
+meat = meat.set_index('date')
+
+# Print the summary statistics of the DataFrame
+print(meat.describe())
+
+# Plot time series dataset
+ax = meat.plot(linewidth=2,fontsize=12)
+
+# Additional customizations
+ax.set_xlabel('Date')
+ax.legend(fontsize=15)
+
+# Show plot
+plt.show()
+
+# Plot an area chart
+ax = meat.plot.area(fontsize=12)
+
+# Additional customizations
+ax.set_xlabel('Date')
+ax.legend(fontsize=15)
+
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>>>Plot multiple time series
+
+COLUMNS=['beef', 'veal', 'pork', 'lamb_and_mutton', 'broilers','other_chicken', 'turkey']
+df_summary=df[COLUMNS].agg(['mean','sum'])
+
+plt.clf()
+ax=df[COLUMNS].plot(colormap='Dark2',figsize=(10,7))
+
+ax.table(cellText=df_summary[COLUMNS].values,colWidths=[0.3]*len(df_summary[COLUMNS].columns),\
+    rowLabels=df_summary.index,
+    colLabels=df_summary[COLUMNS].columns,
+    loc='top')
+
+plt.show()
+
+
+df.plot(subplots=True,
+	linewidth=0.5,
+	layout(2,4),
+	figsize=(16,10),
+	sharex=False,
+	sharey=False)
+
+
+>>>>> sample
+
+# Plot time series dataset using the cubehelix color palette
+ax = meat.plot(colormap='cubehelix', fontsize=15)
+
+# Additional customizations
+ax.set_xlabel('Date')
+ax.legend(fontsize=18)
+
+# Show plot
+plt.show()
+
+# Plot time series dataset using the cubehelix color palette
+ax = meat.plot(colormap='PuOr', fontsize=15)
+
+# Additional customizations
+ax.set_xlabel('Date')
+ax.legend(fontsize=18)
+
+# Show plot
+plt.show()
+
+>>>>>>> with cell data
+
+# Plot the meat data
+ax = meat.plot(fontsize=6, linewidth=1)
+
+# Add x-axis labels
+ax.set_xlabel('Date', fontsize=6)
+
+# Add summary table information to the plot
+ax.table(cellText=meat_mean.values,
+         colWidths = [0.15]*len(meat_mean.columns),
+         rowLabels=meat_mean.index,
+         colLabels=meat_mean.columns,
+         loc='top')
+
+# Specify the fontsize and location of your legend
+ax.legend(loc='upper center', bbox_to_anchor=(0.5, 0.95), ncol=3, fontsize=6)
+
+# Show plot
+plt.show()
+
+# Create a facetted graph with 2 rows and 4 columns
+meat.plot(subplots=True, 
+          layout=(2,4), 
+          sharex=False, 
+          sharey=False, 
+          colormap='viridis', 
+          fontsize=2, 
+          legend=False, 
+          linewidth=0.2)
+
+plt.show()
+
+
+>>>>>>>>>>>> Find relationship between multiple timeseries
+
+The correlation coefficient is a measure used to determine the strength or lack of relationship between two variables
+
+pearson coefficient can be used to compute the correlation coefficient between variables for which the relationship is thought to be linear
+
+kendall tau or spearman rank can be used to compute the correlation coefficient between variables for which the relationship is thought to be non-linear
+
+from scipy.stats.stats import pearsonr
+from scipy.stats.stats import spearmanr
+from scipy.stats.stats import kendalltau
+
+pearsonr(x,y)
+spearmanr(x,y)
+kendalltau(x,y)
+
+>>>>>>> correlation matrix
+
+when computing the correlation coefficient between more than two variables, you obtain a correlation matrix
+
+range:[-1,1] (negative and positive correlation)
+
+0: no relationship
+
+corr_p = meat[['beef','veal','turkey']].corr(method='pearson')
+
+(method='spearman')
+
+
+corr_p = df[COLUMNS].corr(method='pearson')
+#print(corr_p)
+cmap=sns.diverging_palette(h_neg=10, h_pos=240, as_cmap=True)
+sns.heatmap(corr_p, center=0, cmap=cmap, linewidths=1,
+annot=True, fmt=".2f")
+
+sns.clustermap(corr_mat)
+
+
+>>>>> sample
+
+# Print the correlation matrix between the beef and pork columns using the spearman method
+print(meat[['beef', 'pork']].corr(method='spearman'))
+
+# Print the correlation between beef and pork columns
+print(0.827587)
+
+# Compute the correlation between the pork, veal and turkey columns using the pearson method
+print(meat[['pork', 'veal', 'turkey']].corr(method='pearson'))
+
+# Print the correlation between veal and pork columns
+print(-0.827587)
+
+# Print the correlation between veal and turkey columns
+print(-0.768366)
+
+# Print the correlation between pork and turkey columns
+print(0.835215)
+
+
+# Import seaborn library
+import seaborn as sns
+
+# Get correlation matrix of the meat DataFrame: corr_meat
+corr_meat = meat.corr(method='spearman')
+
+
+# Customize the heatmap of the corr_meat correlation matrix
+sns.heatmap(corr_meat,
+            annot=True,
+            linewidths=0.4,
+            annot_kws={"size": 10})
+
+plt.xticks(rotation=90)
+plt.yticks(rotation=0) 
+plt.show()
+
+
+# Import seaborn library
+import seaborn as sns
+
+# Get correlation matrix of the meat DataFrame
+corr_meat = corr_meat = meat.corr(method='spearman')
+
+# Customize the heatmap of the corr_meat correlation matrix and rotate the x-axis labels
+fig = sns.clustermap(corr_meat,
+                     row_cluster=True,
+                     col_cluster=True,
+                     figsize=(10, 10))
+
+plt.setp(fig.ax_heatmap.xaxis.get_majorticklabels(), rotation=90)
+plt.setp(fig.ax_heatmap.yaxis.get_majorticklabels(), rotation=0)
+plt.show()
+
+
+>>>>>>>>>>>>>Case analysis
+
+jobs dataset
+
+# Read in jobs file
+jobs = pd.read_csv(url_jobs)
+
+# Print first five lines of your DataFrame
+print(jobs.head(5))
+
+# Check the type of each column in your DataFrame
+print(jobs.dtypes)
+
+# Convert datestamp column to a datetime object
+jobs['datetime'] = pd.to_datetime(jobs['datestamp'])
+
+# Set the datestamp columns as the index of your DataFrame
+jobs = jobs.set_index('datestamp')
+
+# Check the number of missing values in each column
+print(jobs.isnull().sum())
+
+
+# Generate a boxplot
+jobs.boxplot(fontsize=6, vert=False)
+plt.show()
+
+# Generate numerical summaries
+print(jobs.describe())
+
+# Print the name of the time series with the highest mean
+print('Agriculture')
+
+# Print the name of the time series with the highest variability
+print('Construction')
+
+
+>>>>>>>> beyond summary statistics
+
+jobs.plot(subplots=True,layout=(4,4), figsize=(20,16),sharex=True,sharey=False)
+
+plt.show()
+
+ax=jobs.plot(figsize=(20,14), colormap='Dark2')
+
+ax.axvline('2008-01-01', color='black',linestyle='--')
+
+ax.axvline('2009-01-01', color='black', linestyle='--')
+
+index_month=jobs.index.month
+jobs_by_month=jobs.groupby(index_month).mean()
+print(jobs_by_month)
+
+ax=jobs_by_month.plot(figsize=(12,5), colormap='Dark2')
+ax.legend(bbox_to_anchor=(1.0,0.5),loc='center left')
+
+
+>>>>>>> sample
+
+# A subset of the jobs DataFrame
+jobs_subset = jobs[['Finance', 'Information', 'Manufacturing', 'Construction']]
+
+# Print the first 5 rows of jobs_subset
+print(jobs_subset.head(5))
+
+# Create a facetted graph with 2 rows and 2 columns
+ax = jobs_subset.plot(subplots=True,
+                      layout=(2,2),
+                      sharex=False,
+                      sharey=False,
+                      linewidth=0.7,
+                      fontsize=3,
+                      legend=False)
+
+plt.show()
+
+# Plot all time series in the jobs DataFrame
+ax = jobs.plot(colormap='Spectral', fontsize=6, linewidth=0.8)
+
+# Set labels and legend
+ax.set_xlabel('Date', fontsize=10)
+ax.set_ylabel('Unemployment Rate', fontsize=10)
+ax.set_title('Unemployment rate of U.S. workers by industry', fontsize=10)
+ax.legend(loc='center left', bbox_to_anchor=(1.0, 0.5))
+
+# Annotate your plots with vertical lines
+ax.axvline('2001-07-01', color='blue', linestyle='--', linewidth=0.8)
+ax.axvline('2008-09-01', color='blue', linestyle='--', linewidth=0.8)
+
+# Show plot
+plt.show()
+
+>>>>>>>>>>>>effect seasonally on jobs
+
+# Extract the month from the index of jobs
+index_month = jobs.index.month
+
+# Compute the mean unemployment rate for each month
+jobs_by_month = jobs.groupby(index_month).mean()
+
+# Plot the mean unemployment rate for each month
+ax = jobs_by_month.plot(fontsize=6, linewidth=1)
+
+# Set axis labels and legend
+ax.set_xlabel('Month', fontsize=10)
+ax.set_ylabel('Mean unemployment rate', fontsize=10)
+ax.legend(bbox_to_anchor=(0.8, 0.6), fontsize=10)
+plt.show()
+
+
+>>>>>> 2008 melt down
+
+# Extract of the year in each date indices of the jobs DataFrame
+index_year = jobs.index.year
+
+# Compute the mean unemployment rate for each year
+jobs_by_year = jobs.groupby(index_year).mean()
+
+# Plot the mean unemployment rate for each year
+ax = jobs_by_year.plot(fontsize=6, linewidth=1)
+
+# Set axis labels and legend
+ax.set_xlabel('Year', fontsize=10)
+ax.set_ylabel('Mean unemployment rate', fontsize=10)
+ax.legend(bbox_to_anchor=(0.1, 0.5), fontsize=10)
+plt.show()
+
+
+>>>>>>>>>>> decomposing time series data
+
+
+my_dict={}
+
+import statsmodel.api as sm
+
+ts_names=df.columns
+
+for ts in ts_names:
+	ts_decomposition = sm.tsa.seasonal_decompose(jobs[ts])
+	my_dict[ts]=ts_decomposition
+
+
+my_dict.trend={}
+
+for ts in ts_names:
+	my_dict_trend[ts]=my_dict[ts].trend
+
+trend_df=pd.DataFrame.from_dict(my_dict_trend)
+
+print(trend_df)
+
+
+>>>> sample
+
+
+# Initialize dictionary
+jobs_decomp={}
+
+# Get the names of each time series in the DataFrame
+ts_names=jobs.columns
+
+
+# Run time series decomposition on each time series of the DataFrame
+for ts in ts_names:
+    ts_decomposition = sm.tsa.seasonal_decompose(jobs[ts])
+    jobs_decomp[ts] =ts_decomposition
+
+
+
+
+# Extract the seasonal values for the decomposition of each time series
+for ts in jobs_names:
+    jobs_seasonal[ts] = jobs_decomp[ts].seasonal
+    
+# Create a DataFrame from the jobs_seasonal dictionary
+seasonality_df = pd.DataFrame.from_dict(jobs_seasonal)
+
+# Remove the label for the index
+seasonality_df.index.name = None
+
+# Create a faceted plot of the seasonality_df DataFrame
+jobs_seasonal.plot(subplots=True,
+                   layout=(4,4),
+                   sharey=False,
+                   fontsize=2,
+                   linewidth=0.3,
+                   legend=False)
+
+# Show plot
+plt.show()
+
+
+
+>>>>>>>>>>>>>compute correlations between time series
+
+
+trend_corr = trend_df.corr(method='spearman')
+
+fig=sns.clustermap(trend_corr, annot=True, linewidth=0.4)
+
+plt.setp(fig.ax_heatmap.yaxis.get_majorticklabels(),
+rotation=0)
+
+plt.setp(fig.ax_heatmap.xaxis.get_majorticklabels(),rotation=90)
+
+>>>>> sample
+
+# Get correlation matrix of the seasonality_df DataFrame
+seasonality_corr = seasonality_df.corr(method='spearman')
+
+# Customize the clustermap of the seasonality_corr correlation matrix
+fig = sns.clustermap(seasonality_corr, annot=True, annot_kws={"size": 4}, linewidths=.4, figsize=(15, 10))
+plt.setp(fig.ax_heatmap.yaxis.get_majorticklabels(), rotation=0)
+plt.setp(fig.ax_heatmap.xaxis.get_majorticklabels(), rotation=90)
+plt.show()
+
+# Print the correlation between the seasonalities of the Government and Education & Health industries
+print(seasonality_corr)
+
+
+
+
+

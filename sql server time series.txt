@@ -1,0 +1,1299 @@
+select getdate(), getutcdate() utc_time, sysdatetime() sys_datetime,sysutcdatetime() sys_utc_datetime
+
+datetime2:sysdatetime(), sysutcdatetime() 
+
+parts:
+Year
+Month
+Day
+Day of Year
+Day of Week
+Week of year
+ISO week of year
+Minutes/seconds/millisecond/nanosecond
+
+select DatePart(year,@td) as TheYear
+select DateName(Month,@dt) as TheMonth
+select DateAdd(Day,1, @SomeTime) NextDay
+select DateAdd(Day,-1,@SomeTime) PriorDay
+
+
+declare @StartTime DateTime2(7)='2012-03-01 14:29:36'
+declare @EndTime DateTime2(7)='2012-03-01 18:00:00'
+
+Select DateDiff(Second, @StartTime, @EndTime) SecondsElapsed,
+DateDiff(Minute, @StartTime, @EndTime) MinutesElapsed,
+DateDiff(Hour, @StartTime, @EndTime) HoursElapsed
+
+>>>>> sample
+
+DECLARE
+	@BerlinWallFalls DATETIME2(7) = '1989-11-09 23:49:36.2294852';
+
+-- Fill in each date part
+SELECT
+	DATEPART(Year, @BerlinWallFalls) AS TheYear,
+	DATEPART(Month, @BerlinWallFalls) AS TheMonth,
+	DATEPART(Day, @BerlinWallFalls) AS TheDay,
+	DATEPART(DayOfYear, @BerlinWallFalls) AS TheDayOfYear,
+    -- Day of week is WEEKDAY
+	DATEPART(WEEKDAY, @BerlinWallFalls) AS TheDayOfWeek,
+	DATEPART(Week, @BerlinWallFalls) AS TheWeek,
+	DATEPART(Second, @BerlinWallFalls) AS TheSecond,
+	DATEPART(NanoSecond, @BerlinWallFalls) AS TheNanosecond;
+
+
+DECLARE
+	@BerlinWallFalls DATETIME2(7) = '1989-11-09 23:49:36.2294852';
+
+-- Fill in the function to show the name of each date part
+SELECT
+	DateName(YEAR, @BerlinWallFalls) AS TheYear,
+	DateName(MONTH, @BerlinWallFalls) AS TheMonth,
+	DateName(DAY, @BerlinWallFalls) AS TheDay,
+	DateName(DAYOFYEAR, @BerlinWallFalls) AS TheDayOfYear,
+    -- Day of week is WEEKDAY
+	DateName(WEEKDAY, @BerlinWallFalls) AS TheDayOfWeek,
+	DateName(WEEK, @BerlinWallFalls) AS TheWeek,
+	DateName(SECOND, @BerlinWallFalls) AS TheSecond,
+	DateName(NANOSECOND, @BerlinWallFalls) AS TheNanosecond;
+
+
+DECLARE
+	@LeapDay DATETIME2(7) = '2012-02-29 18:00:00';
+
+-- Fill in the date parts and intervals as needed
+SELECT
+	DATEADD(Day, -1, @LeapDay) AS PriorDay,
+	DATEADD(Day, 1, @LeapDay) AS NextDay,
+    -- For leap years, we need to move 4 years, not just 1
+	DATEADD(YEAR, -4, @LeapDay) AS PriorLeapYear,
+	DATEADD(YEAR, 4, @LeapDay) AS NextLeapYear,
+	DATEADD(Year, -1, @LeapDay) AS PriorYear;
+
+
+DECLARE
+	@PostLeapDay DATETIME2(7) = '2012-03-01 18:00:00',
+    @TwoDaysAgo DATETIME2(7);
+
+SELECT
+	@TwoDaysAgo = DATEADD(DAY, -2, @PostLeapDay);
+
+SELECT
+	@TwoDaysAgo AS TwoDaysAgo,
+	@PostLeapDay AS SomeTime,
+    -- Fill in the appropriate function and date types
+	DateDiff(Day, @TwoDaysAgo, @PostLeapDay) AS DaysDifference,
+	DateDiff(Hour, @TwoDaysAgo, @PostLeapDay) AS HoursDifference,
+	DateDiff(Minute, @TwoDaysAgo, @PostLeapDay) AS MinutesDifference;
+
+>>>> Round to Day, Hour, and Minute
+
+SELECT
+	DATEADD(DAY, DATEDIFF(DAY, 0, @SomeTime), 0) AS RoundedToDay,
+	DATEADD(HOUR, DATEDIFF(HOUR, 0, @SomeTime), 0) AS RoundedToHour,
+	DATEADD(MINUTE, DATEDIFF(MINUTE, 0, @SomeTime), 0) AS RoundedToMinute;
+
+>>>>>>>>>>>>>>formatting functions
+
+Cast() : converting one data type to another data type
+Convert(): converts data types, control on the formatting
+Format(): more flexibilty
+
+
+declare
+   @SomeDate Datetime2(3) = '1991-06-04 08:00:09',
+   @SomeString NVarchar(30)='1991-06-04 08:00:09',
+   @OldDateTime Datetime = '1991-06-04 08:00:09'
+
+select Cast(@SomeDate as nvarchar(30)) DateToString,
+Cast(@SomeString as datetime2(3)) as StringToDate,
+Cast(@OldDateTime as nvarchar(30)) as OldDateToString;
+
+declare
+   @SomeDate Datetime2(3) = '1793-02-21 11:13:19.033'
+
+select Convert(nvarchar(30), @SomeDate,0) as DefaultForm,
+Convert(nvarchar(30), @SomeDate,1) as US_mdy,
+Convert(nvarchar(30), @SomeDate,101) as US_mmdyyyy,
+Convert(nvarchar(30), @SomeDate,120) as ODBC_sec
+
+126 - ISO8601 yyyy-mm-dd hh:mi:ss.mmm
+
+declare
+   @SomeDate Datetime2(3) = '1793-02-21 11:13:19.033'
+
+select format(@SomeDate,'d','en-US') as US_d,
+format(@SomeDate,'d','de-DE') as DE_d,
+format(@SomeDate,'D','de-DE') as DE_D,
+format(@SomeDate,'yyyy-MM-dd') as yMd
+
+
+>>>>> sample
+
+DECLARE
+	@CubsWinWorldSeries DATETIME2(3) = '2016-11-03 00:30:29.245',
+	@OlderDateType DATETIME = '2016-11-03 00:30:29.245';
+
+SELECT
+	-- Fill in the missing function calls
+	Cast(@CubsWinWorldSeries AS DATE) AS CubsWinDateForm,
+	Cast(@CubsWinWorldSeries AS NVARCHAR(30)) AS CubsWinStringForm,
+	Cast(@CubsWinWorldSeries AS DATE) AS OlderDateForm,
+	Cast(@OlderDateType AS NVARCHAR(30)) AS OlderStringForm;
+
+>>> sample
+
+DECLARE
+	@CubsWinWorldSeries DATETIME2(3) = '2016-11-03 00:30:29.245';
+
+SELECT
+	cast(cast(@CubsWinWorldSeries AS date) AS NVARCHAR(30)) AS DateStringForm;
+
+
+>>> sample
+
+DECLARE
+	@CubsWinWorldSeries DATETIME2(3) = '2016-11-03 00:30:29.245';
+
+SELECT
+	convert(Date,@CubsWinWorldSeries) AS CubsWinDateForm,
+	convert(NVARCHAR(30), @CubsWinWorldSeries,101) AS CubsWinStringForm;
+
+
+CubsWinDateForm	CubsWinStringForm
+2016-11-03	11/03/2016
+
+>>>>>sample
+
+DECLARE
+	@CubsWinWorldSeries DATETIME2(3) = '2016-11-03 00:30:29.245';
+
+SELECT
+	convert(NVARCHAR(30), @CubsWinWorldSeries, 0) AS DefaultForm,
+	convert(NVARCHAR(30), @CubsWinWorldSeries, 3) AS UK_dmy,
+	convert(NVARCHAR(30), @CubsWinWorldSeries, 1) AS US_mdy,
+	convert(NVARCHAR(30), @CubsWinWorldSeries, 103) AS UK_dmyyyy,
+	convert(NVARCHAR(30), @CubsWinWorldSeries, 101) AS US_mdyyyy;
+
+DefaultForm	UK_dmy	US_mdy	UK_dmyyyy	US_mdyyyy
+Nov  3 2016 12:30AM	03/11/16	11/03/16	03/11/2016	11/03/2016
+
+>>>>> sample >>> culture specific
+
+DECLARE
+	@Python3ReleaseDate DATETIME2(3) = '2008-12-03 19:45:00.033';
+
+SELECT
+	-- Fill in the function call and format parameter
+	format(@Python3ReleaseDate, 'd', 'en-US') AS US_d,
+	format(@Python3ReleaseDate, 'd', 'de-DE') AS DE_d,
+	-- Fill in the locale for Japan
+	format(@Python3ReleaseDate, 'd', 'jp-JP') AS JP_d,
+	format(@Python3ReleaseDate, 'd', 'zh-cn') AS CN_d;
+
+US_d	DE_d	JP_d	CN_d
+12/3/2008	03.12.2008	12/03/2008	2008/12/3
+
+DECLARE
+	@Python3ReleaseDate DATETIME2(3) = '2008-12-03 19:45:00.033';
+
+SELECT
+	-- Fill in the format parameter
+	FORMAT(@Python3ReleaseDate, 'D', 'en-US') AS US_D,
+	FORMAT(@Python3ReleaseDate, 'D', 'de-DE') AS DE_D,
+	-- Fill in the locale for Indonesia
+	FORMAT(@Python3ReleaseDate, 'D', 'id-ID') AS ID_D,
+	FORMAT(@Python3ReleaseDate, 'D', 'zh-cn') AS CN_D;
+
+US_D	DE_D	ID_D	CN_D
+Wednesday, December 3, 2008	Mittwoch, 3. Dezember 2008	Rabu, 03 Desember 2008	2008?12?3?
+
+
+DECLARE
+	@Python3ReleaseDate DATETIME2(3) = '2008-12-03 19:45:00.033';
+    
+SELECT
+	-- 20081203
+	FORMAT(@Python3ReleaseDate, 'yyyyMMdd') AS F1,
+	-- 2008-12-03
+	FORMAT(@Python3ReleaseDate, 'yyyy-MM-dd') AS F2,
+	-- Dec 03+2008 (the + is just a "+" character)
+	FORMAT(@Python3ReleaseDate, 'MMM dd+yyyy') AS F3,
+	-- 12 08 03 (month, two-digit year, day)
+	FORMAT(@Python3ReleaseDate, 'MM yy dd') AS F4,
+	-- 03 07:45 2008.00
+    -- (day hour:minute year.second)
+	FORMAT(@Python3ReleaseDate, 'dd hh:mm yyyy.ss') AS F5;
+
+F1	F2	F3	F4	F5
+20081203	2008-12-03	Dec 03+2008	12 00 08	03 07:45 2008.00
+
+
+>>>>>>>>>>> calendar tables
+
+DateKey
+Date
+Day
+DayOfWeek
+DayName
+IsAWeekEnd
+FiscalYear
+CalendarYear
+CalendarMonth
+CalendarQuarter
+
+Holiday Name
+Lunar details
+ISO week of year
+
+calendar tables simplify queries
+
+>>>>>> apply()
+
+executes on function on each row in the resultset
+
+>>>>> sample
+
+SELECT
+	c.Date
+FROM dbo.Calendar c
+WHERE
+	c.MonthName = 'December'
+	AND c.DayName = 'Tuesday'
+	AND c.CalendarYear BETWEEN 2008 AND 2010
+ORDER BY
+	c.Date;
+
+>>> sample
+
+SELECT
+	c.Date
+FROM dbo.Calendar c
+WHERE
+    -- Instead of month, use the fiscal week
+	c.FiscalWeekOfYear = 29
+    -- Instead of calendar year, use fiscal year
+	AND c.FiscalYear = 2019
+ORDER BY
+	c.Date ASC;
+
+>>>> sample
+
+SELECT
+	ir.IncidentDate,
+	c.FiscalDayOfYear,
+	c.FiscalWeekOfYear
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+    -- Incident type 3
+	ir.IncidentTypeID = 3
+    -- Fiscal year 2019
+	AND c.FiscalYear = 2019
+    -- Fiscal quarter 3
+	AND c.FiscalQuarter = 3;
+
+>>>> sample
+
+SELECT
+	ir.IncidentDate,
+	c.FiscalDayOfYear,
+	c.FiscalWeekOfYear
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+    -- Incident type 4
+	ir.IncidentTypeID = 4
+    -- Fiscal year 2019
+	AND c.FiscalYear = 2019
+    -- Beyond fiscal week of year 30
+	AND c.FiscalWeekOfYear >30
+    -- Only return weekends
+	AND c.IsWeekEnd = 1;
+
+
+>>>>>>>>>>>Dates from parts
+
+DateFromParts(year,month,day)
+TimeFromParts(hours,minute,second, fraction, precision)
+DateTimeFromParts(Year,month,day, hour, minute, second, ms)
+DateTime2FromParts(Year,month,day,hour,minute,second,fraction,precision)
+SmallDateTimeFromParts(year,month,day,hour,minute)
+DateTimeOffsetFromParts(year,month,day,hour,minute, second, fraction, hour_offset, minute_offset, precision)
+
+
+>>>>> sample
+
+select 
+DateTimeFromParts(1918,11,11,05,45,17,995) as DT,
+DateTime2FromParts(1918,11,11,05,45,17,0,0) as DT20,
+DateTime2FromParts(1918,11,11,05,45,17,995,3) as DT23,
+DateTime2FromParts(1918,11,11,05,45,17,9951234,7) as DT27v
+
+
+india 5 hours and 30 minutes ahead
+
+
+select 
+DateTimeOffsetFromParts(2009,08,14,21,00,00,0,5,30,0) IndiaTimezone,
+DateTimeOffsetFromParts(2009,08,14,21,00,00,0,5,30,0) at time zone 'utc' as utc
+
+IndiaTimezone	utc
+2009-08-14 21:00:00 +05:30	2009-08-14 15:30:00 +00:00
+
+>>>> sample
+
+-- Create dates from component parts on the calendar table
+SELECT TOP(10)
+	DATEFROMPARTS(c.CalendarYear, c.CalendarMonth, c.Day) AS CalendarDate
+FROM dbo.Calendar c
+WHERE
+	c.CalendarYear = 2017
+ORDER BY
+	c.FiscalDayOfYear ASC;
+
+It is important to note that using DATEFROMPARTS() in the WHERE clause like this can lead to performance problems with large data sets because we will need to check every row to determine if the output of DATEFROMPARTS() matches our search argument.
+
+SELECT
+	-- Mark the date and time the lunar module touched down
+    -- Use 24-hour notation for hours, so e.g., 9 PM is 21
+	DATETIME2FROMPARTS(1969, 7, 20, 20, 17, 00, 000, 0) AS TheEagleHasLanded,
+	-- Mark the date and time the lunar module took back off
+    -- Use 24-hour notation for hours, so e.g., 9 PM is 21
+	DATETIMEFROMPARTS(1969, 7, 21, 18, 54, 00, 000) AS MoonDeparture;
+
+TheEagleHasLanded	MoonDeparture
+1969-07-20 20:17:00	1969-07-21 18:54:00
+
+
+SELECT
+	-- Fill in the millisecond PRIOR TO chaos
+	DATETIMEOFFSETFROMPARTS(2038, 01, 19, 03, 14, 07, 999, 0, 0, 3) AS LastMoment,
+    -- Fill in the date and time when we will experience the Y2.038K problem
+    -- Then convert to the Eastern Standard Time time zone
+	DATETIMEOFFSETFROMPARTS(2038, 01, 19, 03, 14, 08, 0, 0, 0, 3) AT TIME ZONE 'Eastern Standard Time' AS TimeForChaos;
+
+
+LastMoment	TimeForChaos
+2038-01-19 03:14:07.9990000 +00:00	2038-01-18 22:14:08.0000000 -05:00
+
+
+>>>>>>>>>translating date string
+
+Cast string to datetimes
+
+select cast('09/14/99' as date) as usdate,
+convert(datetime2(3), 'April 4, 2019 11:52:29.998 PM') as April4
+
+select parse('25 Dezember 2014' as date using 'de-de') as Weihnachten
+
+
+>>>>>>>>>>Setting language
+
+set language='FRENCH'
+
+
+>>>> sample
+
+SELECT
+	d.DateText AS String,
+	-- Cast as DATE
+	cast(d.DateText AS Date) AS StringAsDate,
+	-- Cast as DATETIME2(7)
+	cast(d.DateText AS DateTime2(7)) AS StringAsDateTime2
+FROM dbo.Dates d;
+
+String	StringAsDate	StringAsDateTime2
+2019-04-01 18:08:19.290	2019-04-01	2019-04-01 18:08:19.290000
+2019-04-07 06:14:30	2019-04-07	2019-04-07 06:14:3
+
+
+SET LANGUAGE 'GERMAN'
+
+SELECT
+	d.DateText AS String,
+	-- Convert to DATE
+	Convert(Date, d.DateText) AS StringAsDate,
+	-- Convert to DATETIME2(7)
+	Convert(DateTime2(7), d.DateText) AS StringAsDateTime2
+FROM dbo.Dates d;
+
+String	StringAsDate	StringAsDateTime2
+2019-04-01 18:08:19.290	2019-04-01	2019-04-01 18:08:19.290000
+2019-04-07 06:14:30	2019-04-07	2019-04-07 06:14:30
+
+
+SELECT
+	d.DateText AS String,
+	-- Parse as DATE using German
+	Parse(d.DateText AS DATE USING 'de-de') AS StringAsDate,
+	-- Parse as DATETIME2(7) using German
+	Parse(d.DateText AS DATETIME2(7) USING 'de-de') AS StringAsDateTime2
+FROM dbo.Dates d;
+
+String	StringAsDate	StringAsDateTime2
+2019-04-01 18:08:19.290	2019-04-01	2019-04-01 18:08:19.290000
+2019-04-07 06:14:30	2019-04-07	2019-04-07 06:14:30
+
+
+>>>>>>>>>>>>>>>Working with Offsets
+
+
+datetimeoffset
+(date, time, utc offset)
+
+declare @SomeDate DateTimeOffset='2019-04-10 12:59:02.3908505 -04:00'
+
+select 
+@SomeDate DT4, 
+SwitchOffset(@SomeDate,'-07:00') as LATime
+
+
+declare @SomeDate datetime2(3)='2019-04-10 12:59:02.390'
+
+select ToDateTimeOffset(@SomeDate,'-04:00') as EDT
+
+EDT
+2019-04-10 12:59:02.390 -04:00
+
+
+move from an offset of -5 to an offset of 7
+
+
+declare @SomeDate datetime2(3)='2016-09-04 02:28:29.681'
+select
+ToDateTimeOffset(DateAdd(Hour,7,@SomeDate),'+02:00') as bonntime
+
+bonntime
+2016-09-04 09:28:29.681 +02:00
+
+>>>>> sample
+
+DECLARE
+	@OlympicsUTC NVARCHAR(50) = N'2016-08-08 23:00:00';
+
+SELECT
+	-- Fill in the time zone for Brasilia, Brazil
+	ToDateTimeOffset(@OlympicsUTC, '-03:00') AS BrasiliaTime,
+	-- Fill in the time zone for Chicago, Illinois
+	ToDateTimeOffset(@OlympicsUTC, '-05:00') AS ChicagoTime,
+	-- Fill in the time zone for New Delhi, India
+	ToDateTimeOffset(@OlympicsUTC, '+05:30') AS NewDelhiTime;
+
+
+select tzi.name,
+	tzi.current_utc_offset,
+	tzi.is_currently_dst
+	from sys.time_zone_info tzi
+	where tzi.name like '%Time Zone%'
+
+
+>>>>> sample
+
+DECLARE
+	@OlympicsUTC NVARCHAR(50) = N'2016-08-08 23:00:00';
+
+SELECT
+	-- Fill in the time zone for Brasilia, Brazil
+	switchoffset(@OlympicsUTC, '-03:00') AS BrasiliaTime,
+	-- Fill in the time zone for Chicago, Illinois
+	switchoffset(@OlympicsUTC, '-05:00') AS ChicagoTime,
+	-- Fill in the time zone for New Delhi, India
+	switchoffset(@OlympicsUTC, '+05:30') AS NewDelhiTime;
+
+
+BrasiliaTime	ChicagoTime	NewDelhiTime
+2016-08-08 20:00:00.0000000 -03:00	2016-08-08 18:00:00.0000000 -05:00	2016-08-09 04:30:00.0000000 +05:30
+
+
+DECLARE
+	@OlympicsClosingUTC DATETIME2(0) = '2016-08-21 23:00:00';
+
+SELECT
+	-- Fill in 7 hours back and a '-07:00' offset
+	ToDateTimeOffset(DATEADD(HOUR, -7, @OlympicsClosingUTC), '-07:00') AS PhoenixTime,
+	-- Fill in 12 hours forward and a '+12:00' offset.
+	ToDateTimeOffset(DATEADD(HOUR, 12, @OlympicsClosingUTC), '+12:00') AS TuvaluTime;
+
+PhoenixTime	TuvaluTime
+2016-08-21 16:00:00.0000000 -07:00	2016-08-22 11:00:00.0000000 +12:00
+
+>>>>>>>>>>>>>>handling invalid dates
+
+safe functions
+Try_Cast
+Try_Convert
+Try_Parse
+
+invalid dates are converted to null
+
+>>> sample
+
+DECLARE
+	@GoodDateINTL NVARCHAR(30) = '2019-03-01 18:23:27.920',
+	@GoodDateDE NVARCHAR(30) = '13.4.2019',
+	@GoodDateUS NVARCHAR(30) = '4/13/2019',
+	@BadDate NVARCHAR(30) = N'SOME BAD DATE';
+
+-- The prior solution using TRY_CONVERT
+SELECT
+	TRY_CONVERT(DATETIME2(3), @GoodDateINTL) AS GoodDateINTL,
+	TRY_CONVERT(DATE, @GoodDateDE) AS GoodDateDE,
+	TRY_CONVERT(DATE, @GoodDateUS) AS GoodDateUS,
+	TRY_CONVERT(DATETIME2(3), @BadDate) AS BadDate;
+
+SELECT
+	-- Fill in the correct data type based on our input
+	Try_cast(@GoodDateINTL AS DATETIME2(3)) AS GoodDateINTL,
+    -- Be sure to match these data types with the
+    -- TRY_CONVERT() examples above!
+	try_cast(@GoodDateDE AS DATE) AS GoodDateDE,
+	try_cast(@GoodDateUS AS date) AS GoodDateUS,
+	try_cast(@BadDate AS Date) AS BadDate;
+
+SELECT
+	try_parse(@GoodDateINTL AS DATETIME2(3)) AS GoodDateINTL,
+    -- Fill in the correct region based on our input
+    -- Be sure to match these data types with the
+    -- TRY_CAST() examples above!
+	try_parse(@GoodDateDE AS date USING 'de-de') AS GoodDateDE,
+	try_parse(@GoodDateUS AS date USING 'en-us') AS GoodDateUS,
+    -- TRY_PARSE can't fix completely invalid dates
+	try_parse(@BadDate AS DATETIME2(3) USING 'sk-sk') AS BadDate;
+
+GoodDateINTL	GoodDateDE	GoodDateUS	BadDate
+2019-03-01 18:23:27.920000	2019-04-13	2019-04-13	null
+
+
+>>>> TIME ZONE
+
+WITH EventDates AS
+(
+    SELECT
+        -- Fill in the missing try-conversion function
+        TRY_CONVERT(DATETIME2(3), it.EventDate) AT TIME ZONE it.TimeZone AS EventDateOffset,
+        it.TimeZone
+    FROM dbo.ImportedTime it
+        INNER JOIN sys.time_zone_info tzi
+			ON it.TimeZone = tzi.name
+)
+SELECT
+    -- Fill in the approppriate event date to convert
+	CONVERT(NVARCHAR(50), ed.EventDateOffset) AS EventDateOffsetString,
+	CONVERT(DATETIME2(0), ed.EventDateOffset) AS EventDateLocal,
+	ed.TimeZone,
+    -- Convert from a DATETIMEOFFSET to DATETIME at UTC
+	CAST(ed.EventDateOffset AT TIME ZONE 'UTC' AS DATETIME2(0)) AS EventDateUTC,
+    -- Convert from a DATETIMEOFFSET to DATETIME with time zone
+	CAST(ed.EventDateOffset AT TIME ZONE 'US Eastern Standard Time'  AS DATETIME2(0)) AS EventDateUSEast
+FROM EventDates ed;
+
+
+>>>>> sample
+
+-- Try out how fast the TRY_CONVERT() function is
+-- by try-converting each DateText value to DATE
+DECLARE @StartTimeConvert DATETIME2(7) = SYSUTCDATETIME();
+SELECT try_convert(date,DateText) AS TestDate FROM #DateText;
+DECLARE @EndTimeConvert DATETIME2(7) = SYSUTCDATETIME();
+
+-- Determine how much time the conversion took by
+-- calculating the difference from start time to end time
+SELECT
+    DATEDIFF(MILLISECOND, @StartTimeConvert, @EndTimeConvert) AS ExecutionTimeConvert;
+
+
+-- Try out how fast the TRY_PARSE() function is
+-- by try-parsing each DateText value to DATE
+DECLARE @StartTimeParse DATETIME2(7) = SYSUTCDATETIME();
+SELECT try_parse(DateText as datetime2(3) using 'en-us') AS TestDate FROM #DateText;
+DECLARE @EndTimeParse DATETIME2(7) = SYSUTCDATETIME();
+
+-- Determine how much time the conversion took by
+-- calculating the difference from start time to end time
+SELECT
+    DATEDIFF(MILLISECOND, @StartTimeParse, @EndTimeParse) AS ExecutionTimeParse;
+
+
+>>>>>>>>>Aggregation >>>>>>
+
+Count 
+Count_Big()
+Count(Distinct)
+
+
+Sum()
+Min()
+Max()
+
+
+Count(d.YR)
+#a count of rows where the value if not null
+
+count(nullif(d.YR,1990))
+#if the year is 1990 then null then count the non null rows
+where yr is not null
+
+select count(distinct c.CalendarYear) as Years,
+Count(Distinct nullif(c.CalendarYear,2010)) as Y2
+from dbo.Calendar c
+
+>>>>> pivoting using max and case
+
+select
+	max(case when ir.IncidentTypeID=1
+	then ir.IncidentDate else null) as I1,
+	max(case when ir.IncidentTypeID=2
+	then ir.IncidentDate else null) as I2
+from dbo.IncidentRollup ir
+
+
+>>>> sample 
+
+-- Fill in the appropriate aggregate functions
+SELECT
+	it.IncidentType,
+	count(1) AS NumberOfRows,
+	sum(ir.NumberOfIncidents) AS TotalNumberOfIncidents,
+	min(ir.NumberOfIncidents) AS MinNumberOfIncidents,
+	max(ir.NumberOfIncidents) AS MaxNumberOfIncidents,
+	min(ir.IncidentDate) As MinIncidentDate,
+	max(ir.IncidentDate) AS MaxIncidentDate
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.IncidentType it
+		ON ir.IncidentTypeID = it.IncidentTypeID
+WHERE
+	ir.IncidentDate BETWEEN '2019-08-01' AND '2019-10-31'
+GROUP BY
+	it.IncidentType;
+
+-- Fill in the functions and columns
+SELECT
+	count(distinct ir.IncidentTypeID) AS NumberOfIncidentTypes,
+	count(distinct ir.IncidentDate) AS NumberOfDaysWithIncidents
+FROM dbo.IncidentRollup ir
+WHERE
+ir.IncidentDate BETWEEN '2019-08-01' AND '2019-10-31';
+
+
+SELECT
+	it.IncidentType,
+    -- Fill in the appropriate expression
+	SUM(case WHEN ir.NumberOfIncidents > 5 THEN 1 ELSE 0 end) AS NumberOfBigIncidentDays,
+    -- Number of incidents will always be at least 1, so
+    -- no need to check the minimum value, just that it's
+    -- less than or equal to 5
+    SUM(case WHEN ir.NumberOfIncidents <= 5 THEN 1 ELSE 0 end) AS NumberOfSmallIncidentDays
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.IncidentType it
+		ON ir.IncidentTypeID = it.IncidentTypeID
+WHERE
+	ir.IncidentDate BETWEEN '2019-08-01' AND '2019-10-31'
+GROUP BY
+it.IncidentType;
+
+>>>>> statistical aggregate functions
+
+Avg() Mean
+Stdev() Standard Deviation
+stdevp() Population Standard Deviation
+
+var() variance
+varp() population variance
+
+
+>>> median
+select top(1)
+	percentile_cont(0.5)
+		within group (order by l.someval desc)
+	over() as medianIncidents
+from dbo.LargeTable l
+
+
+SELECT
+CustomerName,
+percentile_cont(0.5) 
+within group(order by Amount_Paid)
+over(partition by CustomerName ) as medianPaid
+  FROM [ReportData].[dbo].[fARCashReceipts]
+
+over allows use to partition our data and get a window
+
+
+>>>>> sample
+
+-- Fill in the missing function names
+SELECT
+	it.IncidentType,
+	avg(ir.NumberOfIncidents) AS MeanNumberOfIncidents,
+	avg(CAST(ir.NumberOfIncidents AS DECIMAL(4,2))) AS MeanNumberOfIncidents,
+	stdev(ir.NumberOfIncidents) AS NumberOfIncidentsStandardDeviation,
+	var(ir.NumberOfIncidents) AS NumberOfIncidentsVariance,
+	count(1) AS NumberOfRows
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.IncidentType it
+		ON ir.IncidentTypeID = it.IncidentTypeID
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	c.CalendarQuarter = 2
+	AND c.CalendarYear = 2020
+GROUP BY
+it.IncidentType;
+
+SELECT DISTINCT
+	it.IncidentType,
+	AVG(CAST(ir.NumberOfIncidents AS DECIMAL(4,2)))
+	    OVER(PARTITION BY it.IncidentType) AS MeanNumberOfIncidents,
+    --- Fill in the missing value
+	PERCENTILE_CONT(0.5)
+    	-- Inside our group, order by number of incidents DESC
+    	WITHIN GROUP (ORDER BY ir.NumberOfIncidents DESC)
+        -- Do this for each IncidentType value
+        OVER (PARTITION BY it.IncidentType) AS MedianNumberOfIncidents,
+	COUNT(1) OVER (PARTITION BY it.IncidentType) AS NumberOfRows
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.IncidentType it
+		ON ir.IncidentTypeID = it.IncidentTypeID
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	c.CalendarQuarter = 2
+	AND c.CalendarYear = 2020;
+
+
+>>>>>>>>>>>>>downsampling and upsampling data
+
+downsampling is changing to a courser type
+
+cast(mydate as date) mydate
+
+removing time
+
+
+select
+ dateadd(hour,datediff(hour,0,SomeDate),0) as SomeDate
+from dbo.SomeTable
+
+datediff(hour, 0, '2019-08-11 06:21:16') = 1048470
+
+dateadd(hour,1048470,0) = '2019-08-11 06:00:00'
+
+
+>>>>>>>>>>>>>rollup, cube, group settings
+
+rollup works best with hierarchial data
+
+
+
+select
+	t.Month,
+	t.Day
+	Sum(t.Events) as Events
+from Table
+Group by
+	t.Month,
+	t.Day
+with Rollup
+order by
+	t.Month,
+	t.Day
+
+
+
+
+select
+	t.Month,
+	t.Day
+	Sum(t.Events) as Events
+from Table
+Group by
+	t.Month,
+	t.Day
+with Cube
+order by
+	t.Month,
+	t.Day
+
+With Grouping sets we control the level of aggregation
+
+select
+	t.IncidentType,
+	t.Office,
+	Sum(t.Events) as Events
+From Table
+Group by Grouping sets
+(
+	(t.IncidentType, t.Office),
+	()  -- grand total
+)
+order by 
+	t.IncidentType,
+	t.Office
+
+
+>>>>> sample rollup
+
+SELECT
+	c.CalendarYear,
+	c.CalendarQuarterName,
+	c.CalendarMonth,
+    -- Include the sum of incidents by day over each range
+	Sum(ir.NumberOfIncidents) AS NumberOfIncidents
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	ir.IncidentTypeID = 2
+GROUP BY
+	-- GROUP BY needs to include all non-aggregated columns
+	c.CalendarYear,
+	c.CalendarQuarterName,
+	c.CalendarMonth
+-- Fill in your grouping operator
+WITH ROLLUP
+ORDER BY
+	c.CalendarYear,
+	c.CalendarQuarterName,
+	c.CalendarMonth;
+
+>>>>>sample cube
+
+select
+DatePart(Quarter,IncidentDate) Quarter,
+DatePart(Year,IncidentDate) Year,
+Sum(NumberOfIncidents)
+from dbo.IncidentRollup
+group by
+DatePart(Quarter,IncidentDate) ,
+DatePart(Year,IncidentDate)
+with Cube
+
+>>>>>> sample Group sets
+
+SELECT
+	c.CalendarYear,
+	c.CalendarQuarterName,
+	c.CalendarMonth,
+	SUM(ir.NumberOfIncidents) AS NumberOfIncidents
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	ir.IncidentTypeID = 2
+-- Fill in your grouping operator here
+GROUP BY Grouping sets
+(
+  	-- Group in hierarchical order:  calendar year,
+    -- calendar quarter name, calendar month
+	(c.CalendarYear, c.CalendarQuarterName, c.CalendarMonth),
+  	-- Group by calendar year
+	(c.CalendarYear),
+    -- This remains blank; it gives us the grand total
+	()
+)
+ORDER BY
+	c.CalendarYear,
+	c.CalendarQuarterName,
+	c.CalendarMonth;
+
+
+>>>>>using aggregation over windows
+
+
+Row_Number(): unique ascending value starting from 1
+Rank(): Ascending integer value starting with 1 but can have ties and can skip numbers
+Dense_Rank(): ascending value starting from 1 but does not skip numbers even with ties.
+
+RunsScore=8,7,7,6,6,3
+
+
+declare @scores as table
+(
+RunsScored int
+)
+insert into @scores(RunsScored) 
+values(8),(7),(7),(6),(6),(3)
+
+select s.RunsScored, 
+Row_Number() over( order by s.RunsScored desc) as rn
+from @scores s
+order by s.RunsScored desc
+
+
+select s.RunsScored, 
+Rank() over( order by s.RunsScored desc) as rk,
+Dense_Rank() over( order by s.RunsScored desc) as drk
+from @scores s
+order by s.RunsScored desc
+
+RunsScored	rk	drk
+8	1	1
+7	2	2
+7	2	2
+6	4	3
+6	4	3
+3	6	4
+
+declare @scores as table
+(
+Team varchar(3),
+RunsScored int
+)
+insert into @scores(Team,RunsScored) 
+values('AZ',8),('FLA',7),('FLA',7),('AZ',6),('FLA',  6),('AZ',3)
+
+select s.RunsScored, 
+Rank() over( order by s.RunsScored desc) as rk,
+Dense_Rank() over( order by s.RunsScored desc) as drk
+from @scores s
+order by s.RunsScored desc
+
+select s.Team,
+s.RunsScored,
+Row_Number() over(partition by s.Team order by s.RunsScored desc) as rn
+from @scores s
+order by s.RunsScored desc
+
+Team	RunsScored	rn
+AZ	8	1
+FLA	7	1
+FLA	7	2
+FLA	6	3
+AZ	6	2
+AZ	3	3
+
+>>>> max , min, avg, sum, count
+
+select s.Team,
+s.RunsScored,
+Max(s.RunsScored) over(partition by s.Team order by s.RunsScored desc) as MaxRuns
+from @scores s
+order by s.RunsScored desc
+
+Team	RunsScored	MaxRuns
+AZ	8	8
+FLA	7	7
+FLA	7	7
+FLA	6	7
+AZ	6	8
+AZ	3	8
+
+
+>>>> sample
+
+SELECT
+	ir.IncidentDate,
+	ir.NumberOfIncidents,
+    -- Fill in each window function and ordering
+    -- Note that all of these are in descending order!
+	Row_Number() OVER (Order by ir.NumberOfIncidents desc) AS rownum,
+	Rank() OVER (order by ir.NumberOfIncidents desc) AS rk,
+	Dense_Rank() OVER (order by ir.NumberOfIncidents desc) AS dr
+FROM dbo.IncidentRollup ir
+WHERE
+	ir.IncidentTypeID = 3
+	AND ir.NumberOfIncidents >= 8
+ORDER BY
+	ir.NumberOfIncidents DESC;
+
+
+>>>> sample
+
+SELECT
+	ir.IncidentDate,
+	ir.NumberOfIncidents,
+    -- Fill in the correct aggregate functions
+    -- You do not need to fill in the OVER clause
+	Sum(ir.NumberOfIncidents) OVER () AS SumOfIncidents,
+	Min(ir.NumberOfIncidents) OVER () AS LowestNumberOfIncidents,
+	Max(ir.NumberOfIncidents) OVER () AS HighestNumberOfIncidents,
+	Count(ir.NumberOfIncidents) OVER () AS CountOfIncidents
+FROM dbo.IncidentRollup ir
+WHERE
+	ir.IncidentDate BETWEEN '2019-07-01' AND '2019-07-31'
+AND ir.IncidentTypeID = 3;
+
+
+>>>>>>> calculating running totals and moving averages
+
+
+select
+	s.Team
+	,s.Game
+	,s.RunsScored
+	,sum(s.RunsScored) Over( partition by s.Team order by s.Game asc
+		range between unbounded preceding and current row) as TotalRuns
+	from #scores s
+drop table #scores
+
+
+range: specify a range of results and duplicates processed all at once (Unbounded and current row)
+
+rows: specify number of rows to include and duplicates processed a row at a time (unbounded, current row, and number of rows)
+
+
+select
+	s.Team,
+	s.Game,
+	s.RunsScored,
+	Avg(s.RunsScored) over(
+	partition by s.Team
+	order by s.Game asc
+	rows between 1 preceding
+	and current row) as AvgRuns
+	from #scores
+
+
+Team	Game	RunsScored	AvgRuns
+AZ	1	8	8
+AZ	2	6	7
+AZ	3	3	4
+FLA	1	7	7
+FLA	2	7	7
+FLA	3	6	6
+
+
+>>>> sample  >> running total
+
+SELECT
+	ir.IncidentDate,
+	ir.IncidentTypeID,
+	ir.NumberOfIncidents,
+    -- Get the total number of incidents
+	Sum(ir.NumberOfIncidents) OVER (
+      	-- Do this for each incident type ID
+		PARTITION BY ir.IncidentTypeID
+      	-- Sort by the incident date
+		ORDER BY ir.IncidentDate
+	) AS NumberOfIncidents
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	c.CalendarYear = 2019
+	AND c.CalendarMonth = 7
+	AND ir.IncidentTypeID IN (1, 2)
+ORDER BY
+	ir.IncidentTypeID,
+	ir.IncidentDate;
+
+
+>>>>> sample >>> moving average 6 days
+
+SELECT
+	ir.IncidentDate,
+	ir.IncidentTypeID,
+	ir.NumberOfIncidents,
+    -- Fill in the correct window function
+	Avg(ir.NumberOfIncidents) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+      	-- Fill in the three parts of the window frame
+		rows BETWEEN 6 preceding AND current row
+	) AS MeanNumberOfIncidents
+FROM dbo.IncidentRollup ir
+	INNER JOIN dbo.Calendar c
+		ON ir.IncidentDate = c.Date
+WHERE
+	c.CalendarYear = 2019
+	AND c.CalendarMonth IN (7, 8)
+	AND ir.IncidentTypeID = 1
+ORDER BY
+	ir.IncidentTypeID,
+	ir.IncidentDate;
+
+
+>>>>>>lead and lag
+
+past, present and future
+
+lag() prior window
+
+
+select 
+Team,
+Game,
+RunsScored,
+Lag(RunsScored) over(partition by s.Team order by Game,RunsScored) PriorRun
+from #scores s
+order by Team,Game,RunsScored
+
+lead() next windwo
+
+select 
+Team,
+Game,
+RunsScored,
+Lead(RunsScored) over(partition by s.Team order by Game,RunsScored) PriorRun
+from #scores s
+order by Team,Game,RunsScored
+
+
+select 
+Team,
+Game,
+RunsScored,
+Lag(RunsScored,2) over(partition by s.Team order by Game,RunsScored) PriorRun
+from #scores s
+order by Team,Game,RunsScored
+
+look two rows back in the partition window
+
+
+lag and lead execute after the where clause
+
+common table expression
+
+with records as(
+select Date, Lag(Val,1) Over(Order by Date) as PriorValue,
+Val
+from t
+)
+select r.Date, r.PriorVal, r.Val from records r
+where
+r.Date>'2019-01-02'
+
+
+>>>>> sample
+
+
+SELECT
+	ir.IncidentDate,
+	ir.IncidentTypeID,
+    -- Get the prior day's number of incidents
+	Lag(ir.NumberOfIncidents,1) OVER (
+      	-- Partition by incident type ID
+		PARTITION BY ir.IncidentTypeID
+      	-- Order by incident date
+		ORDER BY ir.IncidentDate
+	) AS PriorDayIncidents,
+	ir.NumberOfIncidents AS CurrentDayIncidents,
+    -- Get the next day's number of incidents
+	Lead(ir.NumberOfIncidents, 1) OVER (
+      	-- Partition by incident type ID
+		PARTITION BY ir.IncidentTypeID
+      	-- Order by incident date
+		ORDER BY ir.IncidentDate
+	) AS NextDayIncidents
+FROM dbo.IncidentRollup ir
+WHERE
+	ir.IncidentDate >= '2019-07-02'
+	AND ir.IncidentDate <= '2019-07-31'
+	AND ir.IncidentTypeID IN (1, 2)
+ORDER BY
+	ir.IncidentTypeID,
+	ir.IncidentDate;
+
+
+
+SELECT
+	ir.IncidentDate,
+	ir.IncidentTypeID,
+    -- Fill in two periods ago
+	Lag(ir.IncidentDate, 2) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+	) AS Trailing2Day,
+    -- Fill in one period ago
+	Lag(ir.IncidentDate, 1) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+	) AS Trailing1Day,
+	ir.NumberOfIncidents AS CurrentDayIncidents,
+    -- Fill in next period
+	lead(ir.IncidentDate, 1) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+	) AS NextDay
+FROM dbo.IncidentRollup ir
+WHERE
+	ir.IncidentDate >= '2019-07-01'
+	AND ir.IncidentDate <= '2019-07-31'
+	AND ir.IncidentTypeID IN (1, 2)
+ORDER BY
+	ir.IncidentTypeID,
+	ir.IncidentDate;
+
+>>>>>>> days since the last incident and days until the next incident
+
+
+SELECT
+	ir.IncidentDate,
+	ir.IncidentTypeID,
+    -- Fill in the days since last incident
+	DateDiff(DAY, Lag(ir.IncidentDate, 1) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+	), ir.IncidentDate) AS DaysSinceLastIncident,
+    -- Fill in the days until next incident
+	DateDiff(DAY, ir.IncidentDate, Lead(ir.IncidentDate, 1) OVER (
+		PARTITION BY ir.IncidentTypeID
+		ORDER BY ir.IncidentDate
+	)) AS DaysUntilNextIncident
+FROM dbo.IncidentRollup ir
+WHERE
+	ir.IncidentDate >= '2019-07-02'
+	AND ir.IncidentDate <= '2019-07-31'
+	AND ir.IncidentTypeID IN (1, 2)
+ORDER BY
+	ir.IncidentTypeID,
+	ir.IncidentDate;
+
+>>>>>> maximum
+
+start time
+end time
+products ordered
+
+
+-- This section focuses on entrances:  CustomerVisitStart
+SELECT
+	dsv.CustomerID,
+	dsv.CustomerVisitStart AS TimeUTC,
+	1 AS EntryCount,
+    -- We want to know each customer's entrance stream
+    -- Get a unique, ascending row number
+	Row_Number() OVER (
+      -- Break this out by customer ID
+      PARTITION BY dsv.customerID
+      -- Ordered by the customer visit start date
+      ORDER BY dsv.CustomerVisitStart
+    ) AS StartOrdinal
+FROM dbo.DaySpaVisit dsv
+UNION ALL
+-- This section focuses on departures:  CustomerVisitEnd
+SELECT
+	dsv.CustomerID,
+	dsv.CustomerVisitEnd AS TimeUTC,
+	-1 AS EntryCount,
+	NULL AS StartOrdinal
+FROM dbo.DaySpaVisit dsv
+
+
+SELECT s.*,
+    -- Build a stream of all check-in and check-out events
+	Row_Number() OVER (
+      -- Break this out by customer ID
+      PARTITION BY s.CustomerID
+      -- Order by event time and then the start ordinal
+      -- value (in case of exact time matches)
+      ORDER BY s.TimeUTC, s.StartOrdinal
+    ) AS StartOrEndOrdinal
+FROM #StartStopPoints s;
+
+
+SELECT
+	s.CustomerID,
+	MAX(2 * s.StartOrdinal - s.StartOrEndOrdinal) AS MaxConcurrentCustomerVisits
+FROM #StartStopOrder s
+WHERE s.EntryCount = 1
+GROUP BY s.CustomerID
+-- The difference between 2 * start ordinal and the start/end
+-- ordinal represents the number of concurrent visits
+HAVING MAX(2 * s.StartOrdinal - s.StartOrEndOrdinal) > 2
+-- Sort by the largest number of max concurrent customer visits
+ORDER BY MaxConcurrentCustomerVisits desc;

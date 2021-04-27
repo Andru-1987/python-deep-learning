@@ -1,0 +1,125 @@
+plt.plot(aditya.days,
+aditya.case, label='Aditya")
+
+plt.plot(deshaun.days,
+deshaun.case, label='Deshaun")
+
+plt.ylabel('Cases Solved')
+plt.xlabel('Days')
+
+plt.legend()
+
+plt.show()
+
+plt.text(xcoord,ycoord, "Text Message")
+
+plt.title("Plot title", fontsize=20)
+
+plt.legend(color="green")
+
+color=tomato,orange,goldenrod, seagreen, dodgerblue, violet
+
+#web colors
+
+plt.plot(x,y1, linewidth=1, linestyle='-')
+
+linestyle='-','--','-.',':'
+
+marker='x','s','o','d','*','h'
+
+x - cross hair
+s - square
+o - circle
+d - diamond
+* - star
+h - cube
+
+plt.style.use('fivethirtyeight')
+
+plt.scatter(df.age, df.height, color='green',marker='s', alpha=0.1)
+
+alpha makes the marker transparent
+
+>>>>>>>>>>barchart
+
+plt.bar(df.precinct, df.pet_abducted)
+plt.ylabel('Pet Abductions')
+plt.show()
+
+parameters labels for the bars and the height of the bar
+
+plt.barh(df.precinct, df.pet_abducted)
+
+>>>>>adding error bars
+
+plt.bar(df.precinct, df.pet_abducted,yerr=df.error)
+
+yerr
+
+>>>>>>>>>>stacked bar charts
+
+plt.bar(df.precinct, df.cat, bottom=df.dog, label='Cat')
+plt.bar(df.precinct, df.dog, label='Dog')
+plt.legend()
+plt.show()
+
+
+>>>>> sample
+
+# Display the DataFrame hours using print
+print(hours)
+
+# Create a bar plot from the DataFrame hours
+plt.bar(hours.officer, hours.avg_hours_worked,
+        # Add error bars
+        yerr=hours.std_hours_worked)
+
+
+# Display the plot
+plt.show()
+
+
+# Plot the number of hours spent on desk work
+plt.bar(hours.officer, hours.desk_work, label='Desk Work')
+
+# Plot the hours spent on field work on top of desk work
+plt.bar(hours.officer,
+hours.field_work,
+bottom=hours.desk_work,label='Field Work')
+
+# Add a legend
+plt.legend()
+
+# Display the plot
+plt.show()
+
+
+# Plot the number of hours spent on desk work
+plt.bar(hours.officer,hours.desk_work)
+
+# Display the plot
+plt.show()
+
+>>>>>>>histogram
+
+when we look at a histogram we can understand the complete dataset.
+
+plt.hist(male_weight, density=True, range=(10,50))
+
+
+>>>> sample
+
+# Change the number of bins to 50
+plt.hist(puppies.weight,
+        5=35)
+
+# Add labels
+plt.xlabel('Puppy Weight (lbs)')
+plt.ylabel('Number of Puppies')
+
+# Display
+plt.show()
+
+
+
+
