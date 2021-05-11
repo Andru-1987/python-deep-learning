@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added allstate dividend payments using cumsum
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Allstate%20dividends.ipynb
+
 * I add meat consumption trends time series analysis
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Meat%20volume%20timeseries.ipynb
