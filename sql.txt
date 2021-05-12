@@ -1,0 +1,517 @@
+select top(10) product_id, year_intro
+from products
+order by year_intro desc, product_id
+
+select customer_id, total
+from invoice
+where total>15
+
+select customer_id, total
+from invoice
+where total<>10
+
+select customer_id, total
+from invoice
+where total between 20 and 30
+
+
+select top(6) total,
+billing_state
+from invoice where billing_state is not null
+
+SELECT 
+  top (5) description, 
+  event_date 
+FROM 
+  grid 
+  -- Order your results by the event_date column
+order by event_date;
+
+-- Select nerc_region and demand_loss_mw
+SELECT 
+  nerc_region, 
+  demand_loss_mw 
+FROM 
+  grid 
+-- Retrieve rows where affected_customers is >= 500000  (500,000)
+where 
+  affected_customers>=50000;
+
+-- Select description and affected customers
+SELECT 
+  description, affected_customers
+FROM 
+  grid 
+  -- Retrieve rows where the event_date was the 22nd December, 2013    
+WHERE 
+  event_date='2013-12-22'
+
+-- Select description, affected_customers and event date
+SELECT 
+  description, 
+  affected_customers,
+  event_date
+FROM 
+  grid 
+  -- The affected_customers column should be >= 50000 and <=150000   
+WHERE 
+  affected_customers BETWEEN 50000 and 150000
+  
+   -- Define the order   
+order by
+  event_date desc;
+
+-- Retrieve all columns
+SELECT 
+  *
+FROM 
+  grid 
+  -- Return only rows where demand_loss_mw is missing or unknown  
+WHERE 
+  demand_loss_mw is null;
+
+
+-- Retrieve the song, artist and release_year columns
+select song, artist, release_year from songlist
+
+-- Retrieve the song, artist and release_year columns
+SELECT 
+  song, 
+  artist, 
+  release_year 
+FROM 
+  songlist 
+  -- Ensure there are no missing or unknown values in the release_year column
+where
+  release_year is not null
+order by artist, release_year;
+
+
+SELECT 
+  song, 
+  artist, 
+  release_year
+FROM 
+  songlist 
+WHERE 
+  -- Retrieve records greater than and including 1980
+  release_year >=1980
+  -- Also retrieve records up to and including 1990
+  and release_year < 1990
+ORDER BY 
+  artist, 
+  release_year;
+
+SELECT 
+  artist, 
+  release_year, 
+  song 
+FROM 
+  songlist 
+  -- Choose the correct artist and specify the release year
+WHERE 
+  (
+    artist LIKE 'B%' 
+    and release_year = 1986
+  ) 
+  -- Or return all songs released after 1990
+  or release_year > 1990
+  -- Order the results
+ORDER BY 
+  release_year, 
+  artist, 
+  song;
+
+select sum(affected_customers) as total_affected,
+sum(demand_loss_mw) as total_loss
+from grid
+
+
+-- Sum the demand_loss_mw column
+SELECT 
+  sum(demand_loss_mw) AS MRO_demand_loss 
+FROM 
+  grid 
+WHERE
+  -- demand_loss_mw should not contain NULL values
+  demand_loss_mw is not null
+  -- and nerc_region should be 'MRO';
+  and nerc_region = 'MRO';
+
+
+-- Obtain a count of 'grid_id'
+SELECT 
+  count(grid_id) as grid_total,
+  nerc_region
+FROM 
+  grid
+group by nerc_region  
+  ;
+
+
+-- Find the minimum number of affected customers
+SELECT 
+  min(affected_customers) AS min_affected_customers
+FROM 
+  grid
+-- Only retrieve rows where demand_loss_mw has a value
+WHERE
+  demand_loss_mw is not NULL;
+
+select description,
+len(description) as description_length
+from grid
+
+select description, left(description,20) as first_20_left
+from grid
+
+select description, right(description,20) last_20
+from grid
+
+select charindex('_',url) as char_location,
+url from courses
+
+select substring(url,12,12) as target_sections,url
+from courses
+
+select top(5)
+replace(url,'_','-') as replace_with_hyphen
+from courses
+
+SELECT 
+  left(description, 25) AS first_25_left
+FROM 
+  grid;
+
+-- Amend the query to select 25 characters from the  right of the description column
+SELECT 
+  right(description, 20) AS last_25_right 
+FROM 
+  grid;
+
+-- Complete the query to find `Weather` within the description column
+SELECT 
+  description, 
+  charindex('Weather', description) 
+FROM 
+  grid
+WHERE description LIKE '%Weather%';
+
+
+select
+sum(demand_loss_mw) as lost_demand,
+description
+from grid
+where description like '%storm'
+and demand_loss_mw is not null
+group by description
+having sum(demand_loss_mw)>1000
+
+
+-- Select the region column
+SELECT 
+  nerc_region,
+  -- Sum the demand_loss_mw column
+  SUM(demand_loss_mw) AS demand_loss
+FROM 
+  grid
+  -- Exclude NULL values of demand_loss
+WHERE 
+  demand_loss_mw is not null
+  -- Group the results by nerc_region
+group by
+  nerc_region
+  -- Order the results in descending order of demand_loss
+having 
+  sum(demand_loss_mw) > 10000
+ORDER BY 
+  demand_loss DESC;
+
+-- Obtain a count for each country
+SELECT 
+  count(country) AS country_count, 
+  -- Retrieve the country column
+  ___, 
+  -- Return the average of the Place column 
+  avg(place) AS average_place, 
+  AVG(points) AS avg_points, 
+  MIN(points) AS min_points, 
+  MAX(points) AS max_points 
+FROM 
+  eurovision 
+GROUP BY 
+  country;
+
+SELECT 
+  country, 
+  COUNT (country) AS country_count, 
+  AVG (place) AS avg_place, 
+  AVG (points) AS avg_points, 
+  MIN (points) AS min_points, 
+  MAX (points) AS max_points 
+FROM 
+  eurovision 
+GROUP BY 
+  country 
+  -- The country column should only contain those with a count greater than 5
+
+ having count(country) > 5 
+  -- Arrange columns in the correct order
+ORDER BY 
+  avg_place, 
+  avg_points desc;
+
+
+select
+table_A.columnX,
+table_A.columnY,
+table_B.columnZ
+from table_A
+inner join table_B on table_A.foreign_key=table_B.primary_key
+
+
+SELECT 
+  track_id,
+  name AS track_name,
+  title AS album_title
+FROM track
+  -- Complete the join type and the common joining column
+inner JOIN album on track.album_id = album.album_id;
+
+-- Select album_id and title from album, and name from artist
+SELECT 
+  album_id,
+  title,
+  name AS artist
+  -- Enter the main source table name
+FROM artist
+  -- Perform the inner join
+INNER JOIN album on album.artist_id = artist.artist_id;
+
+
+SELECT track_id,
+-- Enter the correct table name prefix when retrieving the name column from the track table
+  artist.name AS track_name,
+  title as album_title,
+  -- Enter the correct table name prefix when retrieving the name column from the artist table
+  artist.name AS artist_name
+FROM track
+  -- Complete the matching columns to join album with track, and artist with album
+INNER JOIN album on track.album_id = album.album_id 
+INNER JOIN artist on album.artist_id = artist.artist_id;
+
+
+Admissions
+1. Patient_ID
+2. Admitted
+
+Discharges
+1. Patient_ID
+2. Discharged
+
+select
+Admitted.Patient_ID,
+Admitted,
+Discharged
+From Admitted
+Left Join Discharged on Discharged.Patient_ID=Admitted.Patient_ID
+
+SELECT 
+  invoiceline_id,
+  unit_price, 
+  quantity,
+  billing_state
+  -- Specify the source table
+FROM invoice
+  -- Complete the join to the invoice table
+left JOIN invoiceline
+on invoiceline.invoice_id = invoice.invoice_id;
+
+-- SELECT the fully qualified album_id column from the album table
+SELECT 
+  album_id,
+  title,
+  album.artist_id,
+  -- SELECT the fully qualified name column from the artist table
+  name as artist
+FROM album
+-- Perform a join to return only rows that match from both tables
+INNER JOIN artist ON album.artist_id = artist.artist_id
+WHERE album.album_id IN (213,214)
+
+SELECT 
+  album.album_id,
+  title,
+  album.artist_id,
+  artist.name as artist
+FROM album
+INNER JOIN artist ON album.artist_id = artist.artist_id
+-- Perform the correct join type to return matches or NULLS from the track table
+right join track on track.album_id = album.album_id
+WHERE album.album_id IN (213,214)
+
+union excludes duplicate rows
+union all includes duplicate rows
+
+
+SELECT 
+  album_id AS ID,
+  title AS description,
+  'Album' AS Source
+  -- Complete the FROM statement
+from album
+ -- Combine the result set using the relevant keyword
+union
+SELECT 
+  artist_id AS ID,
+  name AS description,
+  'Artist'  AS Source
+  -- Complete the FROM statement
+from artist;
+
+
+Date Types for creating tables
+date
+datetime
+integer
+decimal
+float
+bit
+char
+varchar
+nvarchar
+
+-- Create the table
+create table results (
+	track varchar(200),
+	artist varchar(120),
+	album varchar(160),
+	track_length_mins int
+	);
+
+SELECT 
+  track, 
+  artist, 
+  album, 
+  track_length_mins 
+FROM 
+  results;
+
+insert into  ... select
+
+
+delete from
+truncate table
+
+insert INTO tracks
+-- Specify the destination columns
+(track, album, track_length_mins)
+-- Insert the appropriate values for track, album and track length
+VALUES
+  ('Basket Case', 'Dookie', 3);
+-- Select all columns from the new table
+SELECT 
+  *
+FROM 
+  tracks;
+
+-- Run the query
+SELECT 
+  title 
+FROM 
+  album 
+WHERE 
+  album_id = 213;
+-- UPDATE the album table
+update 
+  album
+-- SET the new title    
+set 
+  title = 'Pure Cult: The Best Of The Cult'
+WHERE album_id = 213;
+
+delete FROM 
+  album
+WHERE 
+  album_id = 1
+  -- Run the query again
+SELECT 
+  * 
+FROM 
+  album;
+
+
+declare @test_int int
+declare @my_artist varchar(100)
+
+set @test_int=5
+
+-- Declare @start
+
+declare @start date
+-- SET @start to '2014-01-24'
+set @start='2014-01-24'
+
+-- Declare your variables
+DECLARE @start DATE
+DECLARE @stop DATE
+DECLARE @affected INT;
+-- SET the relevant values for each variable
+SET @start = '2014-01-24'
+SET @stop  = '2014-07-02'
+SET @affected =  5000 ;
+
+SELECT 
+  description,
+  nerc_region,
+  demand_loss_mw,
+  affected_customers
+FROM 
+  grid
+-- Specify the date range of the event_date and the value for @affected
+where event_date between @start AND @stop
+AND affected_customers >= @affected;
+
+
+SELECT  album.title AS album_title,
+  artist.name as artist,
+  MAX(track.milliseconds / (1000 * 60) % 60 ) AS max_track_length_mins
+-- Name the temp table #maxtracks
+INTO #maxtracks
+FROM album
+-- Join album to artist using artist_id
+INNER JOIN artist ON album.artist_id = artist.artist_id
+-- Join track to album using album_id
+inner join track on track.album_id=album.album_id
+
+GROUP BY artist.artist_id, album.title, artist.name,album.album_id
+-- Run the final SELECT query to retrieve the results from the temporary table
+SELECT album_title, artist, max_track_length_mins
+FROM  #maxtracks
+ORDER BY max_track_length_mins DESC, artist;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

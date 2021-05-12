@@ -1,0 +1,14 @@
+filter = (df['Open'].notnull()==True)
+result=df[filter]
+#for key, item in result.iterrows():
+# print(key,is_valid_decimal(item['Open']))
+x_space=np.linspace(1,50,len(result))
+ax = sns.regplot(x=x_space,y=np.array(result['Open'].map(float)))
+ax_twin=ax.twinx()
+ax_twin.bar(x_space,result['Volume'],color='green',alpha=0.3)
+ax.set_title("Price by Volume")
+p=np.polyfit(x_space,result['Open'],2)
+x1=x_space
+y1=np.polyval(p,x1)
+ax.plot(x1,y1)
+plt.show()

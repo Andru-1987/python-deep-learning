@@ -1,0 +1,518 @@
+each table stores data about and entity type
+relationship can be associated with other entities
+1.constraints
+2.keys
+3.referential integrity
+
+basic understanding of sql
+
+select table_schema, table_name from information_schema.tables
+
+select * from sys.tables
+
+select table_name, column_name, data_type
+from information_schema.columns
+where table_name='pg_config'
+
+sample
+
+-- Query the right table in information_schema
+SELECT table_name 
+FROM information_schema.tables
+-- Specify the correct table_schema value
+WHERE table_schema = 'public';
+
+sample
+
+-- Query the right table in information_schema to get columns
+SELECT column_name, data_type 
+FROM information_schema.columns
+WHERE table_name = 'university_professors' AND table_schema = 'public';
+
+select * 
+from university_professors 
+LIMIT 5;
+
+entities:
+1. professors (lastname, firstname, university_shortname)
+2. universities (university_city, university_shortname, university)
+3. organizations (organization sector, organization)
+4. afflictions (organization, function, university_shortname, lastname, firstname)
+
+create table weather
+(
+clouds text,
+temperature numeric,
+weather_station char(5)
+)
+
+sample
+
+CREATE TABLE professors (
+ firstname text,
+ lastname text
+);
+
+create table universities
+(
+university_shortname text, 
+university text,
+university_city text
+);
+
+create table affliations(
+firstname text,
+lastname text,
+university_shortname text,
+function text,
+organization text
+)
+alter table professors
+add column  university_shortname text;
+
+reduce redundancy
+
+
+select count(*) from university_professors
+1377
+
+select count(distinct organization) from university_professors
+1287
+
+remove the redundancy
+
+
+insert into organizations
+select distinct organization, organization_sector
+from university_professor.
+
+alter table table_name
+rename column old_name to new_name
+
+alter table table_name
+drop column column_name
+
+remove the university_shortname column
+
+
+-- Rename the organisation column
+ALTER TABLE affiliations
+RENAME COLUMN organisation TO organization;
+
+-- Delete the university_shortname column
+alter table affiliations
+drop column university_shortname;
+
+sample
+
+-- Insert unique professors into the new table
+insert into professors 
+SELECT DISTINCT firstname, lastname, university_shortname 
+FROM university_professors;
+
+-- Doublecheck the contents of professors
+SELECT * 
+FROM professors;
+
+
+-- Insert unique affiliations into the new table
+insert into affiliations 
+select distinct firstname, lastname, function, organization 
+FROM university_professors;
+
+-- Doublecheck the contents of affiliations
+SELECT * 
+FROM affiliations;
+
+drop table university_professors;
+
+>>>>>>>>>>>>>enforcing constraints
+
+attribute constraints
+key constraints
+referential integrity constraints
+
+
+select temperature * cast(wind_speed as integer) as wind_chill from weather
+
+>>>>>>> working with data types
+
+text: character strings of any length
+varchar[x]: a maximum of n character
+char[x]: a fixed length string of n characters
+boolean: true,false or null
+
+date
+numeric(3,2)
+
+alter table students alter column name type varchar(128)
+
+
+alter table students alter column average_grade type integer
+using round(average_grade)
+
+sample
+
+-- Change the type of firstname
+alter table professors
+alter column firstname
+type varchar(64)
+using SUBSTRING(firstname FROM 1 FOR 16)
+
+
+>>>>>> non null and unique constraints
+1. disallow null values in certain columns
+
+2. must hold true for the current state
+
+NULL != NULL ->False
+
+alter table students
+alter column home_phone
+set not null
+
+unique constraints can only be applied if there are no duplicates in the data
+
+create table_name(
+column_name UNIQUE
+)
+
+alter table table_name
+add constraint some_name UNIQUE(column_name)
+
+>>>> sample
+
+alter table professors 
+ALTER COLUMN firstname SET NOT NULL;
+
+
+sample
+
+-- Make universities.university_shortname unique
+ALTER table universities
+ADD constraint university_shortname_unq UNIQUE(university_shortname);
+
+
+add a primary key to Organizations, Professors, and Universities
+
+a key uniquely identifies a record uniquely
+
+a key is always minimal
+
+there can only be one key for the table.
+
+
+sample
+
+-- Count the number of rows in universities
+SELECT count(*)
+FROM universities;
+
+-- Count the number of distinct values in the university_city column
+SELECT count(distinct(university_city)) 
+FROM universities;
+
+-- Try out different combinations
+select COUNT(distinct(firstname,lastname)) 
+FROM professors;
+
+the only combination that uniquely identifies professors is {firstname, lastname}. {firstname, lastname, university_shortname} is a superkey
+
+>>>>>>Primary Keys
+every table should have a primary key
+primary key - unique and not-null constraints both apply
+
+create table products(
+	product_no integer PRIMARY KEY,
+	name text,
+	price numeric
+);
+
+create table products(
+	product_no integer UNIQUE NOT NULL,
+	name text,
+	price numeric
+);
+
+create table example(
+a integer,
+b integer,
+c integer,
+PRIMARY KEY(a,c)
+)
+
+alter table table_name add constraint some_name primary key(column_name)
+
+
+sample
+
+ALTER TABLE organizations
+RENAME COLUMN organization TO id;
+
+-- Make id a primary key
+ALTER TABLE organizations
+ADD CONSTRAINT organization_pk PRIMARY KEY (id);
+
+
+sample
+
+-- Rename the university_shortname column to id
+alter table universities
+rename column university_shortname to id;
+
+-- Make id a primary key
+alter table universities
+add constraint university_pk primary key(id);
+
+
+>>>>>>>>Surrogate Key
+
+a primary key should never change over time
+
+alter table cars
+add column id serial primary key
+
+another type of surrogate key is combine two or more columns into a new one
+
+alter table table_name add column column_c varchar(256)
+
+update table_name
+set column_c=concat(column_a, column_b);
+
+alter table table_name
+add constraint pk primary key(column_c)
+
+sample
+
+ALTER TABLE professors
+add column id serial;
+
+ALTER table professors
+add CONSTRAINT professors_pkey primary key (id);
+
+
+ALTER TABLE cars
+add column id varchar(128);
+
+UPDATE cars
+set id = concat(make,model);
+
+-- Make id a primary key
+alter table cars
+add constraint id_pk primary key(id);
+
+-- Have a look at the table
+SELECT * FROM cars;
+
+
+-- Create the table
+CREATE TABLE students (
+  last_name varchar(128) NOT NULL,
+  ssn integer PRIMARY KEY,
+  phone_no char(12)
+);
+
+>>>>>>>>>.foreign constraints
+
+professors and universities
+
+a professor works for one universities but an universities can have any number of professors working for it.
+
+a foreign key points to a primary key of another table
+
+the data types of the foreign key and the primary key must be the same
+
+each value of the foreign key must exist in the primary key of the other table
+
+
+create table manufacturers(
+name varchar(255) primary key
+);
+
+insert into manufacturers values('ford'),('vw),('gm');
+
+create table cars(
+model varchar(255) primary key,
+manufacturer_name varchar(255) references manufacturers (name))
+
+insert into cars
+values('Ranger','Ford'),('Beetle','VW')
+
+
+alter table a
+add constraint a_fkey foreign key(b_id) reference b(id);
+
+sample
+
+ALTER TABLE professors
+rename column university_shortname to university_id;
+
+ALTER TABLE professors 
+ADD CONSTRAINT professors_fkey FOREIGN KEY (university_id) REFERENCES universities (id);
+
+-- Select all professors working for universities in the city of Zurich
+SELECT professors.lastname, universities.id, universities.university_city
+from professors
+join universities
+ON professors.university_id = universities.id
+and universities.university_city = 'Zurich';
+
+>>>>> more complex relationships
+
+a professor can have more than one affliation
+
+an end to end relationship exists between professors and organizations
+
+n:m
+foreign key pointing to professors
+foreign key pointing to organizations
+
+
+create table affliations(
+professor_id integer references professor(id),
+organization_id varchar(256) references organizations(id),
+function varchar(256)
+)
+
+possible PK = professor_id, organization_id, function
+
+
+sample
+
+-- Add a professor_id column
+alter table affiliations
+add COLUMN professor_id integer REFERENCES professors (id);
+
+ALTER TABLE affiliations
+RENAME organization TO organization_id;
+
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_fkey foreign key (organization_id) references organizations (id);
+
+
+-- Update professor_id to professors.id where firstname, lastname correspond to rows in professors
+UPDATE affiliations
+SET professor_id = professors.id
+FROM professors
+WHERE affiliations.firstname = professors.firstname AND affiliations.lastname = professors.lastname;
+
+-- Have a look at the 10 first rows of affiliations again
+select * from affiliations limit 10;
+
+
+-- Drop the firstname column
+alter table affiliations
+DROP column firstname;
+
+-- Drop the lastname column
+alter table affiliations drop column lastname;
+
+>>>>>>>>>>>>>referential integrity
+
+a record referencing another table must refer to an existing record in that table.
+
+enforced through foreign keys
+
+create table a
+(
+id integer primary key,
+column_a varchar(64),
+bid_id integer references b (id) on delete no action
+);
+
+
+create table a
+(
+id integer primary key,
+column_a varchar(64),
+bid_id integer references b (id) on delete cascade
+);
+
+delete records in b then a
+
+options:
+restrict
+set null
+set default
+
+
+find the foreign keys
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+ALTER table affiliations
+drop CONSTRAINT affiliations_organization_id_fkey;
+
+
+ALTER TABLE affiliations
+add constraint affiliations_organization_id_fkey foreign KEY (organization_id) REFERENCES organizations (id) on delete cascade
+
+
+-- Identify the correct constraint name
+SELECT constraint_name, table_name, constraint_type
+FROM information_schema.table_constraints
+WHERE constraint_type = 'FOREIGN KEY';
+
+-- Drop the right foreign key constraint
+ALTER TABLE affiliations
+DROP CONSTRAINT affiliations_organization_id_fkey;
+
+-- Add a new foreign key constraint from affiliations to organizations which cascades deletion
+ALTER TABLE affiliations
+ADD CONSTRAINT affiliations_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES organizations (id) ON DELETE CASCADE;
+
+-- Delete an organization 
+DELETE FROM organizations 
+WHERE id = 'CUREM';
+
+-- Check that no more affiliations with this organization exist
+SELECT * FROM affiliations
+WHERE organization_id = 'CUREM';
+
+
+-- Group the table by organization sector, professor ID and university city
+SELECT count(*), organizations.id, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+GROUP BY organizations.organization_sector, 
+professors.id, universities.university_city;
+
+
+-- Filter the table and sort it
+SELECT COUNT(*), organizations.organization_sector, 
+professors.id, universities.university_city
+FROM affiliations
+JOIN professors
+ON affiliations.professor_id = professors.id
+JOIN organizations
+ON affiliations.organization_id = organizations.id
+JOIN universities
+ON professors.university_id = universities.id
+where organizations.organization_sector = 'Media & communication'
+GROUP BY organizations.organization_sector, 
+professors.id, universities.university_city
+order BY count DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
