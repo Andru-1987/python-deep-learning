@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added kc housing price prediction using keras network
+* 
+* https://github.com/dnishimoto/python-deep-learning/blob/master/deep%20learning%20housing%20price.ipynb
+* 
 * I added allstate dividend payments using cumsum
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Allstate%20dividends.ipynb
