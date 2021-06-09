@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added Credit risk of default
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Loan%20Risk%20.ipynb
+
 * I added Electric vehicle trends
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Electric%20Vehicle%20trends.ipynb
