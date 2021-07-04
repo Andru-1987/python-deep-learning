@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added multiple variable lstm prediction of bike share
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Predict%20demand%20of%20bike%20share.ipynb
+
 * I added Credit risk of default (logistic regression, xgboost, keras)
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Credit%20Loan%20Risk%20.ipynb
