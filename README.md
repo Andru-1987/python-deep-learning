@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added an Text keras lstm network for multi classification labels
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Text%20LSTM%20multi-classification.ipynb
+
 * I added multiple variable lstm prediction of bike share
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Predict%20demand%20of%20bike%20share.ipynb
