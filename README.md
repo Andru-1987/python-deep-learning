@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* I added weight training with random forest for 56 features
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Weight%20Lifting%20Random%20Forest.ipynb
+
 * I added deep learn dense network for mnist
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/deep%20learning%20mnist.ipynb
