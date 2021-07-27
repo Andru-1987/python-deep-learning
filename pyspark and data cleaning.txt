@@ -1,0 +1,1321 @@
+data cleaning is preparing raw data for use in data processing pipelines
+
+possible tasks in data cleaning:
+1. reformatting or replacing text
+2. performing calculations
+3. removing garbage or incomplete data
+
+problems typical data systems:
+1. performance
+2. organizing data flow
+
+
+raw data:
+name, age, city
+
+spark schemas
+1. defines the types and columns in a dataframe
+2. types: strings, dates, integers, arrays
+3. improves read performance
+
+
+import pyspark.sql.types
+
+peopleSchema = StructType([
+StructField('name', StringType(), True),
+StructField('age', IntegerType(), True),
+c
+])
+
+
+people_df = spark.read.format('csv').load(name='rawdata.csv', schema=peopleSchema)
+
+
+>>>>>>
+
+# Import the pyspark.sql.types library
+from pyspark.sql.types import *
+
+# Define a new schema using the StructType method
+people_schema = StructType([
+  # Define a StructField for each field
+  StructField('name', StringType(), False),
+  StructField('age', IntegerType(), False),
+  StructField('city', StringType(), False)
+])
+
+
+>>>>>>> immutability and lazy processing
+
+spark dataframes are immutable
+1. the dataframe is defined once and not modifiable after
+
+voter_df = spark.read.csv('voterdata.csv')
+
+voter_df = voter_df.withColumn('fullyear',voter_df.year+2000)
+voter_df = voter_df.drop(voter_df.year)
+
+voter_df.count()
+
+lazy processing (transformations, actions, efficient planning)
+count counts as action
+
+>>>>>
+
+# Load the CSV file
+aa_dfw_df = spark.read.format('csv').options(Header=True).load('AA_DFW_2018.csv.gz')
+
+# Add the airport column using the F.lower() method
+aa_dfw_df = aa_dfw_df.withColumn('airport', F.lower(aa_dfw_df['Destination Airport']))
+
+# Drop the Destination Airport column
+aa_dfw_df = aa_dfw_df.drop(aa_dfw_df['Destination Airport'])
+
+# Show the DataFrame
+aa_dfw_df.show()
+
+>>>>> understanding parquet
+
+difficulties
+1. no defined schedule
+2. escaping a delimiter - nested data 
+
+csv
+1. slow to parse
+2. data types inferred
+3. files cannot be filtered (no predicate pushdown)
+
+
+parquet
+1. columnar data format
+2. supports spark predicate pushdown functionality
+3. support predicate pushdown
+4. automatically stores schema information
+
+df = spark.read.format('parquet).load('filename.parquet')
+
+or
+
+df = spark.read.parquet('filename.parquet')
+
+
+write parquet files
+
+df.write.format('parquet').save('filename.parquet')
+
+df.write.parquet('filename.parquet')
+
+
+>>>>> sql
+
+flight_df= spark.read.parquet('flights.parquet')
+
+flight_df.createOrReplaceTempView('flights')
+
+short_flights_df = spark.sql('select * from flights where flightduration<100')
+
+
+>>>>>>
+
+
+# View the row count of df1 and df2
+print("df1 Count: %d" % df1.count())
+print("df2 Count: %d" % df2.count())
+
+# Combine the DataFrames into one
+df3 = df1.union(df2)
+
+# Save the df3 DataFrame in Parquet format
+df3.write.parquet('AA_DFW_ALL.parquet', mode='overwrite')
+
+# Read the Parquet file into a new DataFrame and run a count
+print(spark.read.parquet('AA_DFW_ALL.parquet').count())
+
+
+>>>>
+
+# Read the Parquet file into flights_df
+flights_df = spark.read.parquet('AA_DFW_ALL.parquet')
+
+# Register the temp table
+flights_df.createOrReplaceTempView('flights')
+
+# Run a SQL query of the average flight duration
+avg_duration = spark.sql('SELECT avg(flight_duration) from flights').collect()[0]
+print('The average flight time is: %d' % avg_duration)
+
+
+>>>>>>> DataFrame column operations
+
+
+
+transformations
+
+voter_df.filter(voter_df.name.like('M%'))
+
+voters=voter_df.select('name','position')
+
+voter_df.filter(voter_df.date > '1/1/2019')
+
+voter_df.select(voter_df.name)
+
+voter_df.withColumn('year',voter_df.date.year)
+
+voter_df.drop('unused_column')
+
+>>>>>> filtering data
+a. remove nulls
+b. remove odd entries
+c. split data from combined sources
+
+voter_df.where(~ voter_df._c1.isNull())
+voter_df.where(voter_df['_c0'].contains('VOTE'))
+voter_df.filter(voter_df.date.year>1800)
+voter_df.filter(voter_df['name'].isNotNull())
+
+negate with ~
+
+
+>>>>> Column String Transformations
+
+import pyspark.sql.functions as F
+
+voter_df.withColumn('upper',F.upper('name'))
+
+voter_df.withColumn('splits', F.split('name',' '))
+
+voter_df.withColumn('year', voter_df['_c4'].cast(IntegerType()))
+
+>>>> ArrayType()
+
+.size(column)   #length of the arrayType column
+.getItem(index)  #retrieve a specific item at index of list column
+
+>>>>>>>
+
+# Show the distinct VOTER_NAME entries
+voter_df.select(voter_df.VOTER_NAME).distinct().show(40, truncate=False)
+
+# Filter voter_df where the VOTER_NAME is 1-20 characters in length
+voter_df = voter_df.filter('length(VOTER_NAME) > 0 and length(VOTER_NAME) < 20')
+
+# Filter out voter_df where the VOTER_NAME contains an underscore
+voter_df = voter_df.filter(~ F.col('VOTER_NAME').contains('_'))
+
+# Show the distinct VOTER_NAME entries again
+voter_df.select(voter_df.VOTER_NAME).distinct().show(40, truncate=False)
+
+>>>>>
+
+ If the .select() transformation is run first, there is not an ID column present to filter on. 
+
+
+>>>>>
+
+
+# Add a new column called splits separated on whitespace
+voter_df = voter_df.withColumn('splits', F.split(voter_df.VOTER_NAME, '\s+'))
+
+# Create a new column called first_name based on the first item in splits
+voter_df = voter_df.withColumn('first_name', voter_df.splits.getItem(0))
+
+# Get the last entry of the splits list and create a column called last_name
+voter_df = voter_df.withColumn('last_name', voter_df.splits.getItem(F.size('splits') - 1))
+
+# Drop the splits column
+voter_df = voter_df.drop('splits')
+
+# Show the voter_df DataFrame
+voter_df.show()
+
+|      DATE|        TITLE|         VOTER_NAME|              splits|first_name|last_name|
++----------+-------------+-------------------+--------------------+----------+---------+
+|02/08/2017|Councilmember|  Jennifer S. Gates|[Jennifer, S., Ga...|  Jennifer|    Gates|
+|02/08/2017|Councilmember| Philip T. Kingston|[Philip, T., King...|    Philip| Kingston|
+|02/08/2017|        Mayor|Michael S. Rawlings|[Michael, S., Raw...|   Michael| Rawlings|
+|02/08/2017|Councilmember|       Adam Medrano|     [Adam, Medrano]|      Adam|  Medrano|
+|02/08/2017|Councilmember|       Casey Thomas|     [Casey, Thomas]|     Casey|   Thomas|
+|02/08/2017|Councilmember|Carolyn King Arnold|[Carolyn, King, A...|   Carolyn|   Arnold|
+|02/08/2017|Councilmember|       Scott Griggs|     [Scott, Griggs]|     Scott|   Griggs|
+|02/08/2017|Councilmember|   B. Adam  McGough| [B., Adam, McGough]|        B.|  McGough|
+|02/08/2017|Councilmember|       Lee Kleinman|     [Lee, Kleinman]|       Lee| Kleinman|
+|02/08/2017|Councilmember|      Sandy Greyson|    [Sandy, Greyson]|     Sandy|  Greyson|
+|02/08/2017|Councilmember|  Jennifer S. Gates|[Jennifer, S., Ga...|  Jennifer|    Gates|
+|02/08/2017|Councilmember| Philip T. Kingston|[Philip, T., King...|    Philip| Kingston|
+|02/08/2017|        Mayor|Michael S. Rawlings|[Michael, S., Raw...|   Michael| Rawlings|
+|02/08/2017|Councilmember|       Adam Medrano|     [Adam, Medrano]|      Adam|  Medrano|
+|02/08/2017|Councilmember|       Casey Thomas|     [Casey, Thomas]|     Casey|   Thomas|
+|02/08/2017|Councilmember|Carolyn King Arnold|[Carolyn, King, A...|   Carolyn|   Arnold|
+|02/08/2017|Councilmember| Rickey D. Callahan|[Rickey, D., Call...|    Rickey| Callahan|
+|01/11/2017|Councilmember|  Jennifer S. Gates|[Jennifer, S., Ga...|  Jennifer|    Gates|
+|04/25/2018|Councilmember|     Sandy  Greyson|    [Sandy, Greyson]|     Sandy|  Greyson|
+|04/25/2018|Councilmember| Jennifer S.  Gates|[Jennifer, S., Ga...|  Jennifer|    Gates|
++----------+-------------+-------------------+--------------------+----------+---------+
+
+>>>> conditional dataframe column operations
+
+if then else
+
+.when()
+.otherwise()
+
+.when(<if condition>, <then x>)
+df.select(df.Name, df.Age, F.when(df.Age>=18, "Adult"))
+
+
+df.select(df.Name,df.Age,
+	.when(df.Age>=18, "Adult",
+	.when(df.Age)<18, "Minor"))
+
+
+df.select(df.Name, df.Age,
+	.when(df.Age >=18, "Adult")
+	.otherwise("Minor"))
+
+
+print(voter_df.columns)
+# Add a column to voter_df for any voter with the title **Councilmember**
+voter_df = voter_df.withColumn('random_val',
+                               F.when(voter_df.TITLE=='Councilmember', 'Yes'))
+
+# Show some of the DataFrame rows, noting whether the when clause worked
+voter_df.show()
+
+['DATE', 'TITLE', 'VOTER_NAME', 'random_val']
++----------+-------------+-------------------+----------+
+|      DATE|        TITLE|         VOTER_NAME|random_val|
++----------+-------------+-------------------+----------+
+|02/08/2017|Councilmember|  Jennifer S. Gates|       Yes|
+|02/08/2017|Councilmember| Philip T. Kingston|       Yes|
+|02/08/2017|        Mayor|Michael S. Rawlings|      null|
+|02/08/2017|Councilmember|       Adam Medrano|       Yes|
+|02/08/2017|Councilmember|       Casey Thomas|       Yes|
+|02/08/2017|Councilmember|Carolyn King Arnold|       Yes|
+|02/08/2017|Councilmember|       Scott Griggs|       Yes|
+|02/08/2017|Councilmember|   B. Adam  McGough|       Yes|
+|02/08/2017|Councilmember|       Lee Kleinman|       Yes|
+|02/08/2017|Councilmember|      Sandy Greyson|       Yes|
++----------+-------------+-------------------+----------+
+only showing top 10 rows
+
+
+# Add a column to voter_df for a voter based on their position
+voter_df = voter_df.withColumn('random_val',
+                               when(voter_df.TITLE == 'Councilmember', F.rand())
+                               .when(voter_df.TITLE =='Mayor', 2)
+                               .otherwise('0'))
+
+# Show some of the DataFrame rows
+voter_df.show(5)
+
+# Use the .filter() clause with random_val
+voter_df.filter(voter_df.random_val==0).show()
+
++----------+--------------------+-------------------+--------------------+
+|      DATE|               TITLE|         VOTER_NAME|          random_val|
++----------+--------------------+-------------------+--------------------+
+|02/08/2017|       Councilmember|  Jennifer S. Gates|  0.6747197945585549|
+|02/08/2017|       Councilmember| Philip T. Kingston|  0.7172501742238399|
+|02/08/2017|       Councilmember|       Adam Medrano|  0.5102729251665463|
+|02/08/2017|       Councilmember|       Casey Thomas|  0.7827099021335184|
+|02/08/2017|       Councilmember|Carolyn King Arnold|  0.3322692884892371|
+|02/08/2017|       Councilmember|       Scott Griggs|0.008465762039200464|
+|02/08/2017|       Councilmember|   B. Adam  McGough|   0.824438288732425|
+|02/08/2017|       Councilmember|       Lee Kleinman|  0.8405422053553591|
+|02/08/2017|       Councilmember|      Sandy Greyson|  0.9695178688645538|
+|02/08/2017|       Councilmember|  Jennifer S. Gates|  0.8418248734086331|
+|02/08/2017|       Councilmember| Philip T. Kingston|  0.8348958041982948|
+|02/08/2017|       Councilmember|       Adam Medrano|  0.6498174267940056|
+|02/08/2017|       Councilmember|       Casey Thomas|  0.8914697502328074|
+|02/08/2017|       Councilmember|Carolyn King Arnold|  0.5646850672911216|
+|02/08/2017|       Councilmember| Rickey D. Callahan|  0.2302011397372855|
+|01/11/2017|       Councilmember|  Jennifer S. Gates|  0.5238492217794773|
+|04/25/2018|       Councilmember|     Sandy  Greyson|  0.8517918172114003|
+|04/25/2018|       Councilmember| Jennifer S.  Gates| 0.34915538130806334|
+|04/25/2018|       Councilmember|Philip T.  Kingston|   0.833572828647334|
+|04/25/2018|Deputy Mayor Pro Tem|       Adam Medrano|                   0|
++----------+--------------------+-------------------+--------------------+
+
+>>>>>>user defined functions
+
+
+pyspark.sql.functions.udf 
+1. stored as a variable
+2. called like a normal spark function
+
+reverse string
+
+def reverseString(mystr):
+	return mystr[::-1]
+
+udfReverseString = udf(reverseString, StringType())
+1. ArrayType(IntegerType())
+2. Schema Object
+3. IntegerType
+4. FloatType
+5. StringType
+6. LongType
+
+
+user_df = user_df.withColumn('ReverseName', udfReverseString(user_df.Name))
+
+
+def sortingCap():
+	return random.choice(['G','H','R','S'])
+
+udfSortingCap=udf(sortingCap,StringType())
+user_df  = user_df.withColumn('Class',udfSortingCap())
+
+>>>>>
+
+
+def getFirstAndMiddle(names):
+  # Return a space separated string of names
+  return ' '.join(names)
+
+# Define the method as a UDF
+udfFirstAndMiddle = F.udf(getFirstAndMiddle, StringType())
+
+print(voter_df.columns)
+# Create a new column using your UDF
+voter_df = voter_df.withColumn('first_and_middle_name', udfFirstAndMiddle(voter_df.splits))
+
+# Show the DataFrame
+voter_df.show(5)
+
+
+['DATE', 'TITLE', 'VOTER_NAME', 'splits', 'first_name', 'last_name']
++----------+-------------+-------------------+--------------------+----------+---------+---------------------+
+|      DATE|        TITLE|         VOTER_NAME|              splits|first_name|last_name|first_and_middle_name|
++----------+-------------+-------------------+--------------------+----------+---------+---------------------+
+|02/08/2017|Councilmember|  Jennifer S. Gates|[Jennifer, S., Ga...|  Jennifer|    Gates|    Jennifer S. Gates|
+|02/08/2017|Councilmember| Philip T. Kingston|[Philip, T., King...|    Philip| Kingston|   Philip T. Kingston|
+|02/08/2017|        Mayor|Michael S. Rawlings|[Michael, S., Raw...|   Michael| Rawlings|  Michael S. Rawlings|
+|02/08/2017|Councilmember|       Adam Medrano|     [Adam, Medrano]|      Adam|  Medrano|         Adam Medrano|
+|02/08/2017|Councilmember|       Casey Thomas|     [Casey, Thomas]|     Casey|   Thomas|         Casey Thomas|
++----------+-------------+-------------------+--------------------+----------+---------+---------------------+
+only showing top 5 rows
+
+
+>>>> partitioning and lazy processing
+
+1. dataframes are broken up into partitions
+2. partition size can vary
+3. each partition is handled independently
+
+transformations are lazy
+
+.withColumn
+.select
+
+nothing is actually done until an action is performed
+actions: .count(), .write()
+
+transformations can be re-ordered for best performance
+sometimes causes unexpected behavior
+
+
+IDs: sequential and unique, not very parallel
+
+pyspark.sql.functions.monotonically_increasing_id()
+1. integer (64 bit) value that increases in value and it is unique
+2. ids max range is 8 billion per group and 2.1 billion possible groups
+
+
+>>>>
+
+# Select all the unique council voters
+voter_df = df.select(df["VOTER NAME"]).distinct()
+
+# Count the rows in voter_df
+print("\nThere are %d rows in the voter_df DataFrame.\n" % voter_df.count())
+
+# Add a ROW_ID
+voter_df = voter_df.withColumn('ROW_ID', F.monotonically_increasing_id())
+
+# Show the rows with 10 highest IDs in the set
+voter_df.orderBy(voter_df.ROW_ID.desc()).show(10)
+
++--------------------+-------------+
+|          VOTER NAME|       ROW_ID|
++--------------------+-------------+
+|        Lee Kleinman|1709396983808|
+|  the  final  201...|1700807049217|
+|         Erik Wilson|1700807049216|
+|  the  final   20...|1683627180032|
+| Carolyn King Arnold|1632087572480|
+| Rickey D.  Callahan|1597727834112|
+|   the   final  2...|1443109011456|
+|    Monica R. Alonzo|1382979469312|
+|     Lee M. Kleinman|1228360646656|
+|   Jennifer S. Gates|1194000908288|
++--------------------+-------------+
+
+# Print the number of partitions in each DataFrame
+print("\nThere are %d partitions in the voter_df DataFrame.\n" % voter_df.rdd.getNumPartitions())
+print("\nThere are %d partitions in the voter_df_single DataFrame.\n" % voter_df_single.rdd.getNumPartitions())
+
+# Add a ROW_ID field to each DataFrame
+voter_df = voter_df.withColumn('ROW_ID', F.monotonically_increasing_id())
+voter_df_single = voter_df_single.withColumn('ROW_ID', F.monotonically_increasing_id())
+
+# Show the top 10 IDs in each DataFrame 
+voter_df.orderBy(voter_df.ROW_ID.desc()).show(10)
+voter_df_single.orderBy(voter_df_single.ROW_ID.desc()).show(10)
+
+There are 200 partitions in the voter_df DataFrame.
+
+
+There are 1 partitions in the voter_df_single DataFrame.
+
++--------------------+-------------+
+|          VOTER NAME|       ROW_ID|
++--------------------+-------------+
+|        Lee Kleinman|1709396983808|
+|  the  final  201...|1700807049217|
+|         Erik Wilson|1700807049216|
+|  the  final   20...|1683627180032|
+| Carolyn King Arnold|1632087572480|
+| Rickey D.  Callahan|1597727834112|
+|   the   final  2...|1443109011456|
+|    Monica R. Alonzo|1382979469312|
+|     Lee M. Kleinman|1228360646656|
+|   Jennifer S. Gates|1194000908288|
++--------------------+-------------+
+only showing top 10 rows
+
++--------------------+------+
+|          VOTER NAME|ROW_ID|
++--------------------+------+
+|      Tennell Atkins|     0|
+|  the  final   20...|     1|
+|        Scott Griggs|     2|
+|       Scott  Griggs|     3|
+|       Sandy Greyson|     4|
+| Michael S. Rawlings|     5|
+| the final 2018 A...|     6|
+|        Kevin Felder|     7|
+|        Adam Medrano|     8|
+|                null|     9|
++--------------------+------+
+only showing top 10 rows
+
+# Determine the highest ROW_ID and save it in previous_max_ID
+previous_max_ID = voter_df_march.select('ROW_ID').rdd.max()[0]
+
+# Add a ROW_ID column to voter_df_april starting at the desired value
+voter_df_april = voter_df_april.withColumn('ROW_ID',  F.monotonically_increasing_id() + previous_max_ID)
+
+# Show the ROW_ID from both DataFrames and compare
+voter_df_march.select('ROW_ID').show()
+voter_df_april.select('ROW_ID').show()
+
+
++-----------+
+|     ROW_ID|
++-----------+
+| 8589934592|
+|25769803776|
+|34359738368|
+|42949672960|
+|51539607552|
++-----------+
+only showing top 5 rows
+
++-------------+
+|       ROW_ID|
++-------------+
+|1717986918400|
+|1735166787584|
+|1743756722176|
+|1752346656768|
+|1760936591360|
++-------------+
+
+create a combination ID containing a name, a new ID, and perhaps a conditional value. When you are able to view your tasks as compositions of available functions, you can clean and modify your data in any way you see fit.
+
+
+>>>>>> caching
+
+stores dataframes in memory or on disk
+
+improves speed on later transformations/actions
+
+reduces resource usage
+
+very large data sets may not fit in memory reserve
+
+local disk based caching may not be a performance improvement
+
+cache only if you need it
+
+try caching dataframes at various points and determine if your performance improves
+
+cache in memory and fast ssd/nvme storage
+
+cache to slow local disk if needed
+
+use intermediate files
+
+stop caching objects when finished
+
+>>> implement cache
+df.cache()
+
+voter_df = spark.read.csv('voter_data.txt.gz')
+voter_df.cache().count()
+
+>>>
+
+voter_df = voter_df.withColumn('ID',montonically_increasing_id())
+voter_df = voter_df.cache()
+voter_df.show()
+
+
+cache is a spark transformation
+
+.is_cached
+
+.unpersist (remove cache)
+
+
+>>>>>
+
+start_time = time.time()
+
+# Add caching to the unique rows in departures_df
+departures_df = departures_df.distinct().cache()
+
+# Count the unique rows in departures_df, noting how long the operation takes
+print("Counting %d rows took %f seconds" % (departures_df.count(), time.time() - start_time))
+
+# Count the rows again, noting the variance in time of a cached DataFrame
+start_time = time.time()
+print("Counting %d rows again took %f seconds" % (departures_df.count(), time.time() - start_time))
+
+
+Counting 139358 rows took 0.938788 seconds
+Counting 139358 rows again took 0.408921 seconds
+
+
+>>>>>
+
+
+# Determine if departures_df is in the cache
+print("Is departures_df cached?: %s" % departures_df.is_cached)
+print("Removing departures_df from cache")
+
+# Remove departures_df from the cache
+departures_df.unpersist()
+
+# Check the cache status again
+print("Is departures_df cached?: %s" % departures_df.is_cached)
+
+
+>>>> improve import performance
+
+spark clusters are made of two types of processes: driver process and worker processes
+
+1. more objects are better than larger ones
+2. split the large data into smaller files
+
+can import via wildcard
+
+airport_df = spark.read.csv('airports-*.txt.gz')
+
+spark performs better if objects are of similar size
+
+a well defined schema will drastically improve import performance
+
+spark schemas provide validation on import
+
+os utilities: split, cut, awk
+
+
+split -l 10000 largefile chunk-
+
+largefile is the name of the file
+chunk- is the prefix to be used.
+
+
+write out to parquet
+
+df_csv = spark.read.csv('singlelargefile.csv')
+df_csv.write.parquet('data.parquet')
+df=spark.read.parquet('data.parquet')
+
+>>>>>
+
+
+# Import the full and split files into DataFrames
+full_df = spark.read.csv('departures_full.txt.gz')
+#where xxx is 000 - 013.
+split_df = spark.read.csv('departures_0*.txt.gz')
+
+# Print the count and run time for each DataFrame
+start_time_a = time.time()
+print("Total rows in full DataFrame:\t%d" % full_df.count())
+print("Time to run: %f" % (time.time() - start_time_a))
+
+start_time_b = time.time()
+print("Total rows in split DataFrame:\t%d" % split_df.count())
+print("Time to run: %f" % (time.time() - start_time_b))
+
+Total rows in full DataFrame:	139359
+Time to run: 0.664024
+Total rows in split DataFrame:	139359
+Time to run: 0.167118
+
+
+#The results should illustrate that using split files runs more quickly than using one large file for import.
+
+
+>>>>>> cluster configuration
+
+configurations to match the needs
+
+spark.conf.get(<configuration name>)
+spark.conf.set(<configuration name>)
+
+cluster types:
+1. single node
+2. standalone clusters
+3. managed clusters: (yarn, mesos, kubernetes)
+
+one driver per spark cluster
+1. task assignments
+2. monitors state of all tasks
+3. results consolidated
+4. shared data access
+
+
+driver node should have double the memory of the worker
+1. fast local storage is helpful
+
+
+worker
+1. runs actual task
+2. ideally has all code, data, and resources for a given task
+
+more worker nodes are often better than larger workers
+
+test to find the balance
+
+fast local storage extremely userful
+
+>>>>
+# Name of the Spark application instance
+app_name = spark.conf.get('spark.app.name')
+
+# Driver TCP port
+driver_tcp_port = spark.conf.get('spark.driver.port')
+
+# Number of join partitions
+num_partitions = spark.conf.get('spark.sql.shuffle.partitions')
+
+# Show the results
+print("Name: %s" % app_name)
+print("Driver TCP port: %s" % driver_tcp_port)
+print("Number of partitions: %s" % num_partitions)
+
+Name: pyspark-shell
+Driver TCP port: 36913
+Number of partitions: 200
+
+
+>>>>>>>> 
+
+# Store the number of partitions in variable
+before = departures_df.rdd.getNumPartitions()
+
+# Configure Spark to use 500 partitions
+spark.conf.set('spark.sql.shuffle.partitions', 500)
+
+# Recreate the DataFrame using the departures data file
+departures_df = spark.read.csv('departures.txt.gz').distinct()
+
+# Print the number of partitions for each instance
+print("Partition count before change: %d" % before)
+print("Partition count after change: %d" % departures_df.rdd.getNumPartitions())
+
+ Partition count before change: 500
+ Partition count after change: 500
+
+>>>> performance improvements
+
+
+voter_df = df.select(df['VOTER NAME').distinct()
+voter_df.explain()
+
+shuffling is moving data to the works.  shuffling show be minimized
+
+limit use of .repartition(num_partitions)
+
+reduce the number of partitions
+   use .coalesce(num_partitions)
+
+.join()
+
+.broadcast()
+1. provides a copy of an object to each worker
+2. prevents undue / excess communication between nodes
+3. can drastically speed up .join() operations
+
+>>>>>> Joining dataframes
+
+# Join the flights_df and aiports_df DataFrames
+normal_df = flights_df.join(airports_df, \
+    flights_df["Destination Airport"] == airports_df["IATA"] )
+
+# Show the query plan
+normal_df.explain()
+
+
+>>>>>>
+
+# Import the broadcast method from pyspark.sql.functions
+from pyspark.sql.functions import broadcast
+
+# Join the flights_df and airports_df DataFrames using broadcasting
+broadcast_df = flights_df.join(broadcast(airports_df), \
+    flights_df["Destination Airport"] == airports_df["IATA"] )
+
+# Show the query plan and compare against the original
+broadcast_df.explain()
+
+>>>>>
+
+start_time = time.time()
+# Count the number of rows in the normal DataFrame
+normal_count = normal_df.count()
+normal_duration = time.time() - start_time
+
+start_time = time.time()
+# Count the number of rows in the broadcast DataFrame
+broadcast_count = broadcast_df.count()
+broadcast_duration = time.time() - start_time
+
+# Print the counts and the duration of the tests
+print("Normal count:\t\t%d\tduration: %f" % (normal_count, normal_duration))
+print("Broadcast count:\t%d\tduration: %f" % (broadcast_count, broadcast_duration))
+
+Normal count:		119910	duration: 2.827836
+Broadcast count:	119910	duration: 0.656963
+
+
+
+>>>>>> data pipelines
+
+a data pipeline is a set of steps required to move data from sources to the desired output
+
+a data pipeline can consist of any number of steps or components and can span many systems
+
+inputs: csv, json, web services, databases
+
+get the data into a dataframe
+
+Transformations
+1. withColumn
+2. filter
+3. drop
+
+Outputs:
+1. cs, parquet, database
+
+Validation
+1. testing on the data
+
+Analysis
+1. row counts
+2. specific calculation
+
+pipelines are a concept
+
+schema=StructType([
+StructField('name',StringType(),False),
+StructField('age',StringType(),False)
+])
+df=spark.read.format('csv').load('datafile').schema(schema)
+df=df.withColumn('id',monotonically_increasing_id())
+
+df.write.parquet('outdata.parquet')
+df.write.json('outdata.json')
+
+>>>>
+
+
+# Import the data to a DataFrame
+departures_df = spark.read.csv('2015-departures.csv.gz', header=True)
+
+# Remove any duration of 0
+departures_df = departures_df.filter(departures_df[3] > 0)
+
+# Add an ID column
+departures_df = departures_df.withColumn('id', F.monotonically_increasing_id())
+
+# Write the file out to JSON format
+departures_df.write.json('output.json', mode='overwrite')
+
+>>>> casting
+
+departures_df = departures_df.withColumn('Duration', departures_df['Duration'].cast(IntegerType()))
+
+
+>>>> Data handling techniques
+
+trying to parse data
+incorrect data
+1. empty rows
+2. commented lines
+3. header
+
+nested structures
+- multiple delimiters
+
+non-regular data
+- differing numbers of columns per row
+
+focused on csv data
+
+stanford imagenet annotations
+1. identifies dog breeds in images
+2. provides list of all identified dogs in image
+3. other metadata (base folder, image size, etc)
+
+
+spark csv parser
+1. automatically removes blank lines
+2. can remove comments using an optional argument
+
+df1=spark.read.csv('datafile.csv.gz', comment='#')
+
+handles header fields
+1. defined via argument
+2. ignored if a schema is defined
+
+df1=spark.read.csv('datafile.csv.gz',header='True')
+
+1. will automatically create columns in a dataframe is it can based on sep argument.
+
+df1 = spark.read.csv('datafile.csv.gz', sep=',')
+ 
+
+can still successfully parse if sep is not in string
+
+df1 = spark.read.csv('datafile.csv.gz', sep='*')
+
+stores data in column defaulting to _c0
+
+
+>>>>>>>>
+
+
+# Import the file to a DataFrame and perform a row count
+annotations_df = spark.read.csv('annotations.csv.gz', sep='|')
+full_count = annotations_df.count()
+
+# Count the number of rows beginning with '#'
+comment_count = annotations_df.where(col('_c0').startswith('#')).count()
+
+# Import the file to a new DataFrame, without commented rows
+no_comments_df = spark.read.csv('annotations.csv.gz', sep='|', comment='#')
+
+# Count the new DataFrame and verify the difference is as expected
+no_comments_count = no_comments_df.count()
+print("Full count: %d\nComment count: %d\nRemaining count: %d" % (full_count, comment_count, no_comments_count))
+
+
+Full count: 32794
+Comment count: 1416
+Remaining count: 31378
+
+
+>>>>>>
+
+# Split _c0 on the tab character and store the list in a variable
+tmp_fields = F.split(annotations_df['_c0'], '\t')
+
+# Create the colcount column on the DataFrame
+annotations_df = annotations_df.withColumn('colcount', F.size(tmp_fields))
+
+# Remove any rows containing fewer than 5 fields
+annotations_df_filtered = annotations_df.filter(~ (col('colcount')<5))
+
+# Count the number of rows
+final_count = annotations_df_filtered.count()
+print("Initial count: %d\nFinal count: %d" % (initial_count, final_count))
+
+Initial count: 31378
+Final count: 20580
+
+>>>>
+
+# Split the content of _c0 on the tab character (aka, '\t')
+split_cols = F.split(annotations_df["_c0"], '\t')
+
+# Add the columns folder, filename, width, and height
+split_df = annotations_df.withColumn('folder', split_cols.getItem(0))
+split_df = split_df.withColumn('filename', split_cols.getItem(1))
+split_df = split_df.withColumn('width', split_cols.getItem(2))
+split_df = split_df.withColumn('height', split_cols.getItem(3))
+
+# Add split_cols as a column
+split_df = split_df.withColumn('split_cols', split_cols) 
+
+
+>>>>>
+
+def retriever(cols, colcount):
+  # Return a list of dog data
+  return cols[4:colcount]
+
+# Define the method as a UDF
+udfRetriever = F.udf(retriever, ArrayType(StringType()))
+
+print(split_df.columns)
+
+# Create a new column using your UDF
+split_df = split_df.withColumn('dog_list', udfRetriever('_c0', 'colcount'))
+
+# Remove the original column, split_cols, and the colcount
+split_df = split_df.drop('_c0').drop('colcount').drop('split_cols')
+
+>>>>>> Data validation
+
+verifying that a dataset complies with the expected format
+
+number of rows / columns
+
+data types (do the data types match)
+
+complex validations rules
+
+validating via joins
+1. compares data against known values
+2. easy to find data in a given set
+3. comparatively fast
+
+
+parsed_df=spark.read.parquet('parsed_data.parquet')
+company_df=spark.read.parquet('companies.parquet')
+
+verified_df=parsed_df.join(company_df, parsed_df.company==company_df.company)
+
+>>>>>>complex rule validation
+1. calculations
+2. verifying against external source
+3. likely uses a udf to modify/verify the dataframe
+
+
+>>>>>>
+
+# Rename the column in valid_folders_df
+valid_folders_df = valid_folders_df.withColumnRenamed('_c0','folder')
+
+# Count the number of rows in split_df
+split_count = split_df.count()
+
+# Join the DataFrames
+joined_df = split_df.join(F.broadcast(valid_folders_df), "folder")
+
+# Compare the number of rows remaining
+joined_count = joined_df.count()
+print("Before: %d\nAfter: %d" % (split_count, joined_count))
+
+
+
+Before: 20580
+After: 19956
+
+
+# Determine the row counts for each DataFrame
+split_count = split_df.count()
+joined_count = joined_df.count()
+
+# Create a DataFrame containing the invalid rows
+invalid_df = split_df.join(F.broadcast(joined_df), 'folder', 'left_anti')
+
+# Validate the count of the new DataFrame is as expected
+invalid_count = invalid_df.count()
+print(" split_df:\t%d\n joined_df:\t%d\n invalid_df: \t%d" % (split_count, joined_count, invalid_count))
+
+# Determine the number of distinct folder rows removed
+invalid_folder_count = invalid_df.select('folder').distinct().count()
+print("%d distinct invalid folders found" % invalid_folder_count)
+
+split_df:	20580
+ joined_df:	19956
+ invalid_df: 	624
+1 distinct invalid folders found
+
+
+>>>>>>> analysis calculations (udf)
+
+calculations using udf
+
+
+def getAvgSales(saleslist):
+	totalsales=0
+	count=0
+	for sale in saleslist:
+		totalsales+=sale[2]+sale[3]
+		count+=2
+
+	return totalsales/count
+
+
+udfGetAvgSale=udf(getAvgSale,DoubleType())
+
+df=df.withColumn('avg_sale',udfGetAvgSale(df.sales_list))
+
+>>>>>> performance increases are accomplished by inline calculations
+
+df=df.read.csv('datafile')
+df=df.withColumn('avg',(df.total_sales / df. sales_count))
+df=df.withColumn('sq_ft', df.width*df.length)
+df=df.withColumn('total_avg_size',udfComputeTotal(df.entries)/df.numEntries)
+
+
+>>>>>
+
+
+print(joined_df.columns)
+# Select the dog details and show 10 untruncated rows
+print(joined_df.select('dog_list').show(10, truncate=False))
+
+# Define a schema type for the details in the dog list
+DogType = StructType([
+	StructField("breed", StringType(), False),
+    StructField("start_x", IntegerType(), False),
+    StructField("start_y",IntegerType(), False),
+    StructField("end_x",IntegerType(), False),
+    StructField("end_y",IntegerType(), False)
+])
+
+
++----------------------------------+
+|dog_list                          |
++----------------------------------+
+|[affenpinscher,0,9,173,298]       |
+|[Border_terrier,73,127,341,335]   |
+|[kuvasz,0,0,499,327]              |
+|[Great_Pyrenees,124,225,403,374]  |
+|[schipperke,146,29,416,309]       |
+|[groenendael,168,0,469,374]       |
+|[Bedlington_terrier,10,12,462,332]|
+|[Lhasa,39,1,499,373]              |
+|[Kerry_blue_terrier,17,16,300,482]|
+|[vizsla,112,93,276,236]           |
++----------------------------------+
+only showing top 10 rows
+
+
+>>>>>
+
+# Create a function to return the number and type of dogs as a tuple
+def dogParse(doglist):
+  dogs = []
+  for dog in doglist:
+    (breed, start_x, start_y, end_x, end_y) = dog.split(',')
+    dogs.append((breed, int(start_x), int(start_y), int(end_x), int(end_y)))
+  return dogs
+
+# Create a UDF
+udfDogParse = F.udf(dogParse, ArrayType(DogType))
+
+# Use the UDF to list of dogs and drop the old column
+joined_df = joined_df.withColumn('dogs', udfDogParse(joined_df.dog_list)).drop('dog_list')
+
+# Show the number of dogs in the first 10 rows
+joined_df.select(F.size('dogs')).show(10)
+
+
+>>>>>
+
+
+# Define a UDF to determine the number of pixels per image
+def dogPixelCount(doglist):
+  totalpixels = 0
+  for dog in doglist:
+    totalpixels += (dog[3] - dog[1]) * (dog[4] - dog[2])
+  return totalpixels
+
+# Define a UDF for the pixel count
+udfDogPixelCount = F.udf(dogPixelCount, IntegerType())
+joined_df = joined_df.withColumn('dog_pixels', udfDogPixelCount(joined_df.dogs))
+
+# Create a column representing the percentage of pixels
+joined_df = joined_df.withColumn('dog_percent', (joined_df.dog_pixels / (joined_df.width * joined_df.height)) * 100)
+
+# Show the first 10 annotations with more than 60% dog
+joined_df.where('dog_percent > 60').show(10)
+
++--------+---------------+-----+------+--------------------+----------+-----------------+
+|  folder|       filename|width|height|                dogs|dog_pixels|      dog_percent|
++--------+---------------+-----+------+--------------------+----------+-----------------+
+|02110627|n02110627_12938|  200|   300|[[affenpinscher, ...|     49997|83.32833333333333|
+|02104029|   n02104029_63|  500|   375|[[kuvasz, 0, 0, 4...|    163173|          87.0256|
+|02105056| n02105056_2834|  500|   375|[[groenendael, 16...|    112574|60.03946666666666|
+|02093647|  n02093647_541|  500|   333|[[Bedlington_terr...|    144640|86.87087087087087|
+|02098413| n02098413_1355|  500|   375|[[Lhasa, 39, 1, 4...|    171120|           91.264|
+|02093859| n02093859_2309|  330|   500|[[Kerry_blue_terr...|    131878|79.92606060606062|
+|02109961| n02109961_1017|  475|   500|[[Eskimo_dog, 43,...|    189189|79.65852631578947|
+|02108000| n02108000_3491|  600|   450|[[EntleBucher, 30...|    168667|62.46925925925926|
+|02085782| n02085782_1731|  600|   449|[[Japanese_spanie...|    250125|92.84521158129176|
+|02110185| n02110185_2736|  259|   500|[[Siberian_husky,...|    113088|87.32664092664093|
++--------+---------------+-----+------+--------------------+----------+-----------------+
+only showing top 10 rows
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

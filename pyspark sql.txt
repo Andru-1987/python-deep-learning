@@ -1,0 +1,1190 @@
+df= spark.read.csv(filename,header=True,inferSchema=True)
+
+df.createOrReplaceTempView('schedule')
+
+
+spark.sql('select * from schedule where station='San Jose'").show()
+
+result= spark.sql("show columns from tablename")
+result = spark.sql("select * from tablename limit 0")
+result=spark.sql("describe tablename")
+
+result.show()
+or
+print(result.columns)
+
+>>>>>>>
+
+ # Load trainsched.txt
+df = spark.read.csv("trainsched.txt", header=True)
+
+# Create temporary table called table1
+df.createOrReplaceTempView('table1')
+
+# Inspect the columns in the table df
+spark.sql("describe schedule").show()
+
++--------+---------+-------+
+|col_name|data_type|comment|
++--------+---------+-------+
+|train_id|   string|   null|
+| station|   string|   null|
+|    time|   string|   null|
++--------+---------+-------+
+
+>>>>>>>Window function sql
+
+express oprations more simply than dot notation or queries
+
+query="""
+select train_id, station, time,
+lead(time,1) over (order by time) as time_next
+from sched
+where trainZ_id=324
+"""
+
+spark.sql(query).show()
+
+
+query="""
+select train_id, station, time,
+lead(time,1) over (partition by train_id, order by time) as time_next
+from sched
+where trainZ_id=324
+"""
+spark.sql(query).show()
+
+
+>>>>>>>
+
+# Add col running_total that sums diff_min col in each group
+query = """
+SELECT train_id, station, time, diff_min,
+sum(diff_min) OVER (PARTITION BY train_id ORDER BY time) AS running_total
+FROM schedule
+"""
+
+# Run the query and display the result
+spark.sql(query).show()
+
+
+|train_id|      station| time|diff_min|running_total|
++--------+-------------+-----+--------+-------------+
+|     217|       Gilroy|6:06a|     9.0|          9.0|
+|     217|   San Martin|6:15a|     6.0|         15.0|
+|     217|  Morgan Hill|6:21a|    15.0|         30.0|
+|     217| Blossom Hill|6:36a|     6.0|         36.0|
+|     217|      Capitol|6:42a|     8.0|         44.0|
+|     217|       Tamien|6:50a|     9.0|         53.0|
+|     217|     San Jose|6:59a|    null|         53.0|
+|     324|San Francisco|7:59a|     4.0|          4.0|
+|     324|  22nd Street|8:03a|    13.0|         17.0|
+|     324|     Millbrae|8:16a|     8.0|         25.0|
+|     324|    Hillsdale|8:24a|     7.0|         32.0|
+|     324| Redwood City|8:31a|     6.0|         38.0|
+|     324|    Palo Alto|8:37a|    28.0|         66.0|
+|     324|     San Jose|9:05a|    null|         66.0|
++--------+-------------+-----+--------+-------------+
+
+
+query = """
+SELECT 
+ROW_NUMBER() OVER (ORDER BY time) AS row,
+train_id, 
+station, 
+time, 
+LEAD(time,1) OVER (Partition by train_id ORDER BY time) AS time_next 
+FROM schedule
+"""
+spark.sql(query).show()
+
+
+>>>>>>> dot notation and sql
+
+df.select('train_id','station')
+df.select(df.train_id,df.station)
+
+from pyspark.sql.functions import col
+
+df.select(col('train_id'),col('station'))
+
+df.select('train_id','station').withColumnRenamed('train_id','train').show(5)
+
+df.select(col('train_id').alias('train'),'station')
+
+
+df.withColumn("id", row_number().over(
+	Window.partitionBy('train_id').orderBy('time')))
+
+
+row_number in sql : pyspark.sql.functions.row_number
+
+
+pyspark.sql.window.Window
+
+window=Window.partitionBy('train_id').orderBy('time')
+dfx=df.withColumn('net',lead('time',1).over(window))
+
+
+>>>>
+
+# Give the identical result in each command
+spark.sql('SELECT train_id, MIN(time) AS start FROM schedule GROUP BY train_id').show()
+df.groupBy('train_id').agg({'time':'min'}).withColumnRenamed('time', 'start').show()
+
+# Print the second column of the result
+spark.sql('SELECT train_id, MIN(time), MAX(time) FROM schedule GROUP BY train_id').show()
+result = df.groupBy('train_id').agg({'time':'min', 'time':'max'})
+result.show()
+print(result.columns[1])
+
+>>>
+from pyspark.sql.functions import min, max, col
+expr = [min(col("time")).alias('start'), max(col("time")).alias('end')]
+dot_df = df.groupBy("train_id").agg(*expr)
+dot_df.show()
+
+
+# Write a SQL query giving a result identical to dot_df
+query = "SELECT train_id, MIN(time) AS start, MAX(time) AS end FROM schedule group by train_id"
+sql_df = spark.sql(query)
+sql_df.show()
+
+
++--------+-----+-----+
+|train_id|start|  end|
++--------+-----+-----+
+|     217|6:06a|6:59a|
+|     324|7:59a|9:05a|
++--------+-----+-----+
+
+
+# Obtain the identical result using dot notation 
+dot_df = df.withColumn('time_next', lead('time', 1)
+        .over(Window.partitionBy('train_id')
+        .orderBy('time')))
+
+
+# Create a SQL query to obtain an identical result to dot_df
+query = """
+SELECT *, 
+(UNIX_TIMESTAMP(lead(time, 1) over (partition BY train_id order BY time),'H:m') 
+ - UNIX_TIMESTAMP(time, 'H:m'))/60 AS diff_min 
+FROM schedule 
+"""
+sql_df = spark.sql(query)
+sql_df.show()
+
+
++--------+-------------+-----+--------+
+|train_id|      station| time|diff_min|
++--------+-------------+-----+--------+
+|     217|       Gilroy|6:06a|     9.0|
+|     217|   San Martin|6:15a|     6.0|
+|     217|  Morgan Hill|6:21a|    15.0|
+|     217| Blossom Hill|6:36a|     6.0|
+
+
+>>>>>>> Natural language text
+
+project Gutenberg  (free ebooks)
+
+gutenberg.org
+
+df=spark.read.text('sherlock.txt')
+
+print(df.first())
+print(df.count())
+
+
+df1.show(15,truncate=False)
+
+truncate=False allows to print longer rows of words
+
+df=df1.select(lower(col('value')))
+
+
+the resulting column is call 'lower(value)'
+
+df=df1.select(lower(col('value')).alias('v'))
+
+df=df1.select(regexp_replace('value','Mr\.','Mr').alias('v'))
+
+df=df1.select(regexp_replace('value','don\'t','do not').alias('v'))
+
+df=df2.select(split('v','[]').alias('words'))
+df.show(truncate=False)
+
+punctuation = "_|.\?\!\",\'\[\}\*()"
+
+df3=df2.select(split('v','[%s]'% punctuation).alias('words'))
+
+df4=df3.select(explode('words').alias('word'))
+df4.show()
+
+explode takes an array of things and puts each thing on its own row
+
+>>>>>>>>>>
+
+# Split the clause column into a column called words 
+split_df = clauses_df.select(split('clause', ' ').alias('words'))
+split_df.show(5, truncate=False)
+
+# Explode the words column into a column called word 
+exploded_df = split_df.select(explode('words').alias('word'))
+exploded_df.show(10)
+
+# Count the resulting number of rows in exploded_df
+print("\nNumber of rows: ", exploded_df.count())
+
++----------+
+|      word|
++----------+
+|     title|
+|       the|
+|adventures|
+|        of|
+|  sherlock|
++----------+
+only showing top 5 rows
+
+
+Number of rows:  1279
+
+
+
+
+df2=df.select('word',monotonically_increasing_id().alias('id'))
+
+dr2.show()
+
+monotonically_increasing_id create a list of integers that are increasing in value
+
+df2 = df.withColumn('title', when(df.id<25000, 'Preface')
+.when(df.id<50000,'Chapter 1')
+.when(df.id<75000,'Chapter 2')
+.otherwise('Chapter 3'))
+
+
+df2 = df.withColumn('part', when(df.id<25000, 0)
+.when(df.id<50000,1)
+.when(df.id<75000,2)
+.otherwise(3))
+
+df2=df.repartition(4,'part')
+
+print(df2.rdd.getNumPartitions())
+
+
+df_parts = spark.read.text('sherlock_parts')
+
+reads multiple files into a dataframe
+
+df=df1.select(regexp_replace('value','Mr\.','Mr').alias('v'))
+
+
+df=df1.select(regexp_replace('value','don\'t','do not').alias('v'))
+
+
+>>>>>
+
+# Load the dataframe
+df = spark.read.load('sherlock_sentences.parquet')
+
+# Filter and show the first 5 rows
+df.where('id > 70').show(5, truncate=False)
+
+>>>>>>> moving window analysis
+
+
+the data is partitioned into 12 parts corresponding to chapters
+
+df.select('part','title').distinct().sort('part').show(truncate=False)
+
+
+query="""
+select id, word as w1,
+lead(word,1) over(partition by part order by id) as w2,
+lead(word,2) over(partition by part order by id) as w3
+from df
+"""
+spark.sql(query).sort('id').show()
+
+w1,w2,w3 correspond with three words creating a 3-tuple
+
+partition runs the query on multiple cpus
+
+sliding window
+
+lag_query="""
+select
+id,
+lag(word,2) over(partition by part order by id) as w1,
+lag(word,1) over(partition by part order by id) as w2
+word as w3
+from df
+order by id
+"""
+
+spark.sql(lag_query).show()
+
+>>>>
+
+# Word for each row, previous two and subsequent two words
+query = """
+SELECT
+part,
+LAG(word, 2) OVER(PARTITION BY part ORDER BY id) AS w1,
+LAG(word, 1) OVER(PARTITION BY part ORDER BY id) AS w2,
+word AS w3,
+LEAD(word, 1) OVER(PARTITION BY part ORDER BY id) AS w4,
+LEAD(word, 2) OVER(PARTITION BY part ORDER BY id) AS w5
+FROM text
+"""
+spark.sql(query).where("part = 12").show(10)
+
+# Repartition text_df into 12 partitions on 'chapter' column
+repart_df = text_df.repartition(12, 'chapter')
+
+# Prove that repart_df has 12 partitions
+repart_df.rdd.getNumPartitions()
+
+
+>>>>>>> common word sequences
+query="""
+select w1,w2,w3, count(*) as count from
+(
+select id, word as w1,
+lead(word,1) over(partition by part order by id) as w2,
+lead(word,2) over(partition by part order by id) as w3
+from df
+)
+group by w1,w2,w3
+order by count desc
+"""
+
+3-tuples
+
+
+query="""
+select w1,w2,w3, length(w1)+length(w2)+length(w3) as length from
+(
+select id, word as w1,
+lead(word,1) over(partition by part order by id) as w2,
+lead(word,2) over(partition by part order by id) as w3
+from df
+)
+group by w1,w2,w3
+order by count desc
+"""
+
+spark.sql(query).show(truncate=False)
+
+>>>>>>
+
+# Find the top 10 sequences of five words
+query = """
+SELECT w1, w2, w3, w4, w5, COUNT(*) AS count FROM (
+   SELECT word AS w1,
+   LEAD(word,1) OVER(partition by part order by id ) AS w2,
+   LEAD(word,2) OVER(partition by part order by id )  AS w3,
+   LEAD(word,3) OVER(partition by part order by id )  AS w4,
+   LEAD(word,4) OVER(partition by part order by id )  AS w5
+   FROM text
+)
+GROUP BY w1, w2, w3, w4, w5
+ORDER BY count DESC
+LIMIT 10 """
+df = spark.sql(query)
+df.show()
+
+>>>>>>>
+
+# Unique 5-tuples sorted in descending order
+query = """
+SELECT distinct w1, w2, w3, w4, w5 FROM (
+   SELECT word AS w1,
+   Lag(word,1) OVER(PARTITION BY part ORDER BY id ) AS w2,
+   Lag(word,2) OVER(PARTITION BY part ORDER BY id ) AS w3,
+   Lag(word,3) OVER(PARTITION BY part ORDER BY id ) AS w4,
+   Lag(word,4) OVER(PARTITION BY part ORDER BY id ) AS w5
+   FROM text
+)
+ORDER BY w1 DESC, w2 DESC, w3 DESC, w4 desc, w5 desc
+LIMIT 10
+"""
+df = spark.sql(query)
+df.show()
+
+
++----------+------------+----+---------------+-----+
+|        w1|          w2|  w3|             w4|   w5|
++----------+------------+----+---------------+-----+
+|   zealand|         new|  in|             is|   it|
+|   youwill|   effective| and|            new| very|
+|   youwill|       cried|  he|            god|thank|
+|     youth|        slim|   a|           from| come|
+|     youth|quick-witted|very|              a|  not|
+|     youth|    obliging|this|             of| name|
+|     youth|           a|such|            not|    s|
+|yourselves|         for| see|            may|  you|
+|yourselves|     conceal| you|             do|  and|
+|  yourself|        were| you|left-handedness|  his|
++----------+------------+----+---------------+-----+
+In [1]:
+
+
+
+#   Most frequent 3-tuple per chapter
+query = """
+SELECT chapter, w1, w2, w3, count FROM
+(
+  SELECT
+  chapter,
+  ROW_NUMBER() OVER (PARTITION BY chapter ORDER BY count DESC) AS row,
+  w1, w2, w3, count
+  FROM ( %s )
+)
+WHERE row = 1
+ORDER BY chapter ASC
+""" % subquery
+
+spark.sql(query).show()
+
+
+
+-------+-------+--------+-------+-----+
+|chapter|     w1|      w2|     w3|count|
++-------+-------+--------+-------+-----+
+|      1|     up|      to|    the|    6|
+|      2|    one|      of|    the|    8|
+|      3|     mr|  hosmer|  angel|   13|
+|      4|   that|      he|    was|    8|
+|      5|   that|      he|    was|    6|
+|      6|neville|      st|  clair|   15|
+|      7|   that|       i|     am|    7|
+|      8|     dr|grimesby|roylott|    8|
+|      9|   that|      it|    was|    7|
+|     10|   lord|      st|  simon|   28|
+|     11|      i|   think|   that|    8|
+|     12|    the|  copper|beeches|   10|
++-------+-------+--------+-------+-----+
+
+<script.py> output:
+    +-------+-------+--------+-------+-----+
+    |chapter|     w1|      w2|     w3|count|
+    +-------+-------+--------+-------+-----+
+    |      1|     up|      to|    the|    6|
+    |      2|    one|      of|    the|    8|
+    |      3|     mr|  hosmer|  angel|   13|
+    |      4|   that|      he|    was|    8|
+    |      5|   that|      he|    was|    6|
+    |      6|neville|      st|  clair|   15|
+    |      7|   that|       i|     am|    7|
+    |      8|     dr|grimesby|roylott|    8|
+    |      9|   that|      it|    was|    7|
+    |     10|   lord|      st|  simon|   28|
+    |     11|      i|   think|   that|    8|
+    |     12|    the|  copper|beeches|   10|
+    +-------+-------+--------+-------+-----+
+
+
+# Split the clause column into a column called words 
+split_df = clauses_df.select(split('clause', ' ').alias('words'))
+split_df.show(5, truncate=False)
+
+# Explode the words column into a column called word 
+exploded_df = split_df.select(explode('words').alias('word'))
+exploded_df.show(10)
+
+# Count the resulting number of rows in exploded_df
+print("\nNumber of rows: ", exploded_df.count())
+
++----------+
+|     title|
+|       the|
+|adventures|
+|        of|
+|  sherlock|
+|    holmes|
+|    author|
+|       sir|
+|    arthur|
+|     conan|
++----------+
+
+>>>>>caching
+
+keeping data in memory
+spark tends to unload memory aggressively
+each worker manages its own cache
+depends on the memory for each worker
+
+to cache a dataframe
+df.cache()
+
+to uncache it
+df.unpresist()
+
+df.is_cached
+
+df.storageLevel (5 details)
+1. useDisk=True (disk if falls out of memory)
+2. useMemory=True
+3. useOffHeap=False (use off heap storage)  (heap is slower that static memory)
+4. deserialize=True (true - faster but uses more memory)
+5. replication=1 (replicate on multiple nodes)
+
+
+df.persist() 
+
+if memory is rare use memory and disk strategy
+
+df.persist(storageLevel=pyspark.StorageLevel.MEMORY_AND_DISK)
+
+
+df.createOrReplaceTempView('df')
+spark.catalog.isCached(tableName='df')
+
+spark.catalog.cacheTable('df')
+spark.catalog.isCached(tableName='df')
+
+spark.catalog.uncacheTable('df')
+spark.catalog.isCached(tableName='df')
+
+spark.catalog.clearCache()
+
+Caching is lazy.  only cache if more than one operation is to be performed
+
+unpersist unneed objects
+
+
+>>>>>>>>>
+
+# Unpersists df1 and df2 and initializes a timer
+prep(df1, df2) 
+
+# Cache df1
+df1.cache()
+
+# Run actions on both dataframes
+run(df1, "df1_1st") 
+run(df1, "df1_2nd")
+run(df2, "df2_1st")
+run(df2, "df2_2nd", elapsed=True)
+
+# Prove df1 is cached
+print(df1.is_cached)
+
+
+>>>>persist memory and disk storage level
+
+ # Unpersist df1 and df2 and initializes a timer
+prep(df1, df2) 
+
+# Persist df2 using memory and disk storage level 
+df2.persist(storageLevel=pyspark.StorageLevel.MEMORY_AND_DISK)
+
+# Run actions both dataframes
+run(df1, "df1_1st") 
+run(df1, "df1_2nd") 
+run(df2, "df2_1st") 
+run(df2, "df2_2nd", elapsed=True)
+
+>>>>>
+
+# List the tables
+print("Tables:\n", spark.catalog.listTables())
+
+# Cache table1 and Confirm that it is cached
+spark.catalog.cacheTable('table1')
+print("table1 is cached: ", spark.catalog.isCached('table1'))
+
+# Uncache table1 and confirm that it is uncached
+spark.catalog.uncacheTable('table1')
+print("table1 is cached: ", spark.catalog.isCached('table1'))
+
+
+>>>>> The Spark UI
+
+1. web interface
+a. Spark Task is a unit of execution that runs on a single cpu
+b. Spark Stage a group of tasks that perform the same computation in parallel, each task typically running on a different subset of the data.
+c. Spark Job is a computation triggered by an action comprised of stages
+
+
+port 4040
+
+spark: jobs, stages, storage, environment, executors, sql
+
+
+spark.catalog.cacheTable('table1')
+spark.catalog.uncacheTable('table1')
+spark.catalog.isCached('table1')
+spark.catalog.dropTempView('table1')
+spark.catalog.listTables()
+
+
+Spark UI Storage Tab
+-shows where data partitions exists
+1. in memory
+2. or on disk
+3. across the cluster
+4. at a snapshot in time
+
+>>>>>>Logging
+
+
+import logging
+
+logging.basicConfig(stream=sys.stdout, level=logging.INFO,
+format='%(asctime)s - %(levelname)s - %(message)s')
+
+logging.info("Hello %s","world")
+logging.debug("Hello, take %d",2)
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG,
+format='%(asctime)s - %(levelname)s - %(message)s')
+
+the debug level will display
+
+>>>>>>>>>>>
+
+import logging
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG,
+                    format='%(levelname)s - %(message)s')
+
+# Log columns of text_df as debug message
+logging.info("text_df columns: %s", text_df.columns)
+
+# Log whether table1 is cached as info message
+logging.info("table1 is cached: %s", spark.catalog.isCached(tableName="table1"))
+
+# Log first row of text_df as warning message
+logging.info("The first row of text_df:\n %s", text_df.first())
+
+# Log selected columns of text_df as error message
+logging.info("Selected columns: %s", text_df.select("id", "word"))
+
+
+Take Hint (-30 XP)
+script.py
+
+Light Mode
+1234567891011
+# Log columns of text_df as debug message
+logging.info("text_df columns: %s", text_df.columns)
+
+# Log whether table1 is cached as info message
+logging.info("table1 is cached: %s", spark.catalog.isCached(tableName="table1"))
+
+# Log first row of text_df as warning message
+logging.info("The first row of text_df:\n %s", text_df.first())
+
+# Log selected columns of text_df as error message
+logging.info("Selected columns: %s", text_df.select("id", "word"))
+
+
+Run Code
+
+Submit Answer
+IPython Shell
+Slides
+
+# List the tables
+print("Tables:\n", spark.catalog.listTables())
+
+# Cache table1 and Confirm that it is cached
+spark.catalog.cacheTable('table1')
+print("table1 is cached: ", spark.catalog.isCached('table1'))
+
+# Uncache table1 and confirm that it is uncached
+spark.catalog.uncacheTable('table1')
+print("table1 is cached: ", spark.catalog.isCached('table1'))
+
+# Log columns of text_df as debug message
+logging.debug("text_df columns: %s", text_df.columns)
+
+# Log whether table1 is cached as info message
+logging.info("table1 is cached: %s", spark.catalog.isCached(tableName="table1"))
+
+# Log first row of text_df as warning message
+logging.warning("The first row of text_df:\n %s", text_df.first())
+
+# Log selected columns of text_df as error message
+logging.error("Selected columns: %s", text_df.select("id", "word"))
+
+
+>>>> avoid stealth operation
+
+logging.debug("text_df columns: %s", text_df.columns)
+logging.info("table1 is cached: %s", spark.catalog.isCached(tableName="table1"))
+# logging.warning("The first row of text_df: %s", text_df.first())
+logging.error("Selected columns: %s", text_df.select("id", "word"))
+logging.info("Tables: %s", spark.sql("SHOW tables").collect())
+logging.debug("First row: %s", spark.sql("SELECT * FROM table1 LIMIT 1"))
+
+
+The first() and the last collect() operation each trigger an action on the dataframe. The collect on the SHOW TABLES query does not trigger an action on the dataframe.
+
+
+>>>>>>> query plans
+
+explain select * from table1
+
+query plan is a string describing how the query will access data.
+
+df.registerTempTable('df')
+
+spark.sql('EXPLAIN SELECT * FROM df').first()
+
+df.cache()
+df.explain()
+
+spark.sql('select * from df').explain()
+
+
+select word, count(*) as count
+from df
+group by word
+order by count desc
+
+df.groupBy('word').count().sort(desc('count')).explain()
+
+cached
+InMemoryTableScan
+	InMemoryRelation
+	StorageLevel(disk, memory, deserialized, 1 replicas)
+
+
+>>>>>>
+
+# Run explain on text_df
+text_df.explain()
+
+# Run explain on "SELECT COUNT(*) AS count FROM table1" 
+spark.sql("SELECT COUNT(*) AS count FROM table1").explain()
+
+# Run explain on "SELECT COUNT(DISTINCT word) AS words FROM table1"
+spark.sql("Explain select count(distinct word) as words from table1").first()
+
+
+>>>>>> non cached
+
+== Physical Plan ==
+*(1) Project [word#0, id#1L, part#2, title#3]
++- *(1) Filter (isnotnull(part#2) && (part#2 = 2))
+   +- *(1) FileScan parquet [word#0,id#1L,part#2,title#3] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<word:string,id:bigint,part:int,title:string>
+== Physical Plan ==
+*(2) HashAggregate(keys=[], functions=[count(1)])
++- Exchange SinglePartition
+   +- *(1) HashAggregate(keys=[], functions=[partial_count(1)])
+      +- *(1) Project
+         +- *(1) Filter (isnotnull(part#2) && (part#2 = 2))
+            +- *(1) FileScan parquet [part#2] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<part:int>
+Row(plan='== Physical Plan ==\n*(3) HashAggregate(keys=[], functions=[count(distinct word#0)])\n+- Exchange SinglePartition\n   +- *(2) HashAggregate(keys=[], functions=[partial_count(distinct word#0)])\n      +- *(2) HashAggregate(keys=[word#0], functions=[])\n         +- Exchange hashpartitioning(word#0, 200)\n            +- *(1) HashAggregate(keys=[word#0], functions=[])\n               +- *(1) Project [word#0]\n                  +- *(1) Filter (isnotnull(part#2) && (part#2 = 2))\n                     +- *(1) FileScan parquet [word#0,part#2] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<word:string,part:int>')
+In [1]:
+
+>>>>>> cached
+
+== Physical Plan ==
+*(1) Project [word#0, id#1L, part#2, title#3]
++- *(1) Filter (isnotnull(part#2) && (part#2 = 2))
+   +- *(1) FileScan parquet [word#0,id#1L,part#2,title#3] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<word:string,id:bigint,part:int,title:string>
+== Physical Plan ==
+*(2) HashAggregate(keys=[], functions=[count(1)])
++- Exchange SinglePartition
+   +- *(1) HashAggregate(keys=[], functions=[partial_count(1)])
+      +- InMemoryTableScan
+            +- InMemoryRelation [word#0, id#1L, part#2, title#3], StorageLevel(disk, memory, deserialized, 1 replicas)
+                  +- *(1) Project [word#0, id#1L, part#2, title#3]
+                     +- *(1) Filter (isnotnull(part#2) && (part#2 = 2))
+                        +- *(1) FileScan parquet [word#0,id#1L,part#2,title#3] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<word:string,id:bigint,part:int,title:string>
+Row(plan='== Physical Plan ==\n*(3) HashAggregate(keys=[], functions=[count(distinct word#0)])\n+- Exchange SinglePartition\n   +- *(2) HashAggregate(keys=[], functions=[partial_count(distinct word#0)])\n      +- *(2) HashAggregate(keys=[word#0], functions=[])\n         +- Exchange hashpartitioning(word#0, 200)\n            +- *(1) HashAggregate(keys=[word#0], functions=[])\n               +- InMemoryTableScan [word#0]\n                     +- InMemoryRelation [word#0, id#1L, part#2, title#3], StorageLevel(disk, memory, deserialized, 1 replicas)\n                           +- *(1) Project [word#0, id#1L, part#2, title#3]\n                              +- *(1) Filter (isnotnull(part#2) && (part#2 = 2))\n                                 +- *(1) FileScan parquet [word#0,id#1L,part#2,title#3] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/tmp/tmpyriyjec5/sherlock_parts.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(part), EqualTo(part,2)], ReadSchema: struct<word:string,id:bigint,part:int,title:string>')
+
+
+part4_df.explain()
+ReadSchema: struct<word:string,id:bigint>
+
+>>>>>>>> Extract Transform Select
+
+from pyspark.sql.functions import split, explode, length
+
+df.where(length('sentence')==0)
+
+>>> custom function
+
+from pyspark.sql.functions import udf
+
+from pyspark.sql.types import BooleanType
+
+
+short_udf = udf(lambda x:
+	True if not x or len(x)<10 else False,BooleanType())
+
+
+df.select(short_udf('textdata').alias(is short)).show(3)
+
+from pyspark.sql.types import StringType, IntegerType, FloatType, ArrayType
+
+in_udf=udf(lambda x:
+	x[0:len(x)-1] if x and len(x)>1
+	else [], ArrayType(StringType()))
+
+
+>>>>> Sparse vector format
+
+1. indices
+2. values
+
+Dense->[1.0,0.0,0.0,3.0]
+is
+Sparse->(4,[0,3],[1.0,3.0])
+
+a. size of the vector
+b. index
+c. value (non zero)
+
+hasattr(x,"toArray") -> determine a structure is an array
+x.numNonzeros()  -> determine a vector is empty
+
+
+>>>>>
+
+# Returns true if the value is a nonempty vector
+nonempty_udf = udf(lambda x:  
+    True if (x and hasattr(x, "toArray") and x.numNonzeros())
+    else False, BooleanType())
+
+# Returns first element of the array as string
+s_udf = udf(lambda x: str(x[0]) if (x and type(x) is list and len(x) > 0)
+    else '', StringType())
+
+
+df3.select('word_array', in_udf('word_array').alias('without endword')).show(5, truncate=30)
+
+
+# Show the rows where doc contains the item '5'
+df_before.where(array_contains('doc', '5')).show()
+
+# UDF removes items in TRIVIAL_TOKENS from array
+rm_trivial_udf = udf(lambda x:
+                     list(set(x) - TRIVIAL_TOKENS) if x
+                     else x,
+                     ArrayType(ArrayType(StringType())))
+
+# Remove trivial tokens from 'in' and 'out' columns of df2
+df_after = df_before.withColumn('in', rm_trivial_udf('in'))\
+                    .withColumn('out', rm_trivial_udf('out'))
+
+# Show the rows of df_after where doc contains the item '5'
+df_after.where(array_contains('doc','5')).show()
+
+
+>>>>> creating feature data for classification
+
+
+from pyspark.sql.functions import udf
+from pyspark.sql.types import IntegerType
+
+
+
+first_udf = udf(lambda x:
+	int(x.indices[0])
+	if (x and hasattr(x, "toArray") and x.numNonZeros())
+	else 0,
+	IntegerType())
+
+
+try:
+	df.select(first_udf('outvec').alias('label')).first()
+
+except: Exception as e:
+	print(e.__class__)
+	print(e.errmsg)
+
+
+if the type is not cast to int, you get the error
+an error occurred while calling 090.collectToPython
+
+
+df.withColumn('label',k_udf('outvec')).drop('outvec').show(3)
+
+
+>>>>>>>>>>CountVectorizer
+
+from pyspark.ml.feature import CountVectorizer
+
+cv=CountVectorizer(inputCol='words',outputCol='features')
+
+model = cv.fit(df)
+result=model.transform(df)
+print(result)
+
+
+>>>>>>>
+
+first_udf = udf(lambda x:
+            float(x.indices[0]) 
+            if (x and hasattr(x, "toArray") and x.numNonzeros())
+            else 0.0,
+            FloatType())
+
+# Apply first_udf to the output column
+df.select(first_udf("output").alias("result")).show(5)
+
+
+# Add label by applying the get_first_udf to output column
+df_new = df.withColumn('label', get_first_udf('output'))
+
+# Show the first five rows 
+df_new.show(5)
+
+
++------------------+-----+
+|            output|label|
++------------------+-----+
+|(12847,[65],[1.0])|   65|
+| (12847,[8],[1.0])|    8|
+|(12847,[47],[1.0])|   47|
+|(12847,[89],[1.0])|   89|
+|(12847,[94],[1.0])|   94|
++------------------+-----+
+
+columns:
+['sentence', 'in', 'out']
+
+# Transform df using model
+result = model.transform(df.withColumnRenamed('in', 'words'))\
+        .withColumnRenamed('words', 'in')\
+        .withColumnRenamed('vec', 'invec')
+result.drop('sentence').show(3, False)
+
+
+
++----------------------+-------+------------------------------------+
+|in                    |out    |invec                               |
++----------------------+-------+------------------------------------+
+|[then, how, many, are]|[there]|(126,[3,18,28,30],[1.0,1.0,1.0,1.0])|
+|[how]                 |[many] |(126,[28],[1.0])                    |
+|[i, donot]            |[know] |(126,[15,78],[1.0,1.0])             |
++----------------------+-------+------------------------------------+
+only showing top 3 rows
+
+# Add a column based on the out column called outvec
+result = model.transform(result.withColumnRenamed('out', 'words'))\
+        .withColumnRenamed('words', 'out')\
+        .withColumnRenamed('vec', 'outvec')
+result.select('invec', 'outvec').show(3, False)	
+
+
++------------------------------------+----------------+
+|invec                               |outvec          |
++------------------------------------+----------------+
+|(126,[3,18,28,30],[1.0,1.0,1.0,1.0])|(126,[11],[1.0])|
+|(126,[28],[1.0])                    |(126,[18],[1.0])|
+|(126,[15,78],[1.0,1.0])             |(126,[21],[1.0])|
++------------------------------------+----------------+
+
+Create a dataframe called result by using model to transform() df. result has the columns sentence, in, out, and invec. invec is the vector transformation of the in column.
+Add a column to result called outvec. result now has the columns sentence, in, out, invec, and outvec.
+
+
+>>>>>> Text Classification
+
+
+finishing some else sentence
+
+df_true = df.where("endword in ('she','he','hers','his','her','him')").withColumn('label',lit(1))
+
+df_false = df.where("endword not in ('she','he','hers','his','her','him')").withColumn('label',lit(0))
+
+
+df_examples = df_true.union(df_false)
+
+
+df_train, df_eval = df_examples.randomSplit((0.60,0.40),42)
+
+42 is a seed for randomness
+
+from pyspark.ml.classification import LogisticRegression
+
+logistic = LogisticRegression(maxIter=50, regParam=0.6, elasticNetParam=0.3)
+
+elasticNet regularization parameters (regParam and elasticNetParam)
+
+model= logistic.fit(df_train)
+
+print("Training iterations:",model.summary.totalIterations)
+
+
+>>>>>>>
+
++-------+-----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+-------------------+
+|endword|doc                                                                                |features                                                                                            |outvec             |
++-------+-----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+-------------------+
+|it     |[please, do, not, remove, it]                                                      |(12847,[15,47,502,1515],[1.0,1.0,1.0,1.0])                                                          |(12847,[7],[1.0])  |
+|holmes |[start, of, the, project, gutenberg, ebook, the, adventures, of, sherlock, holmes] |(12847,[0,3,183,191,569,1584,1921,3302],[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0])                          |(12847,[145],[1.0])|
+|i      |[the, adventures, of, sherlock, holmes, by, sir, arthur, conan, doyle, contents, i]|(12847,[0,3,35,145,569,776,3270,3302,3647,8569,12351],[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0])|(12847,[11],[1.0]) |
+|i      |[the, adventure, of, the, copper, beeches, adventure, i]                           |(12847,[0,3,3766,3830,6900],[1.0,1.0,1.0,1.0,1.0])                                                  |(12847,[11],[1.0]) |
+|i      |[a, scandal, in, bohemia, i]                                                       |(12847,[4,5,3669,5237],[1.0,1.0,1.0,1.0])                                                           |(12847,[11],[1.0]) |
++-------+-----------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+-------------------+
+only showing top 5 rows
+
+
+# Import the lit function
+from pyspark.sql.functions import lit
+
+print(df.show(5,truncate=False))
+# Select the rows where endword is 'him' and label 1
+df_pos = df.where("endword = 'him'")\
+           .withColumn('label', lit(1))
+
+# Select the rows where endword is not 'him' and label 0
+df_neg = df.where("endword <> 'him'")\
+           .withColumn('label', lit(0))
+
+# Union pos and neg in equal number
+df_examples = df_pos.union(df_neg.limit(df_pos.count()))
+print("Number of examples: ", df_examples.count())
+df_examples.where("endword <> 'him'").sample(False, .1, 42).show(5)
+
+# Split the examples into train and test, use 80/20 split
+df_trainset, df_testset = df_examples.randomSplit((.80,.20), 42)
+
+# Print the number of training examples
+print("Number training: ", df_trainset.count())
+
+# Print the number of test examples
+print("Number test: ", df_testset.count())
+
+Number training:  2091
+Number test:  495
+
+# Import the logistic regression classifier
+from pyspark.ml.classification import LogisticRegression
+
+# Instantiate logistic setting elasticnet to 0.0
+logistic = LogisticRegression(maxIter=100, regParam=0.4, elasticNetParam=0.0)
+
+# Train the logistic classifer on the trainset
+df_fitted = logistic.fit(df_trainset)
+
+# Print the number of training iterations
+print("Training iterations: ", df_fitted.summary.totalIterations)
+
+Training iterations:  21
+
+
+>>>>>> Predicting 
+
+predicted=df_trained.transform(df_test)
+
+x=predicted.first
+
+print("Right!" if x.label == int(x.prediction) else "Wrong")
+
+model_stats = model.evaluate(df_eval)
+
+type(model_stats)
+
+print("\nPerformance: %.2f" % model_stats.areaUnderROC)
+
+positive labels=['her','him','he','she','them','us','they','himself','we']
+
+21 iterations
+
+positive lables ['it']
+
+>>>>>>>
+# Score the model on test data
+testSummary = df_fitted.evaluate(df_testset)
+# Print the AUC metric
+print("\ntest AUC: %.3f" % testSummary.areaUnderROC)
+
+test AUC: 0.890
+
+
+# Apply the model to the test data
+predictions = df_fitted.transform(df_testset).select(fields)
+
+# Print incorrect if prediction does not match label
+for x in predictions.take(8):
+    print(x)
+    if x.label != int(x.prediction):
+        print("INCORRECT ==> ")
+    for y in fields:
+        print(y,":", x[y])
+
+
+label : 1
+endword : him
+doc : ['bolkonski', 'made', 'room', 'for', 'him', 'on', 'the', 'bench', 'and', 'the', 'lieutenant', 'colonel', 'sat', 'down', 'beside', 'him']
+probability : [0.3683499060175795,0.6316500939824204]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+

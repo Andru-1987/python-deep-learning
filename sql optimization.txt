@@ -1,0 +1,1047 @@
+nations, cities, earthquakes
+
+players
+playerstats
+teams
+
+customers->Orders
+
+select ps.Team, count(p.PlayerName) as NonNthAmerPlayers from
+PlayerStats ps inner join(select PlayerName from Players where Country<>'USA' or Country <>'Canada')
+p on p.PlayerName=ps.PlayerName
+group by ps.Team
+having Count(p.PlayerName)
+>=24 Order by NonNthAmerPlayers desc
+
+
+>>>> Suggestions:
+
+1. use upper case for all sql syntax
+2. create a new line for each major processing syntax: select, from where
+3. indent code: sub-queries, on statements, and/or conditions
+to avoid long single lines of code, for example, several column names
+4. complete the query with a semi-colon (;)
+5. alias where required, using as
+
+comment blocks of the query
+
+>>>
+
+SELECT PlayerName, Country,
+    ROUND(Weight_kg/SQUARE(Height_cm/100),2) BMI
+FROM Players 
+WHERE Country = 'USA'
+    OR Country = 'Canada'
+ORDER BY BMI;
+
+
+>>>>>>>>>>>>> ALIASING
+
+short name to entity
+1. temporary and exist during the running of query
+2. columns
+3. sub-queries
+
+makes the query easier to read
+avoid repetitive use of long table or column names
+easily identify join tables and associated columns
+identify new columns
+identify sub-queries
+avoid ambiguity when columns from joined tables share the same name
+rename columns
+
+
+SELECT
+	CountryName,
+	Code2,
+	Capital,
+	Pop2017
+FROM Natons
+INNER JOIN Cities
+	ON Capital=CityName
+
+
+SELECT Country,
+	NearestPop as City
+	MAX(Magnitude) as MaxMagnitude
+FROM Earthquakes
+GROUP BY Country, NearestPop;
+
+
+SELECT n.CountryName as Country
+	n.Capital,
+	e.MaxMagnitude
+FROM Nations n
+INNER JOIN
+	(SELECT Country, NearestPop as City,
+	MAX(Magnitude) as MaxMagnitude
+	FROM Earthquakes
+	GROUP BY Country, NearestPop) e
+	ON n.Code2 = e.Country AND n.Capital=e.City
+
+
+SELECT p.PlayerName, p.Country,
+         SUM(ps.TotalPoints) AS TotalPoints  
+FROM PlayerStats ps
+INNER JOIN Players p
+   ON ps.PlayerName = p.PlayerName
+WHERE p.Country = 'Australia'
+GROUP BY p.PlayerName, p.Country
+
+or
+
+SELECT Team, 
+   ROUND(AVG(BMI),2) AS AvgTeamBMI -- Alias the new column
+FROM PlayerStats as ps -- Alias PlayerStats table
+INNER JOIN
+		(SELECT PlayerName, Country,
+			Weight_kg/SQUARE(Height_cm/100) BMI
+		 FROM Players) as p -- Alias the sub-query
+             -- Alias the joining columns
+	ON ps.PlayerName = p.PlayerName 
+GROUP BY Team
+HAVING AVG(BMI) >= 25;
+
+
+>>>>>>>>>>>>Query order
+
+SELECT Country, Place, Magnitude
+FROM Earthquakes
+WHERE Magnitude >=9
+ORDER BY Magnitude DESC
+
+ORDER OF THE DATABASE
+1. FROM
+2. ON
+3. JOIN
+4. WHERE
+5. GROUP BY
+6. HAVING
+7. SELECT
+8. DISTINCT
+9. ORDER BY
+10. TOP
+
+find, merge, then select
+
+
+
+SELECT Date, Place, NearestPop, Magnitude
+FROM Earthquakes
+WHERE Country = 'NZ'
+	AND Magnitude >= 7.5
+ORDER BY Magnitude DESC;
+
+
+ SELECT Date, Place ,NearestPop, Magnitude 
+FROM Earthquakes WHERE Country = 'JP' AND Magnitude >= 8
+ORDER BY Magnitude DESC;
+
+SELECT n.CountryName AS Country
+	,e.NearestPop AS ClosestCity
+    ,e.Date
+    ,e.Magnitude
+FROM Nations AS n
+INNER JOIN Earthquakes AS e
+	ON n.Code2 = e.Country
+WHERE e.Magnitude >= 9
+ORDER BY e.Magnitude DESC;
+
+SELECT n.CountryName AS Country
+	,e.Place AS ClosestCity
+    ,e.Date
+    ,e.Magnitude
+FROM Nations AS n
+INNER JOIN Earthquakes AS e
+	ON n.Code2 = e.Country
+WHERE e.Magnitude >= 9
+ORDER BY e.Magnitude DESC;
+
+
+>>>>>>> filtering with where
+
+select * from playerStats
+where position='SG'
+
+where is processed after from
+
+
+select PlayerName,
+Team,
+TotalRebounds
+from
+(select PlayerName, Team,
+(DRebound+ORebound) as TotalRebounds
+from PlayerStats)tr
+where TotalRebounds>=1000
+order by TotalRebounds desc;
+
+use a subquery to get totals
+not using a subquery will increase the time it takes for the query to run
+applying functions to columns in the where filter condition could increase query times
+avoid using calculations or functions in the where conditions
+
+>>>>
+
+-- First query
+
+SELECT PlayerName, 
+    Team, 
+    Position,
+    AvgRebounds
+    FROM
+    (
+        select
+        PlayerName,
+        Team,
+        Position,
+        (DRebound+ORebound)/CAST(GamesPlayed AS numeric) AS AvgRebounds
+        FROM PlayerStats
+    )tr
+WHERE AvgRebounds >= 12;
+
+
+-- Second query
+
+-- Add the new column to the select statement
+SELECT PlayerName, 
+       Team, 
+       Position, 
+       AvgRebounds -- Add the new column
+FROM
+     -- Sub-query starts here                             
+	(SELECT 
+      PlayerName, 
+      Team, 
+      Position,
+      -- Calculate average total rebounds
+     (DRebound+ORebound)/CAST(GamesPlayed AS numeric) AS AvgRebounds
+	 FROM PlayerStats) tr
+where AvgRebounds >= 12; -- Filter rows
+
+SELECT PlayerName, 
+      Country,
+      College, 
+      DraftYear, 
+      DraftNumber 
+FROM Players 
+--WHERE UPPER(LEFT(College,5)) LIKE 'LOU%';
+WHERE College LIKE 'Louisiana%'; -- Add the wildcard filterv
+                   -- Add the new wildcard filter
+
+
+>>>>>> filtering with Having
+
+precedence
+
+from -> where -> having -> select
+
+do not use having to filter individual or ungrouped rows
+
+applying having filter to a numeric column must use an aggregate function
+
+select
+team,
+sum(DRebound+ORebound) as TotRebounds,
+sum(DRebound) TotalDef,
+sum(ORebound) TotalOff,
+from PlayerStats
+group by Team
+having sum(ORebound)>=1000
+
+
+>>>>>>
+
+
+SELECT Country, COUNT(*) CountOfPlayers 
+FROM Players
+where Country 
+    IN ('Argentina','Brazil','Dominican Republic'
+        ,'Puerto Rico')
+GROUP BY Country
+
+
+SELECT Team, 
+	SUM(TotalPoints) AS TotalPFPoints
+FROM PlayerStats
+-- Filter for only rows with power forwards
+where Position='PF'
+GROUP BY Team
+-- Filter for total points greater than 3000
+having sum(TotalPoints)>3000;
+
+
+>>>>>>> interrogation after select
+
+processing order
+1. from
+2. on
+3. join
+4. where
+5. group by
+6. having
+7. select
+8. distinct
+9. order by
+10. top 5 or top 1 percent
+
+
+select only the columns you need if the table has millions of rows
+
+select * in joins returns duplicates of joining columns
+
+
+>>>>>>
+
+
+SELECT 
+latitude,longitude,magnitude, depth, NearestPop
+
+FROM Earthquakes
+WHERE Country = 'PG' -- Papua New Guinea country code
+	OR Country = 'ID'; -- Indonesia country code
+
+
+SELECT top 10 -- Limit the number of rows to ten
+      Latitude,
+      Longitude,
+	  Magnitude,
+	  Depth,
+	  NearestPop
+FROM Earthquakes
+WHERE Country = 'PG'
+	OR Country = 'ID'
+order by Depth; -- Order results from shallowest to deepest
+
+
+SELECT top 25 percent -- Limit rows to the upper quartile
+       Latitude,
+       Longitude,
+	   Magnitude,
+	   Depth,
+	   NearestPop
+FROM Earthquakes
+WHERE Country = 'PG'
+	OR Country = 'ID'
+order by Magnitude desc; -- Order the results
+
+
+>>>>>> Managing duplicates
+
+
+select PlayerName, Team from PlayerStats;
+
+player could have played for multiple teams in a season
+
+remove duplicates with distinct
+
+select distinct(PlayerName)
+from PlayerStats;
+
+we can get duplicates when we append queries to get one dataset
+
+
+remove duplicates with Union
+
+select FruitName, FruitType
+from Fruits1
+
+union
+
+select FruitName, FruitType
+from Fruits2
+
+
+show all rows with union all
+
+
+consider using union all if duplicate rows are ok, it does not make use of the internal sort
+
+distinct and union will make use of the internal sort.
+
+
+>>>>>
+
+
+SELECT NearestPop, -- Add the closest city
+		Country 
+FROM Earthquakes
+WHERE Magnitude >= 8
+	AND NearestPop IS NOT NULL
+ORDER BY NearestPop;
+
+--You want to know the closest city to earthquakes with a magnitude of 8 or higher.
+
+SELECT distinct(NearestPop),-- Remove duplicate city
+		Country
+FROM Earthquakes
+WHERE magnitude >= 8 -- Add filter condition 
+	AND NearestPop IS NOT NULL
+ORDER BY NearestPop;
+
+--Get the number of cities near earthquakes of magnitude 8 or more
+SELECT NearestPop, 
+       Country, 
+       count(NearestPop) NumEarthquakes -- Number of cities
+FROM Earthquakes
+WHERE Magnitude >= 8
+	AND Country IS NOT NULL
+group by NearestPop, Country -- Group columns
+ORDER BY NumEarthquakes DESC;
+
+--You want a query that returns all cities listed in the Earthquakes
+
+SELECT CityName AS NearCityName, -- City name column
+	   CountryCode
+FROM Cities
+
+union -- Append queries
+
+SELECT Capital AS NearCityName, -- Nation capital column
+       Code2 AS CountryCode
+FROM Nations;
+
+
+SELECT CityName AS NearCityName,
+	   CountryCode
+FROM Cities
+
+union all -- Append queries
+
+SELECT Capital AS NearCityName,
+       Code2 AS CountryCode  -- Country code column
+FROM Nations;
+
+
+UNION ALL returns more rows than UNION because it does not remove duplicates
+
+
+>>>>>>>>>>>>>>>>>>>>>> subqueries
+
+running a query within a query
+
+a subquery is processed first before an outer query is processed
+
+
+select OrderID,
+	CustomerID,
+	NumDays
+from
+	(select *,
+		DateDiff(Day,OrderDate,ShippedDate) as NumDays
+	from Orders) as o
+where NumDays >=35
+
+
+sub-query with Where
+
+>>>>>>>>>>subquery where in
+
+select CustomerID
+	,CompanyName
+from Customers
+Where CustomerID
+	in (	select CustomerID
+		from Orders
+		where Freight > 800);
+
+
+>>>>> subquery inline
+
+select CustomerID,
+	CompanyName,
+	(select avg(Freight) from Orders o where c.CustomerID=o.CustomerID) as AvgFreight
+from Customers c;
+
+subquery contains a reference to the outer query.  subquery cannot run independently of the outer query.
+
+
+select CustomerID
+	,CompanyName
+from Custoemrs
+where CustomerID in
+(
+select CustomerID
+from Orders
+where Freight>800);
+
+uncorrelated subquery do not contain a reference to the outer query
+
+
+correlated sub query executes for each row in the outer query.  can be inefficient because the correlated subquery executes for every row in the outer query.
+
+
+uncorrelated
+subquery executes only once and retures the results to the outer query
+
+
+select c.CustomerID
+	,c.CompanyName
+	,avg(o.Freight)
+from Customers c
+inner join Orders o
+	on c.CustomerID=o.CustomerID
+group by c.CustomerID,
+	c.CompanyName;
+
+
+>>>>>>
+
+SELECT UNStatisticalRegion,
+       CountryName 
+FROM Nations
+WHERE Code2 -- Country code for outer query 
+         IN (SELECT Country -- Country code for sub-query
+             FROM Earthquakes
+             WHERE depth >= 400 ) -- Depth filter
+ORDER BY UNStatisticalRegion;
+
+
+SELECT UNContinentRegion,
+       CountryName, 
+        (SELECT avg(magnitude) -- Add average magnitude
+        FROM Earthquakes e 
+         	  -- Add country code reference
+        WHERE n.Code2 = e.Country) AS AverageMagnitude 
+FROM Nations n
+ORDER BY UNContinentRegion DESC, 
+         AverageMagnitude DESC;
+
+
+SELECT
+	n.CountryName,
+	 (SELECT MAX(c.Pop2017) -- Add 2017 population column
+	 FROM Cities AS c 
+                       -- Outer query country code column
+	 WHERE c.CountryCode = n.Code2) AS BiggestCity
+FROM Nations AS n; -- Outer query table
+
+or
+
+SELECT n.CountryName, 
+       c.BiggestCity 
+FROM Nations AS n
+inner join -- Join the Nations table and sub-query
+    (SELECT CountryCode, 
+     MAX(Pop2017) AS BiggestCity 
+     FROM Cities
+     GROUP BY CountryCode) AS c
+ON n.Code2 = c.CountryCode; -- Add the joining columns
+
+
+>>>>>>>> presence and absence
+
+is data presence or absence in another table
+
+intersect or EXCEPT
+
+customers and orders
+
+
+select CustomerID
+from Customers
+intersect
+select CustomerID
+from Orders;
+
+
+select CustomerID
+from Customers
+accept
+select CustomerID
+from Orders;
+
+
+great for data interrogation
+remove duplicates from the returned results
+
+>>>>>>
+
+
+SELECT Capital
+FROM Nations -- Table with capital cities
+
+INTERSECT -- Add the operator to compare the two queries
+
+SELECT NearestPop -- Add the city name column
+FROM Earthquakes;
+
+
+>>>>>>
+
+SELECT Code2 -- Add the country code column
+FROM Nations
+
+EXCEPT -- Add the operator to compare the two queries
+
+SELECT Country
+FROM Earthquakes; -- Table with country codes
+
+You want to know which countries have no recorded earthquakes.
+
+>>>>>
+
+SELECT CountryName
+FROM Nations -- Table from Earthquakes database
+
+INTERSECT -- Operator for the intersect between tables
+
+SELECT Country
+FROM Players; -- Table from NBA Season 2017-2018 database
+
+
+>>>>>>>> alternative methods
+
+not in
+not exists
+exists
+
+
+
+select CustomerID,
+	CompanyName,
+	ContactName
+From Customers c
+where exists
+	(select 1
+	from Orders o
+	where c.CustomerID=o.CustomerID);
+
+health at scale
+
+
+select CustomerID,
+	CompanyName,
+	ContactName
+From Customers c
+where CustomerID in
+	(select CustomerID
+	from Orders o
+	where c.CustomerID=o.CustomerID);
+
+exists will stop searning the subquery when the condition is true
+
+in collects all the results from a subquery before passing to the outer query.
+
+consider using exists instead of in with a sub-query
+
+
+
+select UNStatisticalRegion as UN_Region
+	,CountryName
+	,Capital
+from Nations
+where Capital not in
+	(select NearestPop
+	from Earthquakes
+	where NearestPop is not null)
+
+NearestPop with a null will cause the subquery to return no results
+
+
+for Exists results can contain any column from the outer query and in any order
+
+
+>>>>>
+
+
+-- First attempt
+SELECT CountryName,
+       Pop2017, -- 2017 country population
+	  Capital, -- Capital city	   
+       WorldBankRegion
+FROM Nations
+WHERE Capital in -- Add the operator to compare queries
+        (SELECT NearestPop 
+	     FROM Earthquakes);
+
+or
+
+-- Second attempt
+SELECT CountryName,   
+	   Capital,
+       Pop2016, -- 2016 country population
+       WorldBankRegion
+FROM Nations AS n
+WHERE exists -- Add the operator to compare queries
+	  (SELECT 1
+	   FROM Earthquakes AS e
+	   WHERE n.Capital = e.NearestPop); -- Columns being compared
+
+
+SELECT WorldBankRegion,
+       CountryName
+FROM Nations
+WHERE Code2 not in -- Add the operator to compare queries
+	(SELECT CountryCode -- Country code column
+	 FROM Cities);
+
+
+
+SELECT WorldBankRegion,
+       CountryName,
+	   Code2,
+       Capital, -- Country capital column
+	   Pop2017
+FROM Nations AS n
+WHERE not exists -- Add the operator to compare queries
+	(SELECT 1
+	 FROM Cities AS c
+	 WHERE n.Code2 = c.CountryCode); 
+
+
+SELECT WorldBankRegion,
+       CountryName,
+       Capital -- Capital city name column
+FROM Nations
+WHERE Capital NOT IN
+	(SELECT NearestPop -- City name column
+     FROM Earthquakes);
+
+
+>>>>>>>>>>>>ALTERNATIVE METHODS
+
+joins can show if data is missing
+
+inner join matches in both tables and the check for presence of data
+
+left join matches left query and matches in the right query
+
+exclusive left join returns only left query not presence in the right query
+
+intersect presence
+except absence
+
+great for data interrogation
+number of columns must be the same
+
+exists and not exists
+
+subquery will stop searching as soon as it evaluates to true
+
+in and not in
+1. results can only contain columns from the outer query
+2. no results returned because of the way not in handles nulls in the sub-query
+
+left join with is null creates exclusive join
+
+
+>>>>>
+
+-- Initial query
+SELECT TeamName,
+       TeamCode,
+	   City
+FROM Teams AS t -- Add table
+WHERE  Exists-- Operator to compare queries
+      (SELECT 1 
+	  FROM Earthquakes AS e -- Add table
+	  WHERE t.City = e.NearestPop)
+
+-- Second query
+SELECT t.TeamName,
+       t.TeamCode,
+	   t.City,
+	   e.Date,
+	   e.Place, -- Place description
+	   e.Country -- Country code
+FROM Teams AS t
+INNER JOIN  Earthquakes AS e -- Operator to compare tables
+	  ON t.City = e.NearestPop
+
+
+-- First attempt
+SELECT c.CustomerID,
+       c.CompanyName,
+	   c.ContactName,
+	   c.ContactTitle,
+	   c.Phone 
+FROM Customers c
+LEFT OUTER JOIN Orders o -- Joining operator
+	ON c.CustomerID = o.CustomerID -- Joining columns
+WHERE c.Country = 'France';
+
+
+-- Second attempt
+SELECT c.CustomerID,
+       c.CompanyName,
+	   c.ContactName,
+	   c.ContactTitle,
+	   c.Phone 
+FROM Customers c
+LEFT OUTER JOIN Orders o
+	ON c.CustomerID = o.CustomerID
+WHERE c.Country = 'France'
+	AND o.OrderID is null; -- Filter condition
+
+
+An inclusive LEFT OUTER JOIN returns all the rows in the left query, whereas an exclusive LEFT OUTER JOIN returns only rows in the left query that are absent in the right query.
+
+
+>>>>>>>> Time Statistics
+
+
+STATISTICS TIME
+
+computes the milliseconds to parse, compile and execute the query
+1. cpu time: time taken by server processors to process the query
+2. elapsed time: total duration of the  query
+a. affected by the network time
+b. load on the server
+c. best measure to use
+
+set statistics time on
+
+
+>>>>
+
+-- Query 1
+SELECT * 
+FROM Teams
+-- Sub-query 1
+WHERE City in -- Sub-query filter operator
+      (SELECT CityName 
+       FROM Cities) -- Table from Earthquakes database
+-- Sub-query 2
+   AND City in -- Sub-query filter operator
+	   (SELECT CityName 
+	    FROM Cities
+		WHERE CountryCode IN ('US','CA'))
+-- Sub-query 3
+    AND City in -- Sub-query filter operator
+        (SELECT CityName 
+         FROM Cities
+	     WHERE Pop2017 >2000000);
+
+
+-- Query 2
+SELECT * 
+FROM Teams AS t
+WHERE EXISTS -- Sub-query filter operator
+	(SELECT 1 
+     FROM Cities AS c
+     WHERE t.City = c.CityName -- Columns being compared
+        AND c.CountryCode IN ('US','CA')
+          AND c.Pop2017 > 2000000);
+
+
+>>>>>>>> Page read statistics
+
+analyzing disks io
+
+all data in either memory or on the disk is stored in 8 kilobyte size pages.
+
+one page can store many rows or one value could span multiple pages
+
+A page can only belong to one table
+
+sql server works with pages cached in memory
+
+if a page is not cached in memory it is read from disk and cached in memory
+
+>>>>>>>>>>  set statistics io on
+
+1. logical reads are imported for each table
+2. number of 8 kilobyte pages read per table
+
+the more pages that need read the slower a query will run.
+
+
+>>>>>
+
+-- Query 2
+SELECT * 
+FROM Teams AS t
+WHERE EXISTS -- Sub-query filter operator
+	(SELECT 1 
+     FROM Cities AS c
+     WHERE t.City = c.CityName -- Columns being compared
+        AND c.CountryCode IN ('US','CA')
+          AND c.Pop2017 > 2000000);
+
+
+-- Example 2
+SELECT c.CustomerID,
+       c.CompanyName,
+       COUNT(o.CustomerID)
+FROM Customers AS c
+INNER JOIN Orders AS o -- Join operator
+    ON c.CustomerID = o.CustomerID
+WHERE o.ShipCity IN -- Shipping destination column
+     ('Berlin','Bern','Bruxelles','Helsinki',
+	 'Lisboa','Madrid','Paris','London')
+GROUP BY c.CustomerID,
+         c.CompanyName;
+
+>>>>> indexes
+
+clustered
+1. table data pages are stored in order by the columns with the index
+2. only one allower per table
+3. speeds up search operations
+4. b-tree structure
+
+non-clustered
+1. text book with an index at the back
+2. contains ordered pointers to the data
+3. structure contains an ordered layer of index pointers to unordered table data pages
+4. a table can have more than one clustered index
+
+
+>>>>>>
+
+-- Query 1
+SELECT *
+FROM Cities
+WHERE CountryCode = 'RU' -- Country code
+		OR CountryCode = 'CN' -- Country code
+
+
+-- Query 2
+SELECT *
+FROM Cities
+WHERE CountryCode IN ('JM','NZ') -- Country codes
+
+
+>>>>> execution plan
+
+optimized for the lowest code
+1. processor usage
+2. memory usage
+3. data page reads
+
+plan tells us:
+index used
+type of joins used
+location and relative cost of: filter conditions, sorting, aggregations
+
+
+execution plans are read right to left
+
+table scan (entire table is scanned)
+cluster index ( index used)
+
+
+>>>>>
+
+SELECT CityName AS NearCityName,
+	   CountryCode
+FROM Cities
+
+union  -- Append queries
+
+SELECT Capital AS NearCityName,
+       Code2 AS CountryCode
+FROM Nations;
+
+ An execution plan does not provide information about the total duration a query takes to complete. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

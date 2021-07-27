@@ -1,0 +1,767 @@
+dataset: monthly airline flights by US airports 2014-2015
+
+why is cleaning data important?
+1. common to acquire messy/dirty data not ready for analysis
+2. lot of time spending cleaning data vs time spent analyzing data
+cleaning process -> clear information
+
+
+Fill numbers with leading zeros
+
+CONCAT(REPLICATE('0',9-len([Flight_Number])), Flight_Number) Flight_Number
+
+FORMAT(value, format[,culture])
+1. value: numeric, date and time
+
+format(cast(Flight_Number as int),'000000000') Flight_Number2
+
+
+>>>>>
+
+SELECT 
+	-- Concat the strings
+	concat(
+		carrier_code, 
+		' - ', 
+      	-- Replicate zeros
+		replicate('0', 9 - len(registration_code)), 
+		registration_code, 
+		', ', 
+		airport_code)
+	AS registration_code
+FROM flight_statistics
+-- Filter registers with more than 100 delays
+WHERE delayed > 100
+
+or
+
+SELECT 
+    -- Concat the strings
+	concat(
+		carrier_code, 
+		' - ', 
+        -- Format the code
+		format(cast(registration_code AS INT), '0000000'),
+		', ', 
+		airport_code
+	) AS registration_code
+FROM flight_statistics
+-- Filter registers with more than 100 delays
+WHERE delayed > 100
+
+
+>>>>>>> cleaning messy strings
+
+trim([characters] string)
+rtrim()  - remove all trailing spaces
+ltrim()  - remove all leading spaces
+
+"Fl" or "fl" or "Florida" -> "Florida"
+
+replace(string_to_replace, occurrences, string_replacement)
+
+1. replaces all occurrences of a specified string with another string
+2. case insensitive by default
+
+select 
+case when airport_state<>'Florida' then
+	replace('fl','Florida')
+else
+	airport_state
+end airport_state
+from airports
+order by airport_state
+
+
+upper -> convert to uppercase
+
+
+>>>>>>>
+
+SELECT 
+	airport_code,
+	-- Use the appropriate function to remove the extra spaces
+    trim(airport_name) AS airport_name,
+	airport_city,
+    airport_state
+-- Select the source table
+FROM airports
+
+or
+
+SELECT 
+	airport_code,
+	-- Use the appropriate function to remove the extra spaces
+    rtrim(ltrim(airport_name)) AS airport_name,
+	airport_city,
+    airport_state
+-- Select the source table
+FROM airports
+
+SELECT airport_code, airport_name, 
+	-- Use the CASE statement
+	case
+    	-- Unify the values
+		WHEN airport_city <> 'Chicago' THEN replace(airport_city, 'ch', 'Chicago')
+		ELSE airport_city 
+	END AS airport_city,
+    airport_state
+FROM airports
+WHERE airport_code IN ('ORD', 'MDW')
+
+
+SELECT 
+	airport_code, airport_name,
+    	-- Convert to uppercase
+    	upper(
+            -- Replace 'Chicago' with 'ch'.
+          	replace(airport_city, 'Chicago', 'ch')
+        ) AS airport_city,
+    airport_state
+FROM airports
+WHERE airport_code IN ('ORD', 'MDW')
+
+
+>>>>>>>>> comparing the similarity of strings
+
+soundex(character expression)
+1. phonetic algorithm
+2. returns four-character code
+3. based on english language, but also works with many words in other languages
+
+difference(character expression)
+
+select soundex('illinois'), soundex('ilynois'),soundex('california')
+
+I452	I452	C416
+
+
+soundex function
+1. writes the first letter of the word
+2. replace all the vowels with 0 and letters h, w, y with 0
+3. constants replaced with
+a. b,f,p,v ->1
+b. c,g,j,k,q,s,x,z ->2
+c. d,t =>3
+d. l ->4
+e. m,n ->5
+f. r->6
+
+illinois -> I4405002
+
+4. replace same adjacent digits with on
+I4405002 -> I40502
+5. remove zeros
+I452
+6. append zeros if code contains less than 3 digits
+7. remove final digit if code has more than 3 digits
+
+
+difference ( character_expression, character_expression)
+1. compares two soundex values
+2. returns a number from 0 to 4
+a. 0 no similarity
+b. 4 similar
+
+  select difference('arizona','arkansas') -> 4
+I4452
+
+SELECT 
+    -- First name and surname of the statisticians
+	DISTINCT S1.statistician_name, S1.statistician_surname
+-- Join flight_statistics with itself
+FROM flight_statistics S1 INNER JOIN flight_statistics S2 
+	-- The SOUNDEX result of the first name and surname have to be the same
+	ON soundex(S1.statistician_name) = soundex(S2.statistician_name) 
+	AND soundex(S1.statistician_surname) = soundex(S2.statistician_surname) 
+-- The texts of the first name or the texts of the surname have to be different
+WHERE S1.statistician_name <> S2.statistician_name
+	OR S1.statistician_surname <> S2.statistician_surname
+
+
+or
+
+SELECT 
+    -- First name and surnames of the statisticians
+	DISTINCT S1.statistician_name, S1.statistician_surname
+-- Join flight_statistics with itself
+FROM flight_statistics S1 INNER JOIN flight_statistics S2 
+	-- The DIFFERENCE of the first name and surname has to be equals to 4
+	ON difference(S1.statistician_name, S2.statistician_name) = 4
+	AND difference(S1.statistician_surname, S2.statistician_surname) = 4
+-- The texts of the first name or the texts of the surname have to be different
+WHERE S1.statistician_name <> S2.statistician_name
+	OR S1.statistician_surname <> S2.statistician_surname
+
+
+>>>>>>>>>>>dealing with missing data
+
+missing values are represented by null
+
+the data does not exist
+
+investigate to get the missing values
+
+depending on the business 
+1.- leave as it is 
+2.- remove rows with missing values 
+3.- fill with other value (text, avg)
+
+
+remove missing value - is not null
+
+
+select * from airports
+where airport_state is null
+
+isnull(check_expression,replacement_value)
+
+select
+airport_code,
+airport_name,
+airport_city,
+isnull(airport_state, 'unknown') as airport_state
+from airports
+
+
+isNull(canceled,(select avg(canceled) from flight_statistics)) as canceled_fixed
+
+coalesce(arg1,arg2,arg3)
+
+coalesce(airport_state,airport_city,'unknown') as airport_state_fixed
+
+
+>>>>>>
+
+
+SELECT *
+-- Select the appropriate table
+FROM airports
+-- Exclude the rows where airport_city is NULL
+WHERE airport_city is not null
+
+or
+
+SELECT *
+-- Select the appropriate table
+FROM airports
+-- Return only the rows where airport_city is NULL
+WHERE airport_city is null
+
+or
+
+SELECT *
+-- Select the appropriate table
+FROM airports
+-- Exclude the rows where airport_city is missing
+WHERE airport_city <>''
+
+or
+
+SELECT *
+-- Select the appropriate table
+FROM airports
+-- Return only the rows where airport_city is missing
+WHERE airport_city=''
+
+SELECT
+  airport_code,
+  airport_name,
+  -- Replace missing values for airport_city with 'Unknown'
+  IsNull(airport_city, 'unknown') AS airport_city,
+  -- Replace missing values for airport_state with 'Unknown'
+  coalesce(airport_state, 'unknown') AS airport_state
+FROM airports
+
+SELECT
+airport_code,
+airport_name,
+-- Replace the missing values
+coalesce(airport_city, airport_state, 'Unknown') AS location
+FROM airports
+
+>>>>> looking for duplicate data
+
+1. duplicate data can interfere in our analysis
+
+
+flight_statistics
+1. airport_code
+2. carrier_code
+3. registration_date
+
+
+row_number() over(partition by value_expression order by clause)
+
+with cte
+as
+(
+select * 
+row_number() over(partition by airport_code, carrier_code, registration_date order by airport_code, carrier_code, registration_date) row_num
+from flight_statistics
+)
+
+row_num>1
+
+exclude duplicates
+row_num=1
+
+select * from cte
+where row_num>1;
+
+
+>>>>>>>
+
+
+SELECT *,
+	   -- Apply ROW_NUMBER()
+       row_number() over (
+         	-- Write the partition
+            partition BY 
+                airport_code, 
+                carrier_code, 
+                registration_date
+			ORDER BY 
+                airport_code, 
+                carrier_code, 
+                registration_date
+        ) row_num
+FROM flight_statistics
+
+-- Use the WITH clause
+with cte AS (
+    SELECT *, 
+        ROW_NUMBER() OVER (
+            PARTITION BY 
+                airport_code, 
+                carrier_code, 
+                registration_date
+			ORDER BY 
+                airport_code, 
+                carrier_code, 
+                registration_date
+        ) row_num
+    FROM flight_statistics
+)
+SELECT * FROM cte
+-- Get only duplicates
+WHERE row_num >1;
+
+
+>>>>>>>> dealing with different date formats
+
+us english month/day/year
+
+spanish day/month/year
+
+italian year/month/day
+
+convert(data_type(length), expression)
+1 -> mm/dd/yy
+2 -> yy.mm.dd
+3 -> dd/mm/yy
+5 -> dd-mm-yy
+10 -> mm-dd-yy
+12 -> yymmdd
+101 -> mm/dd/yyyy
+102 -> yyyy.mm.dd
+103 -> dd/mm/yyyy
+105 -> dd-mm-yyyy
+110 -> mm-dd-yyyy
+112 -> yyyymmdd
+
+format (value, format[,culture])
+1. worse performance
+
+format(cast(entry_date as date), 'd','en-US') as 'US English'
+format(cast(entry_date as date), 'd','de-de') as 'German'
+format(cast(entry_date as date), 'D','en-US') as 'US English'
+format(cast(entry_date as date), 'dd/MM/yyyy') as 'DateTime'
+
+
+>>>>>>
+
+
+SELECT 
+    airport_code,
+    carrier_code,
+    canceled, 
+    airport_code, 
+    -- Convert the registration_date to a DATE and print it in mm/dd/yyyy format
+    convert(VARCHAR(10), cast(registration_date AS DATE), 101) AS registration_date
+FROM flight_statistics 
+-- Convert the registration_date to mm/dd/yyyy format
+WHERE convert(VARCHAR(10), cast(registration_date AS DATE), 101) 
+	-- Filter the first six months of 2014 in mm/dd/yyyy format 
+	BETWEEN '01/01/2014' AND '06/01/2014'
+
+or
+
+SELECT 
+	pilot_code,
+	pilot_name,
+	pilot_surname,
+	carrier_code,
+    -- Convert the entry_date to a DATE and print it in dd/MM/yyyy format
+	format(cast(entry_date AS DATE), 'dd/MM/yyyy') AS entry_date
+from pilots
+
+>>>>>>>>>> out of range values
+
+1. values outside the expected range of valid data
+
+2. can disrupt the results if not detected
+
+
+select * from series
+where rating not between 0 and 10
+
+or
+
+select * from series
+where rating <0 or rating > 10
+
+or
+
+select * from series
+where rating between 0 and 10
+
+or
+
+
+select * from series
+where rating >=0 or rating <= 10
+
+
+inaccurate data
+
+- a man who is pregnant
+
+error episodes.airdate < series.premiered   
+exclude episodes.airdate >= series.premiered   
+
+
+>>>>>>
+
+SELECT * FROM series
+-- Detect the out of range values
+WHERE num_ratings not between 0 AND 5000
+
+or
+
+SELECT * FROM series
+-- Detect the out of range values
+WHERE num_ratings < 0 OR num_ratings > 5000
+
+or
+
+SELECT * FROM series
+-- Exclude the out of range values
+WHERE num_ratings between 0 and 5000
+
+or
+
+SELECT * FROM series
+-- Exclude the out of range values
+WHERE num_ratings >= 0 AND num_ratings <= 5000
+
+or
+
+SELECT * FROM series
+-- Detect series for adults
+WHERE is_adult = 1
+-- Detect series with the minimum age smaller than 18
+AND min_age< 18
+
+or
+
+SELECT * FROM series
+-- Filter series for adults
+WHERE is_adult = 1
+-- Exclude series with the minimum age greater or equals to 18
+AND min_age >= 18
+
+
+>>>>>>>>> converting data with different types
+
+suppose rating is varchar
+
+
+select * from series
+where cast(rating as float) between 0 and 10
+
+select * from series
+where convert(float, rating) between 0 and 10
+
+
+>>>>>>>
+
+-- Use CAST() to convert the num_ratings column
+SELECT AVG(cast(num_ratings as int))
+FROM series
+-- Use CAST() to convert the num_ratings column
+WHERE cast(num_ratings as int) BETWEEN 0 AND 5000
+
+3009.3
+
+
+-- Use CONVERT() to convert the num_ratings column
+SELECT AVG(convert(int, num_ratings))
+FROM series
+-- Use CONVERT() to convert the num_ratings column
+WHERE convert(int, num_ratings) BETWEEN 0 AND 5000
+
+>>>>
+
+select count(episodes.number) count_episodes 
+
+,series.name
+from series join episodes on series.id=episodes.series_id
+group by series.name
+order by count_episodes
+
+
+>>>>>>>>>> Pattern matching
+
+valid numbers ###-###-####
+1. first and fourth numbers between 2 and 9
+2. the rest between 0 and 9
+
+like
+
+or
+
+not like
+
+% any string of zero or more characters
+_ any single character
+[] any single character within the specified range or set
+[^] any single character not within the specificed range or set
+
+[2-9][0-9][0-9]-[2-9][0-9][0-9]-[0-9][0-9][0-9][0-9]
+
+
+>>>>>>
+
+
+SELECT 
+	name,
+    -- URL of the official site
+	official_site
+FROM series
+-- Get the URLs that don't match the pattern
+WHERE official_site not like 
+	-- Write the pattern
+	'www%'
+
+or
+
+SELECT 
+	name, 
+    -- Contact number
+    contact_number
+FROM series
+-- Get the numbers that don't match the pattern
+WHERE contact_number not like
+	-- Write the pattern
+	'555-___-____'
+
+The Good Doctor	000-930-1274
+
+
+>>>>>>> combining data of some columns into one column
+
+>>>paper_shop_daily_sales
+product_name
+units
+year_of_sale
+month_of_sale
+day_of_sale
+vendor_id
+client_id
+
+>>>paper_shop_monthly_sales
+product_name
+units
+year_of_sale
+month_of_sale
+
+concat
+
+select vendor_name, vendor_surname,
+concat(vendor_name,' ', vendor_surname) as full_name
+from vendors
+
+concat ignores the null values in the fields it joins
+
+field1+field2
+
+vendor_name + ' ' + isnull(vendor_surname,'') as full_name
+
+datefromparts(year_of_sale,month_of_sale, day_of_sale) as complete_date
+
+
+>>>>>
+
+
+SELECT 
+	client_name,
+	client_surname,
+    -- Consider the NULL values
+	isnull(city, '') + isnull(', ' + state, '') AS city_state
+FROM clients
+
+or
+
+SELECT 
+		client_name,
+		client_surname,
+    -- Use the function to concatenate the city and the state
+		concat(
+				city,
+				CASE WHEN state IS NULL THEN '' 
+				ELSE isnull(', ', state) END) AS city_state
+FROM clients
+
+or
+
+SELECT 
+	product_name,
+	units,
+    -- Use the function to concatenate the different parts of the date
+	DATEFROMPARTS(
+      	year_of_sale, 
+      	month_of_sale, 
+      	day_of_sale) AS complete_date
+FROM paper_shop_daily_sales
+
+
+>>>>>>>> splitting data of one column into more columns
+
+product_name_units
+
+charindex
+
+substring(string,start,length)
+
+charindex(substring,string)
+
+
+select substring('notebooks-150',1,charindex('-','notebooks-150')-1) as product
+select substring('notebooks-150',charindex('-','notebooks-150')+1,len('notebooks-150')) as name
+
+left
+right
+reverse(string_expression)
+
+
+left('notebooks-150',charindex('-','notebooks-150')-1) product_name
+right('notebooks-150',charindex('-',reverse('notebooks-150'))-1) as units
+
+
+>>>>
+
+
+SELECT 
+	client_name,
+	client_surname,
+    city_state,
+    -- Extract the name of the city
+	substring(city_state, 1, CHARINDEX(', ', city_state) - 1) AS city,
+    -- Extract the name of the state
+    substring(city_state, CHARINDEX(', ', city_state) + 1, LEN(city_state)) AS state
+FROM clients_split
+
+
+or
+
+SELECT
+	client_name,
+	client_surname,
+    -- Extract the name of the city
+	left(city_state, charindex(', ', city_state) - 1) AS city,
+    -- Extract the name of the state
+    right(city_state, charindex(' ,', reverse(city_state)) - 1) AS state
+FROM clients_split
+
+
+>>>>>> transforming rows into columns and vice versa
+
+pivot tables
+
+
+transform into year_of_sale, notebooks, pencils, crayons
+
+
+
+select
+year_of_sale, notebooks, pencils, crayons
+from
+(
+select
+year_of_sale,
+substring(product_name_units,1,charindex('-',product_name_units)-1) as product_name,
+cast(substring(product_name_units,charindex('-',product_name_units)+1,len(product_name_units)) as int)
+as units
+from paper_shop_monthly_sales) as sales
+pivot(sum(units)
+for product_name in (notebooks,pencils,crayons))
+as paper_shop_pivot
+
+
+unpivot turns columns into rows
+
+
+select * from pivot_sales
+unpivot
+(units for product_name in (notebooks, pencils, crayons)
+) as unpvt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
