@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Computer vision using Conv2D with Keras
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/CNN%20Cats%20and%20Dogs%20recogition.ipynb
+
 * Shampoo sales using keras conv1d
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Keras%20shampoo%20sales%20conv1d.ipynb
