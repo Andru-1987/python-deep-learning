@@ -1,0 +1,97 @@
+categories of data types
+1. exact numerics whole numbers(smallint, tinyint, int, bigint) decimals(numeric, decimal, money, smallmoney)
+decimal types are defined by precision and scale  (precision is the maximum number of digits to be stored) scale is the digit count to the right of the decimal
+2. approximate numerics  (float, real)
+3. date and time 
+a. time hh:mm:ss.nnnnnnnn
+b. date YYYY-MM-DD
+c. smalldatetime YYYY-MM-DD hh:mm:ss
+d. datetime YYYY-MM-DD hh:mm:ss.nnn
+e. datetime2 YYYY-MM-DD hh:mm:ss.nnnnnnn
+4. character strings
+a. char
+b. varchar
+c. text
+5. unicode character strings
+a. nchar
+b. nvarchar
+c. ntext
+6. binary data
+7. other types
+a. image
+b. cursor
+c. rowversion
+d. uniqueidentifier
+e. xml
+f. spatial geometry/geography types
+
+
+>>>>>
+
+SELECT 
+	company, 
+	company_location, 
+	bean_origin, 
+	cocoa_percent, 
+	rating
+FROM ratings
+-- Location should be Belgium and the rating should exceed 3.5
+WHERE company_location = 'Belgium'
+	AND rating > 3.5;
+
+SELECT 
+	first_name,
+	last_name,
+	birthdate,
+	gender,
+	email,
+	country,
+	total_votes
+FROM voters
+-- Birthdate > 1990-01-01, total_votes > 100 but < 200
+WHERE Birthdate > '1990-01-01'
+  AND total_votes > 100
+  AND total_votes < 200;
+
+ALTER TABLE voters
+ADD last_vote_time time;
+
+>>>>>>>> how convert data types
+
+for comparing two values, they need to be of the same type
+
+sql server will try to convert one type to another (implicit)
+
+explicit conversion using
+cast
+convert
+
+data type precedence
+1. user defined data type
+2. datetime
+3. date
+4. float
+5. decimal
+6. int
+7. bit
+8. nvarchar
+9. varchar
+10. binary
+
+
+>>>>>>>
+
+SELECT 
+	first_name,
+	last_name,     
+	total_votes
+FROM voters
+where total_votes > '120'
+
+When comparing decimals to integers, the integer value is automatically converted to a decimal.
+
+
+
+
+
+

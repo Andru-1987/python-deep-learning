@@ -1,0 +1,1026 @@
+electric bike store dataset
+1. product_id
+2. product_name
+3. stock
+4. price
+
+Buyers
+1. buyer_id
+2. first_name
+3. last_name
+4. email
+5. phone
+
+Staff
+1. staff_id
+2. first_name
+3. last_name
+4. email
+5. phone
+
+Orders
+1. order_id
+2. product_id
+3. buyer_id
+4. staff_id
+5. price
+6. order_date
+
+
+products
+constraint unique_product_name UNIQUE(product_name)
+
+insert into products(product_name, stock, price)
+values('Trek Powerfly 5 - 2018', 10, 3499.99);
+
+
+
+begin try
+end try
+begin catch
+end catch
+
+
+if an error occurs in the try block then the catch block handles the error
+
+
+begin try
+   insert into products(product_name, stock, price)
+   values('Trek Powerfly 5 - 2018', 10, 3499.99);
+   select 'Product inserted correctly!' as message
+end try
+begin catch
+   select 'an error occurred! you are in the catch block' as message
+end catch
+
+
+you can nest try catch
+
+
+>>>>>>>
+
+
+-- Set up the TRY block
+BEGIN TRY
+	-- Add the constraint
+	ALTER TABLE products
+		ADD CONSTRAINT CHK_Stock CHECK (stock >= 0);
+END TRY
+-- Set up the CATCH block
+BEGIN CATCH
+	SELECT 'An error occurred!';
+END CATCH
+
+
+>>>>>>
+
+
+-- Set up the first TRY block
+BEGIN TRY
+	INSERT INTO buyers (first_name, last_name, email, phone)
+		VALUES ('Peter', 'Thompson', 'peterthomson@mail.com', '555000100');
+END TRY
+-- Set up the first CATCH block
+BEGIN CATCH
+	SELECT 'An error occurred inserting the buyer! You are in the first CATCH block';
+    -- Set up the nested TRY block
+    BEGIN TRY
+    	INSERT INTO errors 
+        	VALUES ('Error inserting a buyer');
+        SELECT 'Error inserted correctly!';
+	END TRY
+    -- Set up the nested CATCH block
+    BEGIN CATCH
+    	SELECT 'An error occurred inserting the error! You are in the nested CATCH block';
+    END CATCH
+END CATCH
+
+
+>>>>>>
+
+sql errors = 1 to 49999
+own error starting at 50001
+
+select * from sys.messages
+
+>>>> severity
+severity level : 0-10 are informational messages 11-16 errors that can be corrected by the users 17-24 are fatal errors
+
+>>>> state
+
+state: 1 if sql server displays error
+0-255 own errors
+
+>>>>>>Uncatchable errors
+
+severity lower than 11 are not catchable (11-19 are catchable)
+
+severity of 20 or higher that stop the connection
+
+compilation errors: objects and columns that do not exist
+
+begin try
+	select non_existent_column from products;
+end try
+begin catch
+	select 'You are in the catch block' as message
+end catch
+
+
+
+>>>>>>
+
+
+BEGIN TRY
+	INSERT INTO products (product_name, stock, price)
+		VALUES ('Sun Bicycles ElectroLite - 2017', 10, 1559.99);
+END TRY
+BEGIN CATCH
+	SELECT 'An error occurred inserting the product!';
+    BEGIN TRY
+    	INSERT INTO errors
+        	VALUES ('Error inserting a product');
+    END TRY    
+    BEGIN CATCH
+    	SELECT 'An error occurred inserting the error!';
+    END CATCH    
+END CATCH
+
+
+>>>>>> giving information about errors
+
+error: msg, levedl, state, line
+
+
+
+Error functions:
+1. ERROR_NUMBER() returns the number of the error
+2. ERROR_SEVERITY() returns the error severity (11-19)
+3. ERROR_STATE() returns the state of the error
+4. ERROR_PROCEDURE() returns the name of the stored procedure/triger where the error happened.  NULL if there is not stored procedure/trigger
+5. ERROR_MESSAGE() returns the text of the error message
+
+
+begin catch
+select
+ERROR_NUMBER() 
+,ERROR_SEVERITY() 
+,ERROR_STATE() 
+,ERROR_PROCEDURE()
+,ERROR_MESSAGE()
+end catch
+
+in the catch block otherwise you get all nulls
+
+works in nested try catch blocks
+
+
+
+>>>>>>>
+
+-- Set up the TRY block
+BEGIN TRY 	
+	SELECT 'Total: ' + SUM(price * quantity) AS total
+	FROM orders  
+END TRY
+-- Set up the CATCH block
+BEGIN CATCH  
+	-- Show error information.
+	SELECT  ERROR_NUMBER() AS number,  
+        	ERROR_SEVERITY() AS severity_level,  
+        	ERROR_STATE() AS state,
+        	ERROR_LINE() AS line,  
+        	ERROR_MESSAGE() AS message; 	
+END CATCH
+BEGIN TRY
+    INSERT INTO products (product_name, stock, price) 
+    VALUES	('Trek Powerfly 5 - 2018', 2, 3499.99),   		
+    		('New Power K- 2018', 3, 1999.99)		
+END TRY
+-- Set up the outer CATCH block
+BEGIN CATCH
+	SELECT 'An error occurred inserting the product!';
+    -- Set up the inner TRY block
+    BEGIN TRY
+    	-- Insert the error
+    	INSERT INTO errors 
+        	VALUES ('Error inserting a product');
+    END TRY    
+    -- Set up the inner CATCH block
+    BEGIN CATCH
+    	-- Show number and message error
+    	SELECT 
+        	ERROR_LINE() AS line,	   
+			ERROR_MESSAGE() AS message; 
+    END CATCH    
+END CATCH
+
+
+
+>>>>>>>>>> raiserror
+
+raiserror
+throw
+
+
+raiserror({msg_str|msg_id| @local_variable_message}, severity,state)
+
+if not exist(select * from staff where staff_id=15)
+	raiserror('No staff member with such id.',16,1);
+
+if we don't include an error number the error number will default to 50,000
+
+raiserror('No %s with id %d',16,1,'staff member', 15);
+
+
+raiserror(60000,16,1)
+
+select * from sys.messages
+
+
+begin try
+	if not exists (select * from staff where staff_id=15)
+		raiserror('no staff member with such id',9,1);
+end try
+begin catch
+	select 'you are in the catch block' as message
+end catch
+
+*** severity of < 11 will not be caught by the catch block
+
+BEGIN TRY
+    DECLARE @product_id INT = 5;
+    IF NOT EXISTS (SELECT * FROM products WHERE product_id = @product_id)
+        RAISERROR('No product with id %d.', 11, 1, @product_id);
+    ELSE 
+        SELECT * FROM products WHERE product_id = @product_id;
+END TRY
+-- Catch the error
+BEGIN CATCH
+	-- Select the error message
+	SELECT ERROR_MESSAGE();
+END CATCH
+
+
+>>>>>>>>>>>THROW
+
+use the throw over raiserror
+
+throw error_number, message, state
+
+
+BEGIN TRY
+	select price/0 from orders
+END TRY
+BEGIN CATCH
+	THROW;
+	SELECT 'This line is executed!' as message
+END CATCH
+
+
+THROW 52000, 'This is an example', 1;
+
+
+
+BEGIN TRY
+	if not exists(select * from staff where staff_id=15)
+		throw 51000, 'this is an example',1
+END TRY
+BEGIN CATCH
+	SELECT ERROR_MESSAGE() AS Message
+END CATCH
+
+throw sets the severity of the throw call to 16 and control passes to the catch block
+
+
+
+>>>>>>>
+
+
+CREATE PROCEDURE insert_product
+  @product_name VARCHAR(50),
+  @stock INT,
+  @price DECIMAL
+
+AS
+
+BEGIN TRY
+	INSERT INTO products (product_name, stock, price)
+		VALUES (@product_name, @stock, @price);
+END TRY
+-- Set up the CATCH block
+BEGIN CATCH
+	-- Insert the error and end the statement with a semicolon
+    INSERT INTO errors VALUES ('Error inserting a product');
+    -- Re-throw the error
+	THROW; 
+END CATCH
+
+
+>>>>
+
+
+BEGIN TRY
+	-- Execute the stored procedure
+	EXEC insert_product
+    	-- Set the values for the parameters
+    	@product_name = 'Trek Conduit+',
+        @stock = 3,
+        @price = 499.99;
+END TRY
+-- Set up the CATCH block
+BEGIN CATCH
+	-- Select the error message
+	SELECT ERROR_MESSAGE();
+END CATCH
+
+
+DECLARE @staff_id INT = 45;
+
+IF NOT EXISTS (SELECT * FROM staff WHERE staff_id = @staff_id)
+   	-- Invoke the THROW statement with parameters
+	THROW 50001, 'No staff member with such id', 1;
+ELSE
+   	SELECT * FROM staff WHERE staff_id = @staff_id
+
+
+>>>>>>> CUSTOMIZING ERROR MESSAGES IN THE THROW STATEMENT
+
+1. variable by concatenating strings
+2. formatmessage function
+
+declare @staff_id as int=500;
+declare @my_message nvarchar(500)=concat('There is no staff member for id', @staff_id,'. Try with another one.');
+
+if not exists(select * from staff where staff_id=@staff_id)
+	throw 50000, @my_message, 1;
+
+
+DECLARE @staff_id INT = 45;
+
+declare @my_message nvarchar(500)=
+	FORMATMESSAGE('There is no staff member for id %d %s', @staff_id,'. Try with another one.')
+
+IF NOT EXISTS (SELECT * FROM staff WHERE staff_id = @staff_id)
+	throw 50000, @my_message, 1;
+
+
+
+add error messages
+
+sp_addmessage
+	msg_id, severity, msgtext, language, with_log, replace
+
+msg_id > 50000
+
+exec sp_addmessage @msgnum=55000, @severity=16, @msgtext='There is no staff member for id %d. %s', @lang=N'us_english';
+
+select * from sys.messages
+
+
+>>>>>
+
+
+DECLARE @first_name NVARCHAR(20) = 'Pedro';
+
+-- Concat the message
+DECLARE @my_message NVARCHAR(500) =
+	CONCAT('There is no staff member with ', @first_name, ' as the first name.');
+
+IF NOT EXISTS (SELECT * FROM staff WHERE first_name = @first_name)
+	-- Throw the error
+	THROW 50000, @my_message, 1;
+
+
+
+>>>>>>
+
+
+DECLARE @product_name AS NVARCHAR(50) = 'Trek CrossRip+ - 2018';
+-- Set the number of sold bikes
+DECLARE @sold_bikes AS INT = 10;
+DECLARE @current_stock INT;
+
+SELECT @current_stock = stock FROM products WHERE product_name = @product_name;
+
+DECLARE @my_message NVARCHAR(500) =
+	-- Customize the error message
+	FORMATMESSAGE('There are not enough %s bikes. You have %d in stock.', @product_name, @current_stock);
+
+IF (@current_stock - @sold_bikes < 0)
+	-- Throw the error
+	THROW 50000, @my_message, 1;
+
+
+EXEC sp_addmessage @msgnum = 50002, @severity = 16, @msgtext = 'There are not enough %s bikes. You only have %d in stock.', @lang = N'us_english';
+
+EXEC sp_addmessage @msgnum = 50002, @severity = 16, @msgtext = 'There are not enough %s bikes. You only have %d in stock.', @lang = N'us_english';
+
+DECLARE @product_name AS NVARCHAR(50) = 'Trek CrossRip+ - 2018';
+DECLARE @sold_bikes AS INT = 10;
+DECLARE @current_stock INT;
+
+SELECT @current_stock = stock FROM products WHERE product_name = @product_name;
+
+DECLARE @my_message NVARCHAR(500) =
+	-- Prepare the error message
+	FORMATMESSAGE(50002, @product_name, @current_stock);
+
+IF (@current_stock - @sold_bikes < 0)
+	-- Throw the error
+	THROW 50000, @my_message, 1;
+
+
+>>>>>>>>>>>>>>>>>>>>> transactions
+
+customers
+1. customer_id
+2. first_name
+3. last_name
+4. email
+5. phone
+
+accounts
+1. account_id
+2. account_number
+3. customer_id
+4. current_balance
+
+transactions
+1. transaction_id
+2. account_id
+3. amount
+4. transaction_date
+
+BEGIN TRAN | TRANSACTION
+
+COMMIT TRAN | TRANSACTION
+ROLLBACK TRAN | TRANSACTION
+
+BEGIN TRY
+BEGIN TRAN;
+	UPDATE accounts set current_balance=current_balance - 100 where account_id=1;
+	insert into transactions values(1,-100, GETDATE());
+
+	Update accounts set current_balance=current_balance + 100 where account_id=5;
+	insert into transactions values(5,100,GETDATE());
+COMMIT TRAN;
+END TRY
+BEGIN CATCH
+	ROLLBACK TRAN
+END CATCH
+
+ACCOUNT 1=24400
+ACCOUNT 5=35300
+
+>>>>>>
+
+BEGIN TRY  
+	BEGIN TRAN;
+		UPDATE accounts SET current_balance = current_balance - 100 WHERE account_id = 1;
+		INSERT INTO transactions VALUES (1, -100, GETDATE());
+        
+		UPDATE accounts SET current_balance = current_balance + 100 WHERE account_id = 5;
+		INSERT INTO transactions VALUES (5, 100, GETDATE());
+	COMMIT TRAN;
+END TRY
+BEGIN CATCH  
+	ROLLBACK TRAN;
+END CATCH
+
+
+BEGIN TRY  
+	-- Begin the transaction
+	BEGIN TRAN;
+		UPDATE accounts SET current_balance = current_balance - 100 WHERE account_id = 1;
+		INSERT INTO transactions VALUES (1, -100, GETDATE());
+        
+		UPDATE accounts SET current_balance = current_balance + 100 WHERE account_id = 5;
+        -- Correct it
+		INSERT INTO transactions VALUES (500, 100, GETDATE());
+    -- Commit the transaction
+	COMMIT TRAN;    
+END TRY
+BEGIN CATCH  
+	SELECT 'Rolling back the transaction';
+    -- Rollback the transaction
+	ROLLBACK TRAN;
+END CATCH
+
+Rolling back the transaction
+
+ACCOUNT 500 does not exist
+
+
+>>>>>
+
+
+-- Begin the transaction
+BEGIN TRAN; 
+	UPDATE accounts set current_balance = current_balance + 100
+		WHERE current_balance < 5000;
+	-- Check number of affected rows
+	IF @@ROWCOUNT > 200
+		BEGIN 
+        	-- Rollback the transaction
+			ROLLBACK TRAN; 
+			SELECT 'More accounts than expected. Rolling back'; 
+		END
+	ELSE
+		BEGIN 
+        	-- Commit the transaction
+			COMMIT TRAN; 
+			SELECT 'Updates commited'; 
+		END
+
+
+>>>>>>> save points
+
+@@TRANCOUNT
+Number of BEGIN TRAN statements that are active in your current connection
+
+greater than 0 -> open transaction
+0 -> no open transaction
+
+begin tran -> @@trancount +1
+commit tran -> @@trancount -1
+rollback tran-> @@trancount -1
+
+
+select @@trancount as '@@trancount value';
+begin tran;
+	select @@trancount as '@@trancount value';
+	delete transactions;
+	begin tran;
+		select @@trancount as '@@trancount value';
+		delete accounts;
+	commit tran;
+	select @@trancount as '@@trancount value';
+rollback tran
+select @@trancount as '@@trancount value';
+
+
+savepoints are markers within a transaction
+allow to rollback to the savepoint
+
+savepoints
+1. markers within a transaction
+2. allow to rollback to the savepoints
+
+save tran| transaction name
+
+
+begin tran;
+	save tran savepoint1;
+	insert into customers values('Mark','Davis','markdavis@mail.com', '55909090');
+
+	save tran savepoint2;
+	insert into customer values('Zack','Roberts','zackroberts@mail.com','555919191');
+
+	rollback tran savepoint2;
+	rollback tran savepoint1;
+
+	save tran savepoint3
+	insert into customers values('Jeremy','Johnsson','jeremyjohnsson@mail.com','555929292');
+	commit tran;
+
+@@trancount is 1
+
+>>>>>>
+
+BEGIN TRY
+	-- Begin the transaction
+	BEGIN TRAN;
+    	-- Correct the mistake
+		UPDATE accounts SET current_balance = current_balance + 200
+			WHERE account_id = 10;
+    	-- Check if there is a transaction
+		IF @@TRANCOUNT > 0     
+    		-- Commit the transaction
+			COMMIT TRAN;
+     
+	SELECT * FROM accounts
+    	WHERE account_id = 10;      
+END TRY
+BEGIN CATCH  
+    SELECT 'Rolling back the transaction'; 
+    -- Check if there is a transaction
+    IF @@TRANCOUNT > 0   	
+    	-- Rollback the transaction
+        ROLLBACK TRAN;
+END CATCH
+
+
+BEGIN TRAN;
+	-- Mark savepoint1
+	SAVE TRAN savepoint1;
+	INSERT INTO customers VALUES ('Mark', 'Davis', 'markdavis@mail.com', '555909090');
+
+	-- Mark savepoint2
+    SAVE TRAN savepoint2;
+	INSERT INTO customers VALUES ('Zack', 'Roberts', 'zackroberts@mail.com', '555919191');
+
+	-- Rollback savepoint2
+	ROLLBACK TRAN savepoint2;
+    -- Rollback savepoint1
+	ROLLBACK TRAN savepoint1;
+
+	-- Mark savepoint3
+	SAVE TRAN savepoint3;
+	INSERT INTO customers VALUES ('Jeremy', 'Johnsson', 'jeremyjohnsson@mail.com', '555929292');
+-- Commit the transaction
+COMMIT TRAN;
+
+>>>>>>>>>>>>>>>>>>>>>>>>CONTROLLING STATE
+XACT_ABORT
+1. specifies whether the current transaction will be automatically rolled back when an error occurs.
+
+SET XACT_ABORT {ON | OFF}
+SET XACT_ABORT OFF
+
+if there is an error: there can be open transactions
+
+
+set XACT_ABORT ON
+
+if there is an error: Rollbacks the transaction and aborts the execution
+
+
+set XACT_ABORT ON;
+begin tran;
+	insert into customers values('Mark','Davis','markdavis@mail.com', '55909090');
+	RAISERROR('Raising an error!',16,1);
+	insert into customer values('Zack','Roberts','zackroberts@mail.com','555919191');
+commit trans;
+
+
+set XACT_ABORT ON;
+begin tran;
+	insert into customers values('Mark','Davis','markdavis@mail.com', '55909090');
+ 	THROW 55000, 'Raising an error!',1;
+	insert into customer values('Zack','Roberts','zackroberts@mail.com','555919191');
+commit trans;
+
+
+XACT_STATE()
+
+0-> no open transaction
+1-> open and committable transaction
+-1-> open and uncommitable
+
+
+set XACT_ABORT OFF;
+
+BEGIN TRY
+	BEGIN TRAN;
+		
+	insert into customers values('Mark','Davis','markdavis@mail.com', '55909090');
+	insert into customer values('Zack','Roberts','zackroberts@mail.com','555919191');
+	COMMIT TRAN;
+END TRY
+
+BEGIN CATCH
+	IF XACT_STATE()=-1
+		ROLLBACK TRAN;
+	IF XACT_STATE()=1
+		COMMIT TRAN;
+	SELECT ERROR_MESSAGE() AS error_message
+END CATCH
+
+
+set XACT_ABORT ON;
+
+BEGIN TRY
+	BEGIN TRAN;
+		
+	insert into customers values('Mark','Davis','markdavis@mail.com', '55909090');
+	insert into customer values('Zack','Roberts','zackroberts@mail.com','555919191');
+	COMMIT TRAN;
+END TRY
+
+BEGIN CATCH
+	IF XACT_STATE()=-1
+		ROLLBACK TRAN;
+	IF XACT_STATE()=1
+		COMMIT TRAN;
+	SELECT ERROR_MESSAGE() AS error_message
+END CATCH
+
+
+>>>>>>transn
+
+
+-- Use the appropriate setting
+SET XACT_ABORT OFF;
+-- Begin the transaction
+BEGIN TRAN; 
+	UPDATE accounts set current_balance = current_balance - current_balance * 0.01 / 100
+		WHERE current_balance > 5000000;
+	IF @@ROWCOUNT <= 10	
+    	-- Throw the error
+		THROW 55000, 'Not enough wealthy customers!', 1;
+	ELSE		
+    	-- Commit the transaction
+		COMMIT TRAN; 
+
+
+-- Use the appropriate setting
+SET XACT_ABORT ON;
+BEGIN TRY
+	BEGIN TRAN;
+		INSERT INTO customers VALUES ('Mark', 'Davis', 'markdavis@mail.com', '555909090');
+		INSERT INTO customers VALUES ('Dylan', 'Smith', 'dylansmith@mail.com', '555888999');
+	COMMIT TRAN;
+END TRY
+BEGIN CATCH
+	-- Check if there is an open transaction
+	IF XACT_STATE() <> 0
+    	-- Rollback the transaction
+		ROLLBACK TRAN;
+    -- Select the message of the error
+    SELECT ERROR_MESSAGE() AS Error_message;
+END CATCH
+
+
+>>>>transaction isolation levels
+concurrency: two or more transactions that read/change shared data at the same time.
+
+isolate our transaction from other transactions
+
+transaction isolation levels
+
+read committed
+read uncommitted 
+1. least restrictive isolation level
+2. reads rows modified by another transaction which hasn't been committed or rolled back yet
+3. can be faster, doesn't block other transactions
+4. concurrency phenomena: allows dirty reads (sees the uncommitted data - risk of rollback - output of state), non-repeatable reads (select at different times have different values due to a concurrent update by another process), and phantom reads
+(records matching a criteria, another transaction from a different process, record count differs on the same criteria)
+repeatable read
+serializable
+snapshot
+
+set transaction isolation level
+read uncommitted | read committed | repeatable read | serializable | snapshot
+
+
+select cast transaction_isolation_level
+when 0 then 'unspecified'
+when 1 then 'read uncommitted'
+when 2 then 'read committed'
+when 3 then 'repeatable read'
+when 4 then 'serializable'
+when 5 then 'snapshot'
+end as transaction_isolation_level
+from sys.dm_exec_sessions
+where session_id=@@SPID
+
+
+>>>>>>>>>>>
+
+-- Set the appropriate isolation level
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+	-- Select first_name, last_name, email and phone
+	SELECT
+    	first_name, 
+        last_name, 
+        email,
+        phone
+    FROM customers;
+
+
+>>>>>>>>>>>>>>>>>> read committed & repeatable read
+
+1. default isolation level
+2. can't read data modified by other transaction that hasn't committed or rolled back
+
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED
+
+if another transaction tries to access the data while in an transaction block it will have to wait until a commit has occurred.
+
+
+READ COMMITTED:
+1. prevents dirty reads
+2. allows non-repeatable and phantom reads
+3. can blokc another transaction until commit tran
+
+when to use
+you want to ensure that you only read committed data, not non-repeatable and phantom reads
+
+
+>>>>>>>> REPEATABLE READ
+
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+1. can't read uncommitted data from other transactions
+
+if some data is read, other transactions can't modify that data until repeatable read transaction finishes
+
+
+no dirty reads, no non-repeatable reads,  but it can have a phantom read
+
+
+read commit: if another transaction tries to access the data while in an transaction block it will have to wait until a commit has occurred. Select, insert, delete, and update are block using a read committed until the begin tran process has committed. READ COMMITTED prevents dirty read. REPEATABLE READ
+
+
+>>>>>>
+
+-- Set the appropriate isolation level
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+
+-- Count the accounts
+SELECT Count(*) AS number_of_accounts
+FROM accounts
+WHERE current_balance >= 50000;
+
+
+>>>>>
+
+
+-- Set the appropriate isolation level
+SET TRANSACTION ISOLATION LEVEL REPEATABLE READ
+
+-- Begin a transaction
+BEGIN TRAN
+
+SELECT * FROM customers;
+
+-- some mathematical operations, don't care about them...
+
+SELECT * FROM customers;
+
+-- Commit the transaction
+COMMIT TRAN
+
+
+>>>>>>>>>> SERIALIZABLE
+
+the most restrictive isolation level
+
+prevents: dirty read, non-repeatable reads, and phantom reads
+
+Query with where clause based on a index range -> Locks only those records
+
+if the query does not have a where clause -> Locks the complete table
+
+
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+BEGIN TRAN
+	SELECT * FROM customers;
+
+locks the table until commit trans
+
+use it when data consistency is a must
+
+
+>>>>>>>>
+
+
+-- Set the appropriate isolation level
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- Begin a transaction
+BEGIN TRAN
+
+SELECT * FROM customers;
+
+-- After some mathematical operations, we selected information from the customers table.
+SELECT * FROM customers;
+
+-- Commit the transaction
+COMMIT TRAN
+
+-- Set the appropriate isolation level
+SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+
+-- Begin a transaction
+BEGIN TRAN
+
+-- Select customer_id between 1 and 10
+SELECT * 
+FROM customers
+WHERE customer_id BETWEEN 1 AND 10;
+
+-- After completing some mathematical operation, select customer_id between 1 and 10
+SELECT * 
+FROM customers
+WHERE customer_id BETWEEN 1 AND 10;
+
+-- Commit the transaction
+Commit TRAN
+
+prevents phantom reads
+
+
+>>>>>>>>>>>>>>>>>>>> snapshot
+
+ALTER DATABASE myDatabaseName SET ALLOW_SNAPSHOT_ISOLATION ON;
+SET TRANSACTION ISOLATION LEVEL SNAPSHOT;
+
+every modification is stored in the tempDB database
+
+only see committed changes that occurred before the start of the snapshot transaction and own changes
+
+can't see any changes made by other transactions after the start of the snapshot transaction
+
+readings don't block writings and writings don't block readings
+
+can have update conflicts
+
+SNAPSHOT prevents dirty reads, non-repeatable reads, and phantom reads
+
+snapshot does not block transactions whereas serializable does
+
+good data consistency
+
+use when data consistency is a must and you don't want blocks
+
+
+>>>>>>>>>>>>>>>> read__committed_snapshot
+
+ALTER DATABASE myDatabaseName SET READ_COMMITTED_SNAPSHOT ON
+
+default off
+
+ALTER DATABASE myDatabaseName SET ALLOW_SNAPSHOT_ISOLATION ON;
+
+WITH(NOLOCK)
+1. Used to read uncommitted data
+2. applies to a specific table
+3. READ UNCOMMITTED applies to the entire connection
+4. Use under any isolation level when you want to read uncommitted data from specific tables
+
+                  dirty reads 	non-repeatable reads 	phantom reads 
+read uncommitted  	yes	yes			yes
+read committed		no	yes			yes
+repeatable read		no	no			yes
+serializable		no	no			no
+snapshot		no	no			no
+
+
+SELECT *
+	-- Avoid being blocked
+	FROM transactions WITH (NOLOCK)
+WHERE account_id = 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

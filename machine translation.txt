@@ -1,0 +1,1092 @@
+source : english sentences 
+target : french sentences
+
+words need to be converted to a numeric representation
+
+one-hot encoded vector - words represented by 1 or 0
+vocabulary is the collection of unique words in the dataset
+
+to_categorical creates the one hot code vectors
+
+word2index ={"I":0,"like":1,"cats":2}
+
+words=["I","like","cats"]
+word_ids=[word2index[w] for w in words]
+[0,1,2]
+
+onehot_1 = to_categorical(word_ids)
+print( [w,ohe.tolist()) for w, ohe in zip(words,onehot_1)])
+
+
+>>>> you can set the number of output classes
+
+onehot_2 = to_categorical(words_ids, num_classes=5)
+print( [w,ohe.tolist()) for w, ohe in zip(words,onehot_2)])
+
+[('I',[1,0,0,0,0,0]),('like',[0,1,0,0,0]),('cats',[0,0,1,0,0])
+
+
+>>>>>>
+
+
+from tensorflow.python.keras.utils import to_categorical
+
+# Create a list of words and convert them to indices
+words = ["I", "like", "cats"]
+word_ids = [word2index[w] for w in words]
+print(word_ids)
+
+# Create onehot vectors using to_categorical function
+onehot_1 = to_categorical(word_ids)
+# Print words and their corresponding onehot vectors
+print([(w,ohe.tolist()) for w,ohe in zip(words, onehot_1)])
+
+# Create onehot vectors with a fixed number of classes and print the result
+# Create onehot vectors using to_categorical function
+onehot_2 = to_categorical(word_ids, num_classes=5)
+
+print([(w,ohe.tolist()) for w,ohe in zip(words, onehot_2)]) 
+
+[('I', [1.0, 0.0, 0.0]), ('like', [0.0, 1.0, 0.0]), ('cats', [0.0, 0.0, 1.0])]
+[('I', [1.0, 0.0, 0.0, 0.0, 0.0]), ('like', [0.0, 1.0, 0.0, 0.0, 0.0]), ('cats', [0.0, 0.0, 1.0, 0.0, 0.0])]
+
+def compute_onehot_length(words, word2index):
+  # Create word IDs for words
+  word_ids = [word2index[w] for w in words]
+  # Convert word IDs to onehot vectors
+  onehot = to_categorical(word_ids)
+  # Return the length of a single one-hot vector
+  return onehot.shape[1]
+
+word2index = {"He":0, "drank": 1, "milk": 2}
+# Compute and print onehot length of a list of words
+print(compute_onehot_length(['He','drank','milk'], word2index))
+
+
+words_1 = ["I", "like", "cats", "We", "like", "dogs", "He", "hates", "rabbits"]
+# Call compute_onehot_length on words_1
+length_1 = compute_onehot_length(words_1, word2index)
+
+words_2 = ["I", "like", "cats", "We", "like", "dogs", "We", "like", "cats"]
+# Call compute_onehot_length on words_2
+length_2 = compute_onehot_length(words_2, word2index)
+
+# Print length_1 and length_2
+print("length_1 =>", length_1, " and length_2 => ", length_2)
+
+
+>>>>>>>>>Encoder and decoder
+
+def words2onehot(word_list, word2index):
+	words_ids=[word2index[w] for w in word_list]
+	onehot = to_categorical(word_ids,3)
+	return onehot
+
+
+def encoder(onehot):
+	word_ids=np.argmax(onehot,axis=1)
+	return word_ids
+
+def decoder(context_vector):
+	word_ids_rev = context_vector[::-1]
+	onehot_rev = to_categorical(word_ids_rev,3)
+	return onehot_rev
+
+def onehot2words(onehot,index2word):
+	ids=np.argmax(onehot,axis=1)
+	return [index2word[id] for id in ids]
+
+::-1 (reverses the numpy array)
+
+onehot = words2onehot(["I","like","cats"],word2index)
+context=encoder(onehot)
+print(context)
+onehot=decoder(context)
+output=onehot2words(onehot,index2word)
+
+
+>>>>>>> reverse sentence
+
+import numpy as np
+
+def words2onehot(word_list, word2index):
+  # Convert words to word IDs
+  word_ids = [word2index[w] for w in word_list]
+  # Convert word IDs to onehot vectors and return the onehot array
+  onehot = to_categorical(word_ids, num_classes=3)
+  return onehot
+
+words = ["I", "like", "cats"]
+# Convert words to onehot vectors using words2onehot
+onehot = words2onehot(words, word2index)
+# Print the result as (<word>, <onehot>) tuples
+print([(w,ohe.tolist()) for w,ohe in zip(words, onehot)])
+
+def encoder(onehot):
+  # Get word IDs from onehot vectors and return the IDs
+  word_ids = np.argmax(onehot, axis=1)
+  return word_ids
+
+# Define "We like dogs" as words
+words = ["We","like","dogs"]
+# Convert words to onehot vectors using words2onehot
+onehot = words2onehot(words, word2index)
+# Get the context vector by using the encoder function
+context = encoder(onehot)
+print(context)
+
+# Define the onehot2words function that returns words for a set of onehot vectors
+def onehot2words(onehot, index2word):
+  ids = np.argmax(onehot, axis=1)
+  res = [index2word[id] for id in ids]
+  return res
+
+def decoder(context_vector):
+  words_ids_rev = context_vector[::-1]
+  onehot_rev = to_categorical(words_ids_rev, num_classes=3)
+  return onehot_rev
+
+
+# Convert context to reversed onehot vectors using decoder
+onehot_rev = decoder(context)
+# Get the reversed words using the onehot2words function
+reversed_words = onehot2words(onehot_rev, index2word)
+print(reversed_words)
+
+['dogs', 'like', 'We']
+
+
+>>>>>>>>>>>>
+
+
+a sentence is a time series input
+
+	current word is affected by previous words
+
+the encoder/decoder uses a machine learning model
+	models that can learn from time-series inputs
+	models are called sequential models.
+
+
+GRU - Gated Recurrent Unit
+
+words are one hot vectors as inputs to the gru
+
+the hidden states represents "memory" of what the model has seen.
+
+inp = keras.layers.Input(shape=(...))
+layer=keras.layers.GRU(...)
+
+out=layer(inp)
+
+model= Model(inputs=inp, outputs=out)
+
+
+sequential data has 3 dimensions:
+1. batch size is the number of sentences
+2. sequential length is the number of words in the sentence
+
+
+time dimension - sequence length
+input dimension - onehot vector length
+
+batch_shape( batch size, sequence length, one hot vector length)
+
+inp = keras.layers.Input(batch_shape=(2,3,4))
+
+2 - source and target sentence
+3 - sequence length
+4 - input dimensionality
+
+gru_out = keras.layers.GRU(10)(inp)   #10 hidden units
+
+model = keras.models.Model(inputs=inp, outputs=gru_out)
+
+
+x=np.random.normal(size(2,3,4)(
+y=model.predict(x)
+
+or
+
+inp = keras.layers.Input(shape=(3,4))
+gru_out = keras.layers.GRU(10)(inp)   #10 hidden units
+
+
+
+gru_out2, gru_state = keras.layers.GRU(10, return_state=True)(inp)   #10 hidden units
+
+gru_state is the last hidden state and gru_out2 is the last output
+
+
+or 
+
+gru_out3 = keras.layers.GRU(10, return_sequences=True)(inp)   #10 hidden units
+
+return all the outputs in the sequence
+
+>>>>>>
+
+import tensorflow.keras as keras
+import numpy as np
+# Define an input layer
+inp = keras.layers.Input(batch_shape=(2,3,4))
+# Define a GRU layer that takes in the input
+gru_out = keras.layers.GRU(10)(inp)
+
+# Define a model that outputs the GRU output
+model = keras.models.Model(inputs=inp, outputs=gru_out)
+
+x = np.random.normal(size=(2,3,4))
+# Get the output of the model and print the result
+y = model.predict(x)
+print("shape (y) =", y.shape, "\ny = \n", y)
+
+>>>>>>>
+
+# Define an input layer
+inp = keras.layers.Input(shape=(3,4))
+# Define a GRU layer that takes in the input
+gru_out = keras.layers.GRU(10)(inp)
+
+# Define a model that outputs the GRU output
+model = keras.models.Model(inputs=inp, outputs=gru_out)
+
+
+x1 = np.random.normal(size=(2,3,4))
+x2 = np.random.normal(size=(5,3,4))
+
+# Get the output of the model and print the result
+y1 = model.predict(x1)
+y2 = model.predict(x2)
+print("shape (y1) = ", y1.shape, " shape (y2) = ", y2.shape)
+
+>>>>>
+
+# Define the Input layer
+#20 time steps
+inp = keras.layers.Input(batch_shape=(3,20,5))
+# Define a GRU layer that takes in inp as the input
+gru_out1 = keras.layers.GRU(10)(inp)
+print("gru_out1.shape = ", gru_out1.shape)
+
+
+>>>>>>
+
+# Define the Input layer
+inp = keras.layers.Input(batch_shape=(3,20,5))
+# Define a GRU layer that takes in inp as the input
+gru_out1 = keras.layers.GRU(10)(inp)
+print("gru_out1.shape = ", gru_out1.shape)
+
+# Define the second GRU and print the shape of the outputs
+gru_out2, gru_state = keras.layers.GRU(10, return_state=True)(inp)
+print("gru_out2.shape = ", gru_out2.shape)
+print("gru_state.shape = ", gru_state.shape)
+
+>>>>>>
+
+
+# Define the Input layer
+inp = keras.layers.Input(batch_shape=(3,20,5))
+# Define a GRU layer that takes in inp as the input
+gru_out1 = keras.layers.GRU(10)(inp)
+print("gru_out1.shape = ", gru_out1.shape)
+
+# Define the second GRU and print the shape of the outputs
+gru_out2, gru_state = keras.layers.GRU(10, return_state=True)(inp)
+print("gru_out2.shape = ", gru_out2.shape)
+print("gru_state.shape = ", gru_state.shape)
+
+# Define the third GRU layer which will return all the outputs
+gru_out3 = keras.layers.GRU(10, return_sequences=True)(inp)
+print("gru_out3.shape = ", gru_out3.shape)
+
+
+gru_out1.shape =  (3, 10)
+gru_out2.shape =  (3, 10)
+gru_state.shape =  (3, 10)
+gru_out3.shape =  (3, 20, 10)
+
+>>>>>>>>>>>>>>>>>Implementing the encoder
+
+english sentences variable is en_sent
+french sentences variable is fr_sent
+
+for en_sent, fr_sent in zip(en_text[:3],fr_text[:3]):
+	print("English: ",ensent,"\tFrench: ",fr_sent)
+
+
+Tokenization
+1. The process of breaking a sentence/phrase to individual token (words)
+
+
+first_sent=en_text[0]
+print("First sentence: ", first_sent)
+first_words=first_sent.split(" ")
+print("\tWords: ",first_words)
+
+
+sent_lengths=[len(en_sent.split(" ")) for en_sent in en_text]
+mean_length = np.mean(sent_lengths)
+print('(English) Mean sentence length: ', mean_length)
+
+
+>>>>>>>computing the size of the vocabulary
+
+all_words=[]
+
+for sent in en_text:
+	all_words.extend(sent.split(" "))
+vocab_size=len(set(all_words))
+
+print("(English) Vocabulary size: ",vocab_size)
+
+set contains only the unique items in the list
+
+
+en_inputs = Input(shape=(en_len,en_vocab))
+en_gru = GRU(hsize,return_state=True)
+en_out, en_state = en_gru(inputs)
+encoder = Model(inputs=en_inputs, outputs=en_state)
+
+print(encoder.summary())
+
+
+>>>>>>>>>
+
+# Iterate through the first 5 English and French sentences in the dataset
+for en_sent, fr_sent in zip(en_text[:5], fr_text[:5]):  
+  print("English: ", en_sent)
+  print("\tFrench: ", fr_sent)
+
+# Get the first sentence of the English dataset
+first_sent = en_text[0]
+print("First sentence: ", first_sent)
+# Tokenize the first sentence
+first_words = first_sent.split(" ")
+# Print the tokenized words
+print("\tWords: ", first_words)
+
+
+>>>>>>
+
+# Compute length of sentences
+sent_lengths = [len(en_sent.split(" ")) for en_sent in en_text]
+# Compute the mean of sentences lengths
+mean_length = np.mean(sent_lengths)
+print('(English) Mean sentence length: ', mean_length)
+
+all_words = []
+for sent in en_text:
+  # Populate all_words with all the words in sentences
+  all_words.extend(sent.split(" "))
+# Compute the length of the set containing all_words
+vocab_size = len(set(all_words))
+print("(English) Vocabulary size: ", vocab_size)
+
+(English) Mean sentence length:  13.2062
+(English) Vocabulary size:  227
+
+
+>>>>>>
+
+
+import tensorflow.keras as keras
+
+en_len = 15
+en_vocab = 150
+hsize = 48
+
+# Define an input layer
+en_inputs = keras.layers.Input(shape=(en_len,en_vocab))
+# Define a GRU layer which returns the state
+en_gru = keras.layers.GRU(hsize, return_state=True)
+# Get the output and state from the GRU
+en_out,en_state = en_gru(en_inputs)
+# Define and print the model summary
+encoder = keras.models.Model(inputs=en_inputs, outputs=en_state)
+print(encoder.summary())
+
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+input_5 (InputLayer)         (None, 15, 150)           0         
+_________________________________________________________________
+gru_1 (GRU)                  [(None, 48), (None, 48)]  28656     
+=================================================================
+Total params: 28,656
+Trainable params: 28,656
+Non-trainable params: 0
+_________________________________________________________________
+
+
+
+>>>>>>> how to implement the decoder
+1. encoder consumes english words one by one
+2. finally produces the context vector
+3. decoder takes the context vector as the initial state
+4. decoder produces French words one by one
+
+
+to produce a french sentence of 10 words, you repeat the context vector 10 times.
+
+the repeat layer allows for repeating an input layer or an output layer a known number of times.
+
+
+
+sequence length = the number of words
+input size= (2x3)
+batch size = the number of sentences
+
+
+
+
+
+from tensorflow.keras.layers import RepeatVector
+rep=RepeatVector(5)
+
+r_inp=Input(shape=(3,))
+r_out = rep(r_inp)
+or
+r_out = RepeatVector(5)(r_inp)
+
+repeat an input layer of 3, 5 times.
+
+repeat_model = Model(inputs=r_inp, outputs=r_out)
+
+x= np.array([[0,1,2],[3,4,5]])
+
+y=repeat_model.predict(x)
+
+print('x.shape = ',x.shape, '\ny.shape =', y.shape)
+
+
+>>>>>
+
+fr_len is the average length of a french sentence
+
+de_inputs = RepeatVector(fr_len)(en_state)
+
+decoder_gru = GRU(hsize,return_sequences=True)
+
+
+#Fixing the initial state of the decoder
+#en_state is the context vector
+
+
+gru_outputs = decoder_gru(de_inputs, initial_state=en_state)
+
+enc_dec= Model(inputs=en_inputs, outputs=gru_outputs)
+
+
+>>>>>>>>>>>>>>>>>
+
+from tensorflow.keras.layers import Input, RepeatVector
+from tensorflow.keras.models import Model
+import numpy as np
+
+inp = Input(shape=(2,))
+# Define a RepeatVector that repeats the input 6 times
+rep = RepeatVector(6)(inp)
+# Define a model
+model = Model(inputs=inp, outputs=rep)
+# Define input x
+x = np.array([[0,1],[2,3]])
+# Get model prediction y
+y = model.predict(x)
+
+print('x.shape = ',x.shape,'\ny.shape = ',y.shape)
+
+
+>>>>>>>
+
+The decoder uses the same model as the encoder. 
+
+the decoder consumes the context vector produced by the encoder as inputs as well as the initial state to the decoder.
+
+
+>>>>>> Dense and TimeDistributed Layers
+
+
+input feeds to weights and bias called the dense layer outputting a number of classes filtering through softmax to produce a probability.
+
+
+dense=Dense(3, activation='softmax')
+
+meaning 3 classes or 3 labels
+
+inp = Input (shape=(3,))
+pred=dense(inp)
+model =Model(inputs=inpt, outputs=pred)
+
+
+from tensorflow.keras.initializers import RandomNormal
+
+init = RandomNormal(mean=0.0, stddev=0.05, seed=6000)
+dense = Dense(4, activation='softmax',
+	kernel_initializer=init, bias_initializer=init)
+
+inp = Input (shape=(3,))
+pred=dense(inp)
+model =Model(inputs=inp, outputs=pred)
+
+
+Dense layer takes a (batch size, input size) array
+
+[[1,6,8],[8,9,10]]  #2x3 array
+
+produces a (batch size, num classes) array
+1. number of classes =4
+
+y=[[0.1,0.3,0.4,0.2],[0.2,0.5,0.1,0.2]] #2x4 array
+
+output for each sample is a probability distribution over the classes
+1. Sums to 1 along columns
+
+can get the class for each sample using 
+np.argmax(y,axis=-1) produces [2,1]
+
+>>>>>>>>>>time series
+
+Dense layer creates a fully connected layer
+
+gru layer:
+batch size, sequence, input_size
+
+
+dense_time = TimeDistributed(Dense(3,activation='softmax'))
+
+inp = Input(shape=(2,3))
+pred = dense_time(inp)
+model = Model(inputs=inp, outputs=pred)
+
+
+TimeDistributed Layer
+takes a (batch size, sequence length, input size) array
+
+x=[
+[[1,6],[8,2],[1,2]],
+[[8,9],[10,8],[1,0]]
+
+produces a (batch size, sequence length, num classes) array
+number of classes=3
+
+y=[[[0.1,0.5,0.4],[0.8,0.1,0.1],[0.6,0.2,0.2]],
+[[0.2,0.5,0.3],[0.2,0.5,0.3],[0.2,0.8,0.0]]] #a 2x3x3 array
+
+classes=np.argmax(y,axis=-1) #2x3 array
+
+#loop through the time dimension
+
+for t in range(3):
+	for prob, c in zip(y[:,t,:],classes[:,t]):
+		print("Prob: ",prob, ", Class: ",c)
+
+
+
+]
+
+
+>>>>>>>>>
+
+# Define an input layer with batch size 3 and input size 3
+inp = Input(batch_shape=(3,3))
+# Get the output of the 3 node Dense layer
+pred = Dense(3, activation='softmax', kernel_initializer=init, bias_initializer=init)(inp)
+model = Model(inputs=inp, outputs=pred)
+
+names = ["Mark", "John", "Kelly"]
+prizes = ["Gift voucher", "Car", "Nothing"]
+x = np.array([[5, 0, 1], [0, 3, 1], [2, 2, 1]])
+# Compute the model prediction for x
+y = model.predict(x)
+# Get the most probable class for each sample
+classes = np.argmax(y, axis=-1)
+print("\n".join(["{} has probabilities {} and wins {}".format(n,p,prizes[c]) \
+                 for n,p,c in zip(names, y, classes)]))
+
+
+Mark has probabilities [0.3454787  0.36202952 0.29249173] and wins Car
+John has probabilities [0.36521763 0.28343266 0.3513497 ] and wins Gift voucher
+Kelly has probabilities [0.3638924  0.307776   0.32833153] and wins Gift voucher
+
+
+>>>>>
+
+# Print names and x
+print('names=\n',names, '\nx=\n',x, '\nx.shape=', x.shape)
+
+You have been provided with the weight initializer init, the prizes list from the previous exercise, a time-series input x and names which contains the names of the contestants. x is a (3,2,3) 
+numpy array where names is a (2,3) Python list. 
+In other words, you have 
+
+2 game shows (i.e. sequence length), 
+each with 3 contestants (batch size) 
+where each contestant has 3 attributes (input size).
+
+
+>>>>>
+
+# Print names and x
+print('names=\n',names, '\nx=\n',x, '\nx.shape=', x.shape)
+
+inp = Input(shape=(2, 3))
+# Create the TimeDistributed layer (the output of the Dense layer)
+dense_time = TimeDistributed(Dense(3, activation='softmax', kernel_initializer=init, bias_initializer=init))
+pred = dense_time(inp)
+model = Model(inputs=inp, outputs=pred)
+
+y = model.predict(x)
+# Get the most probable class for each sample
+classes = np.argmax(y, axis=-1)
+for t in range(2):
+  # Get the t-th time-dimension slice of y and classes
+  for n, p, c in zip(names[t], y[:,t,:], classes[:, t]):
+  	print("Game {}: {} has probs {} and wins {}\n".format(t+1,n,p,prizes[c]))
+
+Game 1: Mark has probs [0.3454787  0.36202952 0.29249173] and wins Car
+
+Game 1: John has probs [0.36521763 0.28343266 0.3513497 ] and wins Gift voucher
+
+Game 1: Kelly has probs [0.3638924  0.307776   0.32833153] and wins Gift voucher
+
+Game 2: Jenny has probs [0.38484108 0.2982516  0.31690735] and wins Gift voucher
+
+Game 2: Shan has probs [0.45300898 0.21960825 0.32738274] and wins Gift voucher
+
+Game 2: Sarah has probs [0.35736424 0.35900456 0.28363118] and wins Car
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>Implementing the full encoder and decoder model
+
+
+The encoder consumes the english input
+
+the encoder produces the context vector
+
+the decoder consumes a repeated set of context vectors
+
+the decoder outputs GRU output sequence
+
+decoder outputs to a TimeDistributed Dense layer producing the french words
+
+
+de_dense = keras.layers.Dense(fr_vocab, activation='softmax')
+de_dense_time = keras.layers.TimeDistributed(de_dense)
+de_pred=de_dense(de_out)
+
+nmt=keras.models.Model(inputs=en_inputs, outputs=de_pred)
+
+nmt.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+
+
+>>>>>>>
+
+
+# Import Dense and TimeDistributed layers
+from tensorflow.keras.layers import Dense, TimeDistributed
+# Define a softmax dense layer that has fr_vocab outputs
+de_dense = Dense(fr_vocab, activation='softmax')
+# Wrap the dense layer in a TimeDistributed layer
+de_dense_time = TimeDistributed(de_dense)
+# Get the final prediction of the model
+de_pred = de_dense_time(de_out)
+print("Prediction shape: ", de_pred.shape)c
+
+
+from tensorflow.keras.models import Model
+# Define a model with encoder input and decoder output
+nmt= Model(inputs=en_inputs, outputs=de_pred)
+
+# Compile the model with an optimizer and a loss
+nmt.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+
+# View the summary of the model 
+nmt.summary()
+
+>>>>>>>>>>>>>>>>>Preprocess the data
+
+Tokenization: Process of breaking a sentence/phrase to individual words/characters
+
+breaking a sentence into tokens is referred to as word tokenization
+
+from keras.preprocessing.text import Tokenizer 
+
+en_tok=Tokinizer()
+
+en_tok.fit_on_texts(en_text)
+
+id=en_tok.word_index['janurary']
+
+word=en_tok.index_word[51]
+
+seq=en_tok.texts_to_sequences(['she likes grapefruit, peaches, and lemons.'])
+
+[[26,70,27,73,7,74]]
+
+limit the size of the vocabulary
+
+tok=Tokenizer(num_words=50)
+
+selects the 50 most common words in the text
+
+Out-of-vocabulary (OOV) words
+1. rare words in the training corpus (collection of text)
+2. words that are not present in the training set
+
+the word water is a oov word and will be ignored
+
+tok=Tokenizer(num_words=50, oov_token='UNK')
+
+
+>>>>>>>
+
+
+from tensorflow.keras.preprocessing.text import Tokenizer
+
+# Define a Keras Tokenizer
+en_tok = Tokenizer()
+
+# Fit the tokenizer on some text
+en_tok.fit_on_texts(en_text)
+
+for w in ["january", "apples", "summer"]:
+  # Get the word ID of word w
+  id = en_tok.word_index[w]
+  # Print the word and the word ID
+  print(w, " has id: ", id)
+
+january  has id:  51
+apples  has id:  80
+summer  has id:  30
+
+
+
+>>>>>
+
+
+# Convert the sentence to a word ID sequence
+seq = en_tok.texts_to_sequences(['she likes grapefruit , peaches , and lemons .'])
+print('Word ID sequence: ', seq)
+
+# Define a tokenizer with vocabulary size 50 and oov_token 'UNK'
+en_tok_new = Tokenizer(num_words=50, oov_token='UNK')
+
+# Fit the tokenizer on en_text
+en_tok_new.fit_on_texts(en_text)
+
+# Convert the sentence to a word ID sequence
+seq_new = en_tok_new.texts_to_sequences(['she likes grapefruit , peaches , and lemons .'])
+print('Word ID sequence (with UNK): ', seq_new)
+print('The ID 1 represents the word: ', en_tok_new.index_word[1])
+
+
+Word ID sequence:  [[26, 70, 27, 73, 7, 74]]
+Word ID sequence (with UNK):  [[27, 1, 28, 1, 8, 1]]
+The ID 1 represents the word:  UNK
+
+
+>>>>>>>>>>>Preprocessing the text
+
+sos - start of sentence
+eos - end of sentence
+
+padding the sentences with a special token
+1. real world datasets never have the same number of words in all the sentences
+
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+sentences=[
+'new jersey is sometimes quiet during autumn.',
+'california is never rainy during july, but it is sometimes beautiful in february.'
+]
+
+seq = en_tok.texts_to_sequences(sentences)
+
+preproc_text=pad_sequences(seqs, padding='post', truncating='post',maxlen=12)
+
+padding can be pre or post
+
+In Keras, 0 will never be allocated as a word ID, since it is used for begin token of the sequences
+
+
+Benefits fo reversing source sentences
+1. helps to make a stronger initial connection between the encoder and decoder
+2. encoder first word is close to the decoder first word
+
+seq=seq[:,::-1]
+
+the first axis remains the same, the time axis reverses
+
+
+rev_sent=[en_tok.index_word[wid] for wid in pad_seq[0][-6:]]
+print('Sentence: ',sentences[0])
+print('\tReversed: ',' '.join(rev_sent))
+
+
+>>>>>>>
+
+
+fr_text_new = []
+
+# Loop through all sentences in fr_text
+for sent in fr_text:
+  
+  print("Before adding tokens: ", sent)
+  
+  # Add sos and eos tokens using string.join
+  sent_new = " ".join(['sos', sent, 'eos'])
+  # Append the modified sentence to fr_text_new
+  fr_text_new.append(sent_new)
+  
+  # Print sentence after adding tokens
+  print("After adding tokens: ", fr_text_new, '\n')
+
+
+>>>>>
+
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.utils import to_categorical
+
+def sents2seqs(input_type, sentences, onehot=False, pad_type='post'):
+	# Convert sentences to sequences      
+    encoded_text = en_tok.texts_to_sequences(sentences)
+    # Pad sentences to en_len
+    preproc_text = pad_sequences(encoded_text, padding=pad_type, truncating=pad_type, maxlen=en_len)
+    if onehot:
+		# Convert the word IDs to onehot vectors
+        preproc_text = to_categorical(preproc_text, num_classes=en_vocab)
+    return preproc_text
+sentence = 'she likes grapefruit , peaches , and lemons .'  
+# Convert a sentence to sequence by pre-padding the sentence
+pad_seq = sents2seqs('source', [sentence], pad_type="pre")
+print(pad_seq)
+
+>>>> reverse seq
+
+sentences = ["california is never rainy during july ."]
+# Add new keyword parameter reverse which defaults to False
+def sents2seqs(input_type, sentences, onehot=False, pad_type='post', reverse=False):     
+    encoded_text = en_tok.texts_to_sequences(sentences)
+    preproc_text = pad_sequences(encoded_text, padding=pad_type, truncating='post', maxlen=en_len)
+    if reverse:
+      # Reverse the text using numpy axis reversing
+      preproc_text = preproc_text[:,::-1]
+    if onehot:
+        preproc_text = to_categorical(preproc_text, num_classes=en_vocab)
+    return preproc_text
+# Call sents2seqs to get the padded and reversed sequence of IDs
+pad_seq = sents2seqs('source', sentences, reverse=True)
+rev_sent = [en_tok.index_word[wid] for wid in pad_seq[0][-6:]] 
+print('\tReversed: ',' '.join(rev_sent))
+
+
+
+>>>>>>>>>>How to train the model
+
+
+encoder gru -> consumes english words and outputs a context vector
+
+
+decoder gru -> consumes the context vector and outputs a sequence of gru outputs
+
+
+decoder prediction layer -> consumes the sequence of gru outputs and outputs prediction probabilities for french words
+
+
+>>>>> parameters
+
+all gru layers and dense layers have parameters
+
+the dense layer has weights and bias initialized with random values
+
+responsible for transforming a given input to an useful output
+
+
+nmt.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['acc'])
+
+
+for ei in range(n_epochs):
+	for i in range(0,data_size,bsize):
+
+		en_x=sents2seqs('source',en_text[i:i+bsize], onehot=True,reverse=True)
+		de_y = sents2seq('target',fr_text[i:i+bsize],onehot=True)
+
+		nmt.train_on_batch(en_x,de_y)
+
+	v_en_x=sents2seqs('source',v_en,onehot=True,pad_type='pre')
+	v_de_y=sents2seqs('target',v_fr,onehot=True)
+
+	res= nmt.evaluate(v_en_x, v_de_y, batch_size=valid_bsize,verbose=0)
+	print("Epoch: {} => Loss:{}, Val Acc:{}".format(ei+1,res[0],res[1]*100.0))
+
+
+
+res[0] -> the loss
+res[1]*100 -> the accuracy
+
+
+train_size, valid_size=800,200
+
+inds=np.arange(len(en_text))
+np.random.shuffle(inds)
+
+train_inds=inds[:train_size]
+valid_inds=inds[train_size:train_size+valid_size]
+
+
+tr_en=[en_text[ti] for ti in train_inds]
+tr_fr=[fr_text[ti] for ti in train_inds]
+
+
+v_en=[en_text[vi] for vi in valid_inds]
+v_fr=[fr_text[vi] for vi in valid_inds]
+
+
+>>>>>>
+
+n_epochs, bsize = 3, 250
+
+for ei in range(n_epochs):
+  for i in range(0,data_size,bsize):
+    # Get a single batch of encoder inputs
+    en_x = sents2seqs('source', en_text[i:i+bsize], onehot=True,reverse=True)
+    # Get a single batch of decoder outputs
+    de_y = sents2seqs('target', fr_text[i:i+bsize],onehot=True)
+    
+    # Train the model on a single batch of data
+    nmt.train_on_batch(en_x,de_y)
+    # Obtain the eval metrics for the training data
+    res = nmt.evaluate(en_x, de_y, batch_size=bsize, verbose=0)
+    print("{} => Train Loss:{}, Train Acc: {}".format(ei+1,res[0], res[1]*100.0)) 
+
+
+>>>>
+
+train_size, valid_size = 800, 200
+# Define a sequence of indices from 0 to len(en_text)
+inds = np.arange(len(en_text))
+np.random.shuffle(inds)
+train_inds = inds[:train_size]
+# Define valid_inds: last valid_size indices
+valid_inds = inds[train_size:train_size+valid_size]
+# Define tr_en (train EN sentences) and tr_fr (train FR sentences)
+tr_en=[en_text[ti] for ti in train_inds]
+tr_fr=[fr_text[ti] for ti in train_inds]
+# Define v_en (valid EN sentences) and v_fr (valid FR sentences)
+v_en=[en_text[vi] for vi in valid_inds]
+v_fr=[fr_text[vi] for vi in valid_inds]
+
+print('Training (EN):\n', tr_en[:3], '\nTraining (FR):\n', tr_fr[:3])
+print('\nValid (EN):\n', v_en[:3], '\nValid (FR):\n', v_fr[:3])
+
+
+>>>>>
+
+# Convert validation data to onehot
+v_en_x=sents2seqs('source',v_en,onehot=True,pad_type='pre', reverse=True)
+v_de_y=sents2seqs('target',v_fr,onehot=True)
+
+n_epochs, bsize = 3, 250
+for ei in range(n_epochs):
+  for i in range(0,train_size,bsize):
+    # Get a single batch of inputs and outputs
+    en_x = sents2seqs('source', en_text[i:i+bsize], onehot=True,reverse=True)
+    de_y = sents2seqs('target', fr_text[i:i+bsize],onehot=True)
+    # Train the model on a single batch of data
+    nmt.train_on_batch(en_x,de_y) 
+  # Evaluate the trained model on the validation data
+  res = nmt.evaluate(en_x, de_y, batch_size=valid_size, verbose=0)
+  print("{} => Loss:{}, Val Acc: {}".format(ei+1,res[0], res[1]*100.0))
+
+
+>>>>>>>> generating translations with nmt
+
+hold-out test set to evaluate the model
+
+you will test the model by asking it to predict translations for one sentence
+
+
+en_st=['the united state is sometimes chilly during december, but it is sometimes freezing in june.']
+en_seq=sents2seq('source',en_st,onehot=True,reverse=True)
+print(np.argmax(en_seq, axis=-1)
+
+id in the tokenization with small occurrences will have small ids
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
