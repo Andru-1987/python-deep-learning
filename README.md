@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Text summerization with GRU neural machine translation
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Text%20Summerization%20GRU.ipynb
+
 * Computer vision using Conv2D with Keras
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/CNN%20Cats%20and%20Dogs%20recogition.ipynb
