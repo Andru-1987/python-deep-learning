@@ -1,0 +1,31 @@
+conda update --all -n myenv -c conda-forge
+
+
+pip install pack_name --upgrade
+
+Note that installing packages with pip in conda is an emergency solution that should typically be avoided
+
+
+conda env create -f myenv.yml
+
+conda update -n base conda
+
+After half a year, I can say that working with Conda (Miniconda) has solved most of my problems:
+
+it runs on every system, WSL, Windows, native Linux etc. conda env create -f myenv.yml is the same on every platform
+most packages are already available on conda-forge, it is easy to get own packages accepted on conda-forge
+for those packages not on conda, I can install pip in conda environment and add packages from pypi with pip. Hint: conda update --all -n myenv -c conda-forge will only update packages from conda, not those installed with pip. Pip installed dependencies must be updated manually with pip install pack_name --upgrade. Note that installing packages with pip in conda is an emergency solution that should typically be avoided
+I can create strict or open environment.yml, specifying the conda channel priority, the packages from conda and the packages from pip
+I can create conda environments from those ymls in a single statement, e.g. to setup a dev environment in Gitlab Continuous Integration, using the Miniconda3 Docker - this makes test-runs very simple and straight forward
+package versions in ymls can be defined strict or open, depending on the situation. E.g. you can fix the env to Python 3.6, but have it retrieve any security updates in this version-range (e.g. 3.6.9)
+I found that conda solves almost all problems with c-compiled dependencies in Windows; conda env's in Windows do allow freezing python code into an executable (tested!) that can be distributed to Windows end-users who cannot use package managers for some reason.
+regarding the issue with "big dependencies": I ended up creating many specific (i.e. small) and a few unspecific (i.e. big) conda environments: For example, I have a quite big jupyter_env, where jupyter lab and most of my scientific packages are installed (numpy, geos, pandas scipy etc.) - I activate it whenever I need access to these tools, I can keep those up to date in a single place. For development of specific packages, I have extra environments that are only used for the package-dependencies (e.g. packe1_env). I have about 10 environemnts overall, which is manageable. Some general purpose tools are installed in the base conda environment, e.g. pylint. Be warned: to make pylint/pycodestyle/autopep8 etc. work (e.g.) in VS Code, it must be installed to the same env that contains the python-code-dependencies - otherwise, you'll get unresolved import warnings
+I installed miniconda with Chocolatey package manager for windows. I keep it up to date with conda update -n base conda, and my envs with conda update --all -n myenv -c conda-forge once a week, works like a charm!
+New Update: there's a --stack flag available (as of 2019-02-07) that allows stacking conda environments, e.g. conda activate my_big_env then conda activate --stack dev_tools_env allows making some general purpose packages available in many envs. However, use with caution - I found that code linters, such as pylint, must be in the same env as the dependencies of the code that is linted
+New Update 2: I started using conda from Windows Subsystem for Linux (WSL), this improved again my workflow significantly: packages are installed faster, I can work with VS Code Insiders in Windows directly connected to WSL and there're far less bugs with python packages in the Linux environment.
+Another Update on a side note, the Miniconda Docker allows converting local conda env workflows flawlessly into containerized infrastructure (CI & CD), tested this for a while now and pretty happy with it - the Dockerfile is cleaner than with Python Docker because conda manages more of the dependency work than pip does. I use this nowadays more and more, for example, when working with jupyter lab, which is started from within a container.
+yes, I stumbled into compatibility problems between certain packages in a conda env, but very rarely. There're two approaches: if it is an important env that must work stable, enable conda config --env --set channel_priority strict - this will only install versions that are compatible. With very few and rare package combinations, this may result in unsolvable dependency conflicts (i.e. the env cannot be created). In this case, I usually create smaller envs for experimental development, with less packages and channel_priority set to flexible (the default). Sometimes, package subsets exists that are easier to solve such as geoviews-core (instead of geoviews) or matplotlib-base (instead of matplotlib). It's also a good approach to try lower python versions for those experimental envs that are unsolvable with strict, e.g. conda create -n jupyter_exp_env python=3.6 -c conda-forge. A last-resort hack is installing packages with pip, which avoids conda's package resolver (but may result in unstable environments and other issues, you've been warned!). Make sure to explicitly install pip in your env first.
+
+
+conda list --revisions
+conda install --revision [#]

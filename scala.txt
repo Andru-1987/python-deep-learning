@@ -1,0 +1,581 @@
+scala is a general-purpose programming language providing support for functional programming and a strong static type system.  Designed to be concise, many of scala's design decisions aimed to address criticisms of java.
+
+scala was released in 2004.  Scala runs on a java virtual machine.  scala source code is compiled to java bytecode.
+
+scala : scalable language
+
+scala lets you add new types, collections, and control constructs that feel like they are built-in to the language.
+
+apache spark is written in scala
+
+
+>>>>>>>scala code and intrepretor
+
+1. scala combines object-oriented and functional programming.  fuses and contributes to the scalablity of the language
+2. every value is an object
+3. every operation is a method call
+
+
+val sumA = 2.+(4)
+
+scala is functional
+1. functions are first-class values
+2. operations of a program should map input values to output values rather than change data in place.
+
+functions should not have side affects
+
+why use scala
+1. code is concise
+2. scala is high level
+3. scala has a rich list of static types and helps reduce bugs and complexity in applications.
+
+
+println("Let's play twenty-one!")
+
+Scala is an object-oriented language because every value is an object and every operation is a method call.
+
+>>>
+
+// Calculate the difference between 8 and 5
+val difference = 8.-(5)
+
+// Print the difference
+println(difference)
+
+The value 8 is an object, which has a subtraction method (.-()). In this example, the value 5 is supplied to that method that method is called
+
+
+>>>>> immutable variables and value types
+
+1. deck of cards
+2. each card has a point value
+3. aces are worth 1 or 11
+4. if you exceed 21 you bust
+5. each player starts with 2 cards
+
+scala has two kinds of variables: val (immutable) and vars (mutable)
+
+1. vals can not be reassigned
+2. vars can be reassigned
+
+val fourHearts: Int=4
+
+Scala value types:
+1. Double
+2. Float
+3. Long
+4. Int
+5. Short
+6. Byte
+7. Char
+8. Boolean
+9. Unit
+
+
+Four most common types are: Double, Int, Boolean, String
+
+Double stores 15 places of precision past the decimal
+Float stores 7 places of precision past the decimal
+int range from -2 billion to 2 billion
+
+boolean is true or false
+val handBusts: Boolean=true
+
+Int is scala.Int
+
+every value is an object in scala
+
+// Define immutable variables for clubs 2? through 4?
+val twoClubs: Int = 2
+val threeClubs: Int = 3
+val fourClubs: Int = 4
+
+// Define immutable variables for player names
+var playerA: String = "Alex"
+var playerB: String = "Chen"
+var playerC: String = "Marta"
+
+// Change playerC from Marta to Umberto
+playerC = "Umberto"
+
+>>>>>>>> mutable variables
+
+var(mutable) -> can be reassigned
+
+var aceSpades: int=1
+
+aceSpades=11
+
+in scala immutable variables are preferred over var except in the case when the variable must be reassigned
+1. you data won't be changed inadvertently
+2. defensive coding
+3. your code is easier to reason about
+4. you have to write fewer tests
+
+Cons
+1. more memory required due to data copying
+
+type inference can be determined by the assigned value
+
+val fourHearts=4
+var aceSpades=1
+
+>>>>>
+val aceClubs, aceDiamonds, aceHearts, aceSpades: Int=1
+
+
+// Create a mutable variable for Alex as player A
+var playerA: String="Alex"
+
+// Change the point value of A? from 1 to 11
+aceDiamonds=11
+
+// Calculate hand value for J? and A?
+println(jackClubs+aceDiamonds)
+
+>>>>>>> scripts and applications
+
+1. at the command line, the scala command executes a script by wrapping it in a template and then compiling and executing the resulting program.
+
+object Game extends App{
+	println("Let's play Twenty-One!")
+}
+
+scalac game.scala  -> compiles it
+
+scala game -> run it
+
+it takes time to compile code
+
+
+use and ide
+
+
+intellij idea
+
+scala kernet for Jupyter using almond
+
+
+>>>>>>>>>>>>> functions
+
+1. functions are invoked with a list of arguments to produce a result
+
+part of a function
+1. parameter list
+2. body
+3. result type
+
+
+def bust(hand: Int): Boolean = {
+	hand > 21
+}
+
+functions are invoked with a list of arguments to produce a result
+
+all functions produce results or first-class values
+
+>>>>>
+
+// Calculate hand values
+val handPlayerA: Int = queenDiamonds+threeClubs+aceHearts+fiveSpades
+val handPlayerB: Int = kingHearts+jackHearts
+
+// Find and print the maximum hand value
+println(maxHand(handPlayerA, handPlayerB))
+
+
+>>>>>>>Arrays
+
+collections are useful
+
+mutable collections can be updated or extended in place
+
+immutable collections never change
+
+array is mutable
+
+val players = Array("Alex","Chen","Marta")
+
+println(players(0))
+
+val players = new Array[String](3)
+
+new array of type string
+
+all collections have a type parameter specifying what they hold, in this case, string
+
+arrays are mutable
+
+arrays can only be updated with the same type variable
+
+arrays are recommended to be val
+
+any is the super type
+
+var mixedTypes = new Array[Any](3)
+
+mixedTypes(0)="I like Turtles"
+mixedTypes(1)=5000
+mixedTypes(2)=true
+
+
+>>>>
+
+val hands: Array[Int] = new Array[Int](3)
+
+// Create and parameterize an array for a round of Twenty-One
+val hands: Array[Int] = new Array[Int](3)
+
+// Initialize the first player's hand in the array
+hands(0) = tenClubs + fourDiamonds
+
+// Initialize the second player's hand in the array
+hands(1) = nineSpades + nineHearts
+
+// Initialize the third player's hand in the array
+hands(2) = twoClubs + threeSpades
+
+>>>>
+
+// Create, parameterize, and initialize an array for a round of Twenty-One
+val hands = Array(tenClubs + fourDiamonds,
+              nineSpades + nineHearts,
+              twoClubs + threeSpades)
+
+
+>>>>
+
+// Initialize player's hand and print out hands before each player hits
+hands(0) = tenClubs + fourDiamonds
+hands(1) = nineSpades + nineHearts
+hands(2) = twoClubs + threeSpades
+hands.foreach(println)
+
+// Add 5? to the first player's hand
+hands(0) = hands(0) + fiveClubs
+
+// Add Q? to the second player's hand
+hands(1) = hands(1) + queenSpades
+
+// Add K? to the third player's hand
+hands(2) = hands(2) + kingClubs
+
+
+>>>>>>>> lists
+
+1. list is an immutable sequence of objects that share the same type
+
+val players = List("Alex","Chen","Marta")
+
+list methods
+1. drop
+2. mkString
+3. length
+4. reverse
+
+val newPlayers="Sindhu":: players
+
+:: appends
+
+or make the list mutable
+
+var players = List("Alex","Chen","Marta")
+players="Sindhu":: players
+
+Nil is the empty list
+
+val players ="Alex"::"Chen"::"Marta"::Nil
+
+val playersA=List("Sindu","Alex")
+val playersB=List("Chen","Marta")
+
+val allPlayers = playersA:::playersB
+
+
+>>>>>
+
+// Initialize a list with an element for each round's prize
+val prizes = List(10,15,20,25,30)
+println(prizes)
+
+// Prepend to prizes to add another round and prize
+val newPrizes = 5::prizes
+println(newPrizes)
+
+
+>>>>
+
+// Initialize a list with an element each round's prize
+val prizes = 10::15::20::25::30::Nil
+println(prizes)
+
+
+>>>>>
+
+// The original NTOA and EuroTO venue lists
+val venuesNTOA = List("The Grand Ballroom", "Atlantis Casino", "Doug's House")
+val venuesEuroTO = "Five Seasons Hotel" :: "The Electric Unicorn" :: Nil
+
+// Concatenate the North American and European venues
+val venuesTOWorld=venuesNTOA:::venuesEuroTO
+
+
+>>>>>>>>>>>> Static type system
+
+Scala's static types help avoid bugs in complex applications
+
+
+a language is statically typed if the type of a variable is known at compile time.  That is, types checked before run-time.
+
+dynamically type if the types are checked at run time, on the fly
+
+static type pros: run faster, reduced bugs, safe refactorings, documentation in the form of type annotations
+
+cons to static type
+
+1. it takes time to check types
+2. code is more verbose
+3. language is not flexible
+
+
+>>>>>>>>>> control structures
+
+A control structure is a block of programming that analyses variables and chooses a direction in which to go based on given parameters.  The term flow control details the direction the program takes.
+
+if/else
+
+val  hand=24
+
+if (hand>21) {
+	println("This hand busts!")
+}
+
+def maxHand(handA: Int, handB: Int) : Int = {
+	if(handA>handB) handA
+	else handB
+}
+
+>>>>>
+
+// Point value of a player's hand
+val hand = sevenClubs + kingDiamonds + threeSpades
+
+// Congratulate the player if they have reached 21
+if (hand==21)
+{println("Twenty-One!")}
+
+>>>>>>
+
+// Point value of a player's hand
+val hand = sevenClubs + kingDiamonds + fiveSpades
+
+// Inform a player where their current hand stands
+val informPlayer: String = {
+  if(hand>21)
+    "Bust! :("
+  else if (hand==21)
+    "Twenty-One! :)"
+  else
+    "Hit or stay?"
+}
+
+// Print the message
+print(informPlayer)
+
+
+// Point value of a player's hand
+val hand = sevenClubs + kingDiamonds + threeSpades
+println(hand)
+// Inform a player where their current hand stands
+val informPlayer: String = {
+  if(hand>21)
+    "Bust! :("
+  else if (hand==21)
+    "Twenty-One! :)"
+  else
+    "Hit or stay?"
+}
+
+// Print the message
+print(informPlayer)
+
+
+// Find the number of points that will cause a bust
+def pointsToBust(hand: Int): Int = {
+  // If the hand is a bust, 0 points remain
+  if(hand>21)
+    0
+  // Otherwise, calculate the difference between 21 and the current hand
+  else
+    21-hand
+  }
+
+// Test pointsToBust with 10? and 5?
+val myHandPointsToBust = pointsToBust(tenSpades+fiveClubs)
+println(myHandPointsToBust)
+
+
+>>>>>>>>>>>>While and the imperative style
+
+while loops
+
+var i = 0
+
+val numRepetitions=3
+
+while(i<numRepetitions){
+  println("Hip hip hooray")
+  i=i+1	
+}
+
+>>>>
+
+var i=0
+var hands=Array(17,24,21)
+
+
+
+while(i<hands.length)
+{
+	println(bust(hands(i)))
+	i+=1
+}
+
+parenthesis must surround the boolean condition in a while loop
+
+>>>>>>>
+
+
+// Define counter variable
+var i = 0
+
+// Define the number of loop iterations
+var numRepetitions = 3
+
+// Loop to print a message for winner of the round
+while (i<numRepetitions) {
+  if (i < 1)
+    println("winner")
+  else
+    println("chicken dinner")
+  // Increment the counter variable
+  i=i+1
+}
+
+>>>
+// Define counter variable
+var i=0
+
+// Create list with five hands of Twenty-One
+var hands = List(16, 21, 8, 25, 4)
+
+// Loop through hands
+while(i<hands.length) {
+  // Find and print number of points to bust
+  println(hands(i))
+  // Increment the counter variable
+  i=i+1
+}
+
+
+>>>>>>>>>>>>>>>>>foreach and functional style
+
+functional style is preferred
+
+imperative: Of the nature of or expressing a command
+
+imperative:
+1. one command at a time
+2. iterate with loops
+3. mutate shared state
+
+
+functions can be pass as functions to functions
+
+hands.foreach(bust)
+
+side effct: code that modifies some variable outside of its local scope
+
+imperative signs of style: var, side effects, unit
+
+functional: val, no side effects, non unit value types
+
+>>>>>
+
+// Find the number of points that will cause a bust
+def pointsToBust(hand: Int) = {
+  // If the hand is a bust, 0 points remain
+  if (bust(hand))
+    println(0)
+  // Otherwise, calculate the difference between 21 and the current hand
+  else
+    println(21 - hand)
+}
+
+// Create list with five hands of Twenty-One
+var hands = List(16, 21, 8, 25, 4)
+
+// Loop through hands, finding each hand's number of points to bust
+hands.foreach(pointsToBust)
+
+
+>>>>>> essence of scala
+you wont change variable data inadvertently
+your code becomes easier to reason about
+you have to write few tests
+functions are more reliable and reusable
+
+preferred
+1. val
+2. immutable objects
+3. functions without side effects
+
+then if necessary
+1. vars
+2. mutable objects
+3. functions with side effects
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
