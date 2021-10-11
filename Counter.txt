@@ -1,0 +1,34 @@
+>>>>>>> Counting made easy
+
+Counter is a collection object
+
+Counter is used for counting data, measuring frequency
+
+
+from collection import Counter
+
+nyc_eatery_count_by_types = Counter(nyc_eatery_types)
+
+print(nyc_eatery_count_by_type)
+
+
+print(nyc_eatery_count_by_types.most_common(3))
+
+>>>>>>>
+
+
+# Import the Counter object
+from collections import Counter
+
+# Print the first ten items from the stations list
+print(stations[0:10])
+
+# Create a Counter of the stations list: station_count
+station_count = Counter(stations)
+
+# Print the station_count
+print(station_count.most_common(3))
+
+['stationname', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park', 'Austin-Forest Park']
+[('Halsted-Orange', 700), ('Chicago/Franklin', 700), ('Medical Center', 700)]
+

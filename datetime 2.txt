@@ -1,0 +1,250 @@
+datetime
+
+strptime() converts from a string to a datetime object
+
+from datetime import datetime
+
+date_dt= datetime.strptime(parking_violations_date, '%m/%d/%Y')
+
+2016-06-11
+
+>>>> Datetime to string
+
+.strftime() methods uses a format string to convert to a datetime object to a string
+
+date_dt.strftime('%m/%d/%Y')
+
+'06/11/2016'
+
+isoformat() method outputs a datetime as an iso standard string
+
+date_dt.isoformat()
+
+>>>>>>>
+
+# Import the datetime object from datetime
+from datetime import datetime
+
+# Iterate over the dates_list 
+for date_str in dates_list:
+    # Convert each date to a datetime object: date_dt
+    date_dt = datetime.strptime(date_str, '%m/%d/%Y')
+    
+    # Print each date_dt
+    print(date_dt)
+
+>>>>>>>
+
+# Loop over the first 10 items of the datetimes_list
+for item in datetimes_list[:10]:
+    # Print out the record as a string in the format of 'MM/DD/YYYY'
+    print(item.strftime('%m/%d/%Y'))
+    
+    # Print out the record as an ISO standard string
+    print(item.isoformat())
+
+02/19/2001
+2001-02-19T00:00:00
+04/10/2001
+2001-04-10T00:00:0
+
+
+>>>>>>> workin with datetime components and current time
+
+datetime components
+1. day
+2. month
+3. year
+4. hour
+5. minute
+6. second
+7. millisecond or nanosecond
+
+daily_violations = defaultdict(int)
+
+for violation in parking_violations:
+	violation_date= datetime.strptime(violation[4],'%m/%d/%Y')
+
+	daily_violations[violation_date.day]+=1
+
+>>>>>.now()
+
+1. returns the current local datetime on the machine
+2. utcnow() returns the current UTC datetime
+
+from datetime import datetime
+
+local_dt= datetime.now()
+
+utc_dt=datetime.utcnow()
+
+utc uses timezones
+
+timezone object
+
+.astimezone - get the time in another timezone
+
+from pytz import timezone
+
+record_dt = datetime.strptime('07/12/2016 04:39PM','%m/%d/%Y %H:%M:%p')
+
+ny_tz=timezone('US/Eastern')
+la_tz=timezone('US/Pacific')
+
+ny_dt = record_dt.replace(tzinfo=ny_tz)
+
+la_dt = ny_dt.astimezone(la_tz)
+
+>>>>>>
+
+
+# Create a defaultdict of an integer: monthly_total_rides
+monthly_total_rides = defaultdict(int)
+
+# Loop over the list daily_summaries
+for daily_summary in daily_summaries:
+    # Convert the service_date to a datetime object
+    service_datetime = datetime.strptime(daily_summary[0],'%m/%d/%Y')
+
+    # Add the total rides to the current amount for the month
+    monthly_total_rides[service_datetime.month] += int(daily_summary[4])
+    
+# Print monthly_total_rides
+print(monthly_total_rides)
+
+defaultdict(<class 'int'>, {1: 515062454, 2: 500276873, 3: 557894281, 4: 544878980, 5: 564403630, 6: 553707053, 7: 552970459, 8: 558434623, 9: 574770898, 10: 652199892, 11: 538491629, 12: 500560093})
+
+>>>>
+
+# Import datetime from the datetime module
+from datetime import datetime
+
+# Compute the local datetime: local_dt
+local_dt = datetime.now()
+
+# Print the local datetime
+print(local_dt)
+
+# Compute the UTC datetime: utc_dt
+utc_dt = datetime.utcnow()
+
+# Print the UTC datetime
+print(utc_dt)
+
+2021-10-01 17:12:41.451471
+2021-10-01 17:12:41.451658
+
+>>>>>>
+
+# Create a Timezone object for Chicago
+chicago_usa_tz = timezone('US/Central')
+
+# Create a Timezone object for New York
+ny_usa_tz = timezone('US/Eastern')
+
+# Iterate over the daily_summaries list
+for orig_dt, ridership in daily_summaries:
+
+    # Make the orig_dt timezone "aware" for Chicago
+    chicago_dt = orig_dt.replace(tzinfo=chicago_usa_tz)
+    
+    # Convert chicago_dt to the New York Timezone
+    ny_dt = chicago_dt.astimezone(ny_usa_tz)
+    
+    # Print the chicago_dt, ny_dt, and ridership
+    print('Chicago: %s, NY: %s, Ridership: %s' % (chicago_dt, ny_dt, ridership))
+
+>>>>>> adding and subtracting time
+
+timedelta is used to represent an amount of change in time
+
+
+from datetime import timedelta
+
+flashback = timedelta(days=90)
+
+print(record_dt - flashback)
+print(record_dt + flashback)
+
+
+time_diff = record_dt - record2_dt
+
+
+>>>>>>>
+
+
+# Import timedelta from the datetime module
+from datetime import timedelta
+
+# Build a timedelta of 30 days: glanceback
+glanceback = timedelta(days=30)
+
+# Iterate over the review_dates as date
+for date in review_dates:
+    # Calculate the date 30 days back: prior_period_dt
+    prior_period_dt = date - glanceback
+    
+    # Print the review_date, day_type and total_ridership
+    print('Date: %s, Type: %s, Total Ridership: %s' %
+         (date, 
+          daily_summaries[date]['day_type'], 
+          daily_summaries[date]['total_ridership']))
+
+    # Print the prior_period_dt, day_type and total_ridership
+    print('Date: %s, Type: %s, Total Ridership: %s' %
+         (prior_period_dt, 
+          daily_summaries[prior_period_dt]['day_type'], 
+          daily_summaries[prior_period_dt]['total_ridership']))
+
+
+Date: 2013-12-22 00:00:00, Type: U, Total Ridership: 685457
+Date: 2013-11-22 00:00:00, Type: W, Total Ridership: 1752614
+Date: 2013-12-23 00:00:00, Type: W, Total Ridership: 1236510
+Date: 2013-11-23 00:00:00, Type: A, Total Ridership: 1048943
+Date: 2013-12-24 00:00:00, Type: W, Total Ridership: 815873
+Date: 2013-11-24 00:00:00, Type: U, Total Ridership: 674817
+Date: 2013-12-25 00:00:00, Type: U, Total Ridership: 363078
+Date: 2013-11-25 00:00:00, Type: W, Total Ridership: 1641025
+Date: 2013-12-26 00:00:00, Type: W, Total Ridership: 995622
+Date: 2013-11-26 00:00:00, Type: W, Total Ridership: 1681213
+Date: 2013-12-27 00:00:00, Type: W, Total Ridership: 1191650
+Date: 2013-11-27 00:00:00, Type: W, Total Ridership: 1441786
+Date: 2013-12-28 00:00:00, Type: A, Total Ridership: 911223
+Date: 2013-11-28 00:00:00, Type: U, Total Ridership: 554312
+Date: 2013-12-29 00:00:00, Type: U, Total Ridership: 627779
+Date: 2013-11-29 00:00:00, Type: W, Total Ridership: 1074544
+Date: 2013-12-30 00:00:00, Type: W, Total Ridership: 1142767
+Date: 2013-11-30 00:00:00, Type: A, Total Ridership: 1013178
+Date: 2013-12-31 00:00:00, Type: W, Total Ridership: 116130
+Date: 2013-12-01 00:00:00, Type: U, Total Ridership: 704442
+
+
+>>>>>>>
+
+# Iterate over the date_ranges
+for start_date, end_date in date_ranges:
+    # Print the End and Start Date
+    print(start_date,end_date)
+    # Print the difference between each end and start date
+    print(end_date-start_date)
+
+
+
+parsing time with pendulum
+
+.parse() will attempt to convert a string to a pendulum datetime object without the need of the format string
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
