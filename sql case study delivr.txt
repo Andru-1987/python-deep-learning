@@ -1,0 +1,1366 @@
+chapter 1: revenue, cost, and profits
+chapter 2: user-centric metrics
+chapter 3: unit economics and distributions
+chapter 4: generating an executived report
+
+
+deliver
+1. food delivery startup, similar to uber
+2. stocks meals from eateries in bulk
+3. offers users these meals through its app
+4. user can order meals from several eateries in on order
+
+Profit: The money a company makes minus the money it spends
+Revenue: The money a company makes
+Cost: The money a company spends
+
+Profit=Revenue - Cost
+
+
+meals:
+meal_id
+eatery
+meal_price
+meal_cost
+
+orders:
+order_date
+user_id
+order_id
+meal_id
+order_quantity
+
+
+select order_id,
+SUM(meal_price * order_quantity) as revenue
+from meals
+join orders on meals.meal_id=orders.meal_id
+group by order_id
+
+
+date_trunc(date_part,date)
+
+date_part: week, month, quarter, year
+
+
+>>>>>>>>
+
+-- Calculate revenue
+SELECT Sum(meal_price * order_quantity) AS revenue
+  FROM meals
+  JOIN orders ON meals.meal_id = orders.meal_id
+-- Keep only the records of customer ID 15
+WHERE user_id='15';
+
+
+>>>>>>>  orders date for 2018-06
+
+
+SELECT  DATE_TRUNC('week', order_date) :: DATE AS delivr_week,
+       -- Calculate revenue
+       Sum(meal_price * order_quantity) AS revenue
+  FROM meals
+  JOIN orders ON meals.meal_id = orders.meal_id
+-- Keep only the records in June 2018
+WHERE DATE_TRUNC('month',order_date)='2018-06-01'
+GROUP BY delivr_week
+ORDER BY delivr_week ASC;
+
+
+>>>>>>> Common Table Expression CTE
+
+Costs
+1. The money a company spends
+a. salaries
+b. fleet acquistions and maintenance
+c. meal costs
+
+Stock:
+1. stocking_date
+2. meal_id
+3. stocked_quantity
+
+
+select
+meals.meal_id,
+sum(meal_cost * stocked_quantity) as cost
+from meals
+join stock on meals.meal_id=stock.meal_id
+group by meals.meal_id
+order by meals.cost desc
+limit 3
+
+<<<<<< How do you combine revenue and costs
+
+Profit=Revenue-Cost
+
+the individual queries for revenue and cost have been written
+
+>>>>>> Common Table Expression (cte)
+1. store a query results in a temporary table
+
+
+
+with table_1 as
+(
+select * from table_2
+)
+
+select * from table_1
+
+multiple cte are separated with a comma.
+
+
+with costs_and_quantities as (
+select
+meals.meal_id,
+sum(stocked_quantity) as quantity,
+sum(meal_cost * stocked_quantity) as cost
+from meals
+join stock on meals.meal_id=stock.meal_id
+group by meals.meal_id
+)
+
+select 
+meal_id,
+quantity,
+cost
+from costs_and_quantities
+order by cost desc
+limit 3
+
+>>>>>  Costs per meal
+
+SELECT
+  -- Calculate cost per meal ID
+  meals.meal_id,
+  sum(meal_cost * stocked_quantity) as cost
+FROM meals
+JOIN stock ON meals.meal_id = stock.meal_id
+GROUP BY meals.meal_id
+ORDER BY cost DESC
+-- Only the top 5 meal IDs by purchase cost
+LIMIT 5;
+
+>>>>>>  Costs per month
+
+
+SELECT
+  -- Calculate cost
+  DATE_TRUNC('month', stocking_date)::DATE AS delivr_month,
+  sum(meal_cost * stocked_quantity) as cost 
+FROM meals
+JOIN stock ON meals.meal_id = stock.meal_id
+GROUP BY delivr_month
+ORDER BY delivr_month ASC;
+
+
+>>>>>
+
+
+-- Declare a CTE named monthly_cost
+with monthly_cost as(
+  SELECT
+    DATE_TRUNC('month', stocking_date)::DATE AS delivr_month,
+    SUM(meal_cost * stocked_quantity) AS cost
+  FROM meals
+  JOIN stock ON meals.meal_id = stock.meal_id
+  GROUP BY delivr_month)
+
+SELECT *
+FROM monthly_cost;
+
+
+>>>>>>>Profit
+
+Revenue: The money a company makes
+1. Multiple each meals price times its ordered quantity, then sum the results
+
+Costs:  The money a company spends
+1. Multiple each meals cost times its stocked quantity, then sum the results
+
+Profit=Revenue - Cost
+
+
+Profit is a key performance indicator: A metric with some value that a company use to measure its performance
+1. identify the best users
+2. profit per meal: identify the most profitable meals
+3. profit per month: tracks profit over time
+
+with revenue as(
+
+select
+meals.meal_id,
+sum(meal_price * meal_quantity) as revenue
+from meals
+join orders on meals.meal_id= orders.meal_id
+group by meals.meal_id),
+cost as (
+select
+meals.meal_id,
+sum(meal_cost * stocked_quantity) as cost
+from meals
+join stock on meals.meal_id = stock.meal_id
+group by meals.meal_id)
+
+
+select
+	revenue.meal_id,
+	revenue,
+	cost,
+	revenue-cost as profit
+
+from revenue
+join cost on revenue.meal_id=cost.meal_id
+order by profit desc
+limit 3;
+
+
+>>>>>>>
+
+
+WITH revenue AS (
+  -- Calculate revenue per eatery
+  SELECT meals.eatery,
+         sum(meal_price*order_quantity) AS revenue
+    FROM meals
+    JOIN orders ON meals.meal_id = orders.meal_id
+   GROUP BY eatery),
+
+  cost AS (
+  -- Calculate cost per eatery
+  SELECT meals.eatery,
+         sum(meal_cost * stocked_quantity) as cost
+    FROM meals
+    JOIN stock ON meals.meal_id = stock.meal_id
+   GROUP BY eatery)
+
+   -- Calculate profit per eatery
+   SELECT revenue.eatery,
+          revenue-cost as profit
+     FROM revenue
+     JOIN cost ON revenue.eatery = cost.eatery
+    ORDER BY profit DESC;
+
+
+>>>>>
+
+
+-- Set up the revenue CTE
+WITH revenue AS ( 
+	SELECT
+		DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+		sum(meal_price*order_quantity) AS revenue
+	FROM meals
+	JOIN orders ON meals.meal_id = orders.meal_id
+	GROUP BY delivr_month),
+-- Set up the cost CTE
+  cost AS (
+ 	SELECT
+		DATE_TRUNC('month', stocking_date) :: DATE AS delivr_month,
+		sum(meal_cost*stocked_quantity) AS cost
+	FROM meals
+    JOIN stock ON meals.meal_id = stock.meal_id
+	GROUP BY delivr_month)
+-- Calculate profit by joining the CTEs
+SELECT
+	revenue.delivr_month,
+	revenue-cost profit
+FROM revenue
+JOIN cost ON revenue.delivr_month = cost.delivr_month
+ORDER BY revenue.delivr_month ASC;
+
+>>>>>>>>>>>>>Registrations and active users
+
+1. Registrations
+2. Active users
+3. Growth
+4. Retention
+
+
+benefits:
+1. measure performance well in b2c (business to consumer)
+2. used by investors to assess pre-revenue and profit startups
+
+registration - user first signs up for an account on delivr through its app
+1. counts registrations over time, usually a month
+2. good at measuring a company's success in attracting new users
+
+registration date is the date of the users first order
+
+
+with reg_dates as(
+select user_id,
+	min(order_date) as reg_date
+from orders
+group by user_id
+order by user_id
+limit 3
+)
+
+select
+	date_trunc('month',reg_date):: date as delivr_month,
+	count(distinct user_id) as regs
+from reg_dates
+group by delivr_month
+order by delivr_month asc
+limit 3
+
+
+Active users KPI counts active users over a specific period of time
+1. daily active users
+2. monthly active users
+
+dau=daily active users
+mau=monthly active users
+
+stickiness is DAU/MAU =0.3  or 30% x 30 days = 9 days each month on the average
+
+
+select
+	date_trunc('month',reg_date):: date as delivr_month,
+	count(distinct user_id) as mau
+from reg_dates
+group by delivr_month
+order by delivr_month asc
+limit 3
+
+
+>>>>>> when users registered
+
+SELECT
+  -- Get the earliest (minimum) order date by user ID
+   user_id,
+   min(order_date) AS reg_date
+FROM orders
+GROUP BY user_id
+-- Order by user ID
+ORDER BY user_id ASC;
+
+>>>>>>>>  registrations per month
+
+-- Wrap the query you wrote in a CTE named reg_dates
+WITH reg_dates AS (
+  SELECT
+    user_id,
+    MIN(order_date) AS reg_date
+  FROM orders
+  GROUP BY user_id)
+
+SELECT
+  -- Count the unique user IDs by registration month
+  date_trunc('month',reg_date):: date as delivr_month,
+  count(distinct user_id) AS regs
+FROM reg_dates
+GROUP BY delivr_month
+ORDER BY delivr_month ASC; 
+
+>>>> mau
+
+SELECT
+  -- Truncate the order date to the nearest month
+  date_trunc('month',order_date):: date AS delivr_month,
+  -- Count the unique user IDs
+  count(distinct user_id) AS mau
+FROM orders
+GROUP BY delivr_month
+-- Order by month
+ORDER BY delivr_month ASC;
+
+
+>>>>>>>> window functions
+
+1. window functions: perform an operation across a set of rows related to the current row
+
+a. calculating the running total
+
+with reg_dates as (
+select
+user_id,
+min(order_date) as reg_date
+from orders
+group by user_id),
+registrations as(
+select
+date_trunc('month',reg_date)::date as delivr_month,
+count(distinct user_id) as regs
+from reg_dates
+group by delivr_month)
+
+select
+delivr_month,
+regs,
+sum(regs) over(order by delivr_month asc) as regs_rt
+from registrations
+order by delivr_month asc limit 3
+
+
+with maus as(
+SELECT
+  -- Truncate the order date to the nearest month
+  date_trunc('month',order_date):: date AS delivr_month,
+  -- Count the unique user IDs
+  count(distinct user_id) AS mau
+FROM orders
+GROUP BY delivr_month
+-- Order by month
+ORDER BY delivr_month ASC)
+
+select
+delivr_month,
+mau,
+coalesce(
+lag(mau) over (order by delivr_month asc),
+1) as last_mau
+from maus
+order by delivr_month asc
+limit 3
+
+
+>>>>>>>>>
+
+
+WITH reg_dates AS (
+  SELECT
+    user_id,
+    MIN(order_date) AS reg_date
+  FROM orders
+  GROUP BY user_id)
+
+SELECT
+  -- Select the month and the registrations
+  date_trunc('month',reg_date) :: DATE AS delivr_month,
+  count(distinct user_id) AS regs
+FROM reg_dates
+GROUP BY delivr_month
+-- Order by month in ascending order
+ORDER BY delivr_month; 
+
+
+>>>>>>
+
+
+WITH reg_dates AS (
+  SELECT
+    user_id,
+    MIN(order_date) AS reg_date
+  FROM orders
+  GROUP BY user_id),
+
+  regs AS (
+  SELECT
+    DATE_TRUNC('month', reg_date) :: DATE AS delivr_month,
+    COUNT(DISTINCT user_id) AS regs
+  FROM reg_dates
+  GROUP BY delivr_month)
+
+SELECT
+  -- Calculate the registrations running total by month
+  delivr_month,
+  sum(regs) over(order by delivr_month asc) as regs_rt
+FROM regs
+-- Order by month in ascending order
+ORDER BY regs ASC; 
+
+>>>>>>
+
+WITH mau AS (
+  SELECT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    COUNT(DISTINCT user_id) AS mau
+  FROM orders
+  GROUP BY delivr_month)
+
+SELECT
+  -- Select the month and the MAU
+  delivr_month,
+  mau,
+  COALESCE(
+   lag(mau) over(order by delivr_month asc),
+  0) AS last_mau
+FROM mau
+-- Order by month in ascending order
+ORDER BY delivr_month ASC;
+
+
+>>>>>>>> Growth rate
+
+tracking change over time
+
+deltas - the difference between two values
+
+
+WITH mau AS (
+  SELECT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    COUNT(DISTINCT user_id) AS mau
+  FROM orders
+  GROUP BY delivr_month),
+maus_lag as
+(
+SELECT
+  -- Select the month and the MAU
+  delivr_month,
+  mau,
+  COALESCE(
+   lag(mau) over(order by delivr_month asc),
+  0) AS last_mau
+FROM mau
+-- Order by month in ascending order
+ORDER BY delivr_month ASC;
+)
+
+select delivr_month,
+mau,
+mau-last_mau as mau_delta
+from maus_lag
+order by delivr_month
+limit 3
+
+
+>>>> delta interpretation
+
+decreasing if the delta<0
+increasing if the delta>0
+stable if the delta==0
+
+>>>>>>>>>Growth rate
+1. A percentage change in a variable over time relative to the variables initial value
+
+2. A delta is the difference between two values
+
+with maus as(
+select 
+date_trunc('month',order_date)::date as delivr_month,
+count(distinct user_id) as mau
+from orders
+group by delivr_month),
+maus_lag as (
+select
+delivr_month,
+mau,
+coaleasce(
+lag(mau) over(order by delivr_month asc),
+1) as last_mau
+from maus)
+
+
+select delivr_month
+mau,
+mau - last_mau as mau_delta
+round(mau-last_mau) :: NUMERIC / last_mau, 2) as growth
+from maus_lag
+order by delivr_month
+limit 3
+
+delta tells if change is decreasing, stable, or increasing
+
+growth rate = (current value - previous value)/previous value
+
+>>>>>>>>
+
+WITH mau AS (
+  SELECT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    COUNT(DISTINCT user_id) AS mau
+  FROM orders
+  GROUP BY delivr_month),
+
+  mau_with_lag AS (
+  SELECT
+    delivr_month,
+    mau,
+    -- Fetch the previous month's MAU
+    COALESCE(
+      lag(mau) over(order by delivr_month),
+    0) AS last_mau
+  FROM mau)
+
+SELECT
+  -- Calculate each month's delta of MAUs
+  mau,
+  mau-last_mau AS mau_delta
+FROM mau_with_lag
+-- Order by month in ascending order
+ORDER BY delivr_month;
+
+
+>>>>>> Growth Rate
+
+SELECT
+  -- Calculate the MoM MAU growth rates
+  delivr_month,
+  ROUND((mau-last_mau)::NUMERIC/last_mau,2) AS growth
+FROM mau_with_lag
+-- Order by month in ascending order
+ORDER BY delivr_month;
+
+
+>>>>>>>>
+
+
+WITH orders AS (
+  SELECT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    --  Count the unique order IDs
+    Count(distinct order_id) AS orders
+  FROM orders
+  GROUP BY delivr_month),
+
+  orders_with_lag AS (
+  SELECT
+    delivr_month,
+    -- Fetch each month's current and previous orders
+    orders,
+    COALESCE(
+      lag(orders) over(order by delivr_month),
+    1) AS last_orders
+  FROM orders)
+
+SELECT
+  delivr_month,
+  -- Calculate the MoM order growth rate
+  ROUND(
+    (orders-last_orders)::NUMERIC/last_orders,2) AS growth
+FROM orders_with_lag
+ORDER BY delivr_month ASC;
+
+
+>>>>>>>>>>>>>>>>>Retention
+
+mau does not show the breakdown of active users by tenure
+
+mau does not distinguish between different patterns of user activity
+
+
+case 1: 100 users register every month and they are active for one month only
+
+case 2: 100 users register the first month, and no one every registers after, but these 100 users are active every month
+
+
+New users joined this month
+
+active users were active in the previous month and stayed active this month
+
+resurrected users weren't active in the previous month, but they returned to activity this month
+
+
+>>>>>>>>>>>>>>>>> Rention rates
+
+1. retention rate: a percentage measuring how many users who were active in a previous month are still active in the current month
+
+
+UC/UP
+
+distinct users
+
+
+with user_activity as
+(
+select distinct
+date_trunc('month',order_date):: Date as delivr_month,
+user_id
+from orders)
+
+select
+previous.delivr_month,
+round(
+count(distinct current.user_id)::NUMERIC /
+	GREATEST(COUNT(DISTINCT previous.user_id),1),
+2) as Retention
+from user_activity as previous
+left join user_activity as current
+on previous.user_id=current.user_id
+and previous.delivr_month=(current.delivr_month - INTERVAL '1 month')
+group by previous.delivr_month
+order by previous.delivr_month asc
+limit 3
+
+<<<<<<<<<<<
+
+WITH user_monthly_activity AS (
+  SELECT DISTINCT
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    user_id
+  FROM orders)
+
+SELECT
+  -- Calculate the MoM retention rates
+  previous.delivr_month,
+  ROUND(
+    count(distinct current.user_id)::NUMERIC /
+    GREATEST(COUNT(DISTINCT previous.user_id),1),
+  2) AS retention_rate
+FROM user_monthly_activity AS previous
+LEFT JOIN user_monthly_activity AS current
+-- Fill in the user and month join conditions
+ON previous.user_id=current.user_id
+and previous.delivr_month=(current.delivr_month - INTERVAL '1 month')
+GROUP BY previous.delivr_month
+ORDER BY previous.delivr_month ASC;
+
+
+>>>>>>>>>>>>>>>>>> Unit economics
+
+distributions give you insights into the customers behaviors
+
+unit economics : measures performance per unit, as opposed to overall performance
+
+>>>>>>>>calculate the average revenue per user<<<<<<<<<
+
+ARPU = revenue / count of users
+
+tells how much revenue the company generates from each user on the average
+
+measures a company's success in scaling its business model
+
+with kpis as(
+select
+date_trunc('month',order_date) as delivr_month,
+sum(meal_price * order_quantity) as revenue,
+count(distinct user_id) as users
+from meals
+join orders on meals.meal_id = orders.meal_id
+group by delivr_month)
+
+select
+delivr_month,
+round(
+revenue::NUMERIC /GREATEST(users,1),
+2) as arpu
+from kpis
+order by delivr_month asc;
+
+
+>>>>>> grouping by user_id
+
+with user_revenues as(
+select
+user_id,
+sum(meal_price * order_quantity) as revenue
+from meals
+join orders on meals.meal_id = orders.meal_id
+group by user_id)
+
+select
+round(avg(revenue)::NUMERIC,2)  as arpu
+from user_revenues;
+
+
+>>>>>>>>>>
+
+
+SELECT
+  -- Select the user ID and calculate revenue
+  user_id,
+  sum(meal_price * order_quantity) AS revenue
+FROM meals AS m
+JOIN orders AS o ON m.meal_id = o.meal_id
+GROUP BY user_id;
+
+
+>>>>>>>>>>>
+
+-- Create a CTE named kpi
+with kpi as (
+  SELECT
+    -- Select the user ID and calculate revenue
+    user_id,
+    SUM(m.meal_price * o.order_quantity) AS revenue
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY user_id)
+-- Calculate ARPU
+SELECT ROUND(avg(revenue) :: numeric, 2) AS arpu
+FROM kpi;
+
+>>>>>>>>>>> arpu per week
+
+WITH kpi AS (
+  SELECT
+    -- Select the week, revenue, and count of users
+    date_trunc('week',order_date) :: DATE AS delivr_week,
+    sum(meal_price * order_quantity) AS revenue,
+    count(distinct user_id) AS users
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY delivr_week)
+
+SELECT
+  delivr_week,
+  -- Calculate ARPU
+  ROUND(
+    revenue :: NUMERIC / greatest(users,1),
+  2) AS arpu
+FROM kpi
+-- Order by week in ascending order
+ORDER BY delivr_week ASC;
+
+
+>>>>>>>> orders per user
+
+WITH kpi AS (
+  SELECT
+    -- Select the count of orders and users
+    count(distinct order_id) AS orders,
+    count(distinct user_id) AS users
+  FROM orders)
+
+SELECT
+  -- Calculate the average orders per user
+  ROUND(
+    orders :: numeric / users,
+  2) AS arpu
+FROM kpi;
+
+
+>>>>>>>>>>>Histograms
+
+with user_orders as (
+
+	select
+	user_id,
+	count(distinct order_id) as orders
+	from meals
+	join orders on meals.meal_id = orders.meal_id
+	group by user_id)
+
+select
+	orders,
+	count(distinct user_id) as users
+	from user_orders
+	group by orders
+	order by orders asc
+
+
+with user_revenues as (
+	select
+		user_id,
+		sum(meal_price * order_quantity) as revenue
+	from meals
+	join orders on meals.meal_id = orders.meal_id
+	group by user_id)
+
+select 
+	round(revenue :: NUMERIC, -2) AS revenue_100,
+	count(distinct user_id) as users
+from user_revenues
+group by revenue_100
+order by revenue_100 asc
+
+
+>>>>>>>
+
+
+WITH user_revenues AS (
+  SELECT
+    -- Select the user ID and revenue
+    user_id,
+    sum(meal_price * order_quantity) AS revenue
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY user_id)
+
+SELECT
+  -- Return the frequency table of revenues by user
+  round(revenue::NUMERIC,-2) AS revenue_100,
+  COUNT(DISTINCT USER_ID) AS users
+FROM user_revenues
+GROUP BY revenue_100
+ORDER BY revenue_100 ASC;
+
+
+>>>>> count orders
+
+SELECT
+  -- Select the user ID and the count of orders
+  USER_ID,
+  count(distinct order_id) AS orders
+FROM orders
+GROUP BY user_id
+ORDER BY user_id ASC
+LIMIT 5;
+
+>>>>>> frequencies
+
+
+WITH user_orders AS (
+  SELECT
+    user_id,
+    COUNT(DISTINCT order_id) AS orders
+  FROM orders
+  GROUP BY user_id)
+
+SELECT
+  -- Return the frequency table of orders by user
+  orders,
+  count(distinct user_id) AS users
+FROM user_orders
+GROUP BY orders
+ORDER BY orders ASC;
+
+
+>>>>>>> bucketing
+
+you can separate the user into groups
+
+case expression is how we create buckets
+
+select
+case
+when meal_price < 4 then 'Low-price meal'
+when meal_price < 6 then 'Mid-price meal'
+else 'High-price meal'
+end as price_category,
+count(distinct meal_id)
+from meals
+group by price_category
+
+
+>>>>
+
+with user_revenue as (
+select
+user_id,
+sum(meal_price*order_quantity) as revenue
+from meals
+join orders on meals.meal_id = orders.meal_id
+group by user_id)
+
+
+select
+case
+when revenue < 150 then 'Low-revenue users'
+when revenue < 300 then 'Mid-revenue users'
+else 'High-revenue users'
+end as revenue_group,
+count(distinct userid) users
+from user_revenue
+group by revenue_group
+
+>>>>>>>>>>>
+
+
+WITH user_revenues AS (
+  SELECT
+    -- Select the user IDs and the revenues they generate
+    user_id,
+    SUM(m.meal_price * o.order_quantity) AS revenue
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY user_id)
+
+SELECT
+  -- Fill in the bucketing conditions
+  CASE
+    WHEN revenue < 150 THEN 'Low-revenue users'
+    WHEN revenue < 300 THEN 'Mid-revenue users'
+    ELSE 'High-revenue users'
+  END AS revenue_group,
+  COUNT(DISTINCT user_id) AS users
+FROM user_revenues
+GROUP BY revenue_group;
+
+
+>>>>>>>>>>>>>
+
+
+-- Store each user's count of orders in a CTE named user_orders
+with user_orders as (
+  SELECT
+    user_id,
+    count(distinct order_id) AS orders
+  FROM orders
+  GROUP BY user_id)
+
+SELECT
+  -- Write the conditions for the three buckets
+  CASE
+    WHEN orders<8 THEN 'Low-orders users'
+    WHEN orders<15 THEN 'Mid-orders users'
+    ELSE 'High-orders users'
+  END AS order_group,
+  -- Count the distinct users in each bucket
+  count(distinct user_id) AS users
+FROM user_orders
+GROUP BY order_group;
+
+
+>>>>>>>>>>>>> percentiles
+
+percentile: nth percentile is the value for which n% of a dataset values are beneath this value
+
+* lowest value is the 0th percentile
+* highest value is the 99th percentile
+
+25th percentile of user orders is 17, then 25% have ordered 17 times or less
+
+first quartile: 25th percentile
+
+third qartile: 75th percentile
+
+interquartile range (IQR) all data between the first and third quartiles
+
+the second quartile: 50th percentile is the median (middle value of the dataset)
+
+
+if the mean is less than the median the data is positive skew  (some values are pushing the average up but most are below the average) (negative trend)
+
+if the mean is greater than the median the data is negatively skewed (some values are pulling the average down but most are above the average) (positive trend)
+
+
+with user_orders as (
+select
+user_id,
+count(distinct order_id) as orders
+from orders
+group by user_id)
+
+select
+round(percentile_cont(0.25) within group (order by orders asc)::NUMERIC,2) as orders_p25,
+round(percentile_cont(0.5) within group (order by orders asc)::NUMERIC,2) as orders_p50,
+round(percentile_cont(0.75) within group (order by orders asc)::NUMERIC,2) as orders_p75,
+round(avg(orders)::NUMERIC,2) as avg_orders
+from user_orders
+
+
+>>>>>>>>>>>
+
+
+WITH user_revenues AS (
+  -- Select the user IDs and their revenues
+  SELECT
+    user_id,
+    sum(meal_price * order_quantity) AS revenue
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY user_id)
+
+SELECT
+  -- Calculate the first, second, and third quartile
+round(percentile_cont(0.25) within group (order by revenue asc)::NUMERIC,2) as revenue_p25,
+round(percentile_cont(0.5) within group (order by revenue asc)::NUMERIC,2) as revenue_p50,
+round(percentile_cont(0.75) within group (order by revenue asc)::NUMERIC,2) as revenue_p75,
+  -- Calculate the average
+  ROUND(avg(revenue) :: numeric, 2) AS avg_revenue
+FROM user_revenues;
+
+
+>>>>>>>>>>>>
+
+SELECT
+  -- Select user_id and calculate revenue by user
+  user_id,
+  sum(meal_price*order_quantity) AS revenue
+FROM meals AS m
+JOIN orders AS o ON m.meal_id = o.meal_id
+GROUP BY user_id;
+
+>>>>>>>>>>>>
+
+
+-- Create a CTE named user_revenues
+WITH user_revenues AS (
+  SELECT
+    -- Select user_id and calculate revenue by user 
+    user_id,
+    SUM(m.meal_price * o.order_quantity) AS revenue
+  FROM meals AS m
+  JOIN orders AS o ON m.meal_id = o.meal_id
+  GROUP BY user_id)
+
+SELECT
+  -- Calculate the first and third revenue quartiles
+  ROUND(
+    percentile_cont(0.25) within group(order by revenue asc) :: NUMERIC,
+  2) AS revenue_p25,
+  ROUND(
+    percentile_cont(0.75) within group(order by revenue asc) :: NUMERIC,
+  2) AS revenue_p75
+FROM user_revenues;
+
+
+>>>> iqr
+
+SELECT
+  -- Count the number of users in the IQR
+  COUNT(DISTINCT USER_ID) AS users
+FROM user_revenues
+CROSS JOIN quartiles
+-- Only keep users with revenues in the IQR range
+WHERE revenue :: NUMERIC >=  revenue_p25
+  AND revenue :: NUMERIC <= revenue_p75;
+
+
+>>>>>>>>>>> survey of useful functions
+
+
+TO_CHAR('2018-08-13', 'FMDay DD, FMMonth YYYY') -> 'Firday 13, August 2018'
+
+TO_CHAR(DATE,TEXT) ? TEXT (the formatted date string)
+
+Dy - abbreviated day name
+
+to_char('2018-06-061','Dy') ? 'Fri'
+
+dd - day number (01-31)
+
+FMDay - Fullday name
+MM - Month of year
+Mon - Abbreviated month name
+FMMonth - Full month name
+YY - last 2 digits of year
+YYYY - full 4 digit year
+
+
+select distinct
+order_date
+to_char(order_date,
+'FMDay DD, FMMonth YYYY') as format_1,
+to_char(order_date,
+'Dy DD Mon/YYYY') as format_2
+from orders
+order by order_date asc
+limit 3
+
+>>>>>>>>>Windows
+
+sum() over  :: calculates a columns running total
+
+lag() over() fetches a preceding rows value
+
+rank() over: assigns a rank to each row based on the rows position in a sorted order
+
+select user_id,
+rank() over (order by revenue desc)
+as revenue_rank
+from user_revenues
+order by revenue_rank desc
+
+>>>>>>>>>>>
+
+
+SELECT DISTINCT
+  -- Select the order date
+  order_date,
+  -- Format the order date
+  TO_CHAR(order_date, 'FMDay DD, FMMonth YYYY') AS format_order_date
+FROM orders
+ORDER BY order_date ASC
+LIMIT 3;
+
+
+>>>>>>>>>>>
+
+SELECT
+  user_id,
+  COUNT(DISTINCT order_id) AS count_orders
+FROM orders
+-- Only keep orders in August 2018
+WHERE DATE_TRUNC('month', order_date) = '2018-08-01'
+GROUP BY user_id;c
+
+
+>>>>>>>>>  rank
+
+SELECT
+  user_id,
+  COUNT(DISTINCT order_id) AS count_orders
+FROM orders
+-- Only keep orders in August 2018
+WHERE DATE_TRUNC('month', order_date) = '2018-08-01'
+GROUP BY user_id;
+
+
+>>>>>>>>>>>>>>>>>>Pivoting
+
+pivoting: rotating a table around a pivot column; transposing a columns values into columns
+
+pivot by delivr_month
+
+
+select
+meal_id,
+date_trunc('month', order_date)::date as delivr_month,
+count(distinct orders):: int as revenue
+from meals
+join orders on meals.meal_id=orders.meal_id
+where meals.meal_id in (0,1)
+and order_date<'2018-08-01'
+group by meal_id, delivr_month
+order by meal_id, delivr_month;
+
+
+create extension if not exists tablefunc
+
+
+select * from crosstab($$
+	TEXT source_sql $$)
+
+as ct(column_1 DATA_TYPE_1,
+	column_2 DATA_TYPE_2
+	...,
+	column_n DATA_TYPE_N);
+
+
+>>>>>>>>
+
+create extension if not exists tablefunc;
+
+select * from crosstab($$
+select 
+meal_id,
+date_trunc('month',order_date)::date as delivr_month,
+count(distinct order_id)::int as orders
+from orders
+where meal_id in (0,1)
+and order_date < '2018-08-01'
+group by meal_id, delivr_month
+order by meal_id, delivr_month $$)
+as ct(meal_id int,
+'2018-06-01' int,
+'2018-07-01' int)
+order by meal_id asc;
+
+
+>>>>>>>
+
+
+-- Import tablefunc
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT * FROM CROSSTAB($$
+  SELECT
+    user_id,
+    DATE_TRUNC('month', order_date) :: DATE AS delivr_month,
+    SUM(meal_price * order_quantity) :: FLOAT AS revenue
+  FROM meals
+  JOIN orders ON meals.meal_id = orders.meal_id
+ WHERE user_id IN (0, 1, 2, 3, 4)
+   AND order_date < '2018-09-01'
+ GROUP BY user_id, delivr_month
+ ORDER BY user_id, delivr_month;
+$$)
+-- Select user ID and the months from June to August 2018
+AS ct (user_id INT,
+       "2018-06-01" FLOAT,
+       "2018-07-01" FLOAT,
+       "2018-08-01" FLOAT)
+ORDER BY user_id ASC;
+
+
+>>>>>>>>>>>>
+
+
+SELECT
+  -- Select eatery and calculate total cost
+  eatery,
+  DATE_TRUNC('month', stocking_date) :: DATE AS delivr_month,
+  sum(meal_cost * stocked_quantity) :: FLOAT AS cost
+FROM meals
+JOIN stock ON meals.meal_id = stock.meal_id
+-- Keep only the records after October 2018
+WHERE stocking_date > '2018-10-01'
+GROUP BY eatery, delivr_month
+ORDER BY eatery, delivr_month;
+
+>>>>>>>>>>>>
+
+-- Import tablefunc
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+SELECT * FROM CROSSTAB($$
+  SELECT
+    -- Select eatery and calculate total cost
+    eatery,
+    DATE_TRUNC('month', stocking_date) :: DATE AS delivr_month,
+    SUM(meal_cost * stocked_quantity) :: FLOAT AS cost
+  FROM meals
+  JOIN stock ON meals.meal_id = stock.meal_id
+  -- Keep only the records after October 2018
+  WHERE DATE_TRUNC('month', stocking_date) > '2018-10-01'
+  GROUP BY eatery, delivr_month
+  ORDER BY eatery, delivr_month;
+$$)
+
+-- Select the eatery and November and December 2018 as columns
+AS ct (eatery TEXT,
+       "2018-11-01" FLOAT,
+       "2018-12-01" FLOAT)
+ORDER BY eatery ASC;
+
+
+>>>>>>>>>>>>Executive reports
+
+1. readability
+a. use readable date formats
+b. round numbers to the second decimal
+
+table shape: reshape long tables into wide ones, pivoting by date when possible
+
+with eatery_orders as
+(
+select
+eatery,
+to_char(order_date, "MM-Mon YYYY') as delivr_month,
+count(distinct order_id) as count_orders
+from meals
+join orders on meals.meal_id = orders.meal_id
+where order_date>'2018-10-01'
+group by eatery, delivr_month
+order by eatery, delivr_month
+)
+
+select
+eatery,
+delivr_month
+rank() over ( partition by delivr_month order by count_orders desc)::int as orders_rank
+from eatery_orders
+order by eatery, delivr_month;
+
+
+create extension if not exists tablefunc;
+
+select * from crosstab($$
+$$) as ct(eatery text,
+"10-Oct 2018" int,
+"11-Nov 2018" int,
+"12-Nov 2018" int)
+order by eatery asc;
+
+>>>>>>>
+
+-- Import tablefunc
+CREATE EXTENSION IF NOT EXISTS tablefunc;
+
+-- Pivot the previous query by quarter
+SELECT * FROM crosstab($$
+  WITH eatery_users AS  (
+    SELECT
+      eatery,
+      -- Format the order date so "2018-06-01" becomes "Q2 2018"
+      TO_CHAR(order_date, '"Q"Q YYYY') AS delivr_quarter,
+      -- Count unique users
+      COUNT(DISTINCT user_id) AS users
+    FROM meals
+    JOIN orders ON meals.meal_id = orders.meal_id
+    GROUP BY eatery, delivr_quarter
+    ORDER BY delivr_quarter, users)
+
+  SELECT
+    -- Select eatery and quarter
+    eatery,
+    delivr_quarter,
+    -- Rank rows, partition by quarter and order by users
+    RANK() OVER
+      (PARTITION BY delivr_quarter
+       ORDER BY users DESC) :: INT AS users_rank
+  FROM eatery_users
+  ORDER BY eatery, delivr_quarter;
+$$)
+-- Select the columns of the pivoted table
+AS  ct (eatery TEXT,
+        "Q2 2018" INT,
+        "Q3 2018" INT,
+        "Q4 2018" INT)
+ORDER BY "Q4 2018";

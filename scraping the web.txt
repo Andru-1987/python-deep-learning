@@ -1,0 +1,69 @@
+what can business gain from web scraping?
+1. compare prices
+2. satisification of customers
+3. generating potential leads
+
+setup: define objective, identify sources
+access raw data: parse & extract
+processing: analyze, explore, learn, wrangle
+
+
+setup: identifying the online sources that will help you with the desired result
+format the data
+
+
+processes: analysis to run through to achieve the desired goal
+
+
+scrapy for large scraping projects
+
+HTML
+
+1. navigate the html to find content we may be interested in retrieving
+
+Extract data:
+1. link urls
+2. element data
+
+<tag-name attrib-name="attrib info">
+	... element contents..
+</tag-name>
+
+<div id="unique-id" class="some class">
+	..div element contents..
+</div>
+
+id is unique
+class does not need to be unique
+
+
+>>>>>>
+
+# HTML code string
+html = '''
+<html>
+  <body>
+    <div class="class1" id="div1">
+      <p class="class2">Visit DataCamp!</p>
+    </div>
+    <div class="you-are-classy">
+      <p class="class2">Keep up the good work!</p>
+    </div>
+  </body>
+</html>
+'''
+# Print out the class of the second div element
+whats_my_class( html )
+
+
+
+
+
+
+
+
+
+
+
+
+

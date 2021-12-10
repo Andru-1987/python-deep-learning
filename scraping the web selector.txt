@@ -1,0 +1,88 @@
+
+>>>>>>> selector
+css locator
+
+
+from scrapy import Selector
+
+html="""
+<html>
+<body>
+<div id="div1" class="class-1">
+<p class="class-1 class-2">Hello Word</p>
+<div id="div2">
+	<p id="p2" class="class-2">Choose Datacamp</p>
+</div>
+<div id="div3" class="class-2">
+	<p class="class-2"> Thanks for Watching</p>
+</div>
+</body>
+</html>
+"""
+
+sel=Selector(text=html)
+
+We can use the xpath call within a Selector to create a new Selectors of specific pieces of the html code
+
+The return is a SelectorList of Selector objects
+
+sel.xpath("//p")
+
+[<Selector xpath='//p' data='<p class="class-1 class-2">Hello Word...'>, <Selector xpath='//p' data='<p id="p2" class="class-2">Choose Dat...'>, <Selector xpath='//p' data='<p class="class-2"> Thanks for Watchi...'>]
+
+use the extract method to get data content
+
+extract_first() get the first element of the list
+
+>>>>>>>
+
+
+sel.xpath( '//div' ).xpath("//p" )
+
+
+# Chain together xpath methods to select desired p element
+sel.xpath( '//div' ).xpath("./span/p[3]" )
+
+[<Selector xpath='span//p[3]' data='<p>YOU GOT IT!</p>'>]
+
+
+>>>>>>>
+
+from scrapy import Selector
+
+# Create a Selector selecting html as the HTML document
+sel = Selector( text=html )
+
+# Create a SelectorList of all div elements in the HTML document
+divs = sel.xpath( "//div")
+print(divs.extract())
+
+
+>>>>>>>> Inspecting the html
+
+you can use inspector to view the html element
+
+get html content from the web using request
+
+import requests
+
+url='https://en.wikipedia.org/wiki/Web_scraping'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

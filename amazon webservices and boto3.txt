@@ -1,0 +1,724 @@
+aws - amazon web services
+boto3
+
+import boto3
+
+s3 = boto3.client('s3',
+	region_name='us-east-1',
+	aws_access_key_id =AWS_KEY_ID,
+	aws_secret_access_key=AWS_SECRET)
+
+response=s3.list_buckets()
+
+AWS_KEY_ID AND AWS_SECRET are liken to username and password
+
+IAM -> identity access management services
+
+Create a user
+permissions summary
+1. AmazonS3FullAccess
+2. AmazonSNSFullAccess
+3. AmazonRekognitionFullAccess
+4. ComprehendFullAccess
+
+
+create the key and secret and store
+
+
+
+s3 - allows storage of files in the cloud
+
+sns - send emails and text and alert subscriber based on events and conditions
+
+comprehend - provides sentiment analysis on blocks of text
+
+Rekognition - extracts text from images
+
+rds
+
+easy to
+
+lambda
+
+
+
+>>>>>>>>>>>>
+
+# Generate the boto3 client for interacting with S3
+s3 = boto3.client('s3', region_name='us-east-1', 
+                        # Set up AWS credentials 
+                        aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+# List the buckets
+buckets = s3.list_buckets()
+
+# Print the buckets
+print(buckets)
+
+>>>>>>>>>>>>>
+
+# Generate the boto3 client for interacting with S3 and SNS
+s3 = boto3.client('s3', region_name='us-east-1', 
+                         aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+
+sns = boto3.client('sns', region_name='us-east-1', 
+                         aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+
+# List S3 buckets and SNS topics
+buckets = s3.list_buckets()
+topics = sns.list_topics()
+
+# Print out the list of SNS topics
+print(topics)
+
+
+Automation is at the heart of data engineering. Sam wants to eliminate boring and repetitive tasks from her and her coworkers plate. 
+
+
+>>>>>>>>>>>>Diving into buckets
+
+cloud storage
+1. buckets are like folders
+a. buckets can generate logs about their own activity
+b. buckets have their own permission policies
+c. they can act as folders of a static website
+
+2. objects are like files
+a. music
+b. csv flat file
+c. video
+
+
+what can we do with buckets?
+1. create a bucket  (bucket names must be unique across s3)
+2. list bucket
+3. delete a bucket
+
+s3 = boto3.client('s3', region_name='us-east-1', 
+                         aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+
+bucket=s3.create_bucket(Bucket='gid-requests')
+
+bucket_response = s3.list_buckets()
+buckets=bucket_response['Buckets']
+print(buckets)
+
+#generates a list of dictionaries of meta data about the bucket
+
+s3.delete_bucket(Bucket='gid-requests')
+
+
+s3.upload_file('/tmp/hello.txt', 'my-bucket-name', 'hello.txt')
+s3.download_file('my-bucket-name', 'hello.txt', '/tmp/hello.txt')
+for file in s3.list_objects(Bucket='my-bucket-name')['Contents']:
+    print(file['Key'])
+
+
+>>>>>>>>>>>>>>
+
+
+import boto3
+
+# Create boto3 client to S3
+s3 = boto3.client('s3', region_name='us-east-1', 
+                         aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+
+# Create the buckets
+response_staging = s3.create_bucket(Bucket='gim-staging')
+response_processed = s3.create_bucket(Bucket='gim-processed')
+response_test = s3.create_bucket(Bucket='gim-test')
+
+# Print out the response
+print(response_staging)
+
+>>>>>>>>>>>>
+
+# Get the list_buckets response
+response = s3.list_buckets()
+
+# Iterate over Buckets from .list_buckets() response
+for bucket in response['Buckets']:
+  
+  	# Print the Name for each bucket
+    print(bucket['Name'])
+
+
+>>>>>>>>>>>>>>
+
+# Delete the gim-test bucket
+s3.delete_bucket(Bucket='gim-test')
+
+# Get the list_buckets response
+response = s3.list_buckets()
+
+# Print each Buckets Name
+for bucket in response['Buckets']:
+    print(bucket['Name'])
+
+>>>>>>>>>>>>>>>>
+
+# Get the list_buckets response
+response = s3.list_buckets()
+
+# Delete all the buckets with 'gim', create replacements.
+for bucket in response['Buckets']:
+  if 'gim' in bucket['Name']:
+      s3.delete_bucket(Bucket=bucket['Name'])
+    
+s3.create_bucket(Bucket='gid-staging')
+s3.create_bucket(Bucket='gid-processed')
+  
+# Print bucket listing after deletion
+response = s3.list_buckets()
+for bucket in response['Buckets']:
+    print(bucket['Name'])
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>uploading and retrieving files
+
+objects can be csv, log file, video, or music
+
+object names are called key
+1. name is a full path from bucket root
+2. an object key is unique in the bucket
+3. an object can only belong to one bucket
+
+import boto3
+import os
+
+def get_all_s3_keys(bucket,prefix):
+    """Get a list of all keys in an S3 bucket."""
+    keys = []
+
+    kwargs = {'Bucket': bucket,Prefix=prefix}
+    while True:
+        resp = s3.list_objects_v2(**kwargs)
+        for obj in resp['Contents']:
+            keys.append(obj['Key'])
+
+        try:
+            kwargs['ContinuationToken'] = resp['NextContinuationToken']
+        except KeyError:
+            break
+
+    return keys
+
+def download_file(file_name, bucket,key):
+	file=s3.download_file(
+		Filename=file_name,
+		Bucket=bucket,
+		Key=key)
+	return file
+
+
+def delete_file(key, bucket):
+	s2.delete_object(
+		Bucket=bucket,
+		Key=key
+	)
+
+
+def upload_file(file_name, bucket, object_name=None):
+    """Upload a file to an S3 bucket
+
+    :param file_name: File to upload
+    :param bucket: Bucket to upload to
+    :param object_name: S3 object name. If not specified then file_name is used
+    :return: True if file was uploaded, else False
+    """
+
+    # If S3 object_name was not specified, use file_name
+    if object_name is None:
+        object_name = file_name
+
+    # Upload the file
+    try:
+        response = s3_client.upload_file(file_name, bucket, object_name)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
+
+
+s3 = boto3.client('s3', region_name='us-east-1', 
+                         aws_access_key_id=AWS_KEY_ID, 
+                         aws_secret_access_key=AWS_SECRET)
+
+
+upload_file('test.txt', 'gid-request', 'test.txt')
+keys=get_all_s3_keys("gid-request","test"):
+
+
+
+>>>>>>>>>>>
+
+
+# Upload final_report.csv to gid-staging
+s3.upload_file(Bucket='gid-staging',
+              # Set filename and key
+               Filename='final_report.csv', 
+               Key='2019/final_report_01_01.csv')
+
+# Get object metadata and print it
+response = s3.head_object(Bucket='gid-staging', 
+                       Key='2019/final_report_01_01.csv')
+
+# Print the size of the uploaded object
+print(response['ContentLength'])
+
+
+
+>>>>>>>>>>>>>
+
+
+# List only objects that start with '2018/final_'
+response = s3.list_objects(Bucket='gid-staging', 
+                           Prefix='2018/final_')
+
+# Iterate over the objects
+if 'Contents' in response:
+  for obj in response['Contents']:
+      # Delete the object
+      s3.delete_object(Bucket='gid-staging', Key=obj['Key'])
+
+# Print the keys of remaining objects in the bucket
+response = s3.list_objects(Bucket='gid-staging')
+
+for obj in response['Contents']:
+  	print(obj['Key'])
+
+
+<<<<<<<<<<<<<<<<<<< keeping objects secure
+
+private data
+
+aws defaults to denying permission
+
+
+aws permissions systems
+1. iam applies accross all aws services
+
+
+acl - access control lists let us set permission on specific objects in a bucket.
+
+bucket policy -  special permissions for a bucket
+
+presigned url - let us have temporary assess to an object
+
+
+acl = 'public-read'
+acl = 'private'
+
+when you upload a file the permissions are private by default
+
+
+s3.put_object_acl(
+	Bucket='gid-requests', Key='potholes.csv', ACL='public-read')
+
+
+now anyone can download this file
+
+
+a file can be set to public read on upload
+
+s3.upload_file(
+	Bucket='gid-requests',
+	Filename='potholes.csv',
+	Key='potholes.csv',
+	ExtraArgs={'ACL':'public-read'})
+
+
+https://{bucket}.s3.amazonaws.com/{key}
+
+access the object using bucket and key
+
+https://gid-requests.s3.amazonaws.com/2019/potholes.csv
+
+
+url="https://{}.s3.amazonaws.com/{}".format("gid-requests","2019/potholes.csv")
+
+df=pd.read_csv(url)
+
+
+s3.upload_file(
+	Bucket='gid-requests',
+	Filename='potholes.csv',
+	Key='potholes.csv',
+	ExtraArgs={'ACL':'private'})
+
+
+>>>>>>
+
+# Upload the final_report.csv to gid-staging bucket
+s3.upload_file(
+  # Complete the filename
+  Filename='./final_report.csv', 
+  # Set the key and bucket
+  Key='2019/final_report_2019_02_20.csv', 
+  Bucket='gid-staging',
+  # During upload, set ACL to public-read
+  ExtraArgs = {
+    'ACL': 'public-read'})c
+
+
+>>>>> ACL for each object in a bucket
+
+
+# List only objects that start with '2019/final_'
+response = s3.list_objects(
+    Bucket='gid-staging', Prefix='2019/final_')
+
+# Iterate over the objects
+for obj in response['Contents']:
+
+    # Give each object ACL of public-read
+    s3.put_object_acl(Bucket='gid-staging', 
+                      Key=obj['Key'], 
+                      ACL='public-read')
+    
+    # Print the Public Object URL for each object
+    print("https://{}.s3.amazonaws.com/{}".format( 'gid-staging', obj['Key']))
+
+
+https://gid-staging.s3.amazonaws.com/2019/final_report_01_00.csv
+https://gid-staging.s3.amazonaws.com/2019/final_report_01_01.csv
+https://gid-staging.s3.amazonaws.com/2019/final_report_01_02.csv
+https://gid-staging.s3.amazonaws.com/2019/final_report_01_03.csv
+https://gid-staging.s3.amazonaws.com/2019/final_report_01_04.csv
+
+
+>>>>>>>> Accessing private objects in s3
+
+what happens when we want to share private data
+
+aws defaults to private  (403 error)
+
+
+s3.download_file(
+	Filename='potholes_local.csv',
+	Bucket='gid-staging',
+	Key='2019/potholes_private.csv')
+
+
+df=pd.read_csv('./potholes_local.csv')
+
+>>> easier way
+
+obj=s3.get_object(Bucket='gid-requests', Key='2019/potholes.csv')
+
+returns meta data and body.  the body is streamingbody. streamingbody does not download the whole content.  pandas knows how to read the streaming body
+
+df=pd.read_csv(obj['Body'])
+
+>>>>>>>Pre-signed urls
+1. Expire after a certain timeframe
+2. Great for temporary access
+
+share_url=s3.generate_presigned_url(
+	ClientMethod='get_object',
+	ExpiresIn=3600,
+	Params={'Bucket':'gid-requests','Key':'potholes.csv'}
+)
+
+pd.read_csv(share_url)
+
+>>>>>>>>load multiple files
+
+df_list=[]
+
+response=s3.list_objects(
+	Bucket='gid-requests',
+	Prefix='2019/')
+
+request_files = response['Contents']
+
+for file in request_files:
+	obj=s3.get_object(Bucket='gid-requests',Key=file['Key'])
+	obj_df=pd.read_csv(obj['Body'])
+        df_list.append(obj_df)
+
+
+df=pd.concat(df_list)
+
+
+share private files using presigned url
+
+.get_presigned_url()
+
+
+ response = s3_client.generate_presigned_url(ClientMethod='get_object',
+          Params={'Bucket': bucket_name,
+                  'Key': object_name},
+                   ExpiresIn=expiration)
+
+
+>>>>>>>
+
+# Generate presigned_url for the uploaded object
+share_url = s3.generate_presigned_url(
+  # Specify allowable operations
+  ClientMethod='get_object',
+  # Set the expiration time
+  ExpiresIn=60,
+  # Set bucket and shareable object's name
+  Params={'Bucket': 'gid-staging','Key': 'final_report.csv'}
+)
+
+# Print out the presigned URL
+print(share_url)
+
+https://gid-staging.s3.amazonaws.com/final_report.csv?AWSAccessKeyId=IAmAFakeKey&Signature=BPiMZqePg0GnI8wyAbQ7UCQurnQ%3D&Expires=1631811037
+
+
+>>>>>>>>
+
+
+df_list =  [ ] 
+
+for file in response['Contents']:
+    # For each file in response load the object from S3
+    obj = s3.get_object(Bucket='gid-requests', Key=file['Key'])
+    # Load the object's StreamingBody with pandas
+    obj_df = pd.read_csv(obj['Body'])
+    # Append the resulting DataFrame to list
+    df_list.append(obj_df)
+
+# Concat all the DataFrames with pandas
+df = pd.concat(df_list)
+
+# Preview the resulting DataFrame
+df.head()
+
+>>>>>>>> sharing files through a website
+
+df.to_html('table_agg.html',render_links=True,columns=['service_name','request_count','info_link'],border=0)
+
+s3.upload_file(
+	Filename='./table_agg.html',
+	Bucket='datacamp-website',
+	Key='table.html',
+	ExtraArgs={
+		'ContentType':'text/html',
+		'ACL':'public-read'}
+	)
+
+https://datacamp-website.s3.amazonaws.com/table.html
+
+
+>>>>>>>> uploading other types of content like images
+
+s3.upload_file(
+	Filename='./plot_image.png',
+	Bucket='datacamp-website',
+	Key='plot_image.png',
+	ExtraArgs={
+		'ContentType':'image/png',
+		'ACL':'public-read'}
+)
+
+
+IANA media types
+Content types
+1. JSON: application/json
+2. png: image/png
+3. pdf: application/pdf
+4. csv: test/csv
+
+>>>>>>>>>
+
+
+# Generate an HTML table with no border and selected columns
+services_df.to_html('./services_no_border.html',
+           # Keep specific columns only
+           columns=['service_name', 'link'],
+           # Set border
+           border=0)
+
+# Generate an html table with border and all columns.
+services_df.to_html('./services_border_all_columns.html', 
+           render_links=True)
+
+
+>>>>>>>>>>
+
+# Generate an HTML table with no border and selected columns
+services_df.to_html('./services_no_border.html',
+           # Keep specific columns only
+           columns=['service_name', 'link'],
+           # Set border
+           border=0)
+
+# Generate an html table with border and all columns.
+services_df.to_html('./services_border_all_columns.html', 
+           render_links=True)
+
+
+>>>>>>>>>>>>>case study
+
+1. download files for the month from the raw data bucket
+2. concatenate them into one csv
+3. create an aggregated dataset
+4. write the dataframe from csv to html
+5. generate a bokeh plot save as html
+
+
+gid-request  (raw data bucket)
+
+
+df_list=[]
+
+response=s3.list_objects(
+	Bucket='gid-requests',
+	Prefix='2019_jan')
+
+
+request_files = response['Contents']
+
+for file in request_files:
+	obj=s3.get_object(Bucket='gid-requests', Key=file['Key'])
+
+	obj_df=pd.read_csv(obj['Body'])
+	df_list.append(obj_df)
+
+df.concat(df_list)
+
+df.to_csv('jan_final_report.csv')
+df.to_html('jan_final_report.html')
+
+s3.upload_file(Filename='./jan_final_report.csv',
+	Key='2019/jan/final_report.csv',
+	Bucket='gid-reports',
+	ExtraArgs={'ACL': 'public-read'})
+
+
+s3.upload_file(Filename='./jan_final_report.html',
+	Key='2019/jan/final_report.html',
+	Bucket='gid-reports',
+	ExtraArgs={
+		'ContentType':'text/html',
+		'ACL':'public-read'
+	})
+
+
+s3.upload_file(Filename='./jan_final_chart.html',
+	Key='2019/jan/final_chart.html',
+	Bucket='gid-reports',
+	ExtraArgs={
+		'ContentType':'text/html',
+		'ACL':'public-read'
+	})
+
+#build the index.html file
+
+r=s3.list_objects(Bucket='gid-reports', Prefix='2019/')
+
+objects_df=pd.DataFrame(r['Contents'])
+
+base_url="http://gid-reports.s3.amazonaws.com/"
+objects_df['Link']=base_url+objects_df['Key']
+
+objects_df.to_html('report_listing.html',
+	columns=['Links','LastModified','Size'],
+	render_links=True)
+
+
+s3.upload_file(Filename='./report_listings.html',
+	Key='index.html',
+	Bucket='gid-reports',
+	ExtraArgs={
+		'ContentType':'text/html',
+		'ACL':'public-read'
+	})
+
+
+>>>>>>>>>>>
+
+df_list = [] 
+
+# Load each object from s3
+for file in request_files:
+    s3_day_reqs = s3.get_object(Bucket='gid-requests', 
+                                Key=file['Key'])
+    # Read the DataFrame into pandas, append it to the list
+    day_reqs = pd.read_csv(s3_day_reqs['Body'])
+    df_list.append(day_reqs)
+
+# Concatenate all the DataFrames in the list
+all_reqs = pd.concat(df_list)
+
+# Preview the DataFrame
+all_reqs.head()
+
+# Write agg_df to a CSV and HTML file with no border
+agg_df.to_csv('./feb_final_report.csv')
+agg_df.to_html('./feb_final_report.html', border=0)
+
+# Upload the generated CSV to the gid-reports bucket
+s3.upload_file(Filename='./feb_final_report.csv', 
+	Key='2019/feb/final_report.html', Bucket='gid-reports',
+    ExtraArgs = {'ACL': 'public-read'})
+
+# Upload the generated HTML to the gid-reports bucket
+s3.upload_file(Filename='./feb_final_report.html', 
+	Key='2019/feb/final_report.html', Bucket='gid-reports',
+    ExtraArgs = {'ContentType': 'text/html', 
+                 'ACL': 'public-read'})
+
+
+# List the gid-reports bucket objects starting with 2019/
+objects_list = s3.list_objects(Bucket='gid-reports', Prefix='2019/')
+
+# Convert the response contents to DataFrame
+objects_df = pd.DataFrame(objects_list['Contents'])
+
+# Create a column "Link" that contains Public Object URL
+base_url = "http://gid-reports.s3.amazonaws.com/"
+objects_df['Link'] = base_url + objects_df['Key']
+
+# Preview the resulting DataFrame
+objects_df.head()
+
+# Write objects_df to an HTML file
+objects_df.to_html('report_listing.html',
+    # Set clickable links
+    render_links=True,
+	# Isolate the columns
+    columns=['Link', 'LastModified', 'Size'])
+
+# Overwrite index.html key by uploading the new file
+s3.upload_file(
+  Filename='./report_listing.html', Key='index.html', 
+  Bucket='gid-reports',
+  ExtraArgs = {
+    'ContentType': 'text/html', 
+    'ACL': 'public-read'
+  })
+
+>>>>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,170 @@
+testing
+1. confirm the code is working as intended
+2. ensure changes in one function don't break another
+3. protect against changes in a dependency
+
+
+
+
+def square(x):
+	"""square the number x
+
+	:param x: number to square
+	:return: x squared
+
+	>>>> square(3)
+
+	9
+	""""
+
+	return x**x
+
+
+**********************************************************************
+File "__main__", line 6, in __main__.square
+Failed example:
+    square(3)
+Expected:
+    9
+Got:
+    27
+**********************************************************************
+1 items had failures:
+   1 of   1 in __main__.square
+***Test Failed*** 1 failures.
+27
+
+>>>>>>>> pytest
+
+test directory
+
+tests
+1. subpackage_tests
+2. subpackage2_tests
+
+
+pytest looks for files that begin or end with the word "test"
+
+
+workdir/tests/test_document.py
+
+def test_document_tokens():
+	doc=Document('a e i o u')
+
+	assert doc.tokens==['a','e','i','o','u']
+
+
+if assert is true the test passes
+
+
+>>>>>test for the edge cases
+
+def test_document_empty():
+	doc=Document('')
+
+	assert doc.tokens==[]
+	assert doc.word_counts==Counter()
+
+
+doc_a = Document('a e i o u')
+doc_b = Document('a e i o u')
+
+print(doc_a==doc_b)
+
+outputs:
+  False
+
+The objects are different instances so the comparison is false
+
+instead compare doc_a.word_counts==doc_b.word_counts)
+
+
+workdir pytest
+
+pytest tests/test_document.py
+
+
+>>>>>>>>
+
+
+def sum_counters(counters):
+    """Aggregate collections.Counter objects by summing counts
+
+    :param counters: list/tuple of counters to sum
+    :return: aggregated counters with counts summed
+
+    >>> d1 = text_analyzer.Document('1 2 fizz 4 buzz fizz 7 8')
+    >>> d2 = text_analyzer.Document('fizz buzz 11 fizz 13 14')
+    >>> sum_counters([d1.word_counts, d2.word_counts])
+    Counter({'fizz': 4, 'buzz': 2})
+    """
+    return sum(counters, Counter())
+
+doctest.testmod()
+
+
+>>>>>>>>
+
+from collections import Counter
+from text_analyzer import SocialMedia
+
+# Create an instance of SocialMedia for testing
+test_post = 'learning #python & #rstats is awesome! thanks @datacamp!'
+sm_post = SocialMedia(test_post)
+
+# Test hashtag counts are created properly
+def test_social_media_hashtags():
+    expected_hashtag_counts = Counter({'#python': 1, '#rstats': 1})
+    assert sm_post.hashtag_counts == expected_hashtag_counts
+
+
+>>>>>>>>
+
+documentation with sphinx
+
+the documentation can be published by sphinx as user documentation
+
+
+class Document:
+
+	"""Analyze text data
+
+	:param text: text to analze
+
+	:ivar text: text originally passed to the instance on creation
+	:ivar tokens: parsed list of words from text
+	:ivar word_counts: counter containing counts of hashtags used in text
+
+	ivar stands for instance variable
+
+
+Sphinx - Generate beautiful documentation
+Travis CI - continously test your code
+GitHub GitLab host your projects with git
+Codecov - Discover where to improve your projects tests
+Code Climate - Analyze your code for improvements in readability
+
+>>>>>>>
+
+from text_analyzer import Document
+
+class SocialMedia(Document):
+    """Analyze text data from social media
+    
+    :param text: social media text to analyze
+
+    :ivar hashtag_counts: Counter object containing counts of hashtags used in text
+    :ivar mention_counts: Counter object containing counts of @mentions used in text
+    """
+    def __init__(self, text):
+        Document.__init__(self, text)
+        self.hashtag_counts = self._count_hashtags()
+        self.mention_counts = self._count_mentions()
+
+
+
+
+
+
+
+

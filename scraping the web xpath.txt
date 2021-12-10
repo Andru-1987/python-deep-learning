@@ -1,0 +1,178 @@
+xpath='/html/body/div[2]'
+
+/ used to move forward one generation
+[] is used to specify which sibling to choose
+
+
+div[2] refers to the second of three div elements of the body
+
+
+<body>
+<span></span>
+<div>1</div>
+<div>2</div>
+<div>3</div>
+</body>
+
+xpath='//table'
+
+look forward to all forward generations
+
+
+xpath='/html/body/div[2]//table'
+
+direct to all table elements which are a descendant of the 2nd div child of the body
+
+>>>>>
+
+<html>
+  <body>
+    <div>
+      <p>Good Luck!</p>
+      <p>Not here...</p>
+    </div>
+    <div>
+      <p>Where am I?</p>
+    </div>
+  </body>
+</html>
+
+# Fill in the blank
+xpath = '/html/body/div[2]/p[1]'
+
+>>>>>
+
+xpath = '//span[@class="span-class"]'
+
+select all span elements whose class attribute equals "span-class"
+
+
+>>>>>>
+<html>
+<body>
+<div>
+<p>hello world!</p>
+<p>enjoy datacamp!</p>
+</div>
+<p>thanks for watching!</p>
+</body>
+</html>
+
+//p[1]
+
+returns hello word and thanks for watching because both are element one at their level
+
+[nth] means the nth of my siblings
+
+xpath="/html/body/*'   
+
+the asterisks * is the wildcard
+
+means ignore tag type
+
+>>>
+
+# Create an XPath string to direct to children of body element
+xpath = "/html/body/*"
+
+# Print out the number of elements selected
+how_many_elements( xpath )
+
+
+>>>>>> Off the beaten XPath
+
+@ represents attribute
+
+1. @class, @id, @href
+
+
+xpath='//p[@class="class-1"]'
+
+find all p elements with a class name =class-1
+
+xpath='//*[@id="uid"]'
+
+find all elements with and id = uid
+
+xpath='//div[@id="uid"]/p[2]
+
+get the 2nd child of the div element with an id=uid
+
+contains(@attri-name,"string-expr")
+
+xpath='//*[contains(@class,"class-1")]'
+
+contains is a partial match search
+
+xpath='/html/body/div/p[2]/@class'
+
+>>>>>
+
+<body>
+<div id="div1" class="class-1">
+<p class="class-1 class-2">Hello Word</p>
+<div id="div2">
+	<p id="p2" class="class-2">Choose Datacamp</p>
+</div>
+<div id="div3" class="class-2">
+	<p class="class-2"> Thanks for Watching</p>
+</div>
+</body>
+
+
+# Create an XPath string to select p element by class
+xpath = '//p[@class="class-1 class-2"]'
+
+# Print out select text
+print_element_text( xpath )
+
+Hello World!
+
+
+
+# Create an Xpath string to select desired p element
+xpath = '//*[@id="div3"]/p'
+
+# Print out selection text
+print_element_text( xpath )
+
+
+# Create an xpath to the href attribute
+xpath = '//p[@id="p2"]/a/@href'
+
+# Print out the selection(s); there should be only one
+print_attribute( xpath )
+
+
+>>>>>>>>
+
+# Create an xpath to the href attributes
+xpath = '//a[contains(@class,"package-snippet")]/@href'
+
+# Print out how many elements are selected
+how_many_elements( xpath )
+# Preview the selected elements
+preview( xpath )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
