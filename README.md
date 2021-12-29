@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Airline customer satisification - Decision boundary analysis
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/airline%20logistic%20regression.ipynb
+
 * Text summerization with GRU neural machine translation
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Text%20Summerization%20GRU.ipynb
