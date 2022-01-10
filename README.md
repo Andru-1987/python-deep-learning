@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* analysis of apply stock
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/stock%20apple%20vs%20vmware.ipynb
+
 * Airline customer satisification - Decision boundary analysis
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/airline%20logistic%20regression.ipynb
