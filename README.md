@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Duke Energy portfolio strategy
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Duke%20Energy.ipynb
+
 * LSTM binary classifier
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20label%20binary%20classification.ipynb
