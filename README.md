@@ -1,7 +1,11 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
-* analysis of apply stock
+* LSTM binary classifier
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20label%20binary%20classification.ipynb
+
+* analysis of apply stock - linear regression
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/stock%20apple%20vs%20vmware.ipynb
 
