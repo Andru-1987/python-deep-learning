@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Extraspace vs rio
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/RIO%20vs%20BHP%20Uranium.ipynb
+
 * Duke Energy portfolio strategy
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Duke%20Energy.ipynb
