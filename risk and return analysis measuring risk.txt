@@ -1,0 +1,168 @@
+the efficient frontier allows use to trade off risk and return
+
+we can measure how much a portfolio loses by
+1. value at risk
+2. condition of value at risk
+
+suppose a portfolio 
+1. 100 usd in a forex
+2. risk factor is the exchange rate
+a. 1 euro for 1 usd then the ratio is 1:1
+
+b. Loss = Eur 100 (the original value) - Euro 100 * (1-r) (r is the fluctuating exchange rate)
+
+Loss distribution: distribution of portfolio losses in the future
+
+y= number of losses of given size
+x. the euro 100 x (1-r)
+
+Maximum loss
+1. what is the maximum loss of a portfolio
+2. losses cannot be bounded with 100% certainty
+
+confidence level:  the likihood that the losses will be capped by an upper bound
+1. Confidence Level:  replace 100% certainty with a likelihood of upper bound
+a. What is the maximum loss that would take place 95% of the time?
+
+>>>>>>>>>>>Value at Risk
+VaR measures the maximum portfolio loss at a particular confidenced level
+
+VaR is expressed for 95%, 99% and 99.5% confidence
+
+
+if 95% of the time EUR/USD exchange rate is at least 0.40 then:
+
+portfolio values is at least 100x.40 Eur/Usd = eur 40
+
+portofolio loss is at most euro 40 - euro 100 = euro 60
+
+95% var is 60 euros
+
+>>>>>>>>>>>> conditional value at risk (cvar)
+
+CVaR measures expected loss given a minimum loss equal to the VaR
+
+CVaR is the expected value of the tail of the loss distribution
+
+significance level = 1 - confidence level
+
+CVaR is the worst expected loss in the worst conditions
+1. f= loss distribution pdf
+2. x= upper bound of the loss (can be infinity)
+3. VaR(alpha) = VaR at the alpha confidence level
+
+
+pdf = probability density function
+
+xs=np.linspace(-3,3)
+ys=norm(0,1).pdf(xs)
+plt.plot(xs, ys, color='gray')
+
+Probability mass function (PMF)
+1. The set of probabilities of discrete outcomes
+2.  the values are discrete because only certain values can be obtained.
+
+>>>>>>>> Deriving the value at risk
+
+1. specify the confidence level 95%
+2. create series of loss observations
+
+loss=pd.Series(observations)
+VaR_95 = loss.quantile(0.95)
+
+print("VaR_95 = ",VaR_95)
+
+output VaR_95 = 1.6119
+
+scipy.stats loss distribution : percent point function .ppf() can be used
+
+>>>>>>> Deriving the conditional value at risk  CVaR
+
+1. specify confidence level 95%
+2. create or use sample from loss distribution
+
+losses = pd.Series(scipy.stats.norm.rvs(size=1000))   #random sample from a normal distribution
+
+VaR_95 = scipy.stats.norm.ppf(0.95)
+
+CVaR_95 = (1/(1-0.95) * scipy.stats.norm.expect(lambda x: x, lb=VaR_95)
+
+print("CVaR_95 = ", CVaR_95)
+
+CVaR_95 =2.15359
+
+
+>>>>>>>>>
+
+
+# Create the VaR measure at the 95% confidence level using norm.ppf()
+VaR_95 = norm.ppf(0.95)
+
+# Create the VaR meaasure at the 5% significance level using numpy.quantile()
+draws = norm.rvs(size = 100000)
+VaR_99 = np.quantile(draws, 0.99)
+
+# Compare the 95% and 99% VaR
+print("95% VaR: ", VaR_95, "; 99% VaR: ", VaR_99)
+
+# Plot the normal distribution histogram and 95% VaR measure
+plt.hist(draws, bins = 100)
+plt.axvline(x = VaR_95, c='r', label = "VaR at 95% Confidence Level")
+plt.legend(); plt.show()
+
+
+ppf is the inverse cumulative density function
+
+
+>>>>>
+
+The conditional value at risk (CVaR), or expected shortfall (ES), asks what the average loss will be, conditional upon losses exceeding some threshold at a certain confidence level.
+
+# Compute the mean and variance of the portfolio returns
+pm = portfolio_losses.mean()
+ps = portfolio_losses.std()
+
+# Compute the 95% VaR using the .ppf()
+VaR_95 = norm.ppf(0.95, loc = pm, scale = ps)
+# Compute the expected tail loss and the CVaR in the worst 5% of cases
+tail_loss = norm.expect(lambda x: x, loc = pm, scale = ps, lb = VaR_95)
+CVaR_95 = (1 / (1 - 0.95)) * tail_loss
+
+# Plot the normal distribution histogram and add lines for the VaR and CVaR
+plt.hist(norm.rvs(size = 100000, loc = pm, scale = ps), bins = 100)
+plt.axvline(x = VaR_95, c='r', label = "VaR, 95% confidence level")
+plt.axvline(x = CVaR_95, c='g', label = "CVaR, worst 5% of outcomes")
+plt.legend(); plt.show()
+
+The CVaR is a richer measure of risk than the VaR, but can be more difficult to compute when the distribution of losses (or returns) is unknown, or is more complicated than a Normal distribution
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

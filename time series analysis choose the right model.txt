@@ -1,0 +1,136 @@
+>>>>>>>>>>>>choose the right model
+
+1. the order of an ar(p) model will usually be unknown
+
+2. two techniques to determine order
+a. partial autocorrelation function
+b. information criteria
+
+
+Partial Autocorrelation Function (PACF)
+
+plot_pacf  (plot the partial auto correlation function)
+
+plt_acf (plot the auto correlation function)
+
+<<<< plot the pacf
+
+plot_pacf(x, lags=20, alpha = 0.05)
+
+
+Two techniques to determine order
+1. the partial autocorrelation function
+2. the information criteria
+
+The partial autocorrelation function measure the benefit of adding another lag
+
+what happens as you add more and more lag values
+
+plot_pacf is the stats model for plotting the partial autocorrelation function
+
+plt_acf is the stats model for plotting the autocorrelation function
+
+from statsmodel.graphics.tsaplots import plot_pacf
+
+plot_pacf(x, lags=20, alpha=0.05)
+
+alpha sets the width of the confidence interval
+
+Analysts record time-series data by measuring a characteristic at evenly spaced intervals—such as daily, monthly, or yearly.
+
+The number of intervals between the two observations is the lag.
+
+white noise has no lags that are significantly different from zero
+
+ar(1) two lags are different from zero
+ar(2) three lags are different from zero
+ar(3) four lags are different from zero
+
+Information criteria
+* information criteria adjusts goodness of fit for number of parameters
+
+* Two popular adjusted goodness of fit measures
+1. akaike information criterion aic
+2. bic bayesian information criterion
+
+from statsmodel.tsa.arima_model import ARMA
+mod =ARMA(simulated_data, order=(1,0))
+
+result=mod.fit()
+
+result.summary()
+result.params
+result.aic
+result.bic
+
+choose the model with the lowest information criteria
+
+>>>>>>>>>>>
+
+# Import the modules for simulating data and for plotting the PACF
+from statsmodels.tsa.arima_process import ArmaProcess
+from statsmodels.graphics.tsaplots import plot_pacf
+
+# Simulate AR(1) with phi=+0.6
+ma = np.array([1])
+ar = np.array([1, -0.6])
+AR_object = ArmaProcess(ar, ma)
+simulated_data_1 = AR_object.generate_sample(nsample=5000)
+
+# Plot PACF for AR(1)
+plot_pacf(simulated_data_1, lags=20)
+plt.show()
+
+# Simulate AR(2) with phi1=+0.6, phi2=+0.3
+ma = np.array([1])
+ar = np.array([1, -0.6, -0.3])
+AR_object = ArmaProcess(ar, ma)
+simulated_data_2 = AR_object.generate_sample(nsample=5000)
+
+# Plot PACF for AR(2)
+plot_pacf(simulated_data_2, lags=20)
+plt.show()
+
+>>>>>> aic and bic for determining overfitting
+
+# Import the module for estimating an ARMA model
+from statsmodels.tsa.arima_model import ARMA
+
+# Fit the data to an AR(p) for p = 0,...,6 , and save the BIC
+BIC = np.zeros(7)
+for p in range(7):
+    mod = ARMA(simulated_data_2, order=(p,0))
+    res = mod.fit()
+# Save BIC for AR(p)    
+    BIC[p] = res.bic
+    
+# Plot the BIC as a function of p
+plt.plot(range(1,7), BIC[1:7], marker='o')
+plt.xlabel('Order of AR Model')
+plt.ylabel('Bayesian Information Criterion')
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

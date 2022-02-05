@@ -1,0 +1,153 @@
+portfolio losses results from extreme values
+
+extreme value losses occur in the tail because they occur rarely
+
+losses exceeding some value we want to manage
+
+extreme value theory uses statistics to manage the distribution of extreme values
+
+block maxima: 
+1. break the period into sub-periods
+2. form block from each sub-period
+3. look at the maximum loss in each block
+
+peak over threshold (POT)
+1. find all losses over given level of interest
+2. set of such losses is the dataset
+
+
+Generalized Extreme Value distribution (GEV)
+1. distribution of maxima of data
+2. parameteric estimation using scipy.stats.genextreme
+
+
+>>>>>> using GEV distribution to calculate VaR and CVar
+
+from scipy.stats import genextreme
+maxima = prices['cci'].resample("W").max()
+params = genextreme.fit(maxima)
+
+VaR99 = genextreme.ppf(0.99,*params)
+
+finds maximum loss over one week period at 99% confidence
+
+print(VaR99)
+
+CVaR_99 = (1/ (1-0.99)) * genextreme.expect(lambda x: x, *params,lb=VaR_99)
+print(CVaR_99)
+
+>>>>>>>>> banking and insurance companies
+
+Var or CVar over extreme values is used to cover losses
+
+banks must keep onhand enough money to cover losses for a specific period
+
+VaR from the GEV
+1. estimates maximum loss
+a. given period
+b. given confidence level
+
+portfolio = 1000000
+
+One week reserve requirement at 99% confidence
+
+Reserve requirement: portfolio values * VaR99
+
+suppose Var99 =0.10 ie 10% maximum loss
+
+reserve requirement = $100,000
+
+as the portfolio value changes the reserve requirement changes
+
+>>>>>>>>>>>> weekly resampling
+
+# Resample the data into weekly blocks
+weekly_maxima = losses.resample("W").max()
+
+# Plot the resulting weekly maxima
+axis_1.plot(weekly_maxima, label = "Weekly Maxima")
+axis_1.legend()
+plt.figure("weekly")
+plt.show()
+
+
+>>>>>>>> monthly resampling 
+
+# Resample the data into monthly blocks
+monthly_maxima = losses.resample("M").max()
+
+# Plot the resulting monthly maxima
+axis_2.plot(monthly_maxima, label = "Monthly Maxima")
+axis_2.legend()
+plt.figure("monthly")
+
+>>>>>>>>> quarterly resampling
+
+# Resample the data into quarterly blocks
+quarterly_maxima = losses.resample("Q").max()
+
+# Plot the resulting quarterly maxima
+axis_3.plot(quarterly_maxima, label = "Quarterly Maxima")
+axis_3.legend()
+plt.figure("quarterly")
+plt.show()
+
+>>>>>> highlight the extreme losses greater than 10 percent
+
+# Plot the log daily losses of GE over the period 2007-2009
+losses.plot()
+
+# Find all daily losses greater than 10%
+extreme_losses = losses[losses>.10]
+
+# Scatter plot the extreme losses
+extreme_losses.plot(style='o')
+plt.show()
+
+>>>>>> density function
+
+# Fit extreme distribution to weekly maximum of losses
+fitted = genextreme.fit(weekly_max)
+
+# Plot extreme distribution with weekly max losses historgram
+x = np.linspace(min(weekly_max), max(weekly_max), 100)
+plt.plot(x, genextreme.pdf(x, *fitted))
+plt.hist(weekly_max, 50, density = True, alpha = 0.3)
+plt.show()
+
+>>>>>>> VaR_99 and CVaR_99
+
+# Compute the weekly block maxima for GE's stock
+weekly_maxima = losses.resample("W").max()
+
+# Fit the GEV distribution to the maxima
+p = genextreme.fit(weekly_maxima)
+
+# Compute the 99% VaR (needed for the CVaR computation)
+VaR_99 = genextreme.ppf(0.99, *p)
+
+# Compute the 99% CVaR estimate
+CVaR_99 = (1 / (1 - 0.99)) * genextreme.expect(lambda x: x, 
+           args=(p[0],), loc = p[1], scale = p[2], lb = VaR_99)
+
+# Display the covering loss amount
+print("Reserve amount: ", 1000000 * CVaR_99,CVaR_99)
+
+Reserve amount:  148202.41307731598 0.148202413077316
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

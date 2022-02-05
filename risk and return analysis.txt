@@ -1,0 +1,132 @@
+see "Economic analysis of the digital economy"
+ceo of shorish research
+
+uncertainty exists because future outcomes are unknown.
+
+uncertainty may impact planning decisions today
+
+risk management is the science of mitigating adverse outcomes
+
+quantify uncertainty by identifying factors of risk
+
+example: fire insurance. What factors make fire more likely?
+
+focus on the great recession of 2007-2010
+
+US lost nearly $10 trillin in household wealth
+US stock markets lost $8 trillion in value
+
+2007-2009
+1. large-scale changes in fundamental asset values
+2. massive uncertainty about future returns
+3. high asset return volatility
+
+Financial portfolio is a collection of assets with uncertain future returns: stocks, bonds, forex, and stock options
+
+maximize portfolio returns conditional on risk appetite
+
+prices=pd.read_csv("portfolio.csv")
+returns = prices.pct_change()
+
+weights=[..]
+
+portfolio_returns = returns.dot(weights)
+
+portfolio return volatility = risk
+
+calculate volatility via covariance matrix
+
+trading_days=252
+
+covariance = returns.cov()*trading_days
+
+Risk depends on asset weights in portfolio
+
+portfolio variance is the quadric function
+
+q2 = wt * cov_p * w
+
+weights=[0.25,0.25,0.25,0.25]  #assume four assets in the portfolio
+
+portfolio_variance = np.transpose(weights)@covariance @weights
+
+variant is transformed into the standard deviation resulting in the volatility
+
+portfolio_volatility = np.sqrt(portfolio_variance)
+
+windowed=portfolio_returns.rolling(30)
+
+volatility = window.std().np.sqrt(252)
+
+volatility.plot().set_ylabel("Standard Deviation...")
+
+>>>>analyze trends for extreme events
+
+>>>>>>>>>>>>>>>>>>>> Prices
+
+# Select portfolio asset prices for the middle of the crisis, 2008-2009
+asset_prices = portfolio.loc['2008-01-01':'2009-12-31']
+
+# Plot portfolio's asset prices during this time
+asset_prices.plot().set_ylabel("Closing Prices, USD")
+plt.show()
+
+print(asset_prices.columns)
+
+print(asset_prices)
+
+>>>>>>>>>>>>>>>> returns
+
+weights=[0.25, 0.25, 0.25, 0.25]
+
+# Compute the portfolio's daily returns
+asset_returns = asset_prices.pct_change()
+portfolio_returns = asset_returns.dot(weights)
+
+# Plot portfolio returns
+portfolio_returns.plot().set_ylabel("Daily Return, %")
+plt.show()
+
+The 'spikiness' of portfolio returns indicates how uncertain and volatile asset returns became
+
+>>>>>>>>>>> covariance matrix
+
+
+# Generate the covariance matrix from portfolio asset's returns
+covariance = asset_returns.cov()
+
+# Annualize the covariance using 252 trading days per year
+covariance = covariance * 252
+
+# Display the covariance matrix
+print(covariance)
+
+                Citibank  Morgan Stanley  Goldman Sachs  J.P. Morgan
+Citibank        1.475195        0.821707       0.573790     0.724639
+Morgan Stanley  0.821707        1.298341       0.658895     0.560523
+Goldman Sachs   0.573790        0.658895       0.500807     0.426979
+J.P. Morgan     0.724639        0.560523       0.426979     0.685584
+
+
+>>>>>> portfolio volatility
+
+# Compute and display portfolio volatility for 2008 - 2009
+portfolio_variance = np.transpose(weights) @ covariance @ weights
+portfolio_volatility = np.sqrt(portfolio_variance)
+print(portfolio_volatility)
+
+0.8475328513962702
+
+>>>>>>>> annualized volatility
+
+# Calculate the 30-day rolling window of portfolio returns
+returns_windowed = portfolio_returns.rolling(window=30)
+
+# Compute the annualized volatility series
+volatility_series = returns_windowed.std()*np.sqrt(252)
+
+# Plot the portfolio volatility
+volatility_series.plot().set_ylabel("Annualized Volatility, 30-day Window")
+plt.show()
+
+

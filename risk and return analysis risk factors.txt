@@ -1,0 +1,162 @@
+volatility measures dispersion of returns around expected values
+
+time series: expected value is the sample average
+
+what drives expectation and dispersion?
+
+risk factors: variables or events driving portfolio return and volatility
+
+risk exposure is the possible portfolio loss use to volatility.  risk factors determine risk exposure
+
+example: flood insurance. deductible is out-of-pocket payment regardless of loss. 100% coverage still leaves deductible to be paid.  so the deductible is the risk exposure.  Frequent flooding increases the risk exposure.
+
+systematic risk is risk factors affecting volatility of all portfolio assets
+1. inflation changes the opportunity cost of investing in bonds a stocks
+2. inflation and recession affect asset valuation
+
+
+market risk is systematic risk from general financial market movements
+
+and airplane engine failure is a systematic risk
+
+economic systematic risks : price level changes and interest rate changes caused by inflation.
+
+idiosyncratic risk is risk associated with a particular asset class
+1. bond default is an idiosyncratic risk
+2. book to market ratio contribute to idiosyncratic risk
+3. sector shocks
+
+Factor model: assessment of risk factors affecting portfolio return
+
+statistical regression: ordinary least squares (ols):
+dependent variable: returns or volatility.
+1. uses a statistical model on risk factors
+2. dependant variable: returns volatility
+3. independent variable : systematic and or idosyncratic risk factors
+
+fama-french factor model: combination of market risk and idosyncratic risk (firm size, firm value)
+
+
+crisis risk factor: 1. investment banks borrowed heavily just before the crisis 2. collateral was in the form of mortgage backed securities.
+
+MBS is an asset class where each asset hold many types of mortgages.
+1. 90 day mortgage delinquency rates rose during the crisis
+
+import statsmodel.api as sm
+regression = sm.OLS(returns, delinquencies).fit()
+
+print(regression.summary())
+
+
+P>t should be 0.05 meaning 95% convidence the coefficient is statistic different from zero
+
+
+>>>>>>>>>  quarterly returns
+
+# Convert daily returns to quarterly average returns
+returns_q = returns.resample('Q').mean()
+
+# Examine the beginning of the quarterly series
+print(returns_q.head())
+
+# Now convert daily returns to weekly minimum returns
+returns_w = returns.resample('W').min()
+
+# Examine the beginning of the weekly series
+print(returns_w.head())
+
+
+>>>>>>> scatter plot delinquencies against returns
+
+# Transform the daily portfolio_returns into quarterly average returns
+portfolio_q_average = portfolio_returns.resample('Q').mean().dropna()
+
+# Create a scatterplot between delinquency and quarterly average returns
+plot_average.scatter(mort_del, portfolio_q_average)
+
+# Transform daily portfolio_returns returns into quarterly minimum returns
+portfolio_q_min = portfolio_returns.resample('Q').min().dropna()
+
+# Create a scatterplot between delinquency and quarterly minimum returns
+plot_min.scatter(mort_del, portfolio_q_min)
+plt.show()
+
+
+Your initial assessment indicates that there is little correlation between average returns and mortgage delinquencies, 
+but a stronger negative correlation exists between minimum returns and delinquency
+
+>>>>>>> mean returns ols looking at p>t
+
+# Add a constant to the regression
+mort_del = sm.add_constant(mort_del)
+
+# Create the regression factor model and fit it to the data
+results = sm.OLS(port_q_mean, mort_del).fit()
+
+# Print a summary of the results
+print(results.summary())
+
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                        -0.0001      0.001     -0.175      0.862      -0.002       0.002
+Mortgage Delinquency Rate     0.0083      0.012      0.693      0.496      -0.016       0.033
+
+
+>>>>>> min returns ols looking at p>t
+
+# Add a constant to the regression
+mort_del = sm.add_constant(mort_del)
+
+# Create the regression factor model and fit it to the data
+results = sm.OLS(port_q_min, mort_del).fit()
+
+# Print a summary of the results
+print(results.summary())
+
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                        -0.0279      0.017     -1.611      0.121      -0.064       0.008
+Mortgage Delinquency Rate    -0.5664      0.260     -2.182      0.040      -1.105      -0.028
+
+
+P>t is less thatn 0.05  (not random - therefore pt supports the idea that min returns were correlated with delinquincies)
+
+>>>>>>> average volatility  ols looking at p>t
+
+
+# Add a constant to the regression
+mort_del = sm.add_constant(mort_del)
+
+# Create the regression factor model and fit it to the data
+results = sm.OLS(vol_q_mean, mort_del).fit()
+
+# Print a summary of the results
+print(results.summary())
+
+=============================================================================================
+                                coef    std err          t      P>|t|      [0.025      0.975]
+---------------------------------------------------------------------------------------------
+const                         0.0100      0.007      1.339      0.194      -0.006       0.026
+Mortgage Delinquency Rate     0.2558      0.112      2.275      0.033       0.023       0.489
+
+
+volatility is correlated with delinquencies.
+
+As seen from the regressions, mortgage delinquencies are acting as a systematic risk factor for both minimum quarterly returns and average volatility of returns, but not for average quarterly returns.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

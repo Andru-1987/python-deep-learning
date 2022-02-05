@@ -1,0 +1,53 @@
+AR - autoregressive
+MA - moving average terms
+
+MA(1) is order(0,1) vs AR(1) as order(1,0)
+
+A statistical model is autoregressive if it predicts future values based on past values. 
+
+from statsmodels.tsa.arima_model import ARMA
+
+mod=ARMA(simulated_data, order=(0,1))
+result=mod.fit()
+
+res.plot_predict(start='2016-07-01', end='2017-06-01')
+plt.show()
+
+
+MA model forecasting: moving average
+
+1. one step ahead forecast
+
+
+# Import the ARMA module from statsmodels
+from statsmodels.tsa.arima_model import ARMA
+
+# Fit an MA(1) model to the first simulated data
+mod = ARMA(simulated_data_1, order=(0,1))
+res = mod.fit()
+
+# Print out summary information on the fit
+print(res.summary())
+
+# Print out the estimate for the constant and for theta
+print("When the true theta=-0.9, the estimate of theta (and the constant) are:")
+print(res.params)
+
+ When the true theta=-0.9, the estimate of theta (and the constant) are:
+    [-0.00384352 -0.8967135 ]
+
+The estimated value is very close to the actual theta -0.9 used to generated the simulated data.
+
+>>>>> arma forecasting
+
+# Import the ARMA module from statsmodels
+from statsmodels.tsa.arima_model import ARMA
+
+# Forecast the first MA(1) model
+mod = ARMA(simulated_data_1, order=(0,1))
+res = mod.fit()
+res.plot_predict(start=990, end=1010)
+plt.show()
+
+
+

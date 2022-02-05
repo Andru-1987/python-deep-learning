@@ -1,0 +1,194 @@
+two series Pt and Qt can be random walks
+
+but some combination of Pt - cQt may not be a random walk
+
+Pt and Qt are cointegrated
+
+Heating Oil and Natural Gas are mean reverted
+
+mean reverted means to come back or go head with constraint
+
+economic substitutes when heating oil dips below natural gas some companies can switch
+
+Platinum and palladium are substitutes ->catalytic converters
+
+corn and wheat -> animal feed
+
+corn and sugar beets -> sweetners
+
+
+>>>>>testing for cointegration
+
+regress Pt on Qt and get slope C
+
+Run augmented Dickey Fuller test on Pt-cQt for random walk
+
+from statsmodel.tsa.stattools import coint
+
+coint(P,Q)
+
+>>>>>>>>  Price series
+
+# Plot the prices separately
+plt.subplot(2,1,1)
+plt.plot(7.25*HO, label='Heating Oil')
+plt.plot(NG, label='Natural Gas')
+plt.legend(loc='best', fontsize='small')
+
+# Plot the spread
+plt.subplot(2,1,2)
+plt.plot(7.25*HO-NG, label='Spread')
+plt.legend(loc='best', fontsize='small')
+plt.axhline(y=0, linestyle='--', color='k')
+plt.show()
+
+
+we multiply the heating oil prices, in $/gallon, by 7.25, which converts it to $/millionBTU, which is the same units as Natural Gas
+
+
+>>>>>>> Test for random walk
+
+
+# Import the adfuller module from statsmodels
+from statsmodels.tsa.stattools import adfuller
+
+# Compute the ADF for HO and NG
+result_HO = adfuller(HO['Close'])
+print("The p-value for the ADF test on HO is ", result_HO[1])
+result_NG = adfuller(NG['Close'])
+print("The p-value for the ADF test on NG is ", result_NG[1])
+
+# Compute the ADF of the spread
+result_spread = adfuller(7.25 * HO['Close'] - NG['Close'])
+print("The p-value for the ADF test on the spread is ", result_spread[1])
+
+The p-value for the ADF test on HO is  0.9567108785017869
+The p-value for the ADF test on NG is  0.900874744467673
+The p-value for the ADF test on the spread is  7.01943930214218e-05
+
+
+The spread is not a random walk
+
+
+>>>>>
+
+
+# Import the statsmodels module for regression and the adfuller function
+import statsmodels.api as sm
+from statsmodels.tsa.stattools import adfuller
+
+# Regress BTC on ETH
+ETH = sm.add_constant(ETH)
+result = sm.OLS(BTC,ETH).fit()
+
+# Compute ADF
+b = result.params[1]
+#augmented dickey fuller test
+adf_stats = adfuller(BTC['Price'] - b*ETH['Price'])
+print("The p-value for the ADF test is ", adf_stats[1])
+
+The p-value for the ADF test is  0.023369002323472707
+
+
+>>>>>> analyze temperature
+
+National Oceanic and Atmospheric Administration (NOAA)
+
+
+1. convert index to datetime object
+2. test for random walk
+3. take first differences of the data
+4. computer acf and pacf
+5. fit ar,ma, arma models to the data
+6. use information criterion to choose the best model
+7. forecast temperature over the next 30 years
+
+# Import the adfuller function from the statsmodels module
+from statsmodels.tsa.stattools import adfuller
+
+# Convert the index to a datetime object
+temp_NY.index = pd.to_datetime(temp_NY.index, format="%Y")
+
+# Plot average temperatures
+temp_NY.plot()
+plt.show()
+
+# Compute and print ADF p-value
+result = adfuller(temp_NY['TAVG'])
+print("The p-value for the ADF test is ", result[1])
+
+The p-value for the ADF test is  0.5832938987871152
+
+
+>>>>>> make temperatures stationary
+
+Since the temperature series, temp_NY, is a random walk with drift, take first differences to make it stationary
+
+>>>>>> acf and pacf
+
+# Import the modules for plotting the sample ACF and PACF
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+
+# Take first difference of the temperature Series
+chg_temp = temp_NY.diff()
+chg_temp = chg_temp.dropna()
+
+# Plot the ACF and PACF on the same page
+fig, axes = plt.subplots(2,1)
+
+# Plot the ACF
+plot_acf(chg_temp, lags=20, ax=axes[0])
+
+# Plot the PACF
+plot_pacf(chg_temp, lags=20, ax=axes[1])
+plt.show()
+
+>>>>>> arma
+
+# Import the module for estimating an ARMA model
+from statsmodels.tsa.arima_model import ARMA
+
+# Fit the data to an AR(1) model and print AIC:
+mod_ar1 = ARMA(chg_temp, order=(1,0))
+res_ar1 = mod_ar1.fit()
+print("The AIC for an AR(1) is: ", res_ar1.aic)
+
+# Fit the data to an AR(2) model and print AIC:
+mod_ar2 = ARMA(chg_temp, order=(2,0))
+res_ar2 = mod_ar2.fit()
+print("The AIC for an AR(2) is: ", res_ar2.aic)
+
+# Fit the data to an ARMA(1,1) model and print AIC:
+mod_arma11 = ARMA(chg_temp, order=(1,1))
+res_arma11 = mod_arma11.fit()
+print("The AIC for an ARMA(1,1) is: ", res_arma11.aic)
+
+The AIC for an AR(1) is:  510.534689831391
+The AIC for an AR(2) is:  501.9274123160228
+The AIC for an ARMA(1,1) is:  469.07291479787045
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,152 @@
+risk is measured by dispersion and volatility
+1. variance (standard deviation) as risk definition
+
+>>>>>Stationary
+
+assumes the distribution is the same over time that the  data is collected
+
+a unchanging distribution is stationary
+
+historical, parametric, and monte carlo estimation techniques assume stationary distribution for random draws
+
+non-stationary : perhaps distribution changes over time
+
+assume specific points in time for change
+a. break up data into sub periods
+b. the data is stationary only for certain sub-periods in the data
+
+a structural break is a change in trend of average and or volatility of data
+
+>>>>>>applying the chow test to determine if a structural break occurred
+
+chow test:
+1. test for existence of structural break given a linear model
+2. null hypothesis : no break
+3. three ols regressions are performed
+a. one for the regression for the entire period
+b. two regressions for before and after the break point
+c. collect sum of squared residuals
+
+import statsmodels.api as sm
+
+res=sm.OLS(log_pop,year).fit()
+
+print('sum of squared residuals 1950-2019', res.ssr)
+
+pop_before=log_pop.loc['1950':'1989']
+pop_after=log_pop.loc['1990':'2019']
+
+year_before=year.loc['1950':'1989']
+year_after=year.loc['1990':'2019']
+
+res_before = sm.OLS(pop_before,year_before).fit()
+res_after = sm.OLS(pop_after,year_after).fit()
+
+print("SSR 1950-1989:", res_before.ssr)
+print("SSR 1990-2019:", res_after.ssr)
+
+
+>>>>>>Chow test
+
+compute teh f-distribution chow test statistic
+
+k=2 degrees of freedom = 2 ols coefficients alpha and beta
+
+
+numerator = (ssr_total - (ssr_before + ssr_after))/2
+
+compute the denominator
+
+denominator = (ssr_before + ssr_after) /66
+
+66 = total number of data points (70) - 2*k or 4
+
+chow_test= numerator/denominator 
+
+print("Chow test statistic:",chow_test,"; Critical value, 99.9%",7.7)
+
+we reject the null hypothesis there was no structural break in the data
+
+>>>>> plot returns and volatility
+
+# Create a plot of quarterly minimum portfolio returns
+plt.plot(port_q_min, label="Quarterly minimum return")
+
+# Create a plot of quarterly mean volatility
+plt.plot(vol_q_mean, label="Quarterly mean volatility")
+
+# Create legend and plot
+plt.legend()
+plt.show()
+
+
+>>>>>>>>>>> richer factor model relationship between portfolio returns and mortgage delinquencies
+
+
+# Import the statsmodels API to be able to run regressions
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+# Add a constant to the regression
+mort_del = sm.add_constant(mort_del)
+
+# Regress quarterly minimum portfolio returns against mortgage delinquencies
+result = sm.OLS(port_q_min, mort_del).fit()
+
+
+# Retrieve the sum-of-squared residuals
+ssr_total = result.ssr
+print("Sum-of-squared residuals, 2005-2010: ", ssr_total)
+
+Sum-of-squared residuals, 2005-2010:  0.05039331102490134
+
+add_constant: add a column of ones to an array
+
+>>>>>> chow test
+
+The columns of both DataFrames are mort_del and returns for mortgage delinquency data and returns data, respectively.
+
+# Add intercept constants to each sub-period 'before' and 'after'
+before_with_intercept = sm.add_constant(before['mort_del'])
+after_with_intercept  = sm.add_constant(after['mort_del'])
+
+# Fit OLS regressions to each sub-period
+r_b = sm.OLS(before['returns'], before_with_intercept).fit()
+r_a = sm.OLS(after['returns'],  after_with_intercept).fit()
+
+# Get sum-of-squared residuals for both regressions
+ssr_before = r_b.ssr
+ssr_after = r_a.ssr
+# Compute and display the Chow test statistic
+numerator = ((ssr_total - (ssr_before + ssr_after)) / 2)
+denominator = ((ssr_before + ssr_after) / (24 - 4))
+print("Chow test statistic: ", numerator / denominator)
+
+Chow test statistic:  28.93147360547482
+
+ The critical F-value at 99% confidence is around 5.85
+
+test statistic was well above the critical F-value, indicating that a structural break in the data occurred in the summer of 2008. 
+
+print(len(after)+len(before)) = 24
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

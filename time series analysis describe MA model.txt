@@ -1,0 +1,75 @@
+MA(1) -> order of 1
+
+todays value = mean + noise + fractional theta of yesterdays noise
+
+R(t) equals u + et + theta (et-1)
+
+ma(1) are stationary for all data.
+
+if theta is negative then one-period mean reversion (expected to be negative)
+
+1. a shock 2 days would have no affect on todays return
+
+if theta is positive then one-period momentum (expected to be positive)
+
+ma order 1
+
+when theta is negative the autocorrelation is negative
+when theta is positive the autocorrelation is positive
+
+>>>>>>> simulate a ma process
+
+
+from statsmodels.tsa.arima_process import ArmaProcess
+
+ar=np.array([1])
+ma= np.array([1,0.5])
+AR_object = ArmaProcess(ar,ma)
+simulated_data=AR_object.generate_sample(nsample=1000)
+plt.plot(simulated_data)
+
+
+>>>>>>>>
+
+# import the module for simulating data
+from statsmodels.tsa.arima_process import ArmaProcess
+
+# Plot 1: MA parameter = -0.9
+plt.subplot(2,1,1)
+ar1 = np.array([1])
+ma1 = np.array([1, -0.9])
+MA_object1 = ArmaProcess(ar1, ma1)
+simulated_data_1 = MA_object1.generate_sample(nsample=1000)
+plt.plot(simulated_data_1)
+
+# Plot 2: MA parameter = +0.9
+plt.subplot(2,1,2)
+ar2 = np.array([1])
+ma2 = np.array([1, 0.9])
+MA_object2 = ArmaProcess(ar2, ma2)
+simulated_data_2 = MA_object2.generate_sample(nsample=1000)
+plt.plot(simulated_data_2)
+
+plt.show()
+
+# Import the plot_acf module from statsmodels
+from statsmodels.graphics.tsaplots import plot_acf
+
+# Plot 1: MA parameter = -0.9
+plot_acf(simulated_data_1, lags=20)
+plt.show()
+
+# Plot 2: MA parameter = 0.9
+plot_acf(simulated_data_2, lags=20)
+plt.show()
+
+# Plot 3: MA parameter = -0.3
+plot_acf(simulated_data_3, lags=20)
+plt.show()
+
+
+
+
+
+
+

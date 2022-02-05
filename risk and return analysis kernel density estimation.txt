@@ -1,0 +1,76 @@
+histogram revisited
+1. assumed (normal distribution)
+2. fitted (parameteric estimation, monte carlo simulation)
+3. ignored (historical simulation)
+
+How to represent histogram by probability distribution
+1. smooth data using filtering
+2. non-parameteric estimation
+
+kernel is a window of values nearby and averages the values
+
+kernel density estimate can be weighted over the observations
+
+the gaussian kernel
+1. contineous kernel
+2. weights all observations by distance from the center
+a. used in time series analysis
+b. signal processing
+
+>>>>>>> non parametric estimation
+
+from scipy.stats import gaussian_kde
+
+kde = guassian_kde(losses)
+loss_range = np.linspace(np.min(losses),np.max(losses),1000)
+
+plt.plot(loss_range,kde.pdf(loss_range))
+
+sample=kde.resample(size=1000)
+
+VaR_99(VaR_99 from kde:",VaR_99)
+
+
+>>>>>>>>>>>
+# Generate a fitted T distribution over losses
+params = t.fit(losses)
+
+# Generate a Gaussian kernal density estimate over losses
+kde = gaussian_kde(losses)
+
+# Add the PDFs of both estimates to a histogram, and display
+loss_range = np.linspace(np.min(losses), np.max(losses), 1000)
+axis.plot(loss_range, t.pdf(loss_range, *params), label = 'T distribution')
+axis.plot(loss_range, kde.pdf(loss_range), label = 'Gaussian KDE')
+plt.legend(); plt.show()
+
+>>>>>
+
+
+# Find the VaR as a quantile of random samples from the distributions
+VaR_99_T   = np.quantile(t.rvs(size=1000, *p), 0.99)
+VaR_99_KDE = np.quantile(kde.resample(size=1000), 0.99)
+
+# Find the expected tail losses, with lower bounds given by the VaR measures
+integral_T   = t.expect(lambda x: x, args = (p[0],), loc = p[1], scale = p[2], lb = VaR_99_T)
+integral_KDE = kde.expect(lambda x: x, lb = VaR_99_KDE)
+
+# Create the 99% CVaR estimates
+CVaR_99_T   = (1 / (1 - 0.99)) * integral_T
+CVaR_99_KDE = (1 / (1 - 0.99)) * integral_KDE
+
+# Display the results
+print("99% CVaR for T: ", CVaR_99_T, "; 99% CVaR for KDE: ", CVaR_99_KDE)
+
+
+99% CVaR for T:  0.4054304659737586 ; 99% CVaR for KDE:  0.24571446915325823
+
+
+
+
+
+
+
+
+
+

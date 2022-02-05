@@ -1,0 +1,134 @@
+fitting distribtions to data
+
+generally we do not know the exact for of a distribution of losses
+
+we may work with a class of distributions that best describes the distibution.
+
+each class has a loss x and parameters called theta
+
+finding the best parameters given data is called parameteric estimation
+
+the loss distribution can be described as f(x,theta)
+
+scipy.stats.norm.fit() optimizes the mean and standard deviation to fit the data
+
+visually see the differences between the data and estimate using a histogram
+
+can provide goodness of fit tests
+
+calculating the portfolio loss is calculating the VaR
+
+>>>>>>>> goodness of fit
+
+plot histogram of the portfolio losses
+
+normal distribution with norm.fit()
+
+student t-distribution with t.fit()
+a. when the distribution is tall
+b. the degrees of freedom is estimated to be low
+
+The anderson-darling test is used to see how close is the goodness of fit 
+a. The null hypothesis is the data is normally distributed
+b. test statistic rejects normal distribution if larger than critical_values
+
+from scipy.stats import anderson
+
+anderson(loss)
+1. the result: statistic, critical_values and signficance_level
+2. statistic is compared with items in the critical values
+
+>>>>>> skew
+
+skewness is the degree to which data is nonsymmetrically distributed
+
+skewed normal distribution: asynmetric contains normal as special case, useful for portfolio data where losses more frequent than gains
+
+from scipy.stats import skewnorm
+
+scipy.stats.skewtest
+
+the null hypothesis: there is no skewness
+
+
+from scipy.stats import skewtest
+
+skewtest(loss)
+
+results->statistic and pvalue
+
+>>>>>>>>>>>>>>> parametric estimation
+
+Parameter estimation is the strongest method of VaR estimation because it assumes that the loss distribution class is known. 
+Parameters are estimated to fit data to this distribution, and statistical inference is then made.
+
+# Import the Normal distribution and skewness test from scipy.stats
+from scipy.stats import norm, anderson
+
+# Fit portfolio losses to the Normal distribution
+params = norm.fit(losses)
+
+# Compute the 95% VaR from the fitted distribution, using parameter estimates
+VaR_95 = norm.ppf(0.95, *params)
+print("VaR_95, Normal distribution: ", VaR_95)
+
+# Test the data for Normality
+print("Anderson-Darling test result: ", anderson(losses))
+
+
+VaR_95, Normal distribution:  0.07376954007991526
+Anderson-Darling test result:  AndersonResult(statistic=30.302775165424237, critical_values=array([0.573, 0.653, 0.783, 0.913, 1.086]), significance_level=array([15. , 10. ,  5. ,  2.5,  1. ]))
+
+The Anderson-Darling test value of 30.30 exceeds the 99% critical value of 1.086 by a large margin, indicating that the Normal distribution may be a poor choice to represent portfolio losses.
+
+
+>>>>>>> test for skewness in the distribution
+
+# Import the skew-normal distribution and skewness test from scipy.stats
+from scipy.stats import skewnorm, skewtest
+
+# Test the data for skewness
+print("Skewtest result: ", skewtest(losses))
+
+# Fit the portfolio loss data to the skew-normal distribution
+params = skewnorm.fit(losses)
+
+# Compute the 95% VaR from the fitted distribution, using parameter estimates
+VaR_95 = skewnorm.ppf(0.95, *params)
+print("VaR_95 from skew-normal: ", VaR_95)
+
+Skewtest result:  SkewtestResult(statistic=-12.561846503056646, pvalue=3.4225103594408506e-36)
+VaR_95 from skew-normal:  0.06759217691716421
+
+Darling and skewtest results show the Normal distribution estimates cannot be relied upon. Skewness matters for loss distributions, and parameter estimation is one way to
+ quantify this important feature of the financial crisis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,194 @@
+auto regressive model
+a. one lagged value on the right side
+b. ar(1) model  (ar model of order 1)
+
+Rt = u + phe * R(t-1) + tau
+
+if phe is 1 ->random walk
+if phe is 0 ->white noise
+
+for stations -1 < phe < 1
+
+negative phe : mean reversion (expected to be negative)
+negative phe : momentum (expected to be positive)
+
+auto correlation
+
+phe = 0.9  decays exponentially
+phe = -0.9 sign alternates between the periods
+
+
+>>>>>>> simulating AR Processes
+
+from statsmodels.tsa.arima_process import ArmaProcess
+
+ar=np.array([1,-0.9])  #if phe is 0.9 than the sign is opposite as -0.9
+ma=np.array([1])
+AR_object = ArmaProcess(ar,ma)
+simulated_data=AR_object.generate_sample(nsample=1000)
+plt.plot(simulated_data)
+
+
+>>>>>> build the simulated data
+
+# Plot 1: AR parameter = +0.9
+plt.subplot(2,1,1)
+ar1 = np.array([1, 0.9])
+ma1 = np.array([1])
+AR_object1 = ArmaProcess(ar1, ma1)
+simulated_data_1 = AR_object1.generate_sample(nsample=1000)
+plt.plot(simulated_data_1)
+
+# Plot 2: AR parameter = -0.9
+plt.subplot(2,1,2)
+ar2 = np.array([1, -0.9])
+ma2 = np.array([1])
+AR_object2 = ArmaProcess(ar2, ma2)
+simulated_data_2 = AR_object2.generate_sample(nsample=1000)
+plt.plot(simulated_data_2)
+plt.show()
+
+
+# Plot 2: AR parameter = -0.3
+plt.subplot(2,1,2)
+ar3 = np.array([1, -0.3])
+ma3 = np.array([1])
+AR_object3 = ArmaProcess(ar3, ma3)
+simulated_data_3 = AR_object3.generate_sample(nsample=1000)
+plt.plot(simulated_data_3)
+plt.show()
+
+
+The autocorrelation function decays exponentially for an AR time series at a rate of the AR parameter. For example, if the AR parameter, , the first-lag autocorrelation will be 0.9, the second-lag will be 
+, the third-lag will be 
+, etc.
+
+# Import the plot_acf module from statsmodels
+from statsmodels.graphics.tsaplots import plot_acf
+
+# Plot 1: AR parameter = +0.9
+plot_acf(simulated_data_1, alpha=1, lags=20)
+plt.show()
+
+# Plot 2: AR parameter = -0.9
+plot_acf(simulated_data_2, alpha=1, lags=20)
+plt.show()
+
+# Plot 3: AR parameter = +0.3
+plot_acf(simulated_data_3, alpha=1, lags=20)
+plt.show()
+
+
+>>>>>>>>>>>>estimating and forecasting the AR model
+
+from statsmodels.tsa.arima_model import ARMA
+
+mod = ARMA(simulated_data, order(1,0))
+result = mod.fit()
+
+print(result.summary())
+
+constant -0.0361 ( mu)
+ar.l1.y 0.9054 (phe)
+
+or
+
+print(result.params)
+
+>>>>>>>>> forecasting an ar model
+
+mod = ARMA(simulated_data, order=(1,0))
+
+res=mod.fit()
+
+res.plot_predict(start='2016-07-01', end='2017-06-01')
+plt.show()
+
+
+the confidence interval get wider the further out you go.
+
+>>>>>
+
+# Import the ARMA module from statsmodels
+from statsmodels.tsa.arima_model import ARMA
+
+# Fit an AR(1) model to the first simulated data
+mod = ARMA(simulated_data_1, order=(1,0))
+res = mod.fit()
+
+# Print out summary information on the fit
+print(res.summary())
+
+# Print out the estimate for the constant and for phi
+print("When the true phi=0.9, the estimate of phi (and the constant) are:")
+print(res.params)
+
+When the true phi=0.9, the estimate of phi (and the constant) are:
+[-0.39859166  0.90110551]
+
+>>>>> forecasting
+
+# Import the ARMA module from statsmodels
+from statsmodels.tsa.arima_model import ARMA
+
+# Forecast the first AR(1) model
+mod = ARMA(simulated_data_1, order=(1,0))
+res = mod.fit()
+res.plot_predict(start=990, end=1010)
+plt.show()
+
+
+>>>>> forecasting bond rates
+
+# Import the ARMA module from statsmodels
+from statsmodels.tsa.arima_model import ARMA
+
+# Forecast interest rates using an AR(1) model
+mod = ARMA(interest_rate_data, order=(1,0))
+res = mod.fit()
+
+# Plot the original series and the forecasted series
+res.plot_predict(start=0, end='2022')
+plt.legend(fontsize=8)
+plt.show()
+
+
+>>>>> autocorrelation
+
+# Import the plot_acf module from statsmodels
+from statsmodels.graphics.tsaplots import plot_acf
+
+# Plot the interest rate series and the simulated random walk series side-by-side
+fig, axes = plt.subplots(2,1)
+
+# Plot the autocorrelation of the interest rate series in the top plot
+fig = plot_acf(interest_rate_data, alpha=1, lags=12, ax=axes[0])
+
+# Plot the autocorrelation of the simulated random walk series in the bottom plot
+fig = plot_acf(simulated_data, alpha=1, lags=12, ax=axes[1])
+
+# Label axes
+axes[0].set_title("Interest Rate Data")
+axes[1].set_title("Simulated Random Walk Data")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

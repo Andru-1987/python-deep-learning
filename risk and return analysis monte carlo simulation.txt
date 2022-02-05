@@ -1,0 +1,117 @@
+var_level = 95
+
+var_95 = np.percentil(StockReturns, 100-var_level)
+
+
+cvar_95=StockReturns[StockReturns <= var_95].mean()
+
+
+parametric Var
+
+mu= np.mean(StockReturns)
+std=np.std(StockReturns)
+confidence_level=0.05
+var = norm.ppf(confidence_level,mu,std)
+
+
+
+weigths=[0.25,0.25,0.25,0.25]
+portfolio_returns=assets_returns.dot(weights)
+losses = - portfolio_returns
+
+VaR_95 = np.quantile(losses,0.95)
+
+assumes future distribution of losses is exactly the same as past
+
+monte carlo simulation: powerful combination of parameteric estimation and simulation
+1. uses the simulation to create a series of random draws
+2. these random draws create a path over time
+3. repeat random draws -> creates set of simulation runs
+4. find VaR estimate as quantile of simulated losses
+
+
+cs = CovarianceShrinkage(prices_detail_df)
+e_cov = cs.ledoit_wolf()
+ef=pypfopt.efficient_frontier.EfficientFrontier(None, e_cov)
+min_vol_weights=ef.min_volatility()
+#print(min_vol_weights)
+
+weights=[]
+
+for stock,weight in min_vol_weights.items():
+    weights.append(weight)
+
+portfolio_returns=returns_df.dot(weights)
+losses = - portfolio_returns
+VaR_95 = np.quantile(losses,0.95)
+
+plt.hist(losses,bins=100)
+plt.axvline(x = VaR_95, c='r', label = "VaR at 95% Confidence Level")
+plt.show()
+
+
+>>>>>> Monte carlo simulation
+
+#there are 1440 minutes in a day
+
+from scipy.stats import norm
+total_steps=1440
+N=10000
+mu=portfolio_losses.mean()
+sigma=portfolio_losses.std()
+
+
+daily_loss=np.zeros(N)
+
+for n in range(N):
+	loss=(mu * (1/total_steps)+
+	norm.rvs(size=total_steps)*sigma*np.sqrt(1/total_steps))
+	daily_loss[n]=sum(loss)
+
+VaR_95 = np.quantile(daily_loss,0.95)
+
+>>>>>>>>> var for 2005-2006 and 2007-2009
+
+# Create portfolio returns for the two sub-periods using the list of asset returns
+print(asset_returns)
+portfolio_returns = np.array([ x.dot(weights) for x in asset_returns])
+
+# Derive portfolio losses from portfolio returns
+losses = - portfolio_returns
+
+# Find the historical simulated VaR estimates
+VaR_95 = [np.quantile(x, 0.95) for x in losses]
+
+# Display the VaR estimates
+print("VaR_95, 2005-2006: ", VaR_95[0], '; VaR_95, 2007-2009: ', VaR_95[1])
+
+
+VaR_95, 2005-2006:  0.014687184472834514 ; VaR_95, 2007-2009:  0.05790574066814192
+
+As you can see, the VaR estimates are very different for the two time periods. This indicates that over the entire 2005 - 2009 period the loss distribution was likely not stationary. 
+
+>>>>> four assets
+
+# Initialize daily cumulative loss for the assets, across N runs
+daily_loss = np.zeros((4,N))
+
+# Create the Monte Carlo simulations for N runs
+for n in range(N):
+    # Compute simulated path of length total_steps for correlated returns
+    correlated_randomness = e_cov @ norm.rvs(size = (4,total_steps))
+
+    steps = 1/total_steps
+    minute_losses = mu * steps + correlated_randomness * np.sqrt(steps)
+    daily_loss[:, n] = minute_losses.sum(axis=1)
+
+# Generate the 95% VaR estimate
+losses = weights @ daily_loss
+print("Monte Carlo VaR_95 estimate: ", np.quantile(losses, 0.95))
+
+Monte Carlo VaR_95 estimate:  0.0032448493079297045
+
+Monte Carlo simulation can be used to create an entire range of possible outcomes
+
+
+
+

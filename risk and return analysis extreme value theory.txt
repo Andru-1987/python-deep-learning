@@ -1,0 +1,18 @@
+portfolio losses results from extreme values
+
+extreme value losses occur in the tail because they occur rarely
+
+losses exceeding some value we want to manage
+
+extreme value theory uses statistics to manage the distribution of extreme values
+
+block maxima: 
+1. break the period into sub-periods
+2. form block from each sub-period
+3. look at the maximum loss in each block
+
+
+
+
+
+

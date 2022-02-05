@@ -1,0 +1,54 @@
+strong stationary : entire distribution of data is time-invariant.  (The distribution does not depend on time)
+
+weak stationary: mean, variance, and autocorrelation are time-invariant (the mean, variance, and autocorrelation do not depend on time)
+
+Autocorrelation is a mathematical representation of the degree of similarity between a given time series and a lagged version of itself over successive time intervals
+
+if the data is non-stationary it becomes difficult to model
+
+if parameters vary with time, too many parameters to estimate
+
+can only estimate a parsimonious model with a few parameters
+
+random walk is an example of nonstationary series.
+
+
+many stationary series can be made non-stationary
+
+plot.plot(SPY)  #SP500 is a non stationary random walk
+
+plot.plot(SPY.diff()))  with the first difference
+
+
+plot.plot(HRB) #not stationary
+plot.plot(HRB.diff(4))  #seasonal difference
+
+
+>>>>amazon revenue to stationary
+
+plt.plot(np.log(AMZN).diff(4))
+
+
+>>>>>>>> HR block  seasonal made stationary
+
+# Import the plot_acf module from statsmodels
+from statsmodels.graphics.tsaplots import plot_acf
+
+# Seasonally adjust quarterly earnings
+HRBsa = HRB.diff(4)
+
+# Print the first 10 rows of the seasonally adjusted series
+print(HRBsa.head(10))
+
+# Drop the NaN data in the first four rows
+HRBsa = HRBsa.dropna()
+
+# Plot the autocorrelation function of the seasonally adjusted series
+plot_acf(HRBsa)
+plt.show()
+
+
+
+
+
+

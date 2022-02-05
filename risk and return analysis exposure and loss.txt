@@ -1,0 +1,159 @@
+a vacation analogy
+1. hotel gives you two payment options
+a. one where you pay at a lower rate with no chance of refund
+b. one where you pay a higher rates with a cancelation of 20% of the room rate
+
+How to decide between options
+1. what determines your decision?
+a. chance of negative shock: illness, travel disruption, weather
+2. Loss associated with shock: amount or conditional amount
+3. Desire to avoid shock: personal feeling
+a. risk tolerance
+
+Risk exposure: probability of loss x loss measure
+1. Loss Measure VaR
+
+suppose the chance of canceling your vacation due to illiness is 10%  P(illiness)=0.10
+
+the non-refundable hotel cost is 500 euro
+
+Var at 90% 
+
+100- P(illness)=90% is 500 euro
+
+total non-refundable hotel cost is 500 
+
+euro
+refundable hotel cost is 550 euro
+
+VaR at 90% confidence level: 20% cancellation fee x 550=110 euro
+
+>>>>>>>The risk exposure in the non refundable case
+
+P(illness) * VaR90= 0.10 x 500 euro=50 euro
+
+
+>>>>>> The risk exposure in the partial refundable case
+
+P(illness) * VaR90=0.10 x110 euro = 11 Euro
+
+the difference if 50 euro - 11 euro = 39 euro
+
+total price difference between the two offers 550 euro - 500 euro = 50 euro
+
+50 euro is more than 39 euro
+
+risk-neutral : only expected values matter
+
+risk-averse : uncertainty itself carries a cost
+
+enterprise/institutional risk management: preferences as risk appetite
+
+individual investors: preferences as risk tolerance
+
+>>>>>
+
+risk exposure depends upon loss distribution (probability of loss)
+
+more generally: continuous loss distribution
+a. normal distribution good for large samples
+
+
+students t-distribution
+a. has fatter tails than normal distribution for small samples
+b. similar to portfolio returns/losses
+c. as the sample size grows, t converges to the normal distribution
+
+
+from scipy.stats import t
+
+params = t.fit(portfolio_losses)
+
+VaR_95 = t.ppf(0.95, *params)
+
+
+>>>> degrees of freedom
+1. degrees of freedom are the number of independent observations
+
+2. the degrees of freedom affect the shape of the distribution
+
+x=np.linspace(-3,3,100)
+
+plt.plot(x, t.pdf(x,df=2))
+plt.plot(x, t.pdf(x,df=5))
+plt.plot(x, t.pdf(x,df=30))
+
+
+>>>>> t-distribution
+
+# Import the Student's t-distribution
+from scipy.stats import t
+
+# Create rolling window parameter list
+mu = losses.rolling(30).mean()
+sigma = losses.rolling(30).std()
+rolling_parameters = [(29, mu[i], s) for i,s in enumerate(sigma)]
+
+# Compute the 99% VaR array using the rolling window parameters
+VaR_99 = np.array( [ t.ppf(0.99, *params) 
+                    for params in rolling_parameters ] )
+
+# Plot the minimum risk exposure over the 2005-2010 time period
+plt.plot(losses.index, 0.01 * VaR_99 * 100000)
+plt.show()
+
+
+Because the confidence level was fixed at 99%, we kept the probability of loss at 1%
+
+
+>>>>>> Conditional CVaR
+
+# Fit the Student's t distribution to crisis losses
+p = t.fit(crisis_losses)
+
+# Compute the VaR_99 for the fitted distribution
+VaR_99 = t.ppf(0.99, *p)
+
+# Use the fitted parameters and VaR_99 to compute CVaR_99
+tail_loss = t.expect(lambda y: y, args = (p[0],), loc = p[1], scale = p[2], lb = VaR_99 )
+CVaR_99 = (1 / (1 - 0.99)) * tail_loss
+print(CVaR_99)
+
+CVaR is the expected value of loss given a minimum loss threshold.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

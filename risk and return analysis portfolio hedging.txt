@@ -1,0 +1,104 @@
+VaR/CVaR give insight into potential portfolio loss for given confidence level
+
+portfolio optimization : best portfolio weights, but volatility is still present
+
+institutional investors: stability of portfolio against volatile changes
+a. pension funds hold $20 trillion
+
+hedging is finding one stock that does well under a condition like weather and another that does poorly 
+the stock doing well offsets the risk of the poor performing stock.  this is hedging.
+
+hedging: offset volatility with another asset
+a. additional return stream moving opposite to portfolio
+b. european call option: call option: right(not obligation) to purchase stock at fixed price X on date M
+c. european put option: put option: right(not obligation) to sell stock at fixed price X on date M
+
+stock=underlying of the option
+a. current market price S = spot price
+
+X= strike price  (this is the fixed price of the the option)
+M= maturity
+
+
+the value of an option changes as the asset price changes
+
+how to price an option.  the black-scholes option pricing formula
+a. spot price S
+b. strike price X
+c. time to maturity
+d. risk free interest rate
+e. volatility of underlying returns (standard deviation)
+
+black_scholes() function
+
+S=70 (strike price)
+X=80 (fixed price)
+T=0.5 (maturity in fractions of a year),
+r=0.02 (the interest rate)
+sigma =0.2 (volatility)
+
+option_value = black_scholes(S,X,T,r,sigma,option_type="put")
+
+put option value goes up as the price of a stock goes down because the investor can sell at strike price which is higher than spot price.
+
+the change between the strike price and the spot price is call the delta
+
+bs_delta() computes the option delta
+
+
+>>>>>>> option value
+
+
+# Compute the volatility as the annualized standard deviation of IBM returns
+sigma = np.sqrt(252) * IBM_returns.std()
+
+# Compute the Black-Scholes option price for this volatility
+value_s = black_scholes(S = 90, X = 80, T = 0.5, r = 0.02, 
+                        sigma = sigma, option_type = "call")
+
+# Compute the Black-Scholes option price for twice the volatility
+value_2s = black_scholes(S = 90, X = 80, T = 0.5, r = 0.02, 
+                sigma = 2*sigma, option_type = "call")
+
+# Display and compare both values
+print("Option value for sigma: ", value_s, "\n",
+      "Option value for 2 * sigma: ", value_2s)
+
+As shown, the value of the call option increases with an increase in volatility!
+
+
+>>>>> put value moving opposite to price value
+
+# Select the first 100 observations of IBM data
+IBM_spot = IBM[:100]
+
+# Initialize the European put option values array
+option_values = np.zeros(IBM_spot.size)
+
+# Iterate through IBM's spot price and compute the option values
+for i,S in enumerate(IBM_spot.values):
+    option_values[i] = black_scholes(S = S, X = 140, T = 0.5, r = 0.02, 
+                        sigma = sigma, option_type = "put")
+
+# Display the option values array
+option_axis.plot(option_values, color = "red", label = "Put Option")
+option_axis.legend(loc = "upper left")
+plt.show()
+
+<<<<<<<<< compute the european put price
+
+# Compute the annualized standard deviation of `IBM` returns
+sigma = np.sqrt(252) * IBM_returns.std()
+
+# Compute the Black-Scholes value at IBM spot price 70
+value = black_scholes(S = 70, X = 80, T = 0.5, r = 0.02, 
+                      sigma = sigma, option_type = "put")
+# Find the delta of the option at IBM spot price 70
+delta = bs_delta(S = 70, X = 80, T = 0.5, r = 0.02, 
+                 sigma = sigma, option_type = "put")
+
+# Find the option value change when the price of IBM falls to 69.5
+value_change = black_scholes(S = 69.5, X = 80, T = 0.5, r = 0.02, 
+                             sigma = sigma, option_type = "put") - value
+
+print( (69.5 - 70) + (1/delta) * value_change )

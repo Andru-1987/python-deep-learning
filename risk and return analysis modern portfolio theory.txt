@@ -1,0 +1,151 @@
+the greater our appetite for risk the greater the compensation for return
+1. we expect to get more by assuming more risk
+2. we cannot guarantee a return
+a. the average is the expected return over time
+
+a set of investor minimum investment points define the risk appetite
+
+by varying the portfolio weights the manager adjusts risks
+
+changing weights changes the investors exposure
+
+>>>the efficient frontier
+
+compute many efficient portfolios for different levels of risk
+
+efficient portfolio is a portfolio with weights generating the highest expected return for a given level of risk (Modern Portfolio Theory)
+
+We can compute efficient portfolios accross a range of different levels of risk.
+
+PyPortfolioOpt  library optimized tools for MPT
+1. EfficientFrontier class generates one optimal portfolio at a time
+
+Constrained Line Algorithm (CLA) class: generates the entire efficient frontier
+1. requires covariance matrix of returns
+2. requires proxy for expected future returns: mean historical returns
+
+expected_returns = mean_historical_return(prices)
+efficient_cov=ConvarianceShrinkage(prices).ledoit_wolf()
+cla = CLA(expected_returns, efficient_cov)
+minimum_variance = cla.min_volatility()
+(ret, vol, weights) = cla.efficient_frontier()
+
+- shrinkage removes error caused from sampling
+- CLA Constrained Line algorithm
+- efficient frontier returns: weights and risk and return values
+
+scatter plot of (vol,ret) pairs
+
+minimum variance portfolio: smallest volatility of all possible efficient portfolios
+
+increasing risk appetite move along the frontier
+
+>>>>>>>> building the efficiency frontier
+
+# Load the investment portfolio price data into the price variable.
+prices = pd.read_csv("portfolio.csv")
+
+# Convert the 'Date' column to a datetime index
+prices['Date'] = pd.to_datetime(prices['Date'], format='%d/%m/%Y')
+prices.set_index(['Date'], inplace = True)
+
+
+>>>>>
+
+The average historical return is usually available as a proxy for expected returns, but is not always accurate--a more thorough estimate of expected returns requires an assumption about the return distribution, which we'll discuss in the context of Loss Distributions later in the course.
+
+
+# Import the mean_historical_return method
+from pypfopt.expected_returns import mean_historical_return
+
+# Compute the annualized average historical return
+mean_returns = mean_historical_return(prices, frequency = 252)
+
+# Plot the annualized average historical return
+plt.plot(mean_returns, linestyle = 'None', marker = 'o')
+plt.show()
+
+>>>>>
+
+
+# Import the CovarianceShrinkage object
+from pypfopt.risk_models import CovarianceShrinkage
+
+# Create the CovarianceShrinkage instance variable
+cs = CovarianceShrinkage(prices)
+sample_cov = prices.pct_change().cov() * 252
+e_cov = cs.ledoit_wolf()
+
+print("Sample Covariance Matrix\n", sample_cov, "\n")
+print("Efficient Covariance Matrix\n", e_cov, "\n")
+
+ Although the differences between the sample covariance and the efficient covariance (found by shrinking errors) may seem small, they have a huge impact on estimation of the optimal portfolio weights and the generation of the efficient frontier.
+
+>>>>>
+
+
+# Create a dictionary of time periods (or 'epochs')
+epochs = { 'before' : {'start': '1-1-2005', 'end': '31-12-2006'},
+           'during' : {'start': '1-1-2007', 'end': '31-12-2008'},
+           'after'  : {'start': '1-1-2009', 'end': '31-12-2010'}
+         }
+
+# Compute the efficient covariance for each epoch
+e_cov = {}
+print(epochs)
+for x in epochs.keys():
+  sub_price = prices.loc[epochs[x]['start']:epochs[x]['end']]
+  e_cov[x] = CovarianceShrinkage(sub_price).ledoit_wolf()
+
+# Display the efficient covariance matrices for all epochs
+print("Efficient Covariance Matrices\n", e_cov)
+
+>>>>>>
+
+
+# Initialize the Crtical Line Algorithm object
+efficient_portfolio_during = CLA(returns_during, ecov_during)
+
+# Find the minimum volatility portfolio weights and display them
+print(efficient_portfolio_during.min_volatility())
+
+# Compute the efficient frontier
+(ret, vol, weights) = efficient_portfolio_during.efficient_frontier()
+
+# Add the frontier to the plot showing the 'before' and 'after' frontiers
+plt.scatter(vol, ret, s = 4, c = 'g', marker = '.', label = 'During')
+plt.legend()
+plt.show()
+
+
+
+For example, if an investment has a 50% chance of gaining 20% and a 50% chance of losing 10%, the expected return would be 5% = (50% x 20% + 50% x -10% = 5%).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
