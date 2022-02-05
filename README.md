@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Bidirectional lstm classifier for equinex - risk management
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Equinix%20data%20center.ipynb
+
 * Extraspace vs rio
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/RIO%20vs%20BHP%20Uranium.ipynb
