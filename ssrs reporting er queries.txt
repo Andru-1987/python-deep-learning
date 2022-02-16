@@ -1,0 +1,191 @@
+-- Select the age of the oldest athlete for each region
+SELECT 
+	countries.region, 
+    max(athletes.age) AS age_of_oldest_athlete
+FROM athletes
+-- First JOIN statement
+JOIN summer_games
+on athletes.id=summer_games.athlete_id
+-- Second JOIN statement
+JOIN countries
+on summer_games.country_id=countries.id
+GROUP BY countries.region;
+
+
+>>>>>>>
+
+
+sELECT 
+	sport, 
+    COUNT(DISTINCT event) AS events
+FROM summer_games
+GROUP BY sport
+UNION
+-- Select sport and events for winter sports
+SELECT 
+	sport, 
+    COUNT(DISTINCT event) AS events
+FROM winter_games
+GROUP BY sport
+-- Show the most events at the top of the report
+ORDER BY events DESC;
+
+use subqueries to validate your totals on the report.
+
+>>>>>>>
+
+
+-- Add the rows column to your query
+SELECT 
+	bronze, 
+	count(*) AS rows
+FROM summer_games
+GROUP BY bronze;
+
+4796 rows were null
+141 rows were 1
+
+>>>>
+
+-- Pull total_bronze_medals from summer_games below
+SELECT count(bronze) AS total_bronze_medals
+FROM summer_games;
+
+
+>>>>>>
+
+/* Pull total_bronze_medals from summer_games below
+SELECT SUM(bronze) AS total_bronze_medals
+FROM summer_games; 
+>> OUTPUT = 141 total_bronze_medals */
+
+-- Setup a query that shows bronze_medal by country
+SELECT 
+	country, 
+    sum(bronze) AS bronze_medals
+FROM summer_games AS s
+JOIN countries AS c
+ON s.country_id=c.id
+GROUP BY country;
+
+
+>>>>>>
+
+
+/* Pull total_bronze_medals below
+SELECT SUM(bronze) AS total_bronze_medals
+FROM summer_games; 
+>> OUTPUT = 141 total_bronze_medals */
+
+-- Select the total bronze_medals from your query
+SELECT sum(bronze_medals) total
+FROM 
+(
+-- Previous query is shown below.  Alias this AS subquery
+  SELECT 
+      country, 
+      SUM(bronze) AS bronze_medals
+  FROM summer_games AS s
+  JOIN countries AS c
+  ON s.country_id = c.id
+  GROUP BY country
+)x
+;
+
+>>>>>>>>
+
+-- Pull athlete_name and gold_medals for summer games
+SELECT 
+	a.name AS athlete_name, 
+    sum(Gold) AS gold_medals
+FROM summer_games AS s
+JOIN athletes AS a
+ON s.athlete_id=a.id
+GROUP BY a.name
+-- Filter for only athletes with 3 gold medals or more
+having Sum(Gold)>3
+-- Sort to show the most gold medals at the top
+ORDER BY a.name;
+
+
+>>>>>>
+
+select
+athlete_id,
+gender,
+age,
+gold
+from
+(
+select
+athlete_id,
+gold
+from summer_games as sg
+union all
+select athlete_id, gold
+from winter_games as wg) as g
+join athletes as a
+on g.athlete_id=a.id
+
+
+>>>>>>>>
+
+
+-- Query season, country, and events for all summer events
+SELECT 
+	'Summer' AS season, 
+    country, 
+    count(distinct event) AS events
+FROM summer_games AS s
+JOIN countries AS c
+ON s.country_id=c.id
+GROUP BY country
+-- Combine the queries
+union all
+-- Query season, country, and events for all winter events
+SELECT 
+	'Winter' AS season, 
+    country, 
+    count(distinct event) AS events
+FROM winter_games AS w
+JOIN countries AS c
+ON w.country_id=c.id
+GROUP BY country
+-- Sort the results to show most events at the top
+ORDER BY events desc;
+
+
+>>>>>>>>>>
+
+
+-- Add outer layer to pull season, country and unique events
+SELECT 
+	season, 
+    country, 
+    count(distinct event) AS events
+FROM
+    -- Pull season, country_id, and event for both seasons
+    (SELECT 
+     	'summer' AS season, 
+     	country_id, 
+     	event
+    FROM summer_games
+   union all
+    SELECT 
+     	'winter' AS season, 
+     	country_id, 
+     	event
+    FROM winter_games) AS subquery
+JOIN countries AS c
+ON c.id=subquery.country_id
+-- Group by any unaggregated fields
+GROUP BY Country,season
+-- Order to show most events at the top
+ORDER BY events desc;
+
+
+
+
+
+
+

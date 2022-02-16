@@ -1,0 +1,83 @@
+null means no value exists
+
+
+sql is unable to add an integer with a null
+
+where field is not null
+
+coalesce(field,null_replacement)
+
+coalesce(region,'Independent Athletes') as region
+
+nulls as a result of a query
+1. left join does not match all rows
+2. no case statement conditional is satisfied
+
+select sum(case when country is null then 1 else 0 end)/sum(1)
+from orders
+
+measuring the impact of nulls
+
+>>>>>>
+
+-- Show total gold_medals by country
+SELECT 
+	country,
+    sum(gold) AS gold_medals
+FROM winter_games AS w
+JOIN countries AS c
+ON w.country_id=c.id
+WHERE gold is not null
+GROUP BY country
+-- Order by gold_medals in descending order
+ORDER BY gold_medals desc;
+
+>>>>>
+
+-- Show total gold_medals by country
+SELECT 
+	country, 
+    SUM(gold) AS gold_medals
+FROM winter_games AS w
+JOIN countries AS c
+ON w.country_id = c.id
+-- Comment out the WHERE statement
+--WHERE gold IS NOT NULL
+GROUP BY country
+-- Replace WHERE statement with equivalent HAVING statement
+HAVING sum(gold)>0
+-- Order by gold_medals in descending order
+ORDER BY gold_medals DESC;
+
+
+>>>>>
+
+-- Pull events and golds by athlete_id for summer events
+SELECT 
+    athlete_id,
+    count(*) AS total_events, 
+    sum(gold) AS gold_medals
+FROM summer_games
+GROUP BY athlete_id
+-- Order by total_events descending and athlete_id ascending
+ORDER BY total_events desc,athlete_id desc;
+
+>>>>>>
+
+-- Pull events and golds by athlete_id for summer events
+SELECT 
+    athlete_id, 
+    -- Replace all null gold values with 0
+    AVG(coalesce(gold,0)) AS avg_golds,
+    COUNT(event) AS total_events, 
+    SUM(coalesce(gold,0)) AS gold_medals
+FROM summer_games
+GROUP BY athlete_id
+-- Order by total_events descending and athlete_id ascending
+ORDER BY total_events DESC, athlete_id;
+
+
+
+
+
+

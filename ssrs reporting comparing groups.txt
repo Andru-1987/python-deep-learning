@@ -1,0 +1,199 @@
+volume metrics
+1. scale with size
+
+efficiency metrics
+
+
+
+>>>>> percent of total calculation
+
+select
+team_id,
+sum(points) as points
+sum(points) over() as total_points
+sum(points) / sum(points) over() as perc_of_total
+from basketball_points
+group by team_id
+
+
+select
+player_id,
+team_id,
+sum(points) as points
+sum(points) over() as total_points
+sum(points) / sum(points) over(partition by team_id) as perc_of_total
+from basketball_points
+group by player_id, team_id
+
+
+>>>>>>>>> efficiency metrics
+
+1. profit margin
+2. revenue per customer
+
+performance index
+1. compares performance to a benchmark
+2. benchmark typically an average or median
+
+
+>>>>>>>
+
+select
+team_id,
+points/game as team_ppg
+from basketball_summary
+
+select
+team_id
+points/game as team_ppg,
+sum(points) over() /sum(games) over() as league_ppg,
+
+(points/games)
+/
+(sum(points) over() / sum(games) over()) as perf_index
+
+from basketball_summary
+
+>>>>>>>>
+
+
+-- Pull country_gdp by region and country
+SELECT 
+	region,
+    country,
+	max(gdp) AS country_gdp
+FROM country_stats AS cs
+JOIN countries AS c
+ON cs.country_id=c.id
+-- Filter out null gdp values
+WHERE gdp is not null
+GROUP BY region, country
+-- Show the highest country_gdp at the top
+ORDER BY country_gdp desc;
+
+
+//row's volume metric by the total volume
+
+>>>>>>>> Global partitioning totals
+
+-- Pull country_gdp by region and country
+SELECT 
+	region,
+    country,
+	SUM(gdp) AS country_gdp,
+    -- Calculate the global gdp
+    SUM(Sum(gdp)) over() AS global_gdp
+FROM country_stats AS cs
+JOIN countries AS c
+ON cs.country_id = c.id
+-- Filter out null gdp values
+WHERE gdp IS NOT NULL
+GROUP BY region, country
+-- Show the highest country_gdp at the top
+ORDER BY country_gdp DESC;
+
+>>>>> Percent of global
+
+-- Pull country_gdp by region and country
+SELECT 
+	region,
+    country,
+	SUM(gdp) AS country_gdp,
+    -- Calculate the global gdp
+    SUM(SUM(gdp)) OVER () AS global_gdp,
+    -- Calculate percent of global gdp
+    SUM(gdp)/SUM(SUM(gdp)) OVER () AS perc_global_gdp
+FROM country_stats AS cs
+JOIN countries AS c
+ON cs.country_id = c.id
+-- Filter out null gdp values
+WHERE gdp IS NOT NULL
+GROUP BY region, country
+-- Show the highest country_gdp at the top
+ORDER BY country_gdp DESC;
+
+>>>>>>>>
+
+
+-- Pull country_gdp by region and country
+SELECT 
+	region,
+    country,
+	SUM(gdp) AS country_gdp,
+    -- Calculate the global gdp
+    SUM(SUM(gdp)) OVER () AS global_gdp,
+    -- Calculate percent of global gdp
+    SUM(gdp) / SUM(SUM(gdp)) OVER () AS perc_global_gdp,
+    -- Calculate percent of gdp relative to its region
+    SUM(gdp) / SUM(SUM(gdp)) OVER (Partition by region) AS perc_region_gdp
+FROM country_stats AS cs
+JOIN countries AS c
+ON cs.country_id = c.id
+-- Filter out null gdp values
+WHERE gdp IS NOT NULL
+GROUP BY region, country
+-- Show the highest country_gdp at the top
+ORDER BY country_gdp DESC;
+
+
+>>>>>>> performance index
+
+-- Bring in region, country, and gdp_per_million
+SELECT 
+    region,
+    country,
+    sum(gdp)/sum(pop_in_millions) AS gdp_per_million
+-- Pull from country_stats_clean
+FROM country_stats_clean AS cs
+JOIN countries AS c
+ON cs.country_id=c.id
+-- Filter for 2016 and remove null gdp values
+WHERE cast(year as date)='2016-01-01'
+and gdp is not null
+GROUP BY region,country
+-- Show highest gdp_per_million at the top
+ORDER BY gdp_per_million desc;
+
+
+-- Bring in region, country, and gdp_per_million
+SELECT 
+    region,
+    country,
+    SUM(gdp) / SUM(pop_in_millions) AS gdp_per_million,
+    -- Output the worlds gdp_per_million
+    SUM(Sum(gdp)) over() / SUM(Sum(pop_in_millions)) over() AS gdp_per_million_total
+-- Pull from country_stats_clean
+FROM country_stats_clean AS cs
+JOIN countries AS c 
+ON cs.country_id = c.id
+-- Filter for 2016 and remove null gdp values
+WHERE year = '2016-01-01' AND gdp IS NOT NULL
+GROUP BY region, country
+-- Show highest gdp_per_million at the top
+ORDER BY gdp_per_million DESC;
+
+-- Bring in region, country, and gdp_per_million
+SELECT 
+    region,
+    country,
+    SUM(gdp) / SUM(pop_in_millions) AS gdp_per_million,
+    -- Output the worlds gdp_per_million
+    SUM(SUM(gdp)) OVER () / SUM(SUM(pop_in_millions)) OVER () AS gdp_per_million_total,
+    -- Build the performance_index in the 3 lines below
+    (SUM(gdp) / SUM(pop_in_millions))
+    /
+    (SUM(SUM(gdp)) OVER () / SUM(SUM(pop_in_millions)) OVER ()) AS performance_index
+-- Pull from country_stats_clean
+FROM country_stats_clean AS cs
+JOIN countries AS c 
+ON cs.country_id = c.id
+-- Filter for 2016 and remove null gdp values
+WHERE year = '2016-01-01' AND gdp IS NOT NULL
+GROUP BY region, country
+-- Show highest gdp_per_million at the top
+ORDER BY gdp_per_million DESC;
+
+
+
+
+

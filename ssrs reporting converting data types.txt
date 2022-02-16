@@ -1,0 +1,56 @@
+focusing on data cleaning and validation
+
+data can be messy in several ways
+1. inconsistent data types
+a. string
+b. numerical
+c. date
+
+2. avg can only be run on numerical data types
+
+3. upper for string
+
+4. datediff for dates
+
+5. data types must be consistent when combining tables
+
+cast(field as type)
+
+
+>>>>
+
+select column_name, data_type
+from information_schema.columns
+where table_name='countries'
+
+
+-- Pull column_name & data_type from the columns table
+SELECT 
+	column_name,
+    data_type
+FROM information_schema.columns
+-- Filter for the table 'country_stats'
+WHERE table_name = 'country_stats';
+>>>>>
+
+SELECT AVG(cast(pop_in_millions as float)) AS avg_population
+FROM country_stats;
+
+
+>>>>>
+
+SELECT 
+	year,
+    -- Pull decade, decade_truncate, and the world's gdp
+    DATE_PART('decade',CAST(year as date)) AS decade,
+    DATE_TRUNC('decade',CAST(year as date)) AS decade_truncated,
+    SUM(gdp) AS world_gdp
+FROM country_stats
+-- Group and order by year in descending order
+GROUP BY year
+ORDER BY year DESC;
+
+
+
+
+

@@ -1,0 +1,131 @@
+select id from countries where region='WESTERN EUROPE'
+
+
+
+select 
+'Summer' as season,
+case when gender='M' and age between 13 and 25 then 'Male Age 13-25'
+when Gender='M' and age>26 then 'Male Age 26+'
+when Gender='F' and age between 13 adn 25 then 'Female Age 13-25' 
+when Gender='F' and age >26 then 'Female Age 26+'
+end demographic_group,
+sum(gold) golds
+from summer_games as wg
+join athletes as a
+on wg.athlete_id = a.id
+where country_id in
+(select id from countries where region='WESTERN EUROPE'
+)
+group by demographic_group
+
+
+order of operations:
+1. two joins
+2. custom logic
+3. union
+4. order by
+
+
+>>>>>>
+
+-- Pull summer bronze_medals, silver_medals, and gold_medals
+SELECT 
+	sum(bronze) bronze_medals, 
+    sum(silver) silver_medals, 
+    sum(gold) gold_medals
+FROM summer_games AS s
+JOIN athletes AS a
+ON s.athlete_id=a.id
+-- Filter for athletes age 16 or below
+WHERE a.age<=16;
+
+or
+
+-- Pull summer bronze_medals, silver_medals, and gold_medals
+SELECT 
+	sum(bronze) bronze_medals, 
+    sum(silver) silver_medals, 
+    sum(gold) gold_medals
+FROM summer_games AS s
+-- Add the WHERE statement below
+WHERE athlete_id IN
+    -- Create subquery list for athlete_ids age 16 or below    
+    (SELECT id
+     FROM athletes
+     WHERE age<=16);
+
+
+>>>>>>>
+
+
+-- Pull event and unique athletes from summer_games 
+SELECT 	
+	event,
+	count(distinct athlete_id) AS athletes
+FROM summer_games
+GROUP BY event;
+
+>>>>>>>
+
+-- Pull event and unique athletes from summer_games 
+SELECT 
+	event, 
+    -- Add the gender field below
+    CASE when event like 'Men%' then 'Male'
+    ELSE 'Female' end AS gender,
+    COUNT(DISTINCT athlete_id) AS athletes
+FROM summer_games
+GROUP BY event;
+
+>>>>>>>>
+
+
+-- Pull event and unique athletes from summer_games 
+SELECT 
+    event,
+    -- Add the gender field below
+    CASE WHEN event LIKE '%Women%' THEN 'female' 
+    ELSE 'male' END AS gender,
+    COUNT(DISTINCT athlete_id) AS athletes
+FROM summer_games
+-- Only include countries that won a nobel prize
+WHERE country_id IN 
+	(SELECT country_id
+    FROM country_stats
+    WHERE nobel_prize_winners>0)
+GROUP BY event;
+
+
+>>>>>
+
+
+-- Pull event and unique athletes from summer_games 
+SELECT 
+    event,
+    -- Add the gender field below
+    CASE WHEN event LIKE '%Women%' THEN 'female' 
+    ELSE 'male' END AS gender,
+    COUNT(DISTINCT athlete_id) AS athletes
+FROM summer_games
+-- Only include countries that won a nobel prize
+WHERE country_id IN 
+	(SELECT country_id 
+    FROM country_stats 
+    WHERE nobel_prize_winners > 0)
+GROUP BY event
+-- Add the second query below and combine with a UNION
+UNION
+SELECT 
+    event,
+    CASE WHEN event LIKE '%Women%' THEN 'female' 
+    ELSE 'male' END AS gender,
+    COUNT(DISTINCT athlete_id) AS athletes
+FROM winter_games
+WHERE country_id IN 
+	(SELECT country_id 
+    FROM country_stats 
+    WHERE nobel_prize_winners > 0)
+GROUP BY event
+-- Order and limit the final output
+ORDER BY athletes DESC
+LIMIT 10;

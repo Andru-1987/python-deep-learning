@@ -1,0 +1,79 @@
+select 
+'Summer' as season,
+athlete_id, 
+gender, 
+
+case when gender='M' and age between 13 and 25 then 'Male Age 13-25'
+when Gender='M' and age>26 then 'Male Age 26+'
+when Gender='F' and age between 13 adn 25 then 'Female Age 13-25' 
+when Gender='F' and age >26 then 'Female Age 26+'
+end demographic_group,
+Sum(gold) golds
+from summer_games as sg
+join athletes as a
+on sg.athlete_id = a.id
+group by demographic_group
+
+union all
+
+select 
+'Winter' as season,
+case when gender='M' and age between 13 and 25 then 'Male Age 13-25'
+when Gender='M' and age>26 then 'Male Age 26+'
+when Gender='F' and age between 13 adn 25 then 'Female Age 13-25' 
+when Gender='F' and age >26 then 'Female Age 26+'
+end demographic_group,
+sum(gold) golds
+from winter_games as wg
+join athletes as a
+on wg.athlete_id = a.id
+
+
+case when {condition_1} then {output_1}
+when {condition_2} then {output_2}
+else {output_3}
+end
+
+
+>>>>>>>>
+
+
+SELECT 
+	name,
+    -- Output 'Tall Female', 'Tall Male', or 'Other'
+	CASE when height >= 175 and gender='F' then 'Tall Female'
+    when height >= 190 and gender='M' then 'Tall Male'
+    else 'Other'
+     END AS segment
+FROM athletes;
+
+>>>>>>>>>
+
+-- Pull in sport, bmi_bucket, and athletes
+SELECT 
+	sport,
+    -- Bucket BMI in three groups: <.25, .25-.30, and >.30	
+    CASE WHEN 100*weight/height^2< 0.25 THEN '<.25'
+    WHEN 100*weight/height^2 between .25 and .30 THEN '.25-.30'
+    WHEN 100*weight/height^2>.30 THEN '>.30' END AS bmi_bucket,
+    count(distinct a.name) AS athletes
+FROM summer_games AS s
+JOIN athletes AS a
+ON s.athlete_id=a.id
+-- GROUP BY non-aggregated fields
+GROUP BY sport,bmi_bucket
+-- Sort by sport and then by athletes in descending order
+ORDER BY sport;
+
+
+>>>>>>>>
+
+
+-- Show height, weight, and bmi for all athletes
+SELECT 
+	height,
+    weight,
+    weight/height^2 AS bmi
+FROM athletes
+-- Filter for NULL bmi values
+WHERE weight/height^2 is Null;
