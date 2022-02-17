@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* Dense layer network multiple input and output disease prediction 
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Disease%20Prediction%20Dense%20Layer.ipynb
+
 * Dense layer network to predict concatenated sin segments
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Dense%20Network%20Sin%20segments.ipynb
