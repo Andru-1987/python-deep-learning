@@ -1,5 +1,7 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
+* Curve fitting the dividend earnings of AllState
+https://github.com/dnishimoto/python-deep-learning/blob/master/Allstate%20dividends.ipynb
 
 * Dense layer network multiple input and output disease prediction 
 
