@@ -2,6 +2,12 @@
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 * Curve fitting the dividend earnings of AllState
 
+nets group classification using lstm with a confusion matrix for measuring performance
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Nets%20Group%20Classification%20LSTM.ipynb
+
+*Allstate dividend analysis
+
 https://github.com/dnishimoto/python-deep-learning/blob/master/Allstate%20dividends.ipynb
 
 * Dense layer network multiple input and output disease prediction 
