@@ -1,0 +1,96 @@
+setup.py
+
+setup(
+classifiers=[
+'Development Status:: 2- Pre-Alpha',
+'Intended Audience::Developers',
+'License:: OSI Approved:: MIT License',
+'Natural Language:: English',
+'Programming Language :: Python ::3',
+'Programming Language :: Python ::3.6',
+'Programming Language :: Python ::3.7',
+'Programming Language :: Python ::3.8',
+]
+
+user can search the classifiers and find your package on PyPl
+
+
+Makefile
+
+dist:
+	python3 setup.py sdist bdist_wheel
+
+
+clean-build:
+	rm -fr build/
+	rm -fr dist/
+	rm -fr .eggs/
+
+test:
+	pytest
+
+release:
+	twine upload dist/*
+
+
+make help
+
+make dist
+make test
+make release
+make clean-build
+
+
+<<<<<<< makefile
+
+.PHONY: clean clean-test clean-pyc clean-build docs help
+.DEFAULT_GOAL := help
+
+define PRINT_HELP_PYSCRIPT
+import re, sys
+
+for line in sys.stdin:
+        match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
+        if match:
+                target, help = match.groups()
+                print("%-20s %s" % (target, help))
+endef
+export PRINT_HELP_PYSCRIPT
+
+help:
+        @python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+
+clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+
+clean-build: ## remove build artifacts
+        rm -fr build/
+        rm -fr dist/
+        rm -fr .eggs/
+        find . -name '*.egg-info' -exec rm -fr {} +
+        find . -name '*.egg' -exec rm -f {} +
+
+clean-pyc: ## remove Python file artifacts
+        find . -name '*.pyc' -exec rm -f {} +
+
+
+test: ## run tests quickly with the default Python
+        pytest 
+ 
+test-all: ## run tests on every Python version with tox
+        tox
+
+release: dist ## package and upload a release
+        twine upload dist/*
+
+dist: clean ## builds source and wheel package
+        python3 setup.py sdist
+        python3 setup.py bdist_wheel
+        ls -l dist
+
+install: clean ## install the package to the active Python's site-packages
+        python3 setup.py install 
+
+
+
+
+

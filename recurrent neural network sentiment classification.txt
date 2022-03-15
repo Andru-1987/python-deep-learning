@@ -1,0 +1,91 @@
+Improving the model
+
+1. add the embedding layer
+2. increase the number of layers
+3. tune the parameters
+4. increase vocabulary size
+5. accept longer sentences with more memory cells
+
+
+RNN can overfit
+
+1. test different batch sizes
+2. add dropout layers
+3. add dropout and recurrent_dropout parameters on rnn layers
+
+#removes 20% of input to add noise
+model.add(Dropout(rate=0.2))
+
+#removes 10% of input and memory cells respectively
+model.add(LSTM(128, dropout=0.1, recurrent_dropout=0.1))
+
+
+>>>>>>>
+
+model=Sequential()
+
+model.add(Embedding(volcabulary_size, wordvec_dim, trainable=True,
+embedding_initializer=Constant(glove_matrix),
+input_length=max_text_len,name="Embedding"))
+model.add(Dense(wordvec_dim,activation='relu', name='Dense1'))
+model.add(Dropout(rate=0.25))
+model.add(LSTM(64, return_sequences=True, dropout=0.15, name="LSTM"))
+model.add(GRU(64, return_sequences=True, dropout=0.15, name="GRU"))
+model.add(Dense(64,name="Dense2"))
+model.add(Dropout(rate=0.25))
+model.add(Dense(32,name="Dense3"))
+model.add(Dense(1,activation='sigmoid',name="Output"))
+
+>>>>>>>
+
+
+# Build and compile the model
+model = Sequential()
+model.add(Embedding(vocabulary_size, wordvec_dim, trainable=True, input_length=max_text_len))
+model.add(LSTM(64, return_sequences=True, dropout=0.2, recurrent_dropout=0.15))
+model.add(LSTM(64, return_sequences=False, dropout=0.2, recurrent_dropout=0.15))
+model.add(Dense(16))
+model.add(Dropout(rate=0.25))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Load pre-trained weights
+model.load_weights('model_weights.h5')
+
+# Print the obtained loss and accuracy
+print("Loss: {0}\nAccuracy: {1}".format(*model.fit(X_test, y_test, verbose=0)))
+
+
+>>>>>> cnn load weights
+
+# Print the model summary
+model_cnn.summary()
+
+# Load pre-trained weights
+model_cnn.load_weights('model_weights.h5')
+
+# Evaluate the model to get the loss and accuracy values
+loss, acc = model_cnn.evaluate(x_test, y_test, verbose=0)
+
+# Print the loss and accuracy obtained
+print("Loss: {0}\nAccuracy: {1}".format(loss, acc))
+
+Loss: 0.4343099966049194
+Accuracy: 0.836
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

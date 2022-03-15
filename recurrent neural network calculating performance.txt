@@ -1,0 +1,104 @@
+The confusion matrix
+
+The dialog of the matrix is the accuracy.
+
+
+sci.space	alt.atheism	soc.religion.christian
+76		2		0
+7		1		2
+9		0		3
+
+Precision(class) = Correct (class)/ Predicted (class)
+
+Precision (sci.space) =76/76+7+9 = .83
+Precision (alt.atheism) =1/2+1+0 = .33
+precision (soc.religion.christian) = 3/0+2+3=0.60
+
+
+Recall(class) = Correct (class)/N(class)
+
+Recall(sci.space)=76/76+2+0=0.97
+Recall(alt.atheism) =1/7+1+2=0.10
+recall(soc.religion.christian)=3/9+0+3=0.25
+
+F1 score = 2 * precision(class)*recall(class)
+	  / precision(class) + recall(class)
+
+
+from sklearn.metrics import confusion_matrix
+
+confusion_matrix
+
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score
+from sklearn.metrics import f1_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
+
+print(accuracy_score(y_true,y_pred, average=None))
+
+lab_names=['sci.space','alt.atheism','soc.religion.christian']
+
+print(classification_report(y_true,y_pred, target_names=lab_names))
+
+>>>>>>>
+
+# Get probabilities for each class
+pred_probabilities = model.predict(X_test)
+
+# Thresholds at 0.5 and 0.8
+y_pred_50 = [np.argmax(x) if np.max(x) >= 0.5 else DEFAULT_CLASS for x in pred_probabilities]
+y_pred_80 = [np.argmax(x) if np.max(x) >= 0.8 else DEFAULT_CLASS for x in pred_probabilities]
+
+trade_off = pd.DataFrame({
+    'Precision_50': precision_score(y_true, y_pred_50, average=None), 
+    'Precision_80': precision_score(y_true, y_pred_80, average=None), 
+    'Recall_50': recall_score(y_true, y_pred_50, average=None), 
+    'Recall_80': recall_score(y_true, y_pred_80, average=None)}, 
+  index=['Class 1', 'Class 2', 'Class 3'])
+
+print(trade_off)
+
+
+You can see that for some classes precision increased and recall decresed, and the opposite also can happen.
+
+>>>>>> precision score
+
+# Compute the precision of the sentiment model
+prec_sentiment = precision_score(sentiment_y_true, sentiment_y_pred, average=None)
+print(prec_sentiment)
+
+>>>>>> recall score
+
+# Compute the recall of the sentiment model
+rec_sentiment = recall_score(sentiment_y_true, sentiment_y_pred, average=None)
+print(rec_sentiment)
+
+If precision is high for one class, you can trust your model when it predicts that class. When recall is high for a class, you can rest assured that that class is well understood by the model.
+
+>>>>>>>>
+
+# Use the model to predict on new data
+y_pred = model.predict(X_test)
+
+# Choose the class with higher probability 
+y_pred = np.argmax(y_pred, axis=1)
+
+
+>>>>>> confusion matrix
+
+# Use the model to predict on new data
+predicted = model.predict(X_test)
+
+# Choose the class with higher probability 
+y_pred = np.argmax(predicted, axis=1)
+
+# Compute and print the confusion matrix
+print(confusion_matrix(y_true, y_pred))
+
+# Create the performance report
+print(classification_report(y_true, y_pred, target_names=news_cat))
+
+
+
+

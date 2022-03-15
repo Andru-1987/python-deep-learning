@@ -1,0 +1,121 @@
+the idea behind transfer learning
+
+1. applied to computer vision tasks
+2. later applied to language models
+
+start with better than random initial weights
+
+use models trained on very big datasets
+a. glove was trained on the wikipeda data
+b. a task impossible with limited computing power
+c. open-source data science models
+
+
+>>>>>>>Word2Vec
+1. contineous bag of words model
+2. skip-gram (uses central word to predict the bag of words)
+
+FastText by facebook in 2016
+a. uses word and n-grams of chars to train the model
+
+ELMo
+1. uses words, embeddings per context
+2. use deep bidirectional language models (biLM)
+
+Word2Vec and FastText are on package gensim
+ELMo is on tensorflow_hub
+
+>>>>>>>>>
+
+from gensim.models import word2vec
+
+w2v_model = word2vec.Word2Vec(tokenized_corpus, size=embedding_dim,
+window=neighbor_words_num, iter=100)
+
+
+window is the number of neighboring words to use as context.
+
+iter is the number of epochs to train the model
+
+w2v_model.wv.most_similar(["captain"],topn=3)
+
+wv is the word vector
+
+
+>>>>>>> example using FastText
+
+from gensim.models import fasttext
+
+ft_model = fasttext.FastText(size=embedding_dim, window=neighbor_words_num)
+
+ft_model.build_vocab(sentences=tokenized_corpus)
+
+ft_model.train(sentences=tokenized_corpus,
+	total_examples=len(tokenized_corpus),
+	epochs=100)
+
+>>>>>> embedding is more accurate
+
+# Import plotting package
+import matplotlib.pyplot as plt
+
+# Insert lists of accuracy obtained on the validation set
+plt.plot(history_no_emb['acc'], marker='o')
+plt.plot(history_emb['acc'], marker='o')
+
+# Add extra descriptions to plot
+plt.title('Learning with and without pre-trained embedding vectors')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['no_embeddings', 'with_embeddings'], loc='upper left')
+
+# Display the plot
+plt.show()
+
+
+>>>>>>>
+
+# Word2Vec model
+w2v_model = Word2Vec.load("bigbang_word2vec.model")
+
+# Selected words to check similarities
+words_of_interest = ["bazinga", "penny", "universe", "spock", "brain"]
+
+# Compute top 5 similar words for each of the words of interest
+top5_similar_words = []
+for word in words_of_interest:
+    top5_similar_words.append(
+      {word: [item[0] for item in w2v_model.wv.most_similar([word], topn=5)]}
+    )
+
+# Print the similar words
+print(top5_similar_words)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

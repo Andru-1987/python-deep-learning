@@ -1,0 +1,78 @@
+contributing.md
+1. either markdown or restructured-text
+2. invites other developers to work on your package
+3. tells them how to get started
+
+history
+1. tells which package will work
+2. tells users the important things that have changed between versions
+3. markdown or restructure file
+
+
+
+#Head
+
+##0.3.0
+
+##0.2.1
+
+##0.2.0
+
+
+Subsections for
+1. improvements to existing functions
+2. new additions
+3. bugs that have been fixed
+4. deprecations
+
+>>>> looks like
+
+0.3.0
+Changed
+*Regression fitting sped up using NumPy operations
+
+Deprecated
+* Support for Python 3.5 has ended
+* regression.regression module has been removed
+
+
+Version number
+* increase version number when ready for new release
+
+two places to change the version number:
+1. setup.py
+2. __init__.py
+a. __version__='0.1.0'
+
+bumpversion
+* convenient tool to update all package version numbers
+
+bumpversion major
+bumpversion minor
+bumpversion patch
+
+
+>>>>>> history.md
+
+# History
+
+## 0.2.0
+### Fixed
+- Bug fixed in `length` subpackage for inches-to-feet conversion.
+### Deprecated
+- Removed Python 2.7 support.
+
+## 0.1.0
+### Added
+- First release on PyPI.
+
+
+
+
+
+
+
+
+
+
+

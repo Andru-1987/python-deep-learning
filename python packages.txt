@@ -1,0 +1,45 @@
+why build a package
+
+1. avoid cut and paste
+2. to keep your functions to date
+
+File layout
+import structure
+make your package installable
+adding licenses and readmes
+style and unit tests for a high quality package
+registering and publishing your package to PyPl
+
+package - a directory full of python code to be imported
+subpackage - a smaller package inside a package
+module - a python file inside a package which stores the package code
+library - either a package or a collection of packages
+
+
+build using a directory tree
+
+mysimplepackage/
+  simplemodule.py
+  __init__.py
+  preprocessing
+      __init__.py
+     standardize.py
+
+  regression
+      __init__.py
+      regression.py
+
+
+
+>>>>>>>>
+
+from textanalysis.textanalysis import count_words
+
+# Count the number of positive words
+nb_positive_words = count_words('hotel-reviews.txt', ['good','great'])
+
+# Count the number of negative words
+nb_negative_words = count_words('hotel-reviews.txt', ['bad','awful'])
+
+print("{} positive words.".format(nb_positive_words))
+print("{} negative words.".format(nb_negative_words))

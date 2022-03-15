@@ -1,0 +1,90 @@
+
+Text Generation model
+1. uses the vocabulary as classes
+2. the last layer applies a softmax with vocabulary size units
+3. uses categorical_crossentropy as a loss function
+
+model=Sequential()
+
+
+model.add(LSTM(units, input_shape=(chars_window,n_vocab),
+dropout=0.15, recurrent_dropout=0.15, return_sequences=True))
+
+
+model.add(LSTM(units,dropout=dropout, recurrent_dropout=0.15, return_sequences=False))
+
+model.add(Dense(n_vocab, activation ='softmax'))
+
+model.compile(loss='categorical_crossentropy',optimizer='adam')
+
+humans see results and evaluate performance
+
+if not good, train more epochs or add complexity to the model (add more memory cells, add layers)
+
+
+X is the sequence of characters and Y is the next character. y has to be one hot encoded.
+
+
+>>>>># Instantiate the vectors
+chars_window=20
+step =3
+sentences = []
+next_chars = []
+# Loop for every sentence
+for sentence in sheldon.split('\n'):
+    # Get 20 previous chars and next char; then shift by step
+    for i in range(0, len(sentence) - chars_window, step):
+        sentences.append(sentence[i:i + chars_window])
+        next_chars.append(sentence[i + chars_window])
+
+# Define a Data Frame with the vectors
+df = pd.DataFrame({'sentence': sentences, 'next_char': next_chars})
+
+# Print the initial rows
+print(df.head())
+
+>>>>
+
+Ones (or True) represent the corresponding character is present, while zeros (or False) represent the absence of the character in that position of the sentence.
+
+# Instantiate the variables with zeros
+numerical_sentences = np.zeros((num_seqs, chars_window, n_vocab), dtype=np.bool)
+numerical_next_chars = np.zeros((num_seqs, n_vocab), dtype=np.bool)
+
+# Loop for every sentence
+for i, sentence in enumerate(sentences):
+  # Loop for every character in sentence
+  for t, char in enumerate(sentence):
+    # Set position of the character to 1
+    numerical_sentences[i, t, char_to_index[char]] = 1
+    # Set next character to 1
+    numerical_next_chars[i, char_to_index[next_chars[i]]] = 1
+
+# Print the first position of each
+print(numerical_sentences[0], numerical_next_chars[0], sep="\n")
+
+
+
+>>>>>>>
+
+
+# Instantiate the model
+model = Sequential(name="LSTM model")
+
+# Add two LSTM layers
+model.add(LSTM(64, input_shape=input_shape, dropout=0.15, recurrent_dropout=0.15, return_sequences=True, name="Input_layer"))
+model.add(LSTM(64, dropout=0.15, recurrent_dropout=0.15, return_sequences=False, name="LSTM_hidden"))
+
+# Add the output layer
+model.add(Dense(n_vocab, activation='softmax', name="Output_layer"))
+
+# Compile and load weights
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+model.load_weights('model_weights.h5')
+# Summary
+model.summary()
+
+>>>>>
+
+
+The main point of the text generation model is that it uses the whole vocabulary as classes on the output layer. 

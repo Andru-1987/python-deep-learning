@@ -1,0 +1,54 @@
+use templates to do alot of setup work for you
+
+>>>> cookiecutter
+
+1. can be used to create empty Python packages
+
+2. creates all the additional files your package needs
+
+>>> standard packages
+
+cookiecutter https://github.com/audreyr/cookiecutter-pypackage
+
+full_name [Audry Roy Greenfield] : David Nishimoto
+
+github_username [audreyr]: MyUsername
+
+project_name [Python Boilerplate]: mysklearn
+
+project_slug [mysklearn]: mysklearn
+
+*slug is a package name you want it to registered under
+
+the slug will be pip install with the slug name
+
+project_short_description [Python Boilerplate ...] A Python package for linear regression
+
+use_pytest [n]: y
+
+use_pypi_deployment_with_travis [y]: n
+
+add_pyup_badge [n]: n
+
+select command_line_interface: [3]
+
+3 - No command-line interface
+
+create_author_file [y]: y
+
+select open_source_license: [6]
+
+6- not open source
+
+>>>>>>>
+
+cookiecutter https://github.com/audreyfeldroy/cookiecutter-pypackage.git
+
+
+
+
+
+
+
+
+

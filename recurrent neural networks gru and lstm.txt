@@ -1,0 +1,76 @@
+GRU cell: memory cell, candidate to memory, update gate
+
+the update gate determines if the candidate to memory will be used to update the Memory cell
+
+if the Update Gate is 0 it keeps the previous memory state
+if the update gate is 1 then the candidate to memory becomes the new memory state
+
+
+LSTM
+forget gate: determines if the previous state should be forgotten (G)
+update gate: the update gate determines if the hidden state will be used to update the memory cell (G)
+memory cell (used for pattern recognition)
+output gate: outputs the hidden state passes on (G)
+
+gradients are no longer dependant on the memory cell states as in the case of RNN
+the derivates on the weights depends on all the gates and the memory cell.
+
+different gradients correspond to the memory state and the gradients of each gate
+a. zero or diverging
+
+
+from keras.layers import GRU, LSTM
+
+model.add(GRU(units=128, return_sequences=True, name='GRU layer'))
+model.add(LSTM(units=64,return_sequencdes=False, name='LSTM layer'))
+
+>>>>>>>>>>>>>
+
+
+# Import the modules
+from keras.layers import GRU, Dense
+
+# Print the old and new model summaries
+SimpleRNN_model.summary()
+gru_model.summary()
+
+# Evaluate the models' performance (ignore the loss value)
+_, acc_simpleRNN = SimpleRNN_model.evaluate(X_test, y_test, verbose=0)
+_, acc_GRU = gru_model.evaluate(X_test, y_test, verbose=0)
+
+# Print the results
+print("SimpleRNN model's accuracy:\t{0}".format(acc_simpleRNN))
+print("GRU model's accuracy:\t{0}".format(acc_GRU))
+
+
+>>>>>>>>>>>>>> LSTM
+
+from keras.layers.recurrent import LSTM
+
+# Build model
+model = Sequential()
+model.add(LSTM(units=128, input_shape=(None, 1), return_sequences=True))
+model.add(LSTM(units=128, return_sequences=True))
+model.add(LSTM(units=128, return_sequences=False))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Load pre-trained weights
+model.load_weights('lstm_stack_model_weights.h5')
+
+print("Loss: %0.04f\nAccuracy: %0.04f" % tuple(model.evaluate(X_test, y_test, verbose=0)))
+
+
+RNN models by stacking layers of LSTM cells one after the other.
+
+Stacking more layers also improve the accuracy of the model when comparing to the baseline 'simple_RNN' model! 
+
+
+
+
+
+
+
+
+
+

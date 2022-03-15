@@ -1,0 +1,58 @@
+setup.py
+* Is used to install the package
+* Contains metadata on the package
+
+mysklearn/  <-- outer director
+|-- mysklearn <-- inner source code directory
+
+|--setup.py <-- setup script in outer
+
+
+
+>>>>> setup.py
+
+from setuptools import setup, find_packages
+
+setup(
+	author="James Fulton",
+	description="A complete package for linear regression",
+	name="mysklearn",
+	version="0.1.0",
+	packages=find_packages(include=["mysklearn","mysklearn.*"]),
+
+)
+
+version number = (major number).(minor number).(patch number)
+
+pathes for bug fixes
+minor for new functionality
+major for big changes
+
+mysklearn <-- include the package
+mysklearn.* <-- means include all the subpackages
+
+pip install -e .
+
+
+. = package in current directory
+
+-e - editable (changes are available on each import)
+
+
+>>>>>>setup.py
+
+
+# Import required functions
+from setuptools import setup, find_packages
+
+# Call setup function
+setup(
+    author="<your-name>",
+    description="A package for converting imperial lengths and weights.",
+    name="impyrial",
+    packages=find_packages(include=["impyrial", "impyrial.*"]),
+    version="0.1.0",
+)
+
+
+pip install -e .

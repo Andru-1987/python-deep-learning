@@ -1,0 +1,74 @@
+why do I need a license
+* to give other permission to use your code
+
+open source licenses
+
+allow users to 
+1. use your package
+2. modify your package
+3. distribute versions of your package
+
+readme is the front page of your package
+1. title
+2. description and features
+3. installation
+4. useage examples
+5. contributing
+
+Markdown (commonmark)
+
+contained in readme.md file
+simpler
+
+#titles
+
+**text bold in double asterisks.
+
+[DataCamp] (https://datacamp.com)
+
+```
+code samples in triple back ticks
+
+```
+
+>>>>>>>releasing your package to the world
+license
+readme
+manifest.in
+
+
+manifest.in
+1. lists all the extra files to include in your package distribution
+
+include README.md
+include LICENSE
+
+>>>>>>
+
+
+A package for converting between imperial unit lengths and weights.
+
+This package was created for the [DataCamp](https://www.datacamp.com) course "Developing Python Packages".
+
+### Features
+
+- Convert lengths between miles, yards, feet and inches.
+- Convert weights between hundredweight, stone, pounds and ounces.
+
+### Usage
+```
+import impyrial
+
+# Convert 500 miles to feet
+impyrial.length.convert_unit(500, from_unit='yd', to_unit='ft')  # returns 1500.0
+
+# Convert 100 ounces to pounds
+impyrial.weight.convert_unit(100, from_unit='oz', to_unit='lb')  # returns 6.25
+```
+
+
+
+
+
+
+

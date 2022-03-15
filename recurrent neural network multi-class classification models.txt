@@ -1,0 +1,94 @@
+multiclass classification
+
+review of the sentiment classification model
+
+model=Sequential()
+model.add(Embedding(10000,128))
+model.add(LSTM(128,dropout=0.2))
+model.add(Dense(1,activation='sigmoid'))
+
+model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
+
+
+#multi-classification
+
+model=Sequential()
+model.add(Embedding(10000,128))
+model.add(LSTM(128,dropout=0.2))
+model.add(Dense(num_classes,activation='softmax'))
+
+model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+
+
+sklearn.datasets import fetch_20newsgroups
+
+news_train=fetch_20newsgroups(subset='train')
+news_test=fetch_20newsgroups(subset='test')
+
+
+news_train.DESCR : documentation
+news_train.data : text data
+news_train.filenames: path to the files on disk
+news_train.target: numerical index of classes
+news_train.target_names
+
+
+from keras.preprocessing.text import Tokenizer 
+from keras.preprocessing.sequence import pad_sequences
+from keras.utils.np_utils import to_categorical
+
+
+tokenizer=Tokenizer()
+#initilizes the tokenizer with the vocabulary and indexes
+tokenizer.fit_on_texts(news_train.data)
+
+
+X_train=tokenizer.texts_to_sequences(news_train.data)
+X_train=pad_sequences(X_train,maxlen=400)
+Y_train=to_categorical(news_train.target)
+
+model.fit(X_Train,Y_train,batch_size=64,epochs=100)
+
+model.evaluate(X_test,Y_test)
+
+
+>>>>>>>>>
+
+# See example article
+print(news_dataset.data[5])
+
+# Transform the text into numerical indexes
+news_num_indices = tokenizer.texts_to_sequences(news_dataset.data)
+
+# Print the transformed example article
+print(news_num_indices[5])
+
+# Transform the labels into one-hot encoded vectors
+labels_onehot = to_categorical(news_dataset.target)
+
+# Check before and after for the sample article
+print("Before: {0}\nAfter: {1}".format(news_dataset.target[5], labels_onehot[5] ))
+
+# Change text for numerical ids and pad
+X_novel = tokenizer.texts_to_sequences(news_novel.data)
+X_novel = pad_sequences(X_novel, maxlen=400)
+
+# One-hot encode the labels
+Y_novel = to_categorical(news_novel.target)
+
+# Load the model pre-trained weights
+model.load_weights('classify_news_weights.h5')
+
+# Evaluate the model on the new dataset
+loss, acc = model.evaluate(X_novel, Y_novel, batch_size=64)
+
+# Print the loss and accuracy obtained
+print("Loss:\t{0}\nAccuracy:\t{1}".format(loss, acc))
+
+
+
+
+
+
+
+

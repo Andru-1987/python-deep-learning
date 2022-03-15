@@ -1,0 +1,123 @@
+why embeddings?
+
+1. one hot encoding tokens
+2. reduce the dimension
+3. embedding are a dense representation of the words
+4. used for transferred learning
+
+
+
+from keras.layers import Embedding
+
+model.add(Embedding(input_dim=size_of_the_vocabulary,
+	output_dim=300,
+	trainable=True,
+	embedding_initializer=None,
+	input_length=size_of_the_sequences))
+
+
+output_dim is the dimension of the embedding space
+trainable whether the model should have its weights updated during the training phase
+embedding_initializer can be used to perform transfer learning
+
+
+nlp is open sourcing on big data training sets: GloVE, word2vec, BERT
+
+
+from keras.initializers import Constant
+
+model.add(Embedding(input_dim=vocabulary_size,
+	output_dim=embedding_dim,
+	embeddings_initializer=Constant(pre_trained_vectors))
+
+
+>>>>>>>GloVE
+
+def get_glove_vectors(filename="glove.6B.300d.txt"):
+	glove_vector_dict={}
+	with open(filename) as f:
+	for line in f:
+		values=line.split()		
+		word=values[0] #first word on the list
+		coefs=values[1:] #remaining are the coefficients
+		glove_vector_dict[word]=np.asarray(coefs,dtype='float32')
+
+
+def filter_glove(vocabulary_dict,glove_dict,wordvec_dim=300):
+	embedding_matrix=np.zeros((len(vocabulary_dict)+1,wordvec_dim))
+
+	for word, i in vocabulary_dict.items():
+		embedding_vector=glove_dict.get(word)
+		if embedding_vector is not None:
+			embedding_matrix[i]=embedding_vector
+
+	return embedding_matrix	
+
+we add 1 because 0 is reserved for the padding token
+
+
+>>>>>> 24 million parameters
+
+# Import the embedding layer
+from keras.layers import Embedding
+
+# Create a model with embeddings
+model = Sequential(name="emb_model")
+model.add(Embedding(input_dim=80002, output_dim=wordvec_dim, input_length=200, trainable=True))
+model.add(GRU(128))
+model.add(Dense(1))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Print the summaries of the one-hot model
+model_onehot.summary()
+
+# Print the summaries of the model with embeddings
+model.summary()
+
+>>>>>>> 2 million parameters
+
+
+# Load the glove pre-trained vectors
+glove_matrix = load_glove('glove_200d.zip')
+
+# Create a model with embeddings
+model = Sequential(name="emb_model")
+model.add(Embedding(input_dim=vocabulary_size + 1, output_dim=wordvec_dim, 
+                    embeddings_initializer=Constant(glove_matrix), 
+                    input_length=sentence_len, trainable=False))
+model.add(GRU(128))
+model.add(Dense(1))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Print the summaries of the model with embeddings
+model.summary()
+
+
+>>>>>> 73 % accurancy vs 49 %
+
+# Create the model with embedding
+model = Sequential(name="emb_model")
+model.add(Embedding(input_dim=max_vocabulary, output_dim=wordvec_dim, input_length=max_len))
+model.add(SimpleRNN(units=128))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+# Load pre-trained weights
+model.load_weights('embedding_model_weights.h5')
+
+# Evaluate the models' performance (ignore the loss value)
+_, acc_embeddings = model.evaluate(X_test, y_test, verbose=0)
+
+# Print the results
+print("SimpleRNN model's accuracy:\t{0}\nEmbeddings model's accuracy:\t{1}".format(acc_simpleRNN, acc_embeddings))
+
+	
+
+
+
+
+
+
+
+
+

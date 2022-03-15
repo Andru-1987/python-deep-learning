@@ -1,0 +1,81 @@
+PyPI
+
+Python Package Index
+1. pip install packages from here
+2. anyone can upload packages
+3. you should upload your package as soon as it might be useful
+
+when you upload your package to PyPI, you upload a package distribution
+1. A distribution package is a bundled version of your package which is ready to be installed
+
+a. source distributions: a distribution package which is mostly your source code
+b. wheel distribution - a distribution package which has been processed to make it faster to install
+
+python setup.py sdist bdist_wheel
+
+a. sdist= source distribution
+b. bdist_wheel = wheel distribution
+
+this will create a dist directory with wheel and source files inside
+
+upload your distribution to pypi
+
+twine upload dist/*
+
+upload your distributions to TestPyPI
+twine upload -r testpypi dist/*
+
+
+pip install mysklearn
+
+your package is live and anyone can download your package
+
+installing package from TestPyPI
+
+pip install --index-url https://test.pypi.org/simple
+--extra-index-url https://pypi.org/simple
+mysklearn
+
+
+>>>>>>>
+
+from setuptools import setup, find_packages
+
+# Add install requirements
+setup(
+    author="<your-name>",
+    description="A package for converting imperial lengths and weights.",
+    name="impyrial",
+    packages=find_packages(include=["impyrial", "impyrial.*"]),
+    version="0.1.0",
+    install_requires=['numpy>=1.10', 'pandas'],
+    python_requires=">=3.5",
+)
+
+python setup.py sdist bdist_wheel
+twine upload dist/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

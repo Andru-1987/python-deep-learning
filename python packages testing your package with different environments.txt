@@ -1,0 +1,82 @@
+testing multiple versions of python
+
+
+>>>>>>setup.py
+
+from setuptools import setup, find_packages
+
+set(
+
+	python_requires='>=2.7',
+)
+
+allows any version of python from version 2.7 upward
+
+
+to test these python version you must:
+1. install all these python versions
+2. install your package and all dependencies into each python
+
+run tox
+
+1. designed to run test with multiple versions of python
+
+>>>> Configure tox
+tox.ini
+
+tox.ini must be put in the top level of the package
+
+[tox]
+envlist= p27,py35,py36,py37
+
+you must have each version of python installed on the computer. tox will not install new versions
+
+[testenv]
+deps=pytest
+commands = pytest
+
+
+pytest is install as a tox dependency
+
+tox 
+
+to run the tox commands
+
+>>>>>>> tox.ini
+
+[tox]
+envlist=p27,p36
+
+[testenv]
+deps = pytest
+commands =
+	pytest
+
+
+tox
+
+>>>>> modify setup.ini (python_requires at least version 3.6)
+
+setup(
+    author="<your-name>",
+    description="A package for converting imperial lengths and weights.",
+    name="impyrial",
+    packages=find_packages(include=["impyrial", "impyrial.*"]),
+    version="0.1.0",
+    install_requires=['numpy>=1.10', 'pandas'],
+    python_requires="==3.6.*",
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

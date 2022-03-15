@@ -1,0 +1,86 @@
+documentation helps the users use your code
+
+document each
+1. function
+2. class
+3. class method
+
+help can then be used to access your documentation
+
+help(np.mean)
+
+Parameters
+
+def count_words(filepath,words_list):
+
+""" Count the total number of times these words appear. 
+
+>>>>>> Numpy documentation style
+
+[Input parameters]
+arg1 : int (description of the parameter)
+
+parameter name : parameter type
+	description of the parameter
+
+interpolation: {'linear','lower','higher','midpoint','nearest'}
+
+[Returns]
+
+  variable : type
+	description
+
+"""
+
+pyment can be used to generate docstrings
+
+
+types: int, float, bool, str, dict, numpy.array
+
+pyment -w -o numpydoc textanalysis.py
+
+
+-w tells pyment to overwrite the text analysis
+
+-o numpydoc - output in NumPy style
+
+>>>>>>
+
+__init__.py (root and subpackage)
+
+contains package documentation
+
+>>>>>>>>
+
+pyment -w -o numpydoc impyrial/length/core.py
+
+
+>>>>>>>>>>>>>>>>
+
+
+INCHES_PER_FOOT = 12.0  # 12 inches in a foot
+INCHES_PER_YARD = INCHES_PER_FOOT * 3.0  # 3 feet in a yard
+
+UNITS = ("in", "ft", "yd")
+
+
+def inches_to_feet(x, reverse=False):
+    """Convert lengths between inches and feet.
+
+    Parameters
+    ----------
+    x : numpy.ndarray
+        Lengths in feet.
+    reverse : bool, optional
+        If true this function converts from feet to inches 
+        instead of the default behavior of inches to feet. 
+        (Default value = False)
+
+    Returns
+    -------
+    numpy.ndarray
+    """
+    if reverse:
+        return x * INCHES_PER_FOOT
+    else:
+        return x / INCHES_PER_FOOT

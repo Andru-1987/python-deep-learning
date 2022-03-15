@@ -1,0 +1,198 @@
+learn how to generate sentences
+
+many inputs with one output
+* sentiment analysis
+* classification
+
+many inputs and many outputs
+
+model.generate_sheldon_phrase()
+
+decide if a token will be characters or words
+
+words demand very large datasets (hundreds of millions of sentences)
+
+chars can be trained faster, but can generate typos
+
+prepare the data
+
+build training samples with (past tokens, next tokens) examples
+
+design the model architecture
+1. embedding layer
+2. number of layers
+
+train and experiment
+
+
+model.translate('vamos jogar futebol?")
+"let's go play soccer"
+
+
+Anki project
+1. tokenize input language sentences
+2. tokenize output language sentences
+
+design the model architecture
+1. encoder and decoder
+
+train and experiment
+
+>>>>>>>>
+
+
+# Context for Sheldon phrase
+sheldon_context = "I’m not insane, my mother had me tested. "
+
+# Generate one Sheldon phrase
+sheldon_phrase = generate_sheldon_phrase(sheldon_model, sheldon_context)
+
+# Print the phrase
+print(sheldon_phrase)
+
+# Context for poem
+poem_context = "May thy beauty forever remain"
+
+# Print the poem
+print(generate_poem(poem_model, poem_context))
+
+
+>>>>>>>
+
+# Transform text into sequence of indexes and pad
+X = encode_sequences(sentences)
+
+# Print the sequences of indexes
+print(X)
+
+# Translate the sentences
+translated = translate_many(model, X)
+
+# Create pandas DataFrame with original and translated
+df = pd.DataFrame({'Original': sentences, 'Translated': translated})
+
+# Print the DataFrame
+print(df)
+
+>>>>>>>>>>
+
+generating sentences
+
+1. sentence is determined by punctuation (.!?)
+
+2. <sent> and </sent> tokens for determining a sentence begins and ends
+
+
+sentence=''
+while next_char !='.':
+	pred=model.predict(X)[0]
+	char_index= np.argmax(pred)
+	next_char=index_to_char(char_index)
+
+	sentence = sentence + next_char
+
+
+temperature : close temperature gets to zero it will empathize the class with highest probability
+
+value equal to one then there is no scaling on the softmax function
+
+higher values makes prediction more creative
+
+>>>>>>>> scaling
+
+def scale_softmax(softmax_pred, temperature=1.0):
+	scaled_pred=np.log(softmax_pred) /temperature
+	scaled_pred = np.exp(scaled_pred)
+
+	scaled_pred = scaled_pred/np.sum(scaled_pred)
+
+	scaled_pred=np.random.multinomial(1,scaled_pred,1)
+
+	return np.argmax(scaled_pred)
+
+
+>>>>>>>>>>>
+
+it uses the previous 20 characters
+
+def get_next_char(model, initial_text, chars_window, char_to_index, index_to_char):
+  	# Initialize the X vector with zeros
+    X = initialize_X(initial_text, chars_window, char_to_index)
+    
+    # Get next character using the model
+    next_char = predict_next_char(model, X, index_to_char)
+	
+    return next_char
+
+# Define context sentence and print the generated text
+initial_text = "I am not insane, "
+print("Next character: {0}".format(get_next_char(model, initial_text, 20, char_to_index, index_to_char)))
+
+
+>>>>>>>>>>
+
+
+def generate_phrase(model, initial_text):
+    # Initialize variables  
+    res, seq, counter, next_char = initialize_params(initial_text)
+
+    
+    # Loop until stop conditions are met
+    while counter < 100 and next_char != r'.':
+      	# Get next char using the model and append to the sentence
+        next_char, res, seq = get_next_token(model, res, seq)
+        # Update the counter
+        counter = counter + 1
+    return res
+  
+# Create a phrase
+print(generate_phrase(model, "I am not insane, "))
+
+
+
+
+>>>>>>>
+
+
+# Define the initial text
+initial_text = "Spock and me "
+
+# Define a vector with temperature values
+temperatures = [0.2, 0.8, 1.0, 3.0, 10.0]
+
+# Loop over temperatures and generate phrases
+for temperature in temperatures:
+	# Generate a phrase
+	phrase = generate_phrase(model, initial_text, temperature)
+    
+	# Print the phrase
+	print('Temperature {0}: {1}'.format(temperature, phrase))
+
+
+You can see that when the temperature is high, the text start to make less sense. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

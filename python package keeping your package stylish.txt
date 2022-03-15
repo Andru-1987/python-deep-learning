@@ -1,0 +1,73 @@
+standard python style is described in pep8
+
+flake8 is used to find styling mistakes
+
+flake8 features.py
+
+#noqa means no quality assurance. flake8 will not evaluate this line.
+
+>>>>> ignoring style violations without using comments
+
+
+flake8 --ignore E222 quadratic.py
+
+
+>>> search for a specific set of violations
+
+flake8 --select F401,F841 features.py
+
+F401 'math' imported but not used
+F841 local variable 'mean_x' is assigned to but never used
+
+>>>>> create a setup.cfg
+
+[flake8]
+
+ignore=E302
+exclude=setup.py
+
+per-file-ignores =
+	example_package/example_package.py : E222
+
+E302 is line spacing. ignore line spacing in all modules
+ignore specific violations in specific files
+
+
+>>>> run on the whole package
+
+flake8
+
+at the top of the package
+
+
+>>>>>>
+
+import numpy as np
+
+
+def calculate_hypotenuse(side1, side2):
+    """Calculate the length of the hypotenuse."""
+    l = np.sqrt( side1**2 + side2**2 )  # noqa: E741
+    return l
+
+
+>>>>>setup.cfg
+
+[flake8]
+
+# Ignore F401 violations in the main __init__.py file
+# per-file-ignores =
+#     impyrial/__init__.py: F401
+        
+# Ignore all violations in the tests directoory
+# exclude = tests/*
+
+
+
+
+
+
+
+
+
+

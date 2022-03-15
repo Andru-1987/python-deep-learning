@@ -1,0 +1,84 @@
+text classification:
+
+1. automatic news classification
+2. document classification for business
+3. queue segmentation for customer support
+
+change for multi-class
+1. the shape of the output variable y
+a. the number of classes as units
+2. number of units on the output layer
+3. activation function on the output layer
+a. softmax will return the probability of each class
+
+model.add(Dense(num_classes, activation='softmax'))
+
+4. loss function
+a. model.compile(loss='categorical_crossentropy')
+
+
+y=["sports","economy","data_science","sports","finance"]
+
+y_series=pd.Series(y,dtype="category")
+
+print(y_series.cat.codes)
+
+from keras.utils.np_utils import to_categorical
+
+y_prep = to_categorical(y)
+
+print(y_prep)
+
+
+>>>>>>>
+
+# Get the numerical ids of column label
+numerical_ids = df.label.cat.codes
+
+# Print initial shape
+print(numerical_ids.shape)
+
+# One-hot encode the indexes
+Y = to_categorical(numerical_ids)
+
+# Check the new shape of the variable
+print(Y.shape)
+
+
+>>>>>>>
+
+To train RNN models, it is necessary to transform the text representation of the classes to a numeric one-hot vector.
+
+# Create and fit tokenizer
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(news_dataset.data)
+
+# Prepare the data
+prep_data = tokenizer.texts_to_sequences(news_dataset.data)
+prep_data = pad_sequences(prep_data, maxlen=200)
+
+# Prepare the labels
+prep_labels = to_categorical(news_dataset.target)
+
+# Print the shapes
+print(prep_data.shape)
+print(prep_labels.shape)
+
+
+(5000, 200)
+(5000, 20)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
