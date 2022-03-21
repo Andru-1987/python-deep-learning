@@ -1,5 +1,8 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
+* abalone age prediction with 9 features lstm
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Abalone%20Age%20Prediction.ipynb
 
 * nets group classification using lstm with a confusion matrix for measuring performance
 
