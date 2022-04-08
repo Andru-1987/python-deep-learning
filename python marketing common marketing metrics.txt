@@ -1,0 +1,54 @@
+Was this campaign successful?
+
+Common metrics:
+1. conversion rate
+2. retention rate
+
+conversion rate = number of people who convert / total number of people we marketed to
+
+
+subscribers = marketing[marketing['converted']==True]['user_id'].nunique()
+
+total=marketing['user_id'].nunique()
+convert_rate=subscribers/total
+
+print(round(convert_rate *100,2),'%')
+
+retention rate = number of people who remain subscribed / total number of people who convert
+
+#users retained after one month
+retained = marketing[marketing['is_retained']==True]['user_id'].nunique()
+
+
+subscribers = marketing[marketing['converted']==True]['user_id'].nunique()
+
+retention = retained/subscribers
+
+print(round(retention*100,2),'%')
+
+>>>>>>>>>>>
+
+
+# Calculate the number of people we marketed to
+total = marketing['user_id'].nunique()
+
+# Calculate the number of people who subscribed
+subscribers = marketing[marketing['converted']==True]['user_id'].nunique()
+
+# Calculate the conversion rate
+conversion_rate = subscribers/total
+print(round(conversion_rate*100, 2), "%")
+
+
+>>>>>>>>>>
+
+# Calculate the number of subscribers
+total_subscribers = marketing[marketing['converted']==True]['user_id'].nunique()
+
+# Calculate the number of people who remained subscribed
+retained = marketing[marketing['is_retained']==True]['user_id'].nunique()
+
+# Calculate the retention rate
+retention_rate = retained/total_subscribers
+print(round(retention_rate*100, 2), "%")
+

@@ -1,0 +1,62 @@
+Calculating lift:  Treatment conversion rate - Control conversion rate/Control conversion rate
+
+a_mean = np.mean(control)
+b_mean = np.mean(personalization)
+
+lift = (b_mean-a_mean)/a_mean
+
+print("lift:", str(round(lift*100,2))+'%')
+
+>>>>>>>statistical significance
+
+two sample T test
+
+T-distribution : 
+1. determines that the samples occurred by chance
+2. uses the mean and sample variance
+
+The T test produces a P value
+
+1. T-statistic of 1.96 is typically statistically significant at the 95% level
+2. depending on the context of the test, you may be comfortable with a lower or high level of statistical signficance
+
+a P value of 0.05 translates to statistical signficance of 95% level
+
+
+from scipy.stats import ttest_ind
+
+t=ttest_ind(control, personlized)
+
+print(t)
+
+
+>>>>>> calculate lift  (increase of personalization over control)
+
+def lift(a,b):
+    # Calcuate the mean of a and b
+    a_mean = np.mean(a)
+    b_mean = np.mean(b)
+    
+    # Calculate the lift using a_mean and b_mean
+    lift = (b_mean-a_mean)/a_mean
+  
+    return str(round(lift*100, 2)) + '%'
+  
+# Print lift() with control and personalization as inputs
+print(lift(control, personalization))
+
+ 38.85%
+
+from scipy.stats import ttest_ind
+t=ttest_ind(control, personalization)
+print(t)
+Ttest_indResult(statistic=-2.7343299447505074, pvalue=0.006451487844694175)
+
+
+
+
+
+
+
+
+

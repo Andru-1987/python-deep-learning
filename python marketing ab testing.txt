@@ -1,0 +1,93 @@
+what is a/b testing?
+
+1. it is randomized experiments and evaluates which variant performs better.
+
+2. control should already exist and running in production
+
+3. what is the hypothesis
+
+4. each variant should have only one change from the control.  We want to know what changed that lead to a change in key metrics.
+
+5. develop a hypothesis and try to determine what metric your trying to impact.
+
+
+>>>>>Stake holders can be confident that the increase in metric was the result of the action in the test
+
+you may need time to reach statistical significance
+
+
+test 1: generic email to the customer
+
+test 2: personalized email based on usage of the website to the customer
+
+
+>>>>> ensure equal number of users was allocated to each variant
+
+email = marketing[marketing['marketing_channel']=='Email']
+
+allocation=email.groupby(['variant']['user_id'].nunique()
+
+>>>>>> plot the results
+
+allocation.plot(kind='bar')
+plt.title('personalization test allocation')
+plt.xticks(rotation=0)
+plt.ylabel('#participants')
+plt.show()
+
+
+variant: control and personalization
+
+
+>>>> find the subscribers
+
+#find the record where the user was converted
+subscribers = email.groupby)['user_id','variant'])['converted'].max()
+
+subscribers = pd.DataFrame(subscribers.unstack(level=1))
+
+control = subscribers['control'].dropna()
+
+personalization=subscribers['personalization'].dropna()
+
+print("Control conversion rate: ", np.mean(control))
+
+print("Personalization conversion rate:",np.mean(personalization))
+
+statistically significant p<.05 means:
+1. not random
+2. the Null Hypothesis is true
+
+
+>>>>>>>>>>
+
+# Subset the DataFrame
+email = marketing[marketing['marketing_channel']=='Email']
+
+# Group the email DataFrame by variant 
+alloc = email.groupby(['variant'])['user_id'].nunique()
+
+alloc.plot(kind='bar')
+plt.title('Personalization test allocation')
+plt.ylabel('# participants')
+plt.show()
+
+>>>>>>>>>
+
+
+# Group marketing by user_id and variant
+subscribers = email.groupby(['user_id', 
+                             'variant'])['converted'].max()
+subscribers_df = pd.DataFrame(subscribers.unstack(level=1)) 
+
+# Drop missing values from the control column
+control = subscribers_df['control'].dropna()
+
+# Drop missing values from the personalization column
+personalization = subscribers_df['personalization'].dropna()
+
+print('Control conversion rate:', np.mean(control))
+print('Personalization conversion rate:', np.mean(personalization))
+
+Control conversion rate: 0.2814814814814815
+Personalization conversion rate: 0.3908450704225352

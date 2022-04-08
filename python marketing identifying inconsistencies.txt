@@ -1,0 +1,133 @@
+Day of week trends
+
+DoW_retention = retention(marketing,['DoW'])
+
+DoW_retention.plot()
+plt.title('Retention rate by day of week')
+plt.ylim(0)
+plt.show()
+
+>>>>>>>>>
+
+# Calculate conversion rate by date served and channel
+daily_conv_channel = conversion_rate(marketing,['date_served','marketing_channel'])
+
+print(daily_conv_channel.head())
+
+>>>>>>>>>
+
+
+# Unstack daily_conv_channel and convert it to a DataFrame
+daily_conv_channel = pd.DataFrame(daily_conv_channel.unstack(level = 1))
+
+# Plot results of daily_conv_channel
+daily_conv_channel.plot()
+plt.show()
+
+>>>>>> Day of the week
+
+# Add day of week column to marketing
+marketing['DoW_served'] = marketing['date_served'].dt.dayofweek
+
+# Calculate conversion rate by day of week
+DoW_conversion = conversion_rate(marketing, ['DoW_served', 'marketing_channel'])
+
+
+# Unstack channels
+DoW_df = pd.DataFrame(DoW_conversion.unstack(level=1))
+
+# Plot conversion rate by day of week
+DoW_df.plot()
+plt.title('Conversion rate by day of week\n')
+
+plt.ylim(0)
+plt.show()
+
+>>>>>> (upward spikes in Arabic and German) and English had a sharp drop off over time
+
+# Isolate the rows where marketing channel is House Ads
+house_ads = marketing[marketing['marketing_channel']=='House Ads']
+
+# Calculate conversion by date served, and language displayed
+conv_lang_channel = conversion_rate(house_ads,['date_served','language_displayed'])
+
+# Unstack conv_lang_channel
+conv_lang_df = pd.DataFrame(conv_lang_channel.unstack(level=1))
+
+# Use your plotting function to display results
+conv_lang_df.plot()
+plt.show()
+
+
+As you can see, the English conversion rate drops around the 11th, and there do not appear to be ads served in other languages for a two week period.
+
+
+>>>>>>>> group by date_served and is_correct_lang
+
+# Add the new column is_correct_lang
+house_ads['is_correct_lang'] = np.where(
+    house_ads['language_displayed'] == house_ads['language_preferred'], 
+    'Yes', 
+    'No')
+
+# Groupby date_served and correct_language
+language_check = house_ads.groupby(['date_served','is_correct_lang'])['is_correct_lang'].count()
+
+# Unstack language_check and fill missing values with 0's
+language_check_df = pd.DataFrame(language_check.unstack(level=1)).fillna(0)
+
+# Print results
+print(language_check_df)
+
+
+is_correct_lang    No    Yes
+date_served                 
+2018-01-01        2.0  189.0
+2018-01-02        3.0  247.0
+2018-01-03        0.0  220.0
+2018-01-04        0.0  168.0
+2018-01-05        0.0  160.0
+2018-01-06        1.0  151.0
+2018-01-07        2.0  130.0
+2018-01-08        0.0  154.0
+2018-01-09        0.0  157.0
+2018-01-10        0.0  170.0
+2018-01-11       20.0  135.0
+2018-01-12       18.0  130.0
+2018-01-13       26.0  122.0
+2018-01-14       20.0  131.0
+2018-01-15       16.0  192.0
+2018-01-16       28.0  127.0
+2018-01-17       21.0  127.0
+2018-01-18       31.0  121.0
+2018-01-19       22.0  127.0
+2018-01-20       28.0  124.0
+2018-01-21       14.0  100.0
+2018-01-22       13.0   72.0
+2018-01-23       16.0   69.0
+2018-01-24       13.0   83.0
+2018-01-25       19.0   74.0
+2018-01-26       24.0   92.0
+2018-01-27       18.0  149.0
+2018-01-28       28.0  136.0
+2018-01-29       24.0  142.0
+2018-01-30       23.0  145.0
+2018-01-31       23.0  135.0
+
+
+As you can see, the English conversion rate drops around the 11th, and there do not appear to be ads served in other languages for a two week period.
+
+
+>>>>>>>>
+
+
+# Divide the count where language is correct by the row sum
+language_check_df['pct'] = language_check_df['Yes']/language_check_df.sum(axis=1)
+
+# Plot and show your results
+plt.plot(language_check_df.index.values, language_check_df['pct'])
+plt.show()
+
+You have shown that house ads have been underperforming due to serving all ads in English rather than each user's preferred language
+
+

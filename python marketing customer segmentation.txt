@@ -1,0 +1,71 @@
+segment your customers to who you are marketing too
+
+look at conversion rates by:
+1. Age
+2. Gender
+3. Location
+4. Past interactions with the business
+5. Marketing channels users interacted with
+
+house_ads = marketing[marketing['subscribing_channel']=='House Ads']
+subscribers = house_ads[house_ads['converted']==True]['user_id'].nunique()
+retained = house_ads[house_ads['is_retained']==True]['user_id'].nunique()
+retention_rate = retained/total_subscribers
+print(round(retention_rate*100,2),'%')
+
+
+>>>>>> group by
+
+retained = marketing[marketing['is_retained']==True].groupby(['subscribing_channel'])['user_id'].nunique()
+subscribers = marketing[marketing['converted']==True].groupby(['subscribing_channel'])['user_id'].nunique()
+channel_retention_rate = retained/subscribers*100
+print(round(channel_retention_rate,2),'%')
+
+
+>>>>>> conversion rate
+
+# Isolate english speakers
+english_speakers = marketing[marketing['language_displayed'] == 'English']
+
+# Calculate the total number of English speaking users
+total = english_speakers['user_id'].nunique()
+
+# Calculate the number of English speakers who converted
+subscribers = english_speakers[english_speakers['converted']==True]['user_id'].nunique()
+
+# Calculate conversion rate
+conversion_rate = subscribers/total
+print('English speaker conversion rate:', round(conversion_rate*100,2), '%')
+
+
+>>>>>>> conversion rate by displayed language
+
+# Group by language_displayed and count unique users
+total = marketing.groupby(['language_displayed'])['user_id'].nunique()
+
+# Group by language_displayed and count unique conversions
+subscribers = marketing[marketing['converted']==True].groupby(['language_displayed'])['user_id'].nunique()
+
+# Calculate the conversion rate for all languages
+language_conversion_rate = subscribers/total*100
+print(language_conversion_rate)
+
+>>>>>>> conversion by day
+
+# Group by date_served and count unique users
+total = marketing.groupby('date_served')['user_id'].nunique()
+
+# Group by date_served and count unique converted users
+subscribers = marketing[marketing['converted']==True].groupby('date_served')['user_id'].nunique()
+
+# Calculate the conversion rate per day
+daily_conversion_rate = subscribers/total
+print(daily_conversion_rate)
+
+import matplotlib.pyplot as plt 
+daily_conversion_rate.plot()
+plt.show()
+
+
+
+
