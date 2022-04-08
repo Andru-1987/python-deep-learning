@@ -1,0 +1,55 @@
+leverage and conviction
+
+support(x) = Frequency(x)/N
+
+support(x->y) = Frequency(x&y)/N
+
+Confidence(x->y) = Support(x->y)/Support(x)
+
+Lift(x->y)=Support(x->y)/Support(x)*Support(y)
+
+Leverage(x->y) = Support(x&y) - Support(x)*Support(y)
+
+leverage range is -1 and 1
+
+
+supportTP = np.logical_and(books['Twilight'], books['Potter']).mean()
+
+# Compute support for Potter
+supportP = books['Potter'].mean()
+
+# Compute support for Twilight
+supportT = books['Twilight'].mean()
+
+leverage = supportTP - supportP * supportT
+
+print(leverage)
+
+0.18  is equivalent to lift > 1
+
+Conviction (x->y) = 
+
+support(x) * support(not y)/support(x&not y)
+
+>>>>> conviction
+
+supportTP = np.logical_and(books['Twilight'], books['Potter']).mean()
+
+# Compute support for Twilight
+supportT = books['Twilight'].mean()
+
+supportnP=1.0 - books['Potter'].mean()
+supportTnP=supportT - supportPT
+
+conviction = supportT * supportnP/supportTnP
+1.16
+
+value greater than 1 suggest a conviction if twilight then a harry potter purchase.
+
+
+
+
+
+
+
+

@@ -1,0 +1,112 @@
+what is market basket analysis?
+1. identify products frequently purchased together
+2. construct recommendations based on these findings
+
+Market basket analysis
+1. constructed around assocation rules.  association rules tell us products are connected with each other
+2. identify items frequently purchased together.
+
+association rules
+
+antecedent -> consequent
+
+1. fiction -> biography
+
+import pandas as pd
+
+books = pd.read_csv('datasets/bookstore.csv')
+
+print(books.head(2))
+
+>>>>> create lists of lists
+
+transactions=books_df['Transaction'].apply(lambda t:t.split(','))
+transactions=list(transactions)
+print(transactions)
+
+
+# Count the number of transactions with coffee and gum
+coffee = transactions.count(['coffee', 'gum'])
+
+# Count the number of transactions with cereal and gum
+cereal = transactions.count(['cereal', 'gum'])
+
+# Count the number of transactions with bread and gum
+bread = transactions.count(['bread', 'gum'])
+
+# Print the counts for each transaction.
+print('coffee:', coffee)
+print('cereal:', cereal)
+print('bread:', bread)
+
+#we can recommend that the store owner cross-sell chewing gum next to the coffee.
+
+Take in an enormous number of association rules and taking only the rules that are useful
+
+association rule
+{health}->{cooking}
+
+multi-antecedent rule
+{humor,travel}->{language}
+
+multi-consequent rule
+{biography}->{history,language}
+
+Finding useful rules is difficult
+1. set of all possible rules is large
+2. most rules are not useful
+3. must discard most rules
+
+transactions=books_df['Transaction'].apply(lambda t:t.split(','))
+transactions=list(transactions)
+#print(transactions[:3])
+
+flattened=[item for transaction in transactions for item in transaction if item.isnumeric()==False and item!='']
+items=list(set(flattened))
+print("items count",len(items))
+rules = list(permutations(items,2))
+print("rules count",len(rules))
+
+>>>>>>>>>
+
+# Import pandas under the alias pd
+import pandas as pd
+
+# Load transactions from pandas
+groceries = pd.read_csv(groceries_path)
+
+# Split transaction strings into lists
+transactions = groceries['Transaction'].apply(lambda t: t.split(','))
+
+# Convert DataFrame column into list of strings
+transactions = list(transactions)
+
+# Print the list of transactions
+print(transactions)
+
+# Import permutations from the itertools module
+from itertools import permutations
+
+# Define the set of groceries
+flattened = [i for t in transactions for i in t]
+groceries = list(set(flattened))
+
+# Generate all possible rules from groceries list
+rules = list(permutations(groceries, 2))
+
+# Print the set of rules
+print(rules)
+
+# Print the number of rules
+print(len(rules))
+
+
+
+
+
+
+
+
+
+
+

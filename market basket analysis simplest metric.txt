@@ -1,0 +1,75 @@
+A metric is a measure of performance for rules
+
+Pruning is the use of metrics to discard rules
+
+The support metric measures the share of transactions that contain an itemset
+
+number of transactions with items(s)/number of transactions
+
+>>>>>>>>>
+
+# Import the transaction encoder function from mlxtend
+from mlxtend.preprocessing import TransactionEncoder
+import pandas as pd
+
+# Instantiate transaction encoder and identify unique items in transactions
+encoder = TransactionEncoder().fit(transactions)
+
+# One-hot encode transactions
+onehot = encoder.transform(transactions)
+
+# Convert one-hot encoded data to DataFrame
+onehot = pd.DataFrame(onehot, columns = encoder.columns_)
+
+# Print the one-hot encoded transaction dataset
+print(onehot)
+
+# Compute the support
+support = onehot.mean()
+
+# Print the support
+print(support)
+
+    biscuit    0.40
+    bread      0.65
+    cereal     0.30
+    coffee     0.40
+    jam        0.10
+    milk       0.25
+    orange     0.15
+    sugar      0.30
+    tea        0.35
+
+
+# Add a jam+bread column to the DataFrame onehot
+onehot['jam+bread'] = np.logical_and(onehot['jam'], onehot['bread'])
+
+# Compute the support
+support = onehot.mean()
+
+# Print the support values
+print(support)
+
+biscuit      0.40
+bread        0.65
+cereal       0.30
+coffee       0.40
+jam          0.10
+milk         0.25
+orange       0.15
+sugar        0.30
+tea          0.35
+jam+bread    0.10
+
+
+
+
+
+
+
+
+
+
+
+
+
