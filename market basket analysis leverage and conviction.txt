@@ -10,7 +10,10 @@ Lift(x->y)=Support(x->y)/Support(x)*Support(y)
 
 Leverage(x->y) = Support(x&y) - Support(x)*Support(y)
 
-leverage range is -1 and 1
+
+>>>>>>>>>Leverage
+
+leverage range is -1 and 1 .  The threshold for determining good rule is 0.
 
 
 supportTP = np.logical_and(books['Twilight'], books['Potter']).mean()
@@ -33,6 +36,8 @@ support(x) * support(not y)/support(x&not y)
 
 >>>>> conviction
 
+support Not Y is the list of trans
+
 supportTP = np.logical_and(books['Twilight'], books['Potter']).mean()
 
 # Compute support for Twilight
@@ -45,6 +50,67 @@ conviction = supportT * supportnP/supportTnP
 1.16
 
 value greater than 1 suggest a conviction if twilight then a harry potter purchase.
+
+
+>>>>>>>>>
+
+
+# Compute support for Potter AND Hunger
+supportPH = np.logical_and(books['Potter'], books['Hunger']).mean()
+
+# Compute support for Potter
+supportP = books['Potter'].mean()
+
+# Compute support for NOT Hunger
+supportnH = 1.0 - books['Hunger'].mean()
+
+# Compute support for Potter and NOT Hunger
+supportPnH = supportP - supportPH
+
+# Compute and print conviction for Potter -> Hunger
+conviction = supportP * supportnH / supportPnH
+print("Conviction: %.2f" % conviction)
+
+def conviction(antecedent, consequent):
+	# Compute support for antecedent AND consequent
+	supportAC = np.logical_and(antecedent, consequent).mean()
+
+	# Compute support for antecedent
+	supportA = antecedent.mean()
+
+	# Compute support for NOT consequent
+	supportnC = 1.0 - consequent.mean()
+
+	# Compute support for antecedent and NOT consequent
+	supportAnC = supportA - supportAC
+
+    # Return conviction
+	return supportA * supportnC / supportAnC
+
+
+>>>>>>>>
+
+# Compute conviction for twilight -> potter and potter -> twilight
+convictionTP = conviction(twilight, potter)
+convictionPT = conviction(potter, twilight)
+
+# Compute conviction for twilight -> hunger and hunger -> twilight
+convictionTH = conviction(twilight, hunger)
+convictionHT = conviction(hunger, twilight)
+
+# Compute conviction for potter -> hunger and hunger -> potter
+convictionPH = conviction(potter, hunger)
+convictionHP = conviction(hunger, potter)
+
+# Print results
+print('Harry Potter -> Twilight: ', convictionHT)
+print('Twilight -> Potter: ', convictionTP)
+
+
+Harry Potter -> Twilight:  1.0315274939515657
+Twilight -> Potter:  1.1550539077290998
+
+if Potter then Twilight and if Twilight then Potter are both above 1, indicating that they are both viable rules.
 
 
 

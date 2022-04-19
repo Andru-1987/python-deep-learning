@@ -1,0 +1,77 @@
+user_id=movies['userId'].unique()
+
+libraries = [list(ratings[ratings['userId']==u].title) for u in user_id]
+
+print(library[0])
+
+from mlxtend.preprocessing import TransactionEncoder
+
+encoder = TransactionEncoder()
+
+onehot = encoder.fit(libraries).transform(libraries)
+
+onehot = pd.DataFrame(onehot, columns=encoder.columns_)
+
+print(onehot.head())
+
+from mlxtend.frequent_patterns  import assocation_rules, apriori
+import seaborn as sns
+
+frequent_itemsets = apriori(onehot, min_support=0.10, use_colnames=True, max_len=2)
+
+rules = association_rules(frequent_itemsets)
+
+rules['antecedents']=rules['antecedents'].apply(lambda a: ','.join(list(a)))
+rules['consequents']=rules['consequents'].apply(lambda a: ','.join(list(a)))
+
+
+plt.figure(figsize=(20,20))
+support_table = association_results.pivot(index='consequents', columns='antecedents', values='support')
+sns.heatmap(support_table)
+plt.show()
+
+sns.heatmap(support_table,annot=True,cbar=False,cmap='ocean')
+
+>>>>>>>>>>>>>
+
+# Compute frequent itemsets using a minimum support of 0.07
+frequent_itemsets = apriori(onehot, min_support = 0.07, 
+                            use_colnames = True, max_len = 2)
+
+# Compute the association rules
+rules = association_rules(frequent_itemsets, metric = 'support', 
+                          min_threshold = 0.0)
+
+
+>>>>>>>>>>>>>
+
+# Replace frozen sets with strings
+rules['antecedents'] = rules['antecedents'].apply(lambda a: ','.join(list(a)))
+rules['consequents'] = rules['consequents'].apply(lambda a: ','.join(list(a)))
+
+# Transform data to matrix format and generate heatmap
+pivot = rules.pivot_table(index='consequents', columns='antecedents', values='support')
+sns.heatmap(pivot)
+
+# Format and display plot
+plt.yticks(rotation=0)
+plt.show()
+
+>>>>>>>>>>>>>
+
+# Import seaborn under its standard alias
+import seaborn as sns
+
+# Transform the DataFrame of rules into a matrix using the lift metric
+pivot = rules.pivot_table(index = 'consequents', 
+                   columns = 'antecedents', values= 'lift')
+
+# Generate a heatmap with annotations on and the colorbar off
+sns.heatmap(pivot, annot = True, cbar=False)
+plt.yticks(rotation=0)
+plt.xticks(rotation=90)
+plt.show()
+
+
+
+

@@ -1,0 +1,56 @@
+counting itemsets
+
+(n,k) = n!/(n-k)!k!
+
+The Apriori Principle
+1. maintain items that a frequent and maintain some level of support
+2. subsets of frequent sets are frequent
+3. prune sets not known to be frequent
+
+Candle=Infrequent
+
+then candles and signs are infrequent and candle and signs and boxes are infrequent
+
+frequent_itemsets = aprior(onehot, min_support = 0.0005, max_len=4, use_colnames=True)
+
+print(len(frequent_itemsets))
+
+3652 from 6 trillion itemsets
+
+>>>> apriori
+
+# Import apriori from mlxtend
+from mlxtend.frequent_patterns import apriori
+
+# Compute frequent itemsets using the Apriori algorithm
+frequent_itemsets = apriori(onehot, 
+                            min_support = 0.006, 
+                            max_len = 3, 
+                            use_colnames = True)
+
+# Print a preview of the frequent itemsets
+print(frequent_itemsets.head()) 
+
+
+>>>>>>>
+
+# Import apriori from mlxtend
+from mlxtend.frequent_patterns import apriori
+
+# Compute frequent itemsets using a support of 0.003 and length of 3
+frequent_itemsets_1 = apriori(onehot, min_support = 0.003, 
+                            max_len = 3, use_colnames = True)
+
+# Compute frequent itemsets using a support of 0.001 and length of 3
+frequent_itemsets_2 = apriori(onehot, min_support = 0.001, 
+                            max_len=3, use_colnames = True)
+
+# Print the number of freqeuent itemsets
+print(len(frequent_itemsets_1), len(frequent_itemsets_2))
+
+
+generated 91 and 429 rules
+
+
+
+

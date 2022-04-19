@@ -1,0 +1,48 @@
+rules_df['rule']=rules_df.index
+coords=rules_df[['antecedent','consequent','rule']]
+
+from pandas.plotting import parallel_coordinates
+
+
+rules=rules_df[rules_df['support']>0.01]
+rules=rules[rules['lift']>0.3]
+rules=rules[rules['confidence']>.2]
+rules=rules[rules['zhang']>.3]
+rules['rule']=rules.index
+coords=rules[['antecedent','consequent','rule']]
+
+plt.figure(figsize=(8,20))
+parallel_coordinates(coords,'rule',colormap='ocean')
+plt.show()
+
+>>>>>>>
+
+# Compute the frequent itemsets
+frequent_itemsets = apriori(onehot, min_support = 0.05, 
+                         use_colnames = True, max_len = 2)
+
+# Compute rules from the frequent itemsets with the confidence metric
+rules = association_rules(frequent_itemsets, metric = 'confidence', 
+                          min_threshold = 0.50)
+
+# Convert rules into coordinates suitable for use in a parallel coordinates plot
+coords = rules_to_coordinates(rules)
+
+# Generate parallel coordinates plot
+parallel_coordinates(coords, 'rule')
+plt.legend([])
+plt.show()
+
+>>>>>>>>
+
+
+# Import the parallel coordinates plot submodule
+from pandas.plotting import parallel_coordinates
+
+# Convert rules into coordinates suitable for use in a parallel coordinates plot
+coords = rules_to_coordinates(rules)
+
+# Generate parallel coordinates plot
+parallel_coordinates(coords, 'rule', colormap = 'ocean')
+plt.legend([])
+plt.show()

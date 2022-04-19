@@ -1,0 +1,72 @@
+
+frequent_itemsets= apriori(onehot, use_colnames=True, min_support=0.0001)
+
+rules = association_rules(frequent_itemsets, metric="support", min_threshold=0.0)
+
+#no pruning with a min_threshold=0.0
+
+print(len(rules))
+
+rules.columns : antecedents, consequents, antecedent support, consequent support, support, confidence, leverage, conviction
+
+
+>>>>>
+
+# Import the association rule function from mlxtend
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Compute all association rules for frequent_itemsets_1
+rules_1 = association_rules(frequent_itemsets_1, 
+                            metric = "support", 
+                         	min_threshold = 0.0015)
+
+# Compute all association rules for frequent_itemsets_2
+rules_2 = association_rules(frequent_itemsets_2, 
+                            metric = "support", 
+                        	min_threshold=0.0015)
+
+# Print the number of association rules generated
+print(len(rules_1), len(rules_2))
+
+>>>>> applying lift to the association rules
+
+# Import the association rules function
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Compute frequent itemsets using the Apriori algorithm
+frequent_itemsets = apriori(onehot, min_support = 0.001, 
+                            max_len = 2, use_colnames = True)
+
+# Compute all association rules for frequent_itemsets
+rules = association_rules(frequent_itemsets, 
+                            metric = "lift", 
+                         	min_threshold = 1)
+
+# Print association rules
+print(rules)
+
+antecedents                  consequents                          antecedent support  consequent     support             support  confidence    lift  leverage    conviction
+    0    (JUMBO BAG RED RETROSPOT)  (BIRTHDAY CARD, RETRO SPOT)               0.008                    0.002              0.002        0.200  88.667     0.001       1.247
+    1  (BIRTHDAY CARD, RETRO SPOT)    (JUMBO BAG RED RETROSPOT)               0.002                    0.008              0.002        0.667  88.667     0.001       2.977
+
+
+>>>>>>>>
+
+# Import the association rules function
+from mlxtend.frequent_patterns import apriori, association_rules
+
+# Compute frequent itemsets using the Apriori algorithm
+frequent_itemsets = apriori(onehot, min_support=0.0015, 
+                            max_len=2, use_colnames = True)
+
+# Compute all association rules using confidence
+rules = association_rules(frequent_itemsets, 
+                            metric = "confidence", 
+                         	min_threshold = 0.5)
+
+# Print association rules
+print(rules)
+
+
+
+

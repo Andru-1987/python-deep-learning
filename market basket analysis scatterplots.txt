@@ -1,0 +1,64 @@
+A scatterplot displays pairs of values
+1. antecedent and consequent support
+2. confidence and lift
+
+
+frequent_itemsets=apriori(onehot,min_support=0.0001, max_len=2, use_colnames=True)
+rules = association_rules(frequent_itemsets, metric = "support", min_threshold = 0.0)
+
+sns.scatterplot('antecedent support','consequent support',data=rules)
+plt.title('antecedent vs consequent support')
+plt.show()
+
+
+scatterplots help to identify natural thresholds in the data
+
+use findings to prune
+- use natural thresholds and patterns to prune
+
+>>>>>>>>
+
+# Import seaborn under its standard alias
+import seaborn as sns
+
+# Apply the Apriori algorithm with a support value of 0.0075
+frequent_itemsets = apriori(onehot, min_support = 0.0075, 
+                            use_colnames = True, max_len = 2)
+
+# Generate association rules without performing additional pruning
+rules = association_rules(frequent_itemsets, metric = 'support', 
+                          min_threshold = 0.0)
+
+# Generate scatterplot using support and confidence
+sns.scatterplot(x = "support", y = "confidence", data = rules)
+plt.show()
+
+Notice that the confidence-support border roughly forms a triangle. 
+This suggests that throwing out some low support rules would also mean that we would discard rules that are strong according to many common metrics.
+
+
+>>>>>>>>>
+
+# Import seaborn under its standard alias
+import seaborn as sns
+
+# Apply the Apriori algorithm with a support value of 0.0075
+frequent_itemsets = apriori(onehot, min_support = 0.0075, 
+                         use_colnames = True, max_len = 2)
+
+# Generate association rules without performing additional pruning
+rules = association_rules(frequent_itemsets, metric = "support", 
+                          min_threshold = 0)
+
+# Generate scatterplot using support and confidence
+sns.scatterplot(x = "support", y = "confidence", 
+                size = "lift", data = rules)
+plt.show()
+
+
+The stronger the confidence level the more the lift
+
+
+
+
+
