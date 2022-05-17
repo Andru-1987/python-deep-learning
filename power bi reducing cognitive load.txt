@@ -1,0 +1,15 @@
+1. you can keep in short memory nine numbers
+2. chunking allows you to store more than nine numbers in short term memory
+3. tailor the page to your audience
+4. focus on one store per report page
+5. strike the balance between information rich visual and confusing the audience
+
+powerbi allows you to include custom visuals in a report
+
+custom visuals can be found at the Microsoft appSource
+
+Historian persona
+1. how has offensive productivity changed over time
+2. is an emphasis on power hitting a detriment elsewhere
+
+

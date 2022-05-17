@@ -1,0 +1,89 @@
+working with date
+
+example date: 2020/09/20 12:52
+
+Year(<date>) returns 2020
+Quarter(<datetime>) returns 3
+Month(<datetime>) returns 9
+
+weekday : format(<date>,<"dddd">) returns friday
+time: format(<date>,<"h:nn:ss">) returns 12:52:00
+
+Time Intelligence Functions:
+1. LastDate
+2. DatesBetween
+3. DateAdd
+
+20+ Date and Time Functions
+30+ Time Intelligence Functions
+
+
+Creating a Date Table
+1. A dedicated date table is highly recommended for accurate reporting using time-intelligence functions
+
+filter by multiple date attributes such as year and month
+custom calendar view/definitions such as fiscal dates
+
+>>>>>>>>Calendar()
+
+Calendar(<Start_date>,<end_date>)
+
+calendar('2020-01-01','2020-12-31')
+
+calendarauto()
+
+1. returns a table with a single column 'date' that automatically takes the earliest and latest date in the model and internally calls calendar()
+
+calendarauto(12)
+1. goes to the end of the year
+
+
+>>>>>calendar
+
+dates= calendar(min(Sales[OrderDate]),max(Sales[OrderDate]))
+
+
+>>>>>> dates table
+click create new table
+
+Dates = calendar("1/1/2022","12/31/2022")
+
+>>>>>>
+what are quick measures?
+--context features using a drag and drop interface
+
+format(Dates[Date],"ddd") -> mon, tue,wed,thu,fri,sat, sun
+
+>>>>>>>>DateDiff
+DATEDIFF(Sales[OrderDate],Sales[DeliveryDate],DAY)
+
+
+
+
+if
+(
+isfiltered('Dates'[Date]),
+error('error message'),
+var _PREV_YEAR = CALCULATE([SalesCount],DateAdd('Dates'.[Date].[Date],-1,YEAR))
+return divide([SalesCount]-_PREV_YEAR,_PREV_YEAR)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

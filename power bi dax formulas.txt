@@ -1,0 +1,80 @@
+introduction to context
+1. enables dynamic analysis where results of a formula change to reflect the selected data
+2. There are 3 types of context: row, filter, and query
+3. row context is the current row
+4. calculated column is values from all columns within the current row
+
+
+Measures:
+1. can apply when using iterator functions which compute calculations row by row
+2. iterator functions can be identified by an X after the function name SUMX()
+
+SUMX(<table>,<expression>)
+
+SUMX(Sales, Sales[Price]+(Sales[Price] * Salex[Tax]))
+
+
+Filter Context
+1. Filter context is a set of filters that have been applied before the calculation is carried out
+
+Applied in several ways:
+1. attributes in row/column
+2. slicer
+3. filter pane
+4. calculated measure
+
+
+CALCULATE(<expression>[,<filter1> [,<filter2>[,...]]])
+
+expression: a measure or calculation to be evaluated.  Must return a single value.
+
+
+filters:
+1. filters need to evaluate as a table
+2. Filters should not clash with one another
+
+CALCULATE( SUM(Sales), Sales[Region]="EMEA")
+
+WideWorldImporters Sample Database
+https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/wide-world-importers
+
+>>>>>>>>>>>>>>>>>> Averagex
+
+AverageTradeDifference = AVERAGEX(Commodities, Commodities[Close]-Commodities[Open])
+
+GoldVolume21= CALCULATE(Sum(Commodities[Volume]), Filter(Commodities,Commodities[Symbol]="Gold"),
+filter(Commodities,Year(Commodities(Date))=2021))
+
+
+OpenConcreteSquareFeet = CALCULATE(Sum(fJCOpenProjects[udSquareFeet]),Filter(fJCOpenProjects,fJCOpenProjects[DepartmentDescription]="Concrete Division"))
+
+>>>>>>>>> using variables to eliminate duplication
+
+Gold21vs20=
+Var GoldVolume20=CALCULATE(Sum(Commodities[Volume]), Filter(Commodities,Commodities[Symbol]="Gold"),
+filter(Commodities,Year(Commodities(Date)=2020))
+
+return ([GoldVolume21]-GoldVolume20,GoldVolume20)
+
+
+TotalSales_w_increase = VAR increase=0.05 return 'Calculations'[TotalSales]+'Calculations'[TotalSales]*increase
+
+AvgProfit_x=AVERAGEX(Sales, Sales[ItemPrice]-Sales[ItemCost])
+AvgProfit=AVERAGE(Sales[Profit])
+
+Bike 2018 = Calculation(sum(Sales[ItemPrice],Filter(Year(Sales[OrderDate])=2018))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

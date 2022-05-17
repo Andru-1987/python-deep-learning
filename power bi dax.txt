@@ -1,0 +1,31 @@
+data analysis expressions
+
+formula language to create calculations
+a. columns, tables, measures
+
+based on excel formulas and functions
+
+power bi uses data analysis services and power pivot
+
+dax has 200 functions
+ 
+a. aggregation: sum, average, count
+b. date time: today, month, year
+c. logical: if, and, or
+d. text: concatenate, upper, left
+
+creating calculated columns
+1. expands our existing dataset without editing the source data
+2. evaluates at a row level and adds a new column to an existing table
+
+calculated measures
+1. aggregate multiple rows
+2. results in another field that you can add to a visualization
+3. calculated at query time as you interact and filter
+
+
+
+
+
+
+

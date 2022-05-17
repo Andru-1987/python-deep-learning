@@ -1,0 +1,103 @@
+dashboards
+1. tells us about critical business or operational metrics, often in real time
+
+2. Single pane of glass
+
+3. The norm for powerbi
+
+
+pixel-perfect reports
+1. provides more detailed information on business or operational metrics, usually delayed
+
+2. called paginated reports in power bi
+
+
+dashboard audience
+1. who is your intended audience
+2. how will they use your dashboard
+3. what actions do you want them to take as a result of looking at your dashboard
+4. are you showing the right measures in the right way
+
+at bat (AB)
+hit (H)
+
+batting average H/AB
+
+a batting average of 300 is great
+
+Walk (BB)
+Hit by Pitch (HBP)
+sacrifice fly (SF)
+
+On-Base percentage (OBP)
+H+BB+HBP
+/
+AB+BB+HBP+SF
+
+->350 good 4000 is great
+
+
+
+Put out (PO) ->defense causes an out
+Assist (A) -> a throw to a defender who then puts out the player
+Error (E) ->failed to make an out
+
+>>>>>> invoke an emotional response from the audience
+
+Lets look at two emotions: happiness and angry
+
+1. happy when everything looks fine
+a. I do not need to perform any action (
+2. angry when threshholds are crossed
+a. now i need to act in response to this issue
+
+
+baseball defensive positions
+1. pitcher (P)
+2. catcher (c)
+3. first baseman (1b)
+4. second baseman (2b)
+5. third baseman (3b)
+6. shortstop (ss)
+7. outfielders (of)
+
+putout is when a defender directly makes an out
+assist is when two defenders work together to make an out
+
+two outs on a play is called a double play
+three outs on a play is called a triple play
+if the defender makes a mistake it is called an error
+
+hitting for power
+Single (1b)
+double (2b)
+triple (3b)
+home run (HR)
+
+
+slugging percentage
+SLG=(1B+2*2B+3*3B+4*HR)/AB
+
+or
+H=1B+2B+3B+4B
+
+SLG = (H+2B+2*3B+3*HR)/AB
+
+
+Slugging Percentage SLG = Divide(( Batting[Hits H]+Batting[2B]+2*Batting[3B]+3*Batting[Home Run HR]),Batting[At Bat AB])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

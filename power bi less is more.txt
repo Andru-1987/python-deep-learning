@@ -1,0 +1,30 @@
+three questions to ask before adding anything to a dashboard
+
+1. does this contribute to the story
+2. is this the right visual element
+3. is this necessary
+
+tailor your story to the clients needs
+
+flexibility limits your control
+
+understand user needs and the types of stories they can pull from the data
+
+line charts are great for showing trends over time
+
+line charts are not good for categorical data
+
+bar charts are better for categorical data
+
+emphasis something using one color
+
+negative space help us understand what is important
+
+>>>>>
+1. who played at each position for our team in a given year
+2. how well is our team meeting expectations around on-base percentage and errors
+
+
+
+
+
