@@ -1,0 +1,64 @@
+how to resolve performance problems
+
+areas where things can go wrong
+1. data import
+2.querying the database with directquery
+3. displaying visuals
+4. calculated versus computed columns
+5. inefficient relationships
+a. many to many relationships
+b. bi directional cross filtering
+
+
+optimizing data
+1. import date
+2. remove unnecessary rows and columns
+3. choose correct data types
+a. numeric data takes less space
+b. casting and aggregating data is slower
+4. group and summarize data
+a. store less data on disk
+b. get to aggregate results faster
+
+direct query
+1. limit parallel queries
+2. relational database advice
+a. write efficient sql queries
+b. use appropriate indexes
+c. get right columns and rows
+
+computed columns get calculated at import time
+
+removing bi-directional filtering using filter measures
+
+1. Create a filter measure in DAX
+
+slicer_MYFactable = int(not isempty('My Fact Table'))
+
+2. we want cases where there are records in the fact table
+a. returns 1 if at least one value in the fact table
+b. returns 0 if no values in the fact table
+
+Add a visual filter to the slicer and set where Slicer_MyFactTable=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

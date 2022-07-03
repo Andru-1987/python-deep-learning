@@ -1,0 +1,29 @@
+what is clean data
+1. free from missing values
+2. typos/data entry errors are correct
+3. no duplicated data
+4. irrelevant data is excluded
+5. outliers are dealt with
+6. columns should have the correct data types for calculations
+7. column and table names should be short and description to avoid confusion
+
+power query allows loading and transforming data
+
+data types in power query: numerical, datetime, text, logical, and binary data
+
+promote headers, reorder columns, sort columns, and remove columns
+
+
+Transform data ribbon
+
+
+
+
+
+
+
+
+
+
+
+

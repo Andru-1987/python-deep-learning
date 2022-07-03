@@ -1,0 +1,53 @@
+Churn is known as the rate of attrition or customer churn, is the rate at which customers stop doing business with an entity.
+
+keeping customers is easier than getting new customers
+
+churn rate= customers lost / total number of customers
+
+churn rate = 10/100
+
+a churner could be someone who hasnt made a purchase in the last 12 months
+
+
+Churn = IF('Databel - Data'[Churn Label]="Yes",1,0)
+
+stacked line
+
+X: Age (bins)
+Y: Number of customers
+Line Y: Churn Rate
+
+
+stacked line
+
+x: number of customers in group
+y axis: average of monthly charge
+column legend: Group
+
+Contract Category 
+= Switch('Databel - Data'[Contract Type],"One Year","Yearly","Two Year","Yearly","Monthly")
+
+Grouped Consumption=if('Databel - Data'[Avg Monthly GB download]<5,"Less than 5 GB",If('Databel - Data'[Avg Monthly GB download]>=5 && 'Databel - Data'[Avg Monthly GB download<=10,"Between 5 and 10 GB","10 or more GB"))
+
+matrix
+rows: intl active
+columns: intl plan
+values: churn rate
+
+
+churn rate by state
+location: State
+bubble size: churn rate
+
+
+
+
+
+
+
+
+
+
+
+
+

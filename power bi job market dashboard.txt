@@ -1,0 +1,31 @@
+who is the audience
+what do they need? what is their goal
+how can a dashboard help
+
+
+What significant visualizations to include?
+
+Are we sizing, positioning, & coloring visuals relative to their importance?
+
+Designing a dashboard
+1. less is more
+2. give numbers contact
+3. label everything
+4. make the dashboard interactive
+
+Jobs Overview
+
+Skills Overview
+
+Company Overview
+
+
+Key Metrics at the top
+slicers on the left
+visuals in the center with data tables
+
+Measures: Skill Count=Count('Job Skills'[Job Skills])
+% Skill in Posting = [Skill Count] / [Posting Count]
+average of Average Pay = AVERAGE('Job Postings'[Average Pay])
+Posting Count = COUNT('Job Posting'[Job Posting ID])
+

@@ -1,0 +1,71 @@
+database normalization
+1. a set of logical rules and processes to follow for data modeling
+2. organizing a database
+3. goals of normalization
+a. remove redundant data
+b. achieve a design which is a good representation of the real world
+
+tables are connected by relationships
+
+key techniques:
+1. column splitting
+2. column extraction
+3. query merging
+4. query appending
+
+split criteria
+1. delimiter
+2. number of characters
+3. position in string
+4. lower vs upper casting
+5. digit vs non-digit
+
+column extraction
+1. keep distinct rows, shrinking total data model size and reducing redundancy
+
+query appending
+1. combining contents of two or more tables into a single table
+2. match rows based on column names, adding null for missing columns
+
+equivalent to union all
+
+types of join:
+inner join
+left outer join
+right outer join
+full outer join
+
+Creating a lookup table
+1. duplicate the table
+2. keep the 2017 naics codes and meaning of naics code columns
+3. remove duplicates for 2017 naics codes
+
+appending tables
+1. append as new (three or more tables)
+
+
+duplicate column
+extract before delimiter
+
+duplicate column
+extract last for characters
+extract before delimiter
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

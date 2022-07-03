@@ -1,0 +1,55 @@
+custom columns are written in m language which comes from Mashup and it is case sensitive
+1. can reference several columns and provide numerical operations + - * / ^
+2. extend functionality of existing transformations
+3. implement advanced logic for conditional columns using and or not
+4. Text columns can be concatenated with &
+5. All columns compared < > <> <= >= =
+6. conditional logic if then else and or not
+7. mismatches will result in an error
+
+Group by with custom columns
+
+All Rows aggregation divides the data into several smaller tables dependant on the aggregation fields
+
+
+Gross Sales=UnitPrice * Quantity * (1-[Discount])
+
+change the data type
+
+Special Discount= if Quantity > 50 and CategoryName <> "Confections" and CategoryName <>"Condiments" then 0.05 + Discount else Discount
+
+
+Grouped Rank = Table.AddIndexColumn(Table.Sort([Grouped],{"Net Sales", Order.Descending}),"CategorySalesRank",1)
+
+Exercise
+Group by CategoryName
+1. TotalStock sum UnitsInStock
+2. Grouped "all rows"
+
+StockPlusOrdered=UnitsInStock+UnitsOnOrder
+
+StockPlusOrderValue=StockPlusOrdered*UnitPrice
+
+IsBackOrdered=If categoryStockRank=1 and stockPlusOrdered < ReorderLevel then true else false
+
+
+GroupedSort=Table.Sort([Grouped],{"StockPlusOrderValue",Order.Descending})
+
+CategoryGroupedRank=Table.AddIndexColumn([SortedGroup],"CategoryGroupedRank",1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,75 @@
+advanced editor
+1. The advanced editor allows you to view and edit the underlying code of your query.
+
+Any transformation you make to your data is translated into M code
+
+a. Table.SelectColumns
+b. Table.Sort
+c. Table.AddIndexColumn
+d. Table.Group
+e. Table.ExpandTableColumn
+f. Table.TransformColumnTypes
+
+
+M code allows you to transform and load it
+1. used to load, transform, and create data
+2. remove or rename columns
+3. pivot, unpivot, transpose, group your data
+4. case-sensitive
+
+
+write your own M language allows you to:
+1. store variables for use in the query
+2. implement custom functions
+3. make advanced transformations
+4. add comments
+
+Number=123
+Text="Data camp"
+Logical=true
+date=1/20/2022
+list={123,"Data Camp",true}
+Table= #table({"Index","Value"},{{"A",123},{"B","Datacamp"},{"C",true}})
+
+
+odata
+
+services.odata.org/V4/Northwind/Northwind.svc
+
+
+#"Sorted Rows" = Table.Sort("Removed Other Columns",{{"UnitsInStock",Order.Descending}}),
+#"Added Index"= Table.AddIndexColumn(#"Sorted Rows1","Index",1,1,Int64.Type),
+#"Renamed Columns1" = Tale.RenameColumns(#"Added Index1",{{"Index","CategoryStockRank"}})
+#"Expanded Grouped" = Table.ExpandedTableColumn(#"Renamed Columns1","Grouped",{"ProductID","ProductName"})
+#"Added Custom"= Table.AddColumn(#"Expanded Group","StockPlusOrdered",each [UnitesInStock]+[UnitsOnOrder]),
+#"Added Custom1"=Table.AddColumn(#"Added Custom"","StockPlusOrderedValue, each[StockPlusOrdered]*[UnitPrice])
+#"Added Conditional Column"=Table.AddColumn(#"Added Custom1","IsBackordered", each if [StockPlusOrder]<[ReorderLevel] then true else false)
+#"Grouped Rows1=Table.Group(#"Added Conditional Column",{"CategoryName"},{{"Total Value", each List.Sum([StockPlusOrderValue]),type number},{"Grouped", each _, type table[CategoryName
+#"Added Custom2" = Table.AddColumn(#"Grouped Rows1","GroupedRank", each Table.AddIndexColumn(Table.Sort([Grouped],{{"StockPlusOrderValue",Order.Descending}}),"CategoryGroupedRank",1))
+
+
+
+FreshProducts={"Seafood","Meat/Poultry","Produce","Dairy Products"},
+
+isFreshProdut=(Input as list)=>
+	let
+		Result=if List.ContainsAny(input,FreshProduct) then true else false
+	in
+		Result,
+
+
+#"Added IsFreshProduct"=Table.AddColumn(#"ReorderColumns","IsFreshProduct",each isFreshProduct({[CategoryName]})),
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,44 @@
+The Kimball Model is referred too as the dimensional model
+
+The Kimball model is based on two key concepts: Facts and Dimensions
+1. Facts are metrics from a business process
+2. Dimensions are context surrounding a business process
+
+Facts and Dimensions form a star schema
+
+
+Fact: property sales
+Dimensions: Lender, Salesperson, Date, Property, Payment Type
+
+
+Fact Tables (measures)
+1. Measurements or metrics from your business process
+2. Keys establish relationships between fact and dimension tables
+
+Dimensions (who, what, when, where, why)
+
+Shared business concepts
+1. person, employee, customer, vendor
+
+static or slowly changing data
+
+dimensions contain many columns and few rows
+
+
+Star Schema
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

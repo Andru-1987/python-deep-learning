@@ -1,0 +1,14 @@
+Git stores all of its extra information in a directory called .git located in the root directory of the repository
+
+all of the information about a repository is stored under its root directory
+
+git has a staging area in which it stores files with changes you want to save.  
+
+putting files in the staging area is like putting things in a box
+
+while committing those changes is like putting that box in the mail.
+
+
+git commit -m "sync"
+
+git push -u origin main

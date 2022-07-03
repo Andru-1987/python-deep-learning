@@ -1,0 +1,30 @@
+free from typos
+consistently formatted
+a. data points are consistently represented
+b. uniform capitalization
+c. no leading or trailing whitespace
+d. no punctation or control characters
+e. ideally, each column will only store one piece of information
+f. columns are split or merged 
+1. split by delimiter
+2. split by custom delimiter
+3. merge together with a space between
+
+Harvard business review
+1. Bad Data costs businesses $3.1 trillion a year
+2. stall and unverified data is being used to make economic decisions costing business money.
+3. data is rounded to the appropriate amount of digits
+4 date data: extract year, quarter, month, week, day
+
+Use the format option to change the capitalization and access Trim and Clean
+
+Trim and Clean should be applied to all text columns
+1. trim removes trailing and leading whitespace
+2. clean removes control characters (new line, carriage return, etc)
+
+Splitting and combining columns
+
+
+
+
+

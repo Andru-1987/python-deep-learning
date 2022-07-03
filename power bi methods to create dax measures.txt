@@ -1,0 +1,62 @@
+implicit vs explicit measures
+
+1. automatically created by powerbi
+2. comes directly from the database
+3. if we drag sales to values of a table power bi will automatically sum it
+
+Explicit
+Total Sales = Sum(orders[Sales])
+
+reusable
+Total Sales East=Calculate([Total Sales], Orders[Region]='East')
+
+Best Practices
+1. Keep DAX measure grouped together:
+2. Measures are free to move to any table
+3. Whereas, Calculated columns belong to a specific table
+
+_Measures
+  Total Sales
+  Total Sales TV
+  Transaction Count
+
+Use variables to improve your formulas
+1. Stores the result of an expression as a named variable
+2. Can be used as an argument to other measure expressions.
+
+var <name>=<expression>
+a. name=The name of the variable
+b. A dax expression which returns a scalar or table value
+c. followed by a return statement
+
+
+VAR SALESPRIORYEAR = CALCULATE([SALES],SAMEPERIODLASTYEAR('DATE'))
+RETURN
+
+Sales growth=[Sales] - SALESPRIORYEAR
+
+
+Sales YoY % New=
+Var SalesPriorYear = calculate([Sales],
+SAMEPERIODLASTYEAR('Dim_DeliveryDate'[Delivery Date Key]))
+return Divide([Sales]-SalesPriorYear,SalesPriorYear)
+
+Sales YoY % Old =
+Divide(
+([sales-Calculate([Sales,SamePeriodLastYear('Dim_DeliveryDate'[Deliver Date Key]))),
+Calculate([Sales],SamePeriodLastYear'[Delivery Date Key]))
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+Luke Barousse
+
+pipeline:
+1. data check
+2. explore data
+3. analyze & visualize data
+4. dashboard
+5. communicate insights
+
+Key insights
+1. job postings are increasing in number
+2. data engineers, data scientist, and analyst are in demand
+3. tech industry need data scientist
+
+
+dataset:
+1. job title
+2. job skills
+3. years of experience
+4. company name
+5. company industry
+
+
+Analyzing and building data visualizations
+
+
+Goals
+1. what key findings to focus
+2. visualizations to share
+
+
+Scatter plot
+x: company industry
+y: average year of experience
+legend: job position level
+size: posting count
+
+
+
+
+
+

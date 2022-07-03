@@ -1,0 +1,65 @@
+what is a data model?
+1. a conceptual view of data elements
+2. typically a visual representation
+3. data models include:
+a. tables
+b. columns
+c. relationships between tables
+d. keys
+
+
+Power query directly changes the data
+
+Data modeling: 80% in Power Query, 20% in power bi
+
+operations:
+1. keep or remove specific columns
+2. keep or remove specific rows
+3. split a single column into multiple columns
+4. summarize group rows in a table by the contents of a column
+
+Data types:
+1. decimal number
+2. fixed decimal number
+3. whole number
+4. percentage
+5. date/time
+6. date
+7. time
+8. date/time/timezone
+9. duration
+10. text
+11. true/false
+12. binary
+
+round in power query changes the data, where as in power bi formating does not
+
+
+dataset
+1. United States Census Bureau survey data of manufacturers
+2. Summary statistics for manufacturing firms
+3. North American Industry Classification System (NAICS)
+
+
+1. remove top rows 1
+2. use first row as headers
+
+3. select column add prefix
+4. transform to natural log
+5. rounding
+
+power bi
+1.sorting
+2.hiding
+3.data category
+
+
+Industrial datasets
+
+https://github.com/makinarocks/awesome-industrial-machine-datasets
+
+
+
+
+
+

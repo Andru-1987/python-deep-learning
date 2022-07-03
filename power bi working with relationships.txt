@@ -1,0 +1,30 @@
+filter direction
+1. all relationships have a cross filter direction
+2. determines the direction that filters will propogate.
+3. from dimension to fact
+
+single direction filters
+1. filter in one direction
+
+bi-directional
+1. filter in both directions
+
+bi directional filters cannot allow for two separate paths between two tables
+
+role playing dimensions
+1. sometimes we need to create multiple relationships between tables.
+
+
+create role playing dimensions
+1. dimensions that can filter related facts differently
+2. typically implemented as views of the date dimension
+
+
+measure name = calculate(measure function, USERELATIONSHIP(dimension key column, fact key column)
+
+
+Number of employees by year founded=
+calculate(average('Establishment Survey'[Number of Employees],Userelationship('Time'[Year],'Establishment Survey'[Year Founded]))
+
+
+

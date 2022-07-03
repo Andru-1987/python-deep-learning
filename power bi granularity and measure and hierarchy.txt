@@ -1,0 +1,38 @@
+granularity: at what level is the data stored with respect to dimensions?
+
+the minimum level of detail to query on
+
+define granularity with by statements
+
+getting to a coarser grain : aggregations and grouping
+
+1. Manage aggregations
+2. group by
+
+Getting to a coarser grain: aggregations and grouping
+1. better query performance with fewer rows
+2. smaller cache sizes and faster refresh time
+
+measures
+1. fields or combinations of fields which can be aggregated or calculated
+
+when you import data into powerbi it is automatically aggregated as sum
+
+Hierarchies (allow users to drill down into data dimensions)
+1. natural hierarchies
+a. levels of the hierarchy exist in the real world
+b. year->month->day
+
+2. artificial hierarchies
+a. levels are created for querying purposes
+b. intake year->favorite color->favorite sport
+
+
+
+
+
+
+
+
+
+

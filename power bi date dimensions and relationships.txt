@@ -1,0 +1,65 @@
+creating date dimensions
+1. match fiscal year with calendar year
+2. slice by quarter, month, and week
+
+time dimensions handle times of the day:
+hour, minute, and second
+
+time dimensions tend to be much less common than date dimensions
+
+
+
+dax
+month_year = Calendar(date(1950,1,1), today())
+
+relationships allow you to link tables in power bi
+1. propagate filter across tables
+2. allow for cross-table calculations
+
+autodetect based on column names
+
+relationship keys
+
+1. relationship are based on keys
+a. one or more columns which guarantee a row is unique
+
+2. two types of keys
+a. natural key: existing column
+b. surrogate key: artificial column
+
+power bi requires single column relationships
+
+composite key: a key made up of at least two columns
+
+
+cardinality
+1. a measure of the relationship between rows of two given tables
+
+a. one to many 1 and *
+b. many to one * and 1
+c. one to one 1 and 1
+d. many to many * and *
+
+new table
+Year  = distinct
+(
+selectcolumns(
+calendar(date(1950,1,1),today()),
+"year",year([Date])
+)
+)
+
+new column
+
+Millenium='Year'[Year] - Mod('Year'[Year],1000)
+
+Decade='Year'[Year]-MOD('Year'[Year],10)
+
+
+
+
+
+
+
+
+

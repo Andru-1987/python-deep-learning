@@ -1,0 +1,70 @@
+dax stands for data analysis expression
+1. dax is a formula expression language used in multiple microsoft analytics tools
+2. dax formulas include functions, operators, and values to perform advanced calculations
+
+Dax formulas are used in
+a. measures
+b. calculated columns
+c. calculated tables
+d. row-level security
+
+The power of DAX
+a. it opens up new capabilities
+b. joins, filters, measures, and calculated fields
+
+calculated columns
+
+cost=Orders[Sales] - Orders[Profit]
+
+measures
+Total Sales = Sum(Orders[Sales])
+
+
+there are three type of context: row, query, and filter context
+
+context allows you to perform dynamic analysis
+
+Row Context:  includes all values in the current row
+
+cost=Orders[Sales] - Orders[Profit]
+
+Query context: refers to the subset of data that is implicitly retrieved for a formula
+a. controlled by slicers, page filters, table columns and row headers
+b. controlled by chart/visual filters
+c. applies after row context
+
+Filter context:  The set of values allowed in each column, or in the values retrieved from a related table
+a. The set of values allowed in each column, or in the values retrieved from a related table
+b. by using arguments to a formula or by using report filters on row and column headings.
+c. applies after query context
+
+Total Cost East = Calculate([Total Costs], Orders[Region]='East')
+
+world wide importers dataset.
+
+contoso data set
+
+new table
+1. Dim_Calendar = calendar(
+Min('Fact_StrategyPlan'[Datekey]),
+Max('Fact_StrategyPlan'[Datekey])
+)
+
+new column
+EntityShort=substitute(dim_entity[EntityDescription],"Contoso","")
+
+new column using the related function
+Scenario = Related(Dim_Scenario[ScenarioDescription])
+
+
+
+
+
+
+
+
+
+
+
+
+

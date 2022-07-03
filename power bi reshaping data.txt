@@ -1,0 +1,18 @@
+transforming data shape
+1. long to wide is called pivot
+2. wide to long is called unpivot
+
+transpose switches the rows with the columns and vice versa
+
+aggregation is changing the granularity of your dataset. too change the granularity use the group by function of power query then apply an aggregation function on the groups: sum, average, median, min/max, std, count
+
+reshaping data is a powerful analysis technique
+
+
+pivot a column with an another column, no aggregation
+
+pivot a table with a column and aggregate
+
+
+
+

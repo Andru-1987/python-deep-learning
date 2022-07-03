@@ -1,0 +1,14 @@
+
+create two slicers
+Naics code=>Industry group
+Geography -> Geographic Area Name
+
+Cross filter direction: for one to many relationships the cross filter direction is always one side, and optionally from the many side (bi-directional)
+
+for one to one relationships, the cross filter is always from both tables.
+
+The slicers will reduce according to the linkage of the tables.
+
+instead of copying table several times.  The appropriate technique is to use the userelationship() function.
+
+Related Number of employees=calculate(Sum('Summary Statistics Double NAICS'[Number of employees],userelationship('Summary Statistics Double NAICS'[NAICS Code Related],'NAICS Code'[2017 NAICS]))

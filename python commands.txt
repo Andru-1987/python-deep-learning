@@ -3,3 +3,12 @@ python3 get-pip.py
 
 from numpy import array
 import numpy as np
+
+conda update --all --yes
+
+conda install python=3.7
+
+conda config --set channel_priority false
+
+conda remove scipy scikit-learn -y
+conda install scipy scikit-learn -y

@@ -1,0 +1,31 @@
+data preview
+1. set of features that allow you to analyze your data 
+
+2. three different types of data preview
+a. column distribution
+b. column quality
+c. column profile
+
+by default preview will only analyze the first 1000 rows
+
+data preview helps you find errors in your dataset and it helps you find inconsistencies in your dataset.
+
+shows how a transformation affects your dataset
+
+column distribution displays a histogram under each section.  helpful for finding duplicate values.
+
+column quality: evaluates for missing values or errors in data type: valid, error, and empty
+
+
+column profile: provides statistics for a single column: maximum, minimum, standard deviation.  Also shows number of unique and distinct values for the column.
+
+
+
+
+
+
+
+
+
+
+

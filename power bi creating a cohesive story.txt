@@ -1,0 +1,19 @@
+build the dashboard to tell the story
+
+we need to combine information in such a way that it fits well together
+
+Overview should include the main insights from your analysis
+
+KPI: churn rate, number of customers, number of churned
+
+count of contract type: month to month,
+yearly, two year contract
+
+churn category
+
+
+
+x: account length
+y: churn rate
+
+legend: contract type
