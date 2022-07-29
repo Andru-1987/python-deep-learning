@@ -3,7 +3,7 @@ python deep learning notebooks.  Open the juptyer projects in a new window to av
 
 * equipment failure analysis: lstm, volt, pressure, rotation
 
-https://github.com/dnishimoto/python-deep-learning/blob/master/Abalone%20Age%20Prediction.ipynb
+https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Classifier%20Equipment%20Failure.ipynb
 
 * market basket analysis: support, conviction, leverage, confidence, lift
 
