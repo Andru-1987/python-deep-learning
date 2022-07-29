@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* equipment failure analysis: lstm, volt, pressure, rotation
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Abalone%20Age%20Prediction.ipynb
+
 * market basket analysis: support, conviction, leverage, confidence, lift
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/grocery%20market%20basket%20analysis.ipynb
