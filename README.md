@@ -1,5 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
+
+* Dense layer classifier for predict import car prices based on features
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Dense%20Import%20Car%20Price%20Predictor.ipynb
+
 * Dense layer classifier of the equipment failure. tsne for visualizing the errors
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Dense%20Classifier%20Equipment%20Failure.ipynb
