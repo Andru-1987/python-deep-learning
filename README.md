@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+*LSTM classifier for prediction remaining life of an aircraft
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Aircraft%20maintenance%20remaining%20useful%20life.ipynb
+
 * Dense layer classifier for predict import car prices based on features
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Dense%20Import%20Car%20Price%20Predictor.ipynb
