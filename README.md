@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+*LSTM classifier for predicting accumulation of the Lockheed Martin stock
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Lockheed%20Martin%20LMT.ipynb
+
 *LSTM classifier for prediction remaining life of an aircraft
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Aircraft%20maintenance%20remaining%20useful%20life.ipynb
