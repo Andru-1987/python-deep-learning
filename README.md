@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+*XGBoost regressor to discover the affect of inflation on commodities
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/XGBoost%20Food%20Prices%20vs%20Copper.ipynb
+
 *LSTM classifier for predicting accumulation of the Lockheed Martin stock
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/LSTM%20Lockheed%20Martin%20LMT.ipynb
