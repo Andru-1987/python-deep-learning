@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* deep learning jeep price prediction 
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/Jeep%20Prediction%20Price%20based%20on%20description.ipynb
+
 *XGBoost regressor to discover the affect of inflation on commodities
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/XGBoost%20Food%20Prices%20vs%20Copper.ipynb
