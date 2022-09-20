@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* oil well rock formation type identification using a support vector machine
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/SVM%20Oil%20Facies.ipynb
+
 * deep learning jeep price prediction 
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Jeep%20Prediction%20Price%20based%20on%20description.ipynb
