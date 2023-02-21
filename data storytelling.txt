@@ -1,0 +1,656 @@
+1. commuicate results to different stakeholders using storytelling
+2. structure a written report
+3. build a compelling oral presentation
+
+impacting decision-making process
+
+making the story stick
+1. simple
+2. concrete
+3. credible
+
+
+story->tech or non tech->data->viz->present
+
+the best results have no impact without proper presentation
+
+data storytelling is the practice of building a narrative around a set of data and its accompanying visualization to help convey the meaning of that data in a powerful and compelling fusion.
+
+anecdotes = imagination
+stories = memorable
+add value = context
+
+capture audiences attention
+facilitate decision-making
+
+data storytelling
+
+3-minute
+
+1. insightful
+2. explanatory
+3. concise
+
+
+apply only findings that apply to the situation
+actionable insights, data that drives action
+compelling and easy to understand
+prioritizing essential points
+centralized insight
+understand background and audience
+clarify facts to that audience
+helps focus attention
+meaning and context
+helps retain insights
+better-informed decision-making
+determine how technical your audience is
+audiences care about results and implications
+
+low accuracy predictions to supply chain agents
+1. don't care about stats
+2. care about their own pain points
+
+translating technical results into stories
+1. easy to understand
+2. engage audience
+3. decision-making
+4. drive change
+5. strategies
+
+
+awareness
+1. what do they know?  how our model works
+2. adjust content.  Prediction's impact and limitations
+
+what do they need to understand?  Why we chose our predictive variables
+
+be conversational.  The context on which our model works
+
+what information do they need?
+it is easier to explain the interactions between customer traits
+
+ADEPT
+1. Analogy
+2. Diagram
+3. Example
+4. Plain English
+5. Technical definition
+
+use acronyms with caution
+1. can help or hurt communication
+2. introduce the term and acronym
+
+jargon
+1. translate terminology
+2. simple terms
+3. guide
+4. definitions
+
+focus on impact
+focus on benefits
+
+Humulity
+1. be receptive
+2. proactively ensure understanding
+3. explain differently
+
+Narrative Structure
+1. What motivated the analysis
+2. What changed
+3. Who is the focus of the analysis?
+a. customers
+b. employees
+c. something else
+
+only relevant information -  don't overwhelm the audience
+
+add supportive evidence if it helps to explain the cause of the problem
+all evidence should build towards the climax, the central insight
+
+provide potential solutions, give a course of action, and be proactive
+
+show how things change over time, the time sensitive patterns
+
+correlation (how one features is influenced by another)
+
+comparision (how one features measures against another feature)
+
+clustering (how two features are arranged by grouping dispersion)
+
+the right data
+1. selecting the right data implies including enough contextual insights in a story to better support the main point without overloading with information.
+a.  Minimal amount of information to support our story
+
+selecting the right data and communicating data
+1. identify personas
+2. select findings and statistics
+3. select a visualization
+4. choose a format
+
+selecting the right data implies including enough contextual insights in a story to better support the main point without overloading with information
+1. include the minimal amount of information to support the story
+
+data:
+a. garbage in, garbage out
+b. adapt to the audience
+
+project manager
+1. interest: project aligns with company objectives
+2. right data: summary data :$2 m cost of marketing campaign
+3. metrics: 10% monthly increase in number of customers
+4. 2% risk of decline
+
+
+Tech team
+project collaborator or technical supervisor
+knowledge: expert (technical aspects)
+interest: replicate project
+
+audience skepticism
+1. different levels of skepticism
+2. different levels
+a. convince yourself
+b. convince a friend
+c. convince a skeptic
+
+
+variations of data
+absolute: difference between 2018 and 2017 sales
+a. absolute change and relative change depend on the quantity
+relative: percentage variation 2018 from 2017
+a. small numbers more significant than reality
+
+using absolute or relative change depends on the question you want to answer
+
+
+ratio
+quotient of two variables
+1. revenue per customer (total product revenue/number of customers)
+
+aggregates
+representative values
+totals/counts
+mean
+median
+
+the mean can be misleading if there are outliers
+
+2019 US average salary was 51916.27
+2019 US median salary was 34248.45
+
+what is p-value
+1. value less than 0.05 is statistically significant
+2. value close to 0.05 is a weak indicator
+
+p-value is not a proof of evidence
+a. reject our hypothesis, but not that is false
+
+consider alternatives or complementary metrics
+
+
+the visualization needs to adjust to the message we want to communicate
+1. audience expertise
+2. familiarity with the topics
+
+how well did our model perform on historical data
+
+Investor
+1. influence (buy or not buy)
+
+Technical lead
+1. the feature importance
+
+pareto principle
+1. aggregate less relevant data
+2. less is more
+
+
+McCandless Method
+1. introduce visualization by name
+a. Graph Headline
+b. clear and obvious
+c. y vs x technique
+2. anticipate audience questions
+a. focus on story not on decoding graph
+3. state insights
+4. help the audience relate to the graph and its insights
+a. importance
+b. action items
+
+
+present the information
+
+which format is more effective? written reports or oral presentations
+
+Stakeholders:
+1. who
+2. why
+a. accountability
+b. methodology
+3. how
+a. make decisions
+b. start new project
+
+Content: results? conclusions? recommendations? and methods?
+
+
+format
+1. document
+2. slide deck
+
+delivery mechanism
+1. live
+2. asynchronous
+
+audience
+1. conference room
+
+oral communication
+advantages: relationship with the audience, immediate feedback, and non-verbal cues
+disadvantages: no permanent record of communication, not suitable for long messages
+
+
+written communication
+advantages: permanent record of communication, shared easily with a large audience, less emotional reaction to message, suitable to share code with collegues
+disadvantages: hard to see if the message was understood, no immediate feedback
+
+choosing the appropriate format
+1. audience
+2. content
+3. requirements
+4. channel
+-> presentation format
+
+who are we presenting too
+stakeholders: who? why? accountability and methodology how? make decisions and start new project what?
+
+content: should we focus on results, conclusions, or recommendations
+
+requirements
+1. time
+2. who do they report too? authority to backup a claim
+3. time zone
+4. how will our presentation be consumed
+5. format: document or slide deck
+6. delivery mechanism
+a. live
+b. asynchronous and get questions later
+7. how big will our audience be
+a. conference room
+b. ball room
+
+
+Types of reports
+1. how to write precise and clear reports
+2. informational: they provide factural information, short, not strict structure, inform about facts
+3. analysis: (relationships and recommendations), varies (short or long), strict structure, data-driven decisions
+4. final: data analysis. findings and results, visuals.  for audiences that need technical details.
+5. summary: key findings and information and visuals. usually less than 5 pages
+
+Written reports
+1. explain data analysis project
+a. sentiment analysis on product reviews
+
+2. communicate findings
+a. 30% negatie ratings for delayed shipping
+b. predict ratings with 90% accuracy
+
+3. standards
+
+4. give recommendations to drive changes
+
+Report structure
+1. introduction: explain the purpose of the report
+2. contextual information:  why we performed the analysis shown?  what motivated our analysis?
+3. summarize our analysis questions: what factors are driving the bad user experience
+4. body of the report, data and description and tables, methods (nlp and random forest), analysis (visuals and graphs of most common words), results (description and visuals - 30% negative ratings associated with words delayed and shipping)
+a. data
+b. methods
+c. analysis
+d. results
+5. conclusions: restate the question.
+
+
+business context
+1-3-25
+a. 1 page of abstract
+b. 3 pages of executive summary
+c. 25 pages of details
+
+
+Reproducibility example
+1. baking a cake
+a. recipe
+b. raw ingredients
+c. our oven and kitchen measuring gadgets
+d. cake with similar flavor
+
+data project
+a. different environment but similar results
+
+reproducibility and replicability virtues
+1. prevents duplication effort
+2. build upon preexisting work
+3. focus on new challenges
+4. peer review
+5. tool agnostic
+
+best practices
+1. keep track of how results were produced
+	a. well document scripts
+	b. list packages and environment used
+2. avoid manual data manipulation
+	a. data versioning
+	b. store raw data and intermediate steps
+	c. adapt and resolve problems
+	d. impute missing values with the mean
+	e. save and close editor
+3. control randomness
+	a. random seeds for ml pipelines
+	b. controls confounding variables
+4. interpretability
+	a. understand the cause of a decision or predict model results
+	b. story with compelling narrativde
+	c. link with reproducibility
+5. cite bibliography correctly
+	a. site and locate a specific publication
+	b. apa - in text citations (author, date)
+
+
+write precise and clear reports
+1. concise
+2. precise
+3. avoid misleading and confusion
+4. meaningful message
+
+avoid empty phrases
+1. it is interesting to note that
+2. the fact that
+3. it should be pointed out that
+4. it is well known that
+5. it is obvious that
+
+write concrete nouns
+1. avoid this, that, it because it adds cognitive load
+	a. distract users from the main insights
+
+active voice puts the emphasis on the author
+the passive voice is stuffy and hard to read
+academic vs business context
+
+redundant adjectives and adverbs
+1. phrases that say the same thing twice
+2. introduce a new
+3. done previously
+4. eliminate redundant adjective and adverbs
+
+run on sentences are two or more independent clauses connected incorrectly
+1. make them two sentences
+2. use dependent clauses like because or also
+
+
+how to write a report on credit risk case
+1. credit risk is the probability of defaulting
+2. loanme bank wants to predict if a customer is likely to default
+3. raw data available
+4. data exploration analysis
+5. model training and evaluation
+
+Story
+increase in defaulting percentage over last 5 years.  predicting which customers had a high probability of default.
+
+insight: people with more unemployment periods tends to default more
+insight: people with lower income tend to default more
+climax: possible to predict which people is more likely to default with an accuracy of 95%
+next steps: run a trial on a control population
+
+Role: financing department director
+interest: decision on implementing an automated loan rejection system
+appropriate data:
+1. relationship between unemployment or income and loan default
+2. percentage customer defaulting over the next months
+
+statisics
+1. median age and income
+2. percentage of change
+3. boxplot with age vs default condition
+4. lineplot with % change default customers
+
+summary report struction
+1. Introduction
+	a. purpose
+	b. contextual information
+	c. question of analysis
+2. Body
+	a. Data
+	b. Results: Key Findings
+
+3. Conclusions
+	a. Restate question
+	b. Central insight
+	c. Add recommendations
+
+
+oral presentation
+1. plan and build presentation slides
+2. avoid common mistakes
+3. present effectively
+
+
+presentation structure:
+1. purpose
+	a. informative
+	b. instructional
+	c. persuasive
+2. audience
+	a. technical collegues
+	b. size of audience (meeting or conference)
+	c. workshop
+3. message
+	a. after one week 90% of the content is forgotten
+	b. what do we want to stick
+	c. capture the audience attention
+	d. what is the central message.  one sentence
+	e. closing statement: sums up presentation and strengthens the central message
+
+
+structure
+1. introduction
+	a. provide background information
+	b. catch audience attention
+	c. glimpse of presentation content
+2. methods, analysis, and model outputs
+3. conclusions and takeaways
+	a. refers back to the introduction
+	b. contains a call to action statement or and next steps
+
+outline
+	1. graphs and visuals
+	2. sections (five or less smaller parts)
+		a. reason for analysis
+		b. exploratory analysis
+		c. sentiment analysis
+		d. conclusions
+
+
+from planning to building
+	1. support story
+	2. refined slides
+	3. slide count or timing = bad metric
+	4. one message per slide
+
+color
+	1. convey meaning
+	2. readibilty
+	3. no more than 3 colors
+	4. good contrast between words and background
+
+fonts
+	serif - for text to be print
+	san serif for text on a screen
+
+Text Slide
+	1. less text: too much text can have a negative impact
+	2. headline: the audience tends to read the slide instead of listening
+	3. write the main points
+	4. we should purpose our slides into written reports
+	5. headlines help the audience to pay attention to that point in time
+		a. highlight the main point of the slide
+		b. be specific and concise
+	6. layering approach
+		a. breaks complex slide into smaller points
+		b. each point stands on its own
+		c. displayed together
+
+
+	when we have to much text we should think of it being replaced with a graph
+
+
+Delivery of presentation
+
+Practice
+
+a. use the script as a guide to help discuss insights and reasoning
+b. don't memorize
+c. the more we practice the more familiar we become with content
+d. anticipate followup questions
+e. rehearsal means standing up, using the slides, and speaking out loud
+f. detect distracting patterns (um, so like, basically, actually)
+g. find linking statements
+h. be aware of emotions (confident or unsure)
+i. deliver the presentation (short attention span)
+j. talk to the audience not at them.
+k. we are developing a relationship with our audience
+l. timing: use the allocated time
+m. open up for questions
+
+avoid common errors
+a. tonalities: speed, volume, and intonation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

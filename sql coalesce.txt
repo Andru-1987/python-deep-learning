@@ -1,0 +1,75 @@
+coalesce() takes a list of values and returns the first non-null value, going from left to right
+
+useful when using sql operations that return null's
+a. rollup and cube
+b. pivoting
+
+select
+coalesce(Country, 'Both Countries') as Country,
+colaesce(Medal, 'All medals') as Medal
+count(*) as Awards
+from summer_medals
+where
+Year=2008 and Country in('CHN','RUS')
+group by rollup(Country, Medal)
+order by Country asc, Medal asc
+
+string_agg(column, separator) takes all the values of a column and concatenates them with separator in between each value
+
+select String_Agg(HQCo,',') companies from Viewpoint.dbo.HQCO
+
+
+SELECT
+  -- Replace the nulls in the columns with meaningful text
+  coalesce(Country, 'All countries') AS Country,
+  coalesce(Gender, 'All genders') AS Gender,
+  COUNT(*) AS Awards
+FROM Summer_Medals
+WHERE
+  Year = 2004
+  AND Medal = 'Gold'
+  AND Country IN ('DEN', 'NOR', 'SWE')
+GROUP BY ROLLUP(Country, Gender)
+ORDER BY Country ASC, Gender ASC;
+
+
+WITH Country_Medals AS (
+  SELECT
+    Country,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE Year = 2000
+    AND Medal = 'Gold'
+  GROUP BY Country)
+
+  SELECT
+    Country,
+    -- Rank countries by the medals awarded
+    Rank() over(partition by Country order by Medals) AS Rank
+  FROM Country_Medals
+  ORDER BY Rank ASC;
+
+
+WITH Country_Medals AS (
+  SELECT
+    Country,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE Year = 2000
+    AND Medal = 'Gold'
+  GROUP BY Country),
+
+  Country_Ranks AS (
+  SELECT
+    Country,
+    RANK() OVER (ORDER BY Medals DESC) AS Rank
+  FROM Country_Medals
+  ORDER BY Rank ASC)
+
+-- Compress the countries column
+SELECT String_Agg(Country, ', ')
+FROM Country_Ranks
+-- Select only the top three ranks
+WHERE Rank<=3;
+
+

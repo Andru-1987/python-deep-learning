@@ -1,0 +1,98 @@
+character(n) char(n)  fixed length string
+varying(n) varchar(n) varing length string not to exceed n characters
+text
+
+types of text data
+1. categorical
+2. unstructured text
+
+select category , count(*) from product group by category;
+
+cases and spaces
+1. upper and lower
+2. rtrim and ltrim
+3. trim
+
+select * from fruit where lower(fav_fruit)='apple'
+
+select * from fruit where fav_fruit like '%apple%'
+
+select * from fruit where fav_fruit Ilike '%apple%'
+
+select trim('Wow!','!')
+
+select trim('Wow!','!Ww')
+
+select trim(lower('Wow!'),'!w')
+
+SELECT 
+	c.name AS country,
+    -- Count matches in each of the 3 seasons
+	count(case when m.season = '2012/2013' then m.id end) AS matches_2012_2013,
+	count(case when m.season = '2013/2014' then m.id end) AS matches_2013_2014,
+	count(case when m.season = '2014/2015' then m.id end) AS matches_2014_2015
+FROM country AS c
+LEFT JOIN match AS m
+ON c.id = m.country_id
+-- Group by country name alias
+group by country;
+
+
+SELECT 
+	c.name AS country,
+    -- Sum the total records in each season where the home team won
+	Sum(case when m.season = '2012/2013' AND m.home_goal > m.away_goal 
+        THEN 1 ELSE 0 end) AS matches_2012_2013,
+ 	sum(case when m.season = '2013/2014' AND m.home_goal > m.away_goal
+        THEN 1 else 0 end) AS matches_2013_2014,
+	sum(case when m.season = '2014/2015'AND m.home_goal > m.away_goal
+        then 1 else 0 end) AS matches_2014_2015
+FROM country AS c
+LEFT JOIN match AS m
+ON c.id = m.country_id
+-- Group by country name alias
+GROUP BY country;
+
+
+SELECT 
+    c.name AS country,
+    -- Count the home wins, away wins, and ties in each country
+	count(case when m.home_goal > m.away_goal THEN m.id 
+        END) AS home_wins,
+	count(case when m.home_goal < m.away_goal THEN m.id 
+        END) AS away_wins,
+	count(case when m.home_goal = m.away_goal THEN m.id 
+        END) AS ties
+FROM country AS c
+LEFT JOIN matches AS m
+ON c.id = m.country_id
+GROUP BY country;
+
+SELECT 
+	c.name AS country,
+    -- Calculate the percentage of tied games in each season
+	avg(case when m.season='2013/2014' AND m.home_goal > m.away_goal THEN 1
+			WHEN m.season='2013/2014' AND m.home_goal != m.away_goal THEN 0
+			END) AS ties_2013_2014,
+	avg(case when m.season='2014/2015' AND m.home_goal > m.away_goal THEN 1
+			WHEN m.season='2014/2015' AND m.home_goal != m.away_goal THEN 0
+			end) AS ties_2014_2015
+FROM country AS c
+LEFT JOIN matches AS m
+ON c.id = m.country_id
+GROUP BY country;
+
+
+SELECT 
+	c.name AS country,
+    -- Round the percentage of tied games to 2 decimal points
+	round(avg(CASE WHEN m.season='2013/2014' AND m.home_goal = m.away_goal THEN 1
+			 WHEN m.season='2013/2014' AND m.home_goal != m.away_goal THEN 0
+			 END),2) AS pct_ties_2013_2014,
+	round(avg(CASE WHEN m.season='2014/2015' AND m.home_goal = m.away_goal THEN 1
+			 WHEN m.season='2014/2015' AND m.home_goal != m.away_goal THEN 0
+			 END),2) AS pct_ties_2014_2015
+FROM country AS c
+LEFT JOIN matches AS m
+ON c.id = m.country_id
+GROUP BY country;

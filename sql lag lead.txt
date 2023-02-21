@@ -1,0 +1,87 @@
+lag(column, n) returns column's value at the row n rows before the current row
+lead(column, n) returns column's value at the row n rows after the current row
+
+first_value(column) returns the first value in the table or partition
+last_value(column) returns the last value in the table or partition
+
+with Hosts as
+(
+se;ect distinct year, City
+from Summer_Medals
+)
+
+select 
+Year, City,
+Lead(City,1) Over (order by Year asc) as Next_City,
+lead(City,2) over (order by Year asc) as After_Next_City
+from Hosts
+Order by Year asc
+
+
+select
+Year, City
+First_Value(City) over
+(order by Year asc) as First_City,
+Last_VAlue(City Over(
+order by Year asc
+Range between
+Unbounded preceding and unbounded following
+) as last_city
+From Hosts
+Order by Year asc
+
+range between clause extends the window to end of the table or partition
+
+WITH Discus_Medalists AS (
+  SELECT DISTINCT
+    Year,
+    Athlete
+  FROM Summer_Medals
+  WHERE Medal = 'Gold'
+    AND Event = 'Discus Throw'
+    AND Gender = 'Women'
+    AND Year >= 2000)
+
+SELECT
+  -- For each year, fetch the current and future medalists
+  Year,
+  Athlete,
+  lead(Athlete,3) OVER (ORDER BY Year ASC) AS Future_Champion
+FROM Discus_Medalists
+ORDER BY Year ASC;
+
+
+WITH All_Male_Medalists AS (
+  SELECT DISTINCT
+    Athlete
+  FROM Summer_Medals
+  WHERE Medal = 'Gold'
+    AND Gender = 'Men')
+
+SELECT
+  -- Fetch all athletes and the first athlete alphabetically
+  Athlete,
+  First_Value(Athlete) OVER (
+    ORDER BY Athlete ASC
+  ) AS First_Athlete
+FROM All_Male_Medalists;
+
+WITH Hosts AS (
+  SELECT DISTINCT Year, City
+    FROM Summer_Medals)
+
+SELECT
+  Year,
+  City,
+  -- Get the last city in which the Olympic games were held
+  Last_Value(Year) OVER (
+   ORDER BY City ASC
+   RANGE BETWEEN
+     UNBOUNDED PRECEDING AND
+     UNBOUNDED FOLLOWING
+  ) AS Last_City
+FROM Hosts
+ORDER BY Year ASC;
+
+
+

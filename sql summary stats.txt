@@ -1,0 +1,207 @@
+summer olympics:
+1. year, city, sport, discipline, event, athlete, country, gender, and medal
+
+window functions
+1. perform an operation across a set of rows that are somehow related to the current row
+2. fetching values from preceding or following rows
+a. running totals
+b. growth over time
+
+select
+year, Event, Country,
+ROW_NUMBER() over () as Row_N
+from Summer_Medals
+where Medal='Gold'
+
+a. order by
+b. partition by
+c. rows/range preceding/following/unbounded
+
+SELECT
+  *,
+  -- Assign numbers to each row
+  ROW_NUMBER() OVER() AS Row_N
+FROM Summer_Medals
+ORDER BY Row_N ASC;
+
+
+SELECT
+  Year,
+
+  -- Assign numbers to each year
+  ROW_NUMBER() OVER() AS Row_N
+FROM (
+  SELECT distinct year
+  FROM Summer_Medals
+  ORDER BY Year ASC
+) AS Years
+ORDER BY Year ASC;
+
+order by in over orders the rows related to the current row
+
+
+select
+year, Event, Country,
+ROW_NUMBER() over (order by Year desc, Event asc) as Row_N
+from Summer_Medals
+where Medal='Gold'
+order by Country asc, Row_N asc
+
+Reigning champion
+1. a reigning champion is a champion who's won both the previous and current year competitions
+2. the previous and current year's chanpion need to be in the same row ( in two different columns)
+
+Lag
+
+
+with Discus_Gold as
+(
+select
+year, Country as Champion
+from Summer_Medals
+where
+year in(1996,2000,2004, 2008, 2012)
+and Gender='Men' and Medal='Gold'
+and Event='Discus Throw'
+)
+
+select 
+Year, Champion,
+Lag(Champion,10 Over(order by Year asc) as Last_Champion
+from Discus_Gold
+Order by Year asc
+
+
+SELECT
+  Year,
+  -- Assign the lowest numbers to the most recent years
+  Row_Number() OVER (order by year desc) AS Row_N
+FROM (
+  SELECT DISTINCT Year
+  FROM Summer_Medals
+) AS Years
+ORDER BY Year;
+
+SELECT
+  Year,
+  -- Assign the lowest numbers to the most recent years
+  Row_Number() OVER (order by year) AS Row_N
+FROM (
+  SELECT DISTINCT Year
+  FROM Summer_Medals
+) AS Years
+ORDER BY Year;
+
+WITH Athlete_Medals AS (
+  SELECT
+    -- Count the number of medals each athlete has earned
+    Athlete,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete)
+
+SELECT
+  -- Number each athlete by how many medals they've earned
+  Athlete,
+  Row_Number() OVER (ORDER BY Medals DESC) AS Row_N
+FROM Athlete_Medals
+ORDER BY Medals DESC;
+
+SELECT
+  -- Return each year's champions' countries
+  Year,
+  Country AS champion
+FROM Summer_Medals
+WHERE
+  Discipline = 'Weightlifting' AND
+  Event = '69KG' AND
+  Gender = 'Men' AND
+  Medal = 'Gold';
+
+WITH Weightlifting_Gold AS (
+  SELECT
+    -- Return each year's champions' countries
+    Year,
+    Country AS champion
+  FROM Summer_Medals
+  WHERE
+    Discipline = 'Weightlifting' AND
+    Event = '69KG' AND
+    Gender = 'Men' AND
+    Medal = 'Gold')
+
+SELECT
+  Year, Champion,
+  -- Fetch the previous year's champion
+  lag(Champion) OVER
+    (order by year ASC) AS Last_Champion
+FROM Weightlifting_Gold
+ORDER BY Year ASC;
+
+
+with Country_Gold as(
+select
+distinct Year, Country, Event
+from Summer_Medals
+where
+Year in (2008,2012)
+and Country in('CHN','JPN')
+and Gender ='Women' and Medal='Gold')
+
+select
+Year, Country, Event
+Row_Number() over (Partition by Year, Country)
+From Country_Gold
+
+
+WITH Tennis_Gold AS (
+  SELECT DISTINCT
+    Gender, Year, Country
+  FROM Summer_Medals
+  WHERE
+    Year >= 2000 AND
+    Event = 'Javelin Throw' AND
+    Medal = 'Gold')
+
+SELECT
+  Gender, Year,
+  Country AS Champion,
+  -- Fetch the previous year's champion by gender
+  lag(Country) OVER (partition by Gender
+            ORDER BY Year ASC) AS Last_Champion
+FROM Tennis_Gold
+ORDER BY Gender ASC, Year ASC;
+
+
+WITH Athletics_Gold AS (
+  SELECT DISTINCT
+    Gender, Year, Event, Country
+  FROM Summer_Medals
+  WHERE
+    Year >= 2000 AND
+    Discipline = 'Athletics' AND
+    Event IN ('100M', '10000M') AND
+    Medal = 'Gold')
+
+SELECT
+  Gender, Year, Event,
+  Country AS Champion,
+  -- Fetch the previous year's champion by gender and event
+  Lag(Country) OVER (Partition by Gender,Event
+            ORDER BY Year ASC) AS Last_Champion
+FROM Athletics_Gold
+ORDER BY Event ASC, Gender ASC, Year ASC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

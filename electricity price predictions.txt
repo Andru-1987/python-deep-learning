@@ -1,0 +1,21 @@
+what determines the cost of the electric bill?
+1. how much electricy is used during the course of a billing cycle.
+2. the wholesale price your utility pays for electricity varies from day to day
+a. wholesale price is based on demand for electricity and the cost of fuel for generators
+b. natural gas and coal are the largest sources of electricity production 
+c. predictors of price: total demand, natural gas prices, hour of day, wind generation output, coal prices, month, day of week
+d. Megawatt-hours (MWh) are a common unit of measure for both electricity generation capacity and demand
+e. the Random Forest approach was better able to capture the cyclical (i.e., non-linear) nature of our time series data, which fluctuates depending on the hour of the day, day of the week, and month of the year
+
+https://raw.githubusercontent.com/amankharwal/Website-data/master/electricity.csv
+
+
+natural gas dollars per million btu
+
+https://github.com/dannychua/Electricity-Price-Predictor/blob/master/data/raw/EIA%20-%20Natural%20gas%20henry%20hub%20daily%20prices/Natural%20gas%20henry%20hub%20daily%20prices.csv
+
+wind generation
+https://github.com/dannychua/Electricity-Price-Predictor/blob/master/data/raw/MISO%20-%20Wind%20Generation/20081231_hwd_HIST.csv
+
+coal prices are determined by the ton
+https://github.com/dannychua/Electricity-Price-Predictor/blob/master/data/raw/Quantdl%20-%20Coal%20(Daily%2C%20US)/DOE-COAL.csv

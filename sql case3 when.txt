@@ -1,0 +1,150 @@
+select date, hometeam_id, awayteam_id
+case when hometeam_id=8455 and home_goal>away_goal then 'Chelsea home win!' 
+when awayteam_id=8444 and home_goal<away_goal then 'Chelesea away win!'
+else 'Loss or Tie :(' end as outcome
+from match
+where hometeam_id=8455 or awayteam_id=8455
+
+
+select date, hometeam_id, awayteam_id
+case when hometeam_id=8455 and home_goal>away_goal then 'Chelsea home win!' 
+when awayteam_id=8444 and home_goal<away_goal then 'Chelesea away win!'
+end as outcome
+from match
+where 
+case when hometeam_id=8455 and home_goal>away_goal then 'Chelsea home win!' 
+when awayteam_id=8444 and home_goal<away_goal then 'Chelesea away win!' end is not null;
+
+
+SELECT 
+	date,
+	-- Identify the home team as Barcelona or Real Madrid
+	CASE WHEN hometeam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END AS home,
+    -- Identify the away team as Barcelona or Real Madrid
+	CASE WHEN awayteam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END AS away
+FROM matches_spain
+WHERE (awayteam_id = 8634 OR hometeam_id = 8634)
+      AND (awayteam_id = 8633 OR hometeam_id = 8633);
+
+
+SELECT 
+	date,
+	CASE WHEN hometeam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END as home,
+	CASE WHEN awayteam_id = 8634 THEN 'FC Barcelona' 
+         ELSE 'Real Madrid CF' END as away,
+	-- Identify all possible match outcomes
+	case when home_goal > away_goal and hometeam_id = 8634 then 'Barcelona win!'
+        WHEN home_goal > away_goal and hometeam_id = 8633 then 'Real Madrid win!'
+        WHEN home_goal < away_goal and awayteam_id = 8634 then 'Barcelona win!'
+        WHEN home_goal < away_goal and awayteam_id = 8633 then 'Real Madrid win!'
+        else 'Tie!' end as outcome
+FROM matches_spain
+WHERE (awayteam_id = 8634 OR hometeam_id = 8634)
+      AND (awayteam_id = 8633 OR hometeam_id = 8633);
+
+
+-- Select team_long_name and team_api_id from team
+SELECT
+	team_long_name,
+	team_api_id
+FROM team
+-- Filter for team long name
+WHERE team_long_name = 'Bologna';
+
+-- Select the season and date columns
+SELECT 
+	season,
+	date,
+    -- Identify when Bologna won a match
+	case when hometeam_id = 9857 and home_goal > away_goal   then 'Bologna Win'
+		when awayteam_id = 9857   and away_goal > home_goal   then 'Bologna Win' 
+		end AS outcome
+FROM matches_italy;
+
+
+-- Select the season, date, home_goal, and away_goal columns
+SELECT 
+	season,
+    date,
+	home_goal,
+	away_goal
+FROM matches_italy
+WHERE 
+-- Exclude games not won by Bologna
+	case when hometeam_id = 9857 and home_goal > away_goal then 'Bologna Win'
+		when awayteam_id = 9857 and away_goal > home_goal then 'Bologna Win' 
+		end IS NOT null;
+
+
+select
+season,
+count(case when hometeam_id=8650
+and home_goal>away_goal
+then id end) as home_wins
+,count(case when awayteam_id=8650 and away_goal>home_goal then id end) as away_wins
+from match
+group by season
+
+
+select
+season,
+sum(case when hometeam_id=8650 and home_goal>away_goal then home_goal end) as home_wins
+,sum(case when awayteam_id=8650 and away_goal>home_goal then away_goal end) as away_wins from match
+group by season
+
+round(3.14,2)
+
+
+select
+season,
+avg(
+case when hometeam_id=8650 and home_goal>away_goal then 1 
+when hometeam_id=8650 and home_goal<away_goal then 0 end) as pct_home_wins
+,avg(case when awayteam_id=8650 and away_goal>home_goal then 1
+when awayteam_id=8650 and away_goal<home_goal then 0 end) as pct_away_wins from match
+group by season
+
+
+SELECT 
+	c.name AS country,
+    -- Count games from the 2012/2013 season
+	count(case when m.season = '2012/2013' 
+        	then m.id ELSE null end) AS matches_2012_2013
+FROM country AS c
+LEFT JOIN match AS m
+ON c.id = m.country_id
+-- Group by country name alias
+group by country;
+
+DROP TABLE IF EXISTS correlations;
+
+CREATE TEMP TABLE correlations AS
+SELECT 'profits'::varchar AS measure,
+       corr(profits, profits) AS profits,
+       corr(profits, profits_change) AS profits_change,
+       corr(profits, revenues_change) AS revenues_change
+  FROM fortune500;
+
+INSERT INTO correlations
+SELECT 'profits_change'::varchar AS measure,
+       corr(profits_change, profits) AS profits,
+       corr(profits_change, profits_change) AS profits_change,
+       corr(profits_change, revenues_change) AS revenues_change
+  FROM fortune500;
+
+INSERT INTO correlations
+SELECT 'revenues_change'::varchar AS measure,
+       corr(revenues_change, profits) AS profits,
+       corr(revenues_change, profits_change) AS profits_change,
+       corr(revenues_change, revenues_change) AS revenues_change
+  FROM fortune500;
+
+-- Select each column, rounding the correlations
+SELECT measure, 
+       round(profits::numeric, 2) AS profits,
+       round(profits_change::numeric, 2) AS profits_change,
+       round(revenues_change::numeric, 2) AS revenues_change
+  FROM correlations;

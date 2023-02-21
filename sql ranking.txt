@@ -1,0 +1,37 @@
+rank() assigns the same number to rows with identical values, skipping over the next numbers in each cases
+dense_rank() also assigns the same number to rows with identical value, but doesn't skip over the next numbers
+
+WITH Athlete_Medals AS (
+  SELECT
+    Athlete,
+    COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete)
+
+SELECT
+  Athlete,
+  Medals,
+  -- Rank athletes by the medals they've won
+  Rank() OVER (ORDER BY Medals DESC) AS Rank_N
+FROM Athlete_Medals
+ORDER BY Medals DESC;
+
+WITH Athlete_Medals AS (
+  SELECT
+    Country, Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country IN ('JPN', 'KOR')
+    AND Year >= 2000
+  GROUP BY Country, Athlete
+  HAVING COUNT(*) > 1)
+
+SELECT
+  Athlete,
+  -- Rank athletes in each country by the medals they've won
+  Country,
+  Dense_Rank() OVER (PARTITION BY Country
+                ORDER BY Medals DESC) AS Rank_N
+FROM Athlete_Medals
+ORDER BY Country ASC, RANK_N ASC;
+

@@ -1,0 +1,1075 @@
+bayesian analysis means updating ones belief about something as new information becomes avaiable.
+
+probability is the proportion of outcomes -> degree of belief
+
+bayesian use random variables
+
+bayesian approach can handle uncertainty
+
+a bayesian model can include expert opinion or domain knowledge
+
+bayesian does not rely on fixed constants such as p-values
+
+bayesian is statically correct with little data.
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.kdeplot(draws, shade=True)
+plt.show()
+
+>>>>>>>>> bayesian probability and bayes theorem
+
+probability is a statement of uncertainty and expressed with a number between 0 and 1
+
+P=0 -> impossible
+P=1 -> certain
+p=.5 -> 50/50 chance
+
+P(rain tomorrow) =0.75 -> 75% chance of rain tomorrow
+
+
+Sum rule
+
+1. Probability of A or B (independent events)
+2. probability of rolling 2 or 4 with a die
+3. P(2 or 4) = 1/6+1/6=.333 = 33.3%
+
+Product rule
+1. Probability of A and B (independent events)
+2. and is multiplication
+3. P(2 and 4) = 1/6 * 1/6 = 0.027 = 2.8%
+
+Conditional probability
+1. Probability of some event occurring, given that some other event has occurred
+2. P(A|B)  means the probability of A given B
+
+P(A) = 2/3 (unconditional)
+P(B)= 1/3 (unconditional)
+
+P(A|B)  if a is one occurrence and b is two occurrences then P(A|B) is 1/2
+P(B|A) if B is two occurrence and A is one then P(B|A) would be 1
+
+
+>>>>Bayes Theorem
+1. A way to calculate conditional probability when know some other probabilities
+
+P(A|B) = (P(B|A) * P(A))/P(B)
+
+P(accident|slippery) = (P(slippery|accident)*P(accident))/p(slippery)
+
+
+accident, slippery
+False, True
+
+p_accident=road_conditions["accident"].mean() #0.0625
+
+p_slippery=road_conditions["slippery"].mean() #0892
+
+p_slippery_given_accident=road_conditions.loc[road_conditions["accident"]]["slippery"].mean()
+
+p_accident_given_slippery = p_slippery_given_accident * p_accident/p_slippery
+
+
+https://raw.githubusercontent.com/theDefiBat/final-yr-projectqA/master/Accidents.csv
+
+# Calculate probability of drawing a king or queen
+p_king_or_queen = 4/52+4/52
+print(p_king_or_queen)
+
+
+# Calculate probability of drawing <= 5
+p_five_or_less = 4 / 52 + 4 / 52 + 4 / 52 + 4 / 52
+print(p_five_or_less)
+
+four aces, four kings, four tens, 
+four fives, 
+
+use
+
+four fours, four threes, four twos, four ones
+
+ 0.3076923076923077
+
+# Calculate probability of drawing four aces
+p_all_four_aces = 4/52 * 4/52 * 4/52 *4/52
+print(p_all_four_aces )
+
+3.501277966457758e-05
+
+>>>>>>>
+
+# Calculate and print the unconditional probability of spam
+p_spam = emails["spam"].mean()
+print(p_spam)
+
+# Calculate and print the unconditional probability of "!!!"
+p_3_excl = emails["contains_3_excl"].mean()
+print(p_3_excl)
+
+
+# Calculate and print the unconditional probability of spam
+p_spam = emails.loc[emails["spam"]]["contains_3_excl"].mean()
+print(p_spam)
+
+# Calculate and print the probability of spam given "!!!"
+p_spam_given_3_excl = p_3_excl_given_spam*p_spam/p_3_excl
+print(p_spam_given_3_excl)
+
+0.857142857142857
+
+>>>>>>>>>>>>Tasting the Bayes
+
+binomal distribution
+1. A discrete distribution of two valeus Success=1 and Failure=0
+
+one parameter the probability of success
+
+task: given a list of draws (successes or failures), estimate the probability of success
+
+import numpy as np
+np.random.binomal(100,0.5)
+returns the number of successes
+
+np.random.binomal(1,0.5,size=5)
+return an array
+
+>>>>> get_heads_prob
+
+tosses= np.random.binomial(1,0.5,size=1000)
+
+print(tosses)
+
+heads_prob = get_heads_prob(tosses)
+
+returns a list of probabilities of getting heads
+
+sns.kdeplot(heads_prob, shade=True, label="heads probability")
+plt.show()
+
+>>>> probability with no data
+
+# Estimate and plot heads probability based on no data
+heads_prob_nodata = get_heads_prob([])
+sns.kdeplot(heads_prob_nodata, shade=True, label="no data")
+plt.show()
+
+>>>>> probability with a single tail
+
+# Estimate and plot heads probability based on a single tails
+heads_prob_onetails = get_heads_prob([0])
+sns.kdeplot(heads_prob_onetails, shade=True, label="single tails")
+plt.show()
+
+>>>> 1000 random tosses
+
+# Estimate and plot heads probability based on 1000 tosses with a biased coin
+biased_tosses = np.random.binomial(1,0.5,size=1000)
+
+heads_prob_biased = get_heads_prob(biased_tosses)
+sns.kdeplot(heads_prob_biased , shade=True, label="biased coin")
+plt.show()
+
+That's interesting! With no data, each possible value of the heads probabilty is equally likely! That's the Bayesian way of saying 'we don't know'. Having seen a single tails, the model suspects that tails is more likely than heads, but since there is so little data, it is not very sure about it, so other values are possible, too. Having seen 1000 tosses, 5% of them heads, the model is certain: the heads probability is around 5%. You have just witnessed the Bayesian approach at its core: as more data come in, we update our belief about the parameter, and with more data we become more certain about our estimate!
+
+>>>>>>
+# Assign first 10 and 100 tosses to separate variables
+tosses_first_10 = tosses[:10]
+tosses_first_100 = tosses[:100]
+
+# Get head probabilities for first 10, first 100, and all tossses
+heads_prob_first_10 = get_heads_prob(tosses_first_10)
+heads_prob_first_100 = get_heads_prob(tosses_first_100)
+heads_prob_all = get_heads_prob(tosses)
+
+# Plot density of head probability for each subset of tosses
+sns.kdeplot(heads_prob_first_10, shade=True, label="first_10",color="red")
+sns.kdeplot(heads_prob_first_100, shade=True, label="first_100",color="blue")
+sns.kdeplot(heads_prob_all, shade=True, label="all", color="green")
+plt.show()
+
+>>>>>> under the bayesian hood
+
+p(a|b) = (p(b|a) * p(a))/p(b)
+
+P(parameters|data) = (p(data|parameters) * (parameters)) / p(data)
+
+p(parameters|data) -> posterior distribution: what we know about the parameters after having seen the data
+
+p(parameters) -> prior distribution: what we know about the parameters before seeing any data
+
+p(data| parameters) -> likelihood of te data according to our statistical model
+
+num_heads=np.arange(0,101,1)
+head_prob=np.arange(0,1.01,0.01)
+coin = pd.DataFrame((x,y) for x in num_heads for y in head_prob])
+coin.columns=["num_heads","head_prob"]
+
+
+from scipy.stats import uniform
+coin["prior"] = uniform.pdf(coin["head_prob"])
+
+
+from scipy.stats import binom
+number_of_tosses=100
+coin["likelihood"]=binom.pmf(coin["num_heads"],number_of_tosses,coin["head_prob"])
+
+coin["posterior_prob"]=coin["prior"] * coin["likelihood"]
+coin["posterior_prob"] /= coin["posterior_prob"].sum()
+
+
+heads75=coin.loc[coin["num_heads"]==75]
+heads75["posterior_prob"] /= heads75["posterior_prob"].sum()
+
+sns.lineplot(heads75["head_prob"],heads75["posterior_prob"])
+plt.show()
+
+>>>>>
+
+# Create cured patients array from 1 to 10
+num_patients_cured = np.arange(0,11,1)
+
+# Create efficacy rate array from 0 to 1 by 0.01
+efficacy_rate = np.arange(0,1.01,0.01)
+
+# Combine the two arrays in one DataFrame
+df = pd.DataFrame([(x, y) for x in num_patients_cured for y in efficacy_rate])
+
+# Name the columns
+df.columns = ["num_patients_cured","efficacy_rate"]
+
+# Calculate the prior efficacy rate and the likelihood
+df["prior"] = uniform.pdf(df["efficacy_rate"])
+df["likelihood"] = binom.pmf(df["num_patients_cured"], 10, df["efficacy_rate"])
+
+# Calculate the posterior efficacy rate and scale it to sum up to one
+df["posterior_prob"] = df["prior"] * df["likelihood"]
+df["posterior_prob"] /= df["posterior_prob"].sum()
+
+# Compute the posterior probability of observing 9 cured patients
+df_9_of_10_cured = df[df["num_patients_cured"]==9]
+df_9_of_10_cured["posterior_prob"] /= df_9_of_10_cured["posterior_prob"].sum()
+
+sns.lineplot(df_9_of_10_cured["efficacy_rate"],df_9_of_10_cured["posterior_prob"])
+plt.show()
+print(df)
+
+Good job! As we might have expected, observing 9 out of 10 patients cured results in the posterior efficacy rate of 90% being very likely. Notice, however, how much uncertainty there is in the posterior distribution: even the efficacy of 50% is plausible. This is the result of a very small data sample and a great example of how Bayesian parameter estimates incorporate uncertainty!
+
+# Assign old posterior to new prior and calculate likelihood
+df["new_prior"] = df["posterior_prob"]
+df["new_likelihood"] = binom.pmf(df["num_patients_cured"], 12, df["efficacy_rate"])
+
+# Calculate new posterior and scale it
+df["new_posterior_prob"] = df["new_prior"] * df["new_likelihood"] 
+df["new_posterior_prob"] /= df["new_posterior_prob"] .sum()
+
+# Compute the posterior probability of observing 10 cured patients
+df_10_of_12_cured = df[df["num_patients_cured"]==10]
+df_10_of_12_cured["new_posterior_prob"] /= df_10_of_12_cured["new_posterior_prob"].sum()
+
+sns.lineplot(df_9_of_10_cured["efficacy_rate"],df_9_of_10_cured["posterior_prob"])
+sns.lineplot(df_10_of_12_cured["efficacy_rate"],df_10_of_12_cured["new_posterior_prob"])
+plt.show()
+print(df)
+
+print("We have learned from the Previous batch.")
+
+>>>>> Prior belief
+
+1. Prior distribution reflects what we know about the parameter before observing any data
+a. nothing-> uniform distribution (all values equally likely)
+b. old posterior -> can be updated with new data
+
+One can choose any probability distribution as a prior to include external info in the model:
+expert opinion, common knowledge, previous research, and subjective belief
+
+prior distribution
+1. prior distribution chosen before we see the data
+2. prior choice can impact posterior results (especially with little data)
+
+*** to avoid cherry-picking, prior choices should be clearly stated and explainable: based on previous research, sensible assumptions, expert opinions
+
+Conjugate priors
+1. some priors, multiplied with specific likelihoods, yield known posteriors
+2. Known as conjugate priors
+
+in the case of coin tossing:
+1. if we choose a prior Beta(a,b)
+2. then the posterior is Beta(#heads+a,#tosses-#heads + b)
+
+
+x=NumberOfSuccesses + a
+y=NumberOfObservations-NumberOfSuccesses+b
+
+def get_heads_prob(tosses):
+	num_heads=np.sum(tosses)
+	return np.random.beta(num_heads+1,len(tosses) - num_heads+1, 1000)
+
+Two ways to get posterior
+1. simulation
+a. if posterior is known, we can sample from it using numpy
+	draws=np.random.beta(2,4,1000)
+
+	the result is a 1000 draws
+
+	plotted using
+	sns.kdeplot(draws)
+
+
+
+2. calculation
+
+	if posterior is not known, we can calculate it using grid approximation
+
+
+	can be plotted with
+	sns.lineplot(df["head_prob"],df["posterior_prob"])
+
+>>>> Simulate 10000 draws
+
+# Define the number of patients treated and cured
+num_patients_treated = 10 + 12
+num_patients_cured = 9 + 10
+
+(9,10) and (10,12) with a Beta(5,2)
+
+# Simulate 10000 draws from the posterior distribuition
+posterior_draws = np.random.beta(num_patients_cured + 5, num_patients_treated - num_patients_cured + 2, 10000)
+
+# Plot the posterior distribution
+sns.kdeplot(posterior_draws, shade=True)
+plt.show()
+
+Well done! Notice that the posterior distribuion has a slightly longer tail on the left-hand side, allowing for efficacy rates as small as 50%, even though in your data you observe 86% (19 out of 22). This is the impact of the prior: you learn not only from your own small data, but also from other countries' experience! Now that you know how obtain posterior distributions of the parameters, let's talk about how to report these results!
+
+
+
+>>>> reporting prior and posterior distributions
+
+sns.kdeplot(prior_draws, shade=True, label="prior")
+sns.kdeplot(posterior_draws, shade=True, label="posterior")
+
+Bayesian point estimates
+1. No single number can fully convey the complete information contained in a distribution
+2. however, sometimes a point estimate of a parameter is needed
+
+posterior_mean = np.mean(posterior_draws)
+posterior_median= np.median(posterior_draws)
+posterior_p75 = np.percentile(posterior_draws,75)
+
+>>> calculating the uncertainty
+
+1. Credibility intervales:  an interval of probablity that the parameter falls inside it is x%
+
+2. the wider the credible interval, the more uncertainty in parameter estimate
+
+3. parameter is random, so it can fall into an interval with some probability
+
+4. in the frequentist world, the confidence interval is random while the parameter is fixed
+
+
+
+highest posterior density
+
+import arviz as az
+
+hpd = az.hdi(posterior_draws, hdi_prob=0.9)
+print(hpd)
+
+>>>>>>>>>>
+
+# Calculate the expected number of people cured
+cured_expected = np.mean(drug_efficacy_posterior_draws) * 100000
+
+# Calculate the minimum number of people cured with 50% probability
+min_cured_50_perc = np.median(drug_efficacy_posterior_draws) * 100_000
+print(min_cured_50_perc)
+
+# Calculate the minimum number of people cured with 90% probability
+min_cured_90_perc = np.percentile(drug_efficacy_posterior_draws,10) * 100_000
+
+Based on the experiments carried out by ourselves and neighboring countries, 
+    should we distribute the drug, we can expect 82777 infected people to be cured. 
+    There is a 50% probability the number of cured infections 
+    will amount to at least 83484, and with 90% probability 
+    it will not be less than 73485.
+
+
+>>>>>>>>>>>>
+
+# Import arviz as az
+import arviz as az
+
+# Calculate HPD credible interval of 90%
+ci_90 = az.hdi(drug_efficacy_posterior_draws, hdi_prob=0.9)
+
+# Calculate HPD credible interval of 95%
+ci_95 = az.hdi(drug_efficacy_posterior_draws, hdi_prob=0.95)
+
+# Print the memo
+print(f"The experimental results indicate that with a 90% probability \nthe new drug's efficacy rate is between {np.round(ci_90[0], 2)} and {np.round(ci_90[1], 2)}, \nand with a 95% probability it is between {np.round(ci_95[0], 2)} and {np.round(ci_95[1], 2)}.")
+
+
+The experimental results indicate that with a 90% probability 
+the new drug's efficacy rate is between 0.72 and 0.94, 
+and with a 95% probability it is between 0.7 and 0.95.
+
+Perfect, even though this was a hard one! That's the Bayesian interpretation of a credible interval. Since the drug's true efficacy rate is considered a random variable, we can make probabilistic statements about it, as in: "the probability that it takes a particular value or that it lies in a particular interval is X%". Great job on finishing Chapter 2. Next, in Chapter 3, you will apply all you've learned about the Bayesian approach to practical problems: A/B testing, decision analysis, and regression modeling. See you there!
+
+>>>> A/B testing
+
+1. Randomized experiment: divide users into two groups (a and b)
+2. compare which group scores better based on some metric
+
+frequentist way
+1. based on hypothesis testing
+2. check whether a and b perform the same or not
+3. does not say how much better is a then b
+
+A/B testing: Bayesian approach
+1. calculate posterior click-through rates for website layout A and B and compare them.
+2. directly calculate the probability that a is better than b
+3. quantify how much better it is
+4. estimate expected loss in case we make a wrong decision
+
+Click or don't click
+
+Simulated beta posterior
+
+we know that if the prior is Beta(a,b), then the posterior is Beta(x,y)
+
+x=NumberOfSuccesses + a
+y= NumberOfObservations - NumberOfSuccesses + b
+
+def simulate_beta_posterior(trials, beta_prior_a, beta_prior_b):
+	num_successes=np.sum(trials)
+	posterior_draws=np.random.beta(num_successes+beta_prior_a,len(trials)-num_successes + beta_prior_b,10000)
+	return posterior_draws
+
+A_posterior = simulate_beta_posterior(A_clicks,1,1)
+B_posterior = simulate_beta_posterior(B_clicks,1,1)
+
+sns.kdeplot(A_posterior, shade=True, label="A")
+sns.kdeplot(B_posterior, shade=True, label="B")
+plt.show()
+
+diff= B_posterior - A_posterior
+
+sns.kdeplot(diff, shade=True, label="difference: A-B")
+plt.show()
+
+
+probability of b being better
+
+(diff>0).mean()
+
+.9639
+
+>>>>> Expected loss
+
+# Difference (B-A) when A is better
+loss= diff[diff<0]
+
+# Expected (average) loss
+expected_loss=loss.mean()
+print(expected_loss)
+
+-0.007
+
+>>>>>>>>>>>>>>>>>>
+
+# Set prior parameters and calculate number of successes
+beta_prior_a = 1
+beta_prior_b = 1
+num_successes = np.sum(tosses)
+
+
+# Generate 10000 posterior draws
+posterior_draws = np.random.beta(num_successes+beta_prior_a,len(tosses)-num_successes + beta_prior_b,10000)
+
+# Plot density of posterior_draws
+sns.kdeplot(posterior_draws, shade=True)
+plt.show()
+
+>>>>> beta(1,10)
+
+# Set prior parameters and calculate number of successes
+beta_prior_a = 1
+beta_prior_b = 10
+num_successes = np.sum(tosses)
+
+# Generate 10000 posterior draws
+posterior_draws = np.random.beta(
+  num_successes+beta_prior_a, 
+  len(tosses)-num_successes+beta_prior_b, 
+  10000)  
+
+# Plot density of posterior_draws
+sns.kdeplot(posterior_draws, shade=True)
+plt.show()
+
+>>>>>> generate random
+
+# Generate prior draws
+prior_draws = np.random.beta(10, 50, 100000)
+
+
+# Plot the prior
+sns.kdeplot(prior_draws, shade=True, label="prior")
+plt.show()
+
+# Extract the banner_clicked column for each product
+clothes_clicked = ads.loc[ads["product"] == "clothes"]["banner_clicked"]
+print(clothes_clicked)
+sneakers_clicked = ads.loc[ads["product"] == "sneakers"]["banner_clicked"]
+
+# Simulate posterior draws for each product
+clothes_posterior = simulate_beta_posterior(clothes_clicked, 10, 50)
+sneakers_posterior = simulate_beta_posterior(sneakers_clicked, 10, 50)
+
+sns.kdeplot(clothes_posterior, shade=True, label="clothes")
+sns.kdeplot(sneakers_posterior, shade=True, label="sneakers")
+plt.show()
+
+>>>>>
+
+# Calculate posterior difference and plot it
+diff = clothes_posterior - sneakers_posterior
+sns.kdeplot(diff, shade=True, label="diff")
+plt.show()
+
+?>>>>>>>>>>
+
+
+# Calculate posterior difference and plot it
+diff = clothes_posterior - sneakers_posterior
+sns.kdeplot(diff, shade=True, label="diff")
+plt.show()
+
+# Calculate and print 90% credible interval of posterior difference
+interval = az.hdi(diff, hdi_prob=0.9)
+print(interval)
+
+
+[0.0027596  0.02405221]
+
+
+# Calculate and print probability of clothes ad being better
+clothes_better_prob = (diff>0).mean()
+print(clothes_better_prob)
+
+0.9809
+
+Well done! Take a look at the posterior density plot of the difference in click rates: it is very likely positive, indicating that clothes are likely better. The credible interaval indicates that with 90% probability, the clothes ads click rate is up to 2.4 percentage points higher than the one for sneakers. Finally, the probability that the clothes click rate is higher is 98%. Great! But there is a 2% chance that actually sneakers ads are better! How great is that risk? Let's find out!
+
+# Slice diff to take only cases where it is negative
+loss= diff[diff<0]
+print(loss)
+
+# Compute and print expected loss
+expected_loss = loss.mean()
+print(expected_loss)
+
+-0.0027337213289205884
+
+Terrific job! You can sefely roll out the clothes campaign to a larger audience. You are 98% sure it has a higher click rare, and even if the 2% risk of this being a wrong decision materializes, you will only lose 0.2 percentage points in the click rate, which is a very small risk!
+
+
+>>>>>>>>>>>>>>>>>>>> Decision analysis
+
+1. decision-makers care about maximizing proft, reducing costs, saving lives, etc
+2. Decision analysis -> translating parameters to relevant metrics to inform decision-making
+
+From posteriors to decisions
+1. To make strategic decisons, one should know the probabilities of different scenarios
+2. Bayesian methods allow us to translate parameters into relevant metrics easily
+
+expected revenue = click rates * impressions * revenue per click 
+
+num_impressions = 1000
+rev_per_click_A = 3.6
+rev_per_click_B = 3
+
+#compute number of clicks
+num_clicks_B=A_posterior * num_impressions
+num_clicks_B=B_posterior * num_impressions
+
+#compute posterior revenue
+rev_A = num_clicks_A * rev_per_click_A
+rev_B = num_clicks_B * rev_per_click_B
+
+
+Forest plot
+
+import pymc3 as pm
+
+revenue={"A": rev_A, "B":rev_B}
+
+pm.forestplot(revenue, hdi_prob=0.99)
+
+
+>>>>>>>>>>>>>>>>>>>>>>
+
+# Calculate distributions of the numbers of clicks for clothes and sneakers
+clothes_num_clicks = clothes_posterior *10000
+sneakers_num_clicks = sneakers_posterior * 10000
+
+# Calculate cost distributions for each product and platform
+ads_costs = {
+    "clothes_mobile": clothes_num_clicks *2.5,
+    "sneakers_mobile": sneakers_num_clicks*2.5,
+    "clothes_desktop": clothes_num_clicks*2,
+    "sneakers_desktop": sneakers_num_clicks*2,
+}
+
+# Draw a forest plot of ads_costs
+pm.forestplot(ads_costs, hdi_prob=0.99, textsize=15)
+plt.show()
+
+Yup, that's false! The ends of the whiskers mark the 99% credible interval, so there is a 1% chance the cost will fall outside of it. It's very, very unlikely, but there is a slim chance that the clothes-mobile cost will turn out lower. It's important to stay cautious when communicating possible scenarios -- that's the thing with probability, it's rarely the case that something is 'completely impossible'!
+
+# Calculate profit distributions for each product and platform
+ads_profit = {
+    "clothes_mobile": clothes_num_clicks*3.4
+    - ads_costs["clothes_mobile"]
+    ,
+    "sneakers_mobile": sneakers_num_clicks*3.4
+    - ads_costs["sneakers_mobile"]
+    ,
+    "clothes_desktop": clothes_num_clicks*3
+    - ads_costs["clothes_desktop"]
+    ,
+    "sneakers_desktop": sneakers_num_clicks*3
+    - ads_costs["sneakers_desktop"]
+    ,
+}
+
+# Draw a forest plot of ads_profit
+pm.forestplot(ads_profit, hdi_prob=0.99, textsize=15)
+plt.show()
+
+Well done! Notice how shifting focus from costs to profit has changed the optimal decision. The sneakers-desktop campaign which minimizes the cost is not the best choice when you care about the profit. Based on these results, you would be more likely to invest in the clothes-desktop campaign, wouldn't you? Let's continue to the final lesson of this chapter, where we look at regression and forecasting, the Bayesian way!
+
+
+>>>>> Regression and forecasting
+
+linear regression
+	y=b0+b1x1+b2x2
+
+	sales=b0 + b1marketingSpending
+
+
+normal_0_1 = np.random.normal(0,1, size=10000)
+normal_3_1 = np.random.normal(3,1, size=10000)
+normal_0_3 = np.random.normal(3,1, size=10000)
+
+sns.kdeplot(normal_0_1, shade=True, label="N(0,1)")
+sns.kdeplot(normal_3_1, shade=True, label="N(3,1)")
+sns.kdeplot(normal_0_3, shade=True, label="N(0,3)")
+plt.show()
+
+
+Bayesian regression model
+	sales=N(b0 + b1marketingSpending, sigmoid)
+
+
+* we expect $5000 sales without any market
+* we expect $2000 increase in sales from each 1000 increase in spending
+* uniform prior for standard deviation, as we don't know what it could be
+
+If the prior and the posterior belong to the same parametric family, then the prior is said to be conjugate for the likelihood.
+
+Estimating regression parameters
+1. grid approximation -> impractical for many parameters
+2. choose conjugate priors and simulate from a know posterior -> unintuive priors
+3. third way: simulate from the posterior even with non-conjugate priors
+
+import pymc3 as pm
+
+pm.plot_posterior(
+	marketing_spending_draws,
+	hdi_prob=0.95
+)
+
+posterior_draws_df= pd.DataFrame({
+	"intercept_draws": intercept_draws,
+	"marketing_spending_draws": marketing_spending_draws,
+	"sd_draws": sd_draws
+})
+
+>>>>Predictive distribution
+1. How much sales can we expect if we spend $1000 on marketing?
+
+	sales=N(b0 + b1marketingSpending, sigmoid)
+
+
+#Get point estimates of parameters
+intercept_mean = intercept_draws.mean()
+marketing_spending_mean = marketing_spending_draws.mean()
+sd_mean = sd_draws.mean()
+
+spend_amount=1000
+predictive_mean = intercept_mean + marketing_spending_mean * spend_amount
+
+#simulate from predictive distribution
+predictive_draws = np.random.normal(predictive_mean, sd_mean, size=10000)
+
+Recall the normal distribution is parameterized by the mean (location of the peak of the distribution) and the standard deviation (the larger, the wider and shorter the distribution).
+
+
+Your linear regression model has four parameters: the intercept, the impact of clothes ads, the impact of sneakers ads, and the variance.
+
+# Collect parameter draws in a DataFrame
+posterior_draws_df = pd.DataFrame({
+    "intercept_draws": intercept_draws,
+    "clothes_draws": clothes_draws,
+  	"sneakers_draws": sneakers_draws,
+    "sd_draws": sd_draws,
+})
+
+# Describe parameter posteriors
+draws_stats = posterior_draws_df.describe()
+print(draws_stats)
+
+# Plot clothes parameter posterior
+pm.plot_posterior(clothes_draws, hdi_prob=0.95)
+plt.show()
+
+the impact parameters of both clothes and sneakers look okay: they are positive, most likely around 0.1, indicating 1 additional click from 10 ad impressions, which makes sense. Let's now use the model to make predictions!
+
+
+# Aggregate posteriors of the parameters to point estimates
+intercept_coef = intercept_draws.mean()
+sneakers_coef = sneakers_draws.mean()
+clothes_coef = clothes_draws.mean()
+sd_coef = sd_draws.mean()
+
+# Calculate the mean of the predictive distribution
+pred_mean = intercept_coef + sneakers_coef * 10 + clothes_coef * 10
+
+print(pred_mean)
+3.3622967279348037
+
+# Sample 1000 draws from the predictive distribution
+pred_draws = np.random.normal(pred_mean, sd_coef, size=1000)
+
+# Plot the density of the predictive distribution
+pm.plot_posterior(pred_draws, hdi_prob=0.99)
+plt.show()
+
+Great job! It looks like you can expect more or less three or four clicks if you show 10 clothes and 10 sneaker ads. Head off to the final chapter of the course where you will be using the pymc3 package to carry out a full-fledged Bayesian linear regression analysis - see you there!
+
+>>>>>> Markov Chain Monte Carlo and model fitting (MCMC)
+
+* approximating some quantity by generating random numbers
+
+Markov Chains
+1. Models a sequence of states, between which one transitions with given probabilities
+
+What will the bear do next?
+
+	hunt	eat	sleep
+hunt	0.1	0.8	0.1
+eat	0.05	0.4	0.55
+sleep	0.8	0.15	0.05
+
+after many time periods, transition probabilities become the same no matter where we start
+
+ads_aggregate
+
+1. date
+2. clothes_banners_shown
+3. sneakers_banners_shown
+4. num_clicks
+
+predict the num_clicks
+
+formula = "num_clicks ~ clothes_banners_shown + sneakers_banners_shown"
+
+chains are the number of cores on the machine
+
+with pm.Model() as model:
+	pm.GLM.from_formula(formula, data=ads_aggregated)
+	print(model)
+	trace_1=pm.sample(draws=1000, tune=500, chain=4)
+
+
+intercept ~ flat
+clothes_banners_shown ~ normal
+sneakers_banner_shown ~ normal
+sd_log__ ~ Transformed Distribution
+sd ~ HalfCauchy
+y ~ Normal
+
+>>>>> Interpreting results and comparing models
+when have 4 parameters: the intercept, two input parameters, and the standard deviation
+
+number of draws for each parameter: 1000 x 4=4000
+
+pm.traceplot(trace_1)
+
+pm.forestplot(trace_1)  (we get confident about the parameter ranges)
+
+
+formula = "num_clicks ~ clothes_banners_shown + sneakers_banners_shown + weekend"
+
+with pm.Model() as model:
+	pm.GLM.from_formula(formula, data=ads_aggregated)
+	print(model)
+	trace_2=pm.sample(draws=1000, tune=500, chain=4)
+
+
+>>>>>> we can compare the two models using widely applicable information criterion (WAIC)
+
+comparison = pm.compare({"trace_1":trace_1,"trace_2":trace_2},ic="waic", scale="deviance")
+
+print(comparison)
+
+waic is a measure
+the lower the number the better
+
+pm.compareplot(comparision)
+
+>>>>>>>>
+
+# Import pymc3
+import pymc3 as pm
+
+# Draw a trace plot of trace_1
+pm.traceplot(trace_1)
+plt.show()
+
+# Draw a forest plot of trace_1
+pm.forestplot(trace_1)
+plt.show()
+
+
+# Gather trace_1 and trace_2 into a dictionary
+traces_dict = {"trace_1":trace_1,"trace_2":trace_2}
+
+# Create a comparison table based on WAIC
+comparison = pm.compare(traces_dict,ic="waic", scale="deviance")
+
+# Draw a comparison plot
+pm.compareplot(comparison, textsize=20)
+plt.show()
+
+rank      waic  p_waic  d_waic  weight      se    dse  warning waic_scale
+trace_2     0 -1272.601   4.594   0.000   0.979  16.162  0.000    False        log
+trace_1     1 -1281.706   3.716   9.105   0.021  16.391  4.395    False        log
+
+Yes, it's the other way around! The weight of 0.021 for model_1 indicates it is the true model with around 2% probability.
+
+>>>>>>>>>>>>>>> making predictions
+
+model ads_test
+1. clothes_banners_shown
+2. sneakers_banners_shown
+3. num_clicks
+4. weekend (true or false)
+
+
+with pm.Model() as model:
+	pm.GLM.from_formula(formula, data=ads_test)
+	posterior_predictive = pm.fast_sample_posterior_predictive(trace_2)
+
+posterior_predictive["y"].shape
+
+(4000, 5)   4000 rows and 5 columns
+
+the 5 columns match to the 5 observation
+
+pm.plot_posterior(posterior_predictive["y"][:,0])
+
+
+1. clothes_banners_shown=40
+2. sneakers_banners_shown=36
+3. num_clicks=7
+4. weekend =True
+
+9.7 is 94% confident it is between 4.4 and 15
+
+>>>>>>> test error distribution
+
+errors=[]
+
+for index, test_example in ads_test.iterrows():
+	error=posterior_predictive["y"][:,index] - test_example["num_clicks"]
+	errors.append(error)
+
+
+error_distribution = np.array(errors).reshape(-1)
+
+error_distribution.shape
+(20000,0)
+pm.plot_posterior(error_distribution)
+
+
+>>>>> bikes
+
+your job is to predict the number of bikes rented per day, and you are almost there
+
+ work_day   temp  humidity  wind_speed  num_bikes
+0         0  0.266     0.688       0.176      2.947
+1         1  0.283     0.622       0.154      3.784
+2         1  0.354     0.496       0.147      4.375
+3         1  0.257     0.723       0.134      2.802
+4         1  0.265     0.562       0.194      3.830
+
+formula = "num_bikes ~ temp + work_day + wind_speed"
+
+# Generate predictive draws
+with pm.Model() as model:
+    pm.GLM.from_formula(formula, data=bikes_test)
+    posterior_predictive =pm.fast_sample_posterior_predictive(trace_2)
+
+# Initialize errors
+errors = []
+
+# Iterate over rows of bikes_test to compute error per row
+for index, test_example in bikes_test.iterrows():
+    error = posterior_predictive["y"][:,index] - test_example["num_bikes"]
+    errors.append(error)
+
+# Reshape errors
+error_distribution = np.array(errors).reshape(-1)
+
+
+# Plot the error distribution
+pm.plot_posterior(error_distribution)
+plt.show()
+
+Outstanding job! This was a tough one! In practice, you might want to compute the error estimate based on more than just 10 observations, but you can already see some patterns. For example, the error is more often positive than negative, which means that the model tends to overpredict the number of bikes rented!
+
+
+>>>>>> estimate the price of an avocado
+
+Goal: estimate price elasticity of avocados and optimize the price
+
+(price elasticity = impact of the change in price on the sales volume)
+
+1. Fit a bayesian regression model
+2. Inspect the model to verify its correctness
+3. Predict sales volume for different prices
+4. Propose the profit-maximizing price and the associate uncertainty
+
+
+model
+1. date
+2. price
+3. volume (in 10,000s)
+4. type_organic (true or false)
+
+
+formula = "num_bikes ~ temp + work_day + wind_speed"
+
+# Generate predictive draws
+# priors
+with pm.Model() as model:
+    priors = {"wind_speed": pm.Normal.dist(mu=-5)}
+    pm.GLM.from_formula(formula, data=bikes, priors=priors)
+    trace=pm.sample(draws=1000,tune=500)
+
+
+temp_draws=trace.get_values("temp")
+
+>>>>>>>>
+
+formula = "volume ~ price + type_organic"
+with pm.Model() as model:
+    priors = {"price": pm.Normal.dist(mu=-80)}
+    pm.GLM.from_formula(formula, data=avocado, priors=priors)
+    trace=pm.sample(draws=1000,tune=500)
+
+# Draw a trace plot of trace
+pm.traceplot(trace)
+plt.show()
+
+# Print a summary of trace
+summary = pm.summary(trace)
+print(summary)
+
+
+  mean     sd   hdi_3%  hdi_97%  mcse_mean  mcse_sd  ess_bulk  ess_tail  r_hat
+Intercept     424.607  3.334  418.409  430.949      0.071    0.050    2216.0    2320.0    1.0
+price         -79.942  1.021  -81.917  -78.184      0.031    0.022    1100.0     857.0    1.0
+type_organic -291.325  4.487 -299.952 -283.184      0.093    0.066    2344.0    2410.0    1.0
+sd             40.926  1.603   37.835   43.899      0.027    0.019    3606.0    2692.0    1.0
+In [1]:
+
+
+# Get each parameter's posterior mean
+intercept_mean = np.mean(trace.get_values("Intercept")) 
+organic_mean = np.mean(trace.get_values("type_organic")) 
+price_mean = np.mean(trace.get_values("price")) 
+sd_mean = np.mean(trace.get_values("sd")) 
+
+print(trace.get_values("Intercept"))
+
+
+Well done! Have you noticed something unusual when it comes it MCMC convergence? Look at the left part of the trace plot for price: the density of one of the chains is slightly wobbly. Luckily, it's only one chain and its density is still quite close to the densities of other chains. So, all in all, we don't need to worry about it and we can safely use the model to optimize the price!
+
+# For each price, predict volume and use it to predict profit
+predicted_profit_per_price = {}
+for price in [0.5, 0.75, 1, 1.25]:
+    pred_mean = (intercept_mean+price_mean*price+organic_mean)
+    volume_pred =np.random.normal(pred_mean, sd_mean, size=1000)
+    profit_pred = price * volume_pred
+    predicted_profit_per_price.update({price: profit_pred})
+
+
+# Draw a forest plot of predicted profit for all prices
+
+pm.forestplot(predicted_profit_per_price, hdi_prob=0.99)
+plt.show()
+
+# Calculate and print HPD of predicted profit for the optimal price
+opt_hpd = az.hdi(predicted_profit_per_price[0.75],credible_interval=0.99) 
+print(opt_hpd)
+
+  [ -6.66302508 109.50098096]
+
+Terrfic work! With a higher or lower price, your company would lose profit, but thanks to your modeling skills, they were able to set the best possible price. More than that, knowing the uncertainty in the profit prediction, they can prepare for the worst-case scenario (in which the profit is negative)!
+
+Congratulations! You did it! You’re now able to perform A/B testing, decision analysis, and regression modeling the Bayesian way in Python. Tweet us your feedback and tell us what’d you think.
+
+50 cents had the best chances of not getting a negative profit
+
+[ 7.52258802 83.80112668]
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

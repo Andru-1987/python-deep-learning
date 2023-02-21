@@ -1,0 +1,73 @@
+paging is splitting data into equal chunks
+
+separating data into quartiles or thirds (top middle 33%, and bottom thirds) to judge performance
+
+ntile(n) splits data into n approximately equal pages
+
+with disciplines as 
+(
+select distinct Discipline from Summer_Medals)
+
+select Discipline, ntile(15) over() as page
+from Disciplines
+order by Page asc 
+
+
+with Country_Medals as (
+select
+Country, count(*) as medals
+from Summer_Medals
+Group by Country),
+
+select Country, Medals,
+NTILES(3) over (order by Medals desc) as Third
+from Country_Medals;
+
+WITH Events AS (
+  SELECT DISTINCT Event
+  FROM Summer_Medals)
+  
+SELECT
+  --- Split up the distinct events into 111 unique groups
+  Event,
+  Ntile(111) OVER (ORDER BY Event ASC) AS Page
+FROM Events
+ORDER BY Event ASC;
+
+
+WITH Athlete_Medals AS (
+  SELECT Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete
+  HAVING COUNT(*) > 1)
+  
+SELECT
+  Athlete,
+  Medals,
+  -- Split athletes into thirds by their earned medals
+  NTILE(3) OVER (ORDER BY Medals DESC) AS Third
+FROM Athlete_Medals
+ORDER BY Medals DESC, Athlete ASC;
+
+
+WITH Athlete_Medals AS (
+  SELECT Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Athlete
+  HAVING COUNT(*) > 1),
+  
+  Thirds AS (
+  SELECT
+    Athlete,
+    Medals,
+    NTILE(3) OVER (ORDER BY Medals DESC) AS Third
+  FROM Athlete_Medals)
+  
+SELECT
+  -- Get the average medals earned in each third
+  Third,
+  Avg(Medals) AS Avg_Medals
+FROM Thirds
+GROUP BY Third
+ORDER BY Third ASC;
+

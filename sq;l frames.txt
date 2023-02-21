@@ -1,0 +1,125 @@
+last_value(City) over(
+order by Year asc
+range between
+unbounded preceding and
+unbounded following
+) as last_city
+
+rows between
+* rows between start and finish
+* n preceding
+
+rows between 3 preceding and current row
+rows between 1 preceding and 1 following
+
+
+select 
+Year, count(*) as Medals
+From Summer_Medals
+where
+Country='RUS'
+and Medal='Gold'
+Group by Year
+Order by Year asc
+
+
+
+select 
+Year, 
+Max(Medals) over (Order by Year Asc) as Max_Medals,
+Max(Medals) over( order by Year asc 
+rows between 1 preceding and current row) as Max_Medals_Last
+From Russia_Medals
+Group by Year
+
+
+WITH Scandinavian_Medals AS (
+  SELECT
+    Year, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country IN ('DEN', 'NOR', 'FIN', 'SWE', 'ISL')
+    AND Medal = 'Gold'
+  GROUP BY Year)
+
+SELECT
+  -- Select each year's medals
+  Year,
+  Medals,
+  -- Get the max of the current and next years'  medals
+  Max(Medals) OVER (ORDER BY Year ASC
+             ROWS BETWEEN Current row
+             AND 1 following) AS Max_Medals
+FROM Scandinavian_Medals
+ORDER BY Year ASC;
+
+
+WITH Chinese_Medals AS (
+  SELECT
+    Athlete, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country = 'CHN' AND Medal = 'Gold'
+    AND Year >= 2000
+  GROUP BY Athlete)
+
+SELECT
+  -- Select the athletes and the medals they've earned
+  Athlete,
+  Medals,
+  -- Get the max of the last two and current rows' medals 
+  max(Medals) OVER (ORDER BY Athlete ASC
+              ROWS BETWEEN 2 preceding
+            AND current row) AS Max_Medals
+FROM Chinese_Medals
+ORDER BY Athlete ASC;
+
+>>>>>>>>>>>>>>>>moving averages
+
+moving average is the average of last n periods
+
+10 ma is hte average of the last 10 days sold units
+
+
+WITH Russian_Medals AS (
+  SELECT
+    Year, COUNT(*) AS Medals
+  FROM Summer_Medals
+  WHERE
+    Country = 'RUS'
+    AND Medal = 'Gold'
+    AND Year >= 1980
+  GROUP BY Year)
+
+SELECT
+  Year, Medals,
+  --- Calculate the 3-year moving average of medals earned
+  avg(Medals) OVER
+    (ORDER BY Year ASC
+     ROWS BETWEEN
+     2 preceding AND current row) AS Medals_MA
+FROM Russian_Medals
+ORDER BY Year ASC;
+
+
+WITH Country_Medals AS (
+  SELECT
+    Year, Country, COUNT(*) AS Medals
+  FROM Summer_Medals
+  GROUP BY Year, Country)
+
+SELECT
+  Year, Country, Medals,
+  -- Calculate each country's 3-game moving total
+  sum(Medals) OVER
+    (PARTITION BY Country
+     ORDER BY Year ASC
+     ROWS BETWEEN
+     2 preceding AND current row) AS Medals_MA
+FROM Country_Medals
+ORDER BY Country ASC, Year ASC;
+
+
+
+
+
