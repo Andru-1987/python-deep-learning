@@ -1,6 +1,10 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* carbohydrate predictor using bayesian and general linear model
+
+https://github.com/dnishimoto/python-deep-learning/blob/master/carbohydrate%20predictor.ipynb
+
 * electricity pricing using a bayesian classifier.
 
 https://github.com/dnishimoto/python-deep-learning/blob/master/Bayesian%20Electricity%20Prices.ipynb
