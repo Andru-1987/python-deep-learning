@@ -1,0 +1,141 @@
+Code
+https://github.com/junzis/atdelay/blob/main/airport_delay_lstm.ipynb
+Data
+https://github.com/YBI-Foundation/Dataset/blob/main/Airline%20Delay.csv
+
+
+lookback=6
+lookforward=6
+
+
+
+from tensorflow.keras import layers, models, optimizers
+from tensorflow.keras.losses import MeanSquaredError
+
+
+inputs = layers.Input((lookback, n_features))
+lstm1 = layers.LSTM(200, return_sequences=True)
+lstm2 = layers.LSTM(200, return_sequences=False)
+dense1 = layers.Dense(200)
+dropout1 = layers.Dropout(0.25)
+dense2 = layers.Dense(100)
+output = layers.Dense(lookahead * 2)
+reshape = layers.Reshape((lookahead, 2))
+
+out = lstm1(inputs)
+out = lstm2(out)
+out = dense1(out)
+out = dropout1(out)
+out = dense2(out)
+outputs = output(out)
+outputs = reshape(outputs)
+
+model = models.Model(inputs, outputs)
+
+optimizer = optimizers.Adam()
+model.compile(
+    optimizer=optimizer,
+    loss=MeanSquaredError(reduction="auto", name="mean_squared_error"),
+    weighted_metrics=["acc"],
+)
+
+model.summary()
+
+es = EarlyStopping(monitor="val_loss", mode="min", verbose=1, patience=10)
+
+# Fit data
+history = model.fit(
+    X_train,
+    y_train,
+    epochs=100,
+    validation_data=(X_test, y_test),
+    # verbose=0,
+    shuffle=False,
+    callbacks=[es],
+)
+
+# Plot loss
+plt.plot(history.history["loss"], label="Train Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
+plt.title("Loss vs Epochs")
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.legend()
+plt.show()
+
+
+y_test_hat = model.predict(X_test)
+
+results = pd.concat(
+    [
+        pd.DataFrame().assign(time=y_test_time),
+        pd.DataFrame(
+            y_test[:, :, 0].round().astype(int),
+            columns=[f"arr_{n}m" for n in range(30, 181, 30)],
+        ),
+        pd.DataFrame(
+            y_test[:, :, 1].round().astype(int),
+            columns=[f"dep_{n}m" for n in range(30, 181, 30)],
+        ),
+        pd.DataFrame(
+            y_test_hat[:, :, 0].round().astype(int),
+            columns=[f"arr_est_{n}m" for n in range(30, 181, 30)],
+        ),
+        pd.DataFrame(
+            y_test_hat[:, :, 1].round().astype(int),
+            columns=[f"dep_est_{n}m" for n in range(30, 181, 30)],
+        ),
+    ],
+    axis=1,
+)
+
+res = dict()
+for i in range(1, 7):
+    res[i] = {
+        "arr_mae": mean_absolute_error(results[f"arr_{i*30}m"], results[f"arr_est_{i*30}m"]),
+        "arr_rmse": mean_squared_error(
+            results[f"arr_{i*30}m"], results[f"arr_est_{i*30}m"], squared=False
+        ),
+        "arr_r2": r2_score(results[f"arr_{i*30}m"], results[f"arr_est_{i*30}m"]),
+        "dep_mae": mean_absolute_error(results[f"dep_{i*30}m"], results[f"dep_est_{i*30}m"]),
+        "dep_rmse": mean_squared_error(
+            results[f"dep_{i*30}m"], results[f"dep_est_{i*30}m"], squared=False
+        ),
+        "dep_r2": r2_score(results[f"dep_{i*30}m"], results[f"dep_est_{i*30}m"]),
+    }
+
+pd.DataFrame.from_dict(res, orient="index")
+
+
+df = results
+
+fig, axes = plt.subplots(4, 1, figsize=(16, 8), sharex=True, sharey=True)
+
+ax = axes[0]
+ax.plot(df.arr_30m, alpha=0.9, label="Actual")
+ax.plot(df.arr_est_30m, color="r", alpha=0.8, label="Predicted (+30 min)")
+ax.axhline(0, ls=":")
+ax.legend(loc="upper left", borderaxespad=0.2, ncol=2)
+ax.set_title("Arrival delay (min)")
+
+
+ax = axes[1]
+ax.plot(df.arr_60m, alpha=0.9, label="Actual")
+ax.plot(df.arr_est_60m, color="r", alpha=0.8, label="Predicted (+60 min)")
+ax.axhline(0, ls=":")
+ax.legend(loc="upper left", borderaxespad=0.2, ncol=2)
+
+ax = axes[2]
+ax.plot(df.arr_120m, alpha=0.9, label="Actual")
+ax.plot(df.arr_est_120m, color="r", alpha=0.8, label="Predicted (+120 min)")
+ax.axhline(0, ls=":")
+ax.legend(loc="upper left", borderaxespad=0.2, ncol=2)
+
+ax = axes[3]
+ax.plot(df.arr_180m, alpha=0.9, label="Actual")
+ax.plot(df.arr_est_180m, color="r", alpha=0.8, label="Predicted (+180 min)")
+ax.axhline(0, ls=":")
+ax.legend(loc="upper left", borderaxespad=0.2, ncol=2)
+
+
+plt.tight_layout()

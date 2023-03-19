@@ -1,0 +1,21 @@
+https://github.com/vikas9087/Predicting-World-GDP-using-Economical-Social-Parameters/blob/master/Data%20Sources/Percentage_working_population.csv
+
+working population percentage
+
+https://github.com/vikas9087/Predicting-World-GDP-using-Economical-Social-Parameters/blob/master/Data%20Sources/GDP%20by%20Country.csv
+
+gdp by country
+
+https://github.com/vikas9087/Predicting-World-GDP-using-Economical-Social-Parameters/blob/master/Data%20Sources/World%20GDP%20growth%20rate.csv
+
+gdp growth rates
+
+The gross domestic product implicit price deflator, or GDP deflator, measures changes in the prices of goods and services produced in the United States, including those exported to other countries. Prices of imports are excluded.
+
+savings and investing
+
+https://apps.bea.gov/iTable/?reqid=19&step=3&isuri=1&1921=survey&1903=11#eyJhcHBpZCI6MTksInN0ZXBzIjpbMSwyLDNdLCJkYXRhIjpbWyJOSVBBX1RhYmxlX0xpc3QiLCIxMzciXSxbIkNhdGVnb3JpZXMiLCJTdXJ2ZXkiXV19
+
+Real Gross Domestic Product, Chained Dollars
+
+https://apps.bea.gov/iTable/?reqid=19&step=3&isuri=1&1921=survey&1903=11#eyJhcHBpZCI6MTksInN0ZXBzIjpbMSwyLDNdLCJkYXRhIjpbWyJDYXRlZ29yaWVzIiwiU3VydmV5Il0sWyJOSVBBX1RhYmxlX0xpc3QiLCI2Il1dfQ==

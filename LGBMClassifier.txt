@@ -1,0 +1,60 @@
+def titanic_lightgbm(train_path, test_path):
+    """
+    :param train_path: path to the train data
+    :param test_path: path to the test data
+    :return: the predictions of the test data
+    """
+    # import the data
+    train = pd.read_csv(train_path)
+    test = pd.read_csv(test_path)
+
+    # drop the useless columns
+    train = train.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
+    test = test.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
+
+    # fill the missing values
+    train['Age'] = train['Age'].fillna(train['Age'].mean())
+    test['Age'] = test['Age'].fillna(test['Age'].mean())
+    test['Fare'] = test['Fare'].fillna(test['Fare'].mean())
+
+    # encode the categorical variables
+    train['Sex'] = train['Sex'].map({'male': 0, 'female': 1})
+    test['Sex'] = test['Sex'].map({'male': 0, 'female': 1})
+    train['Embarked'] = train['Embarked'].map({'S': 0, 'C': 1, 'Q': 2})
+    test['Embarked'] = test['Embarked'].map({'S': 0, 'C': 1, 'Q': 2})
+
+    # split the data
+    X_train = train.drop('Survived', axis=1)
+    y_train = train['Survived']
+    X_test = test
+
+    # fit the model
+    lgbm = LGBMClassifier()
+    lgbm.fit(X_train, y_train)
+
+    # predict the test data
+    y_pred = lgbm.predict(X_test)
+
+    return y_pred
+
+
+"""
+2. code a function importing the titanic data and applying the xgboost classifier
+"""
+
+
+def titanic_xgboost(train_path, test_path):
+    """
+    :param train_path: path to the train data
+    :param test_path: path to the test data
+    :return: the predictions of the test data
+    """
+    # import the data
+    train = pd.read_csv(train_path)
+    test = pd.read_csv(test_path)
+
+    # drop the useless columns
+    train = train.drop(
+
+
+https://raw.githubusercontent.com/anjali1729/Thyroid-Disease-Classification/master/thyroid.csv

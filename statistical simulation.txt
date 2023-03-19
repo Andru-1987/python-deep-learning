@@ -1,0 +1,983 @@
+Tushar Shanker
+
+continueous random variable
+1. infinitely many possible variables
+2. e.g. Height/Weight
+
+discrete random variable
+1. finite set of possible values
+2. e.g. Outcomes of six-sided die
+
+probability distributions
+1. continuous probability distributions (probability density function)
+a. u= mean phe= std
+2. the variable on the x axis and the probability of observing that outcomes on the y axix
+
+discrete probability distributions
+1. probability mass function
+2. binomal distribution n=10 phe=0.5
+where the number of heads in 10 tosses
+
+The numpy.random module also has a number of useful probability distributions for both discrete and continuous random variables.
+
+
+#In addition, you will also see how the sample mean changes as we draw more samples from a distribution.
+# Initialize seed and parameters
+np.random.seed(123) 
+lam, size_1, size_2 = 5, 3, 100  
+
+# Draw samples & calculate absolute difference between lambda and sample mean
+samples_1 = np.random.poisson(lam, size_1)
+samples_2 = np.random.poisson(lam, size_2)
+answer_1 = abs(lam-np.mean(samples_1))
+answer_2 = abs(lam-np.mean(samples_2)) 
+
+print("|Lambda - sample mean| with {} samples is {} and with {} samples is {}. ".format(size_1, answer_1, size_2, answer_2))
+
+print("|Lambda - sample mean| with {} samples is {} and with {} samples is {}. ".format(size_1, answer_1, size_2, answer_2))
+|Lambda - sample mean| with 3 samples is 0.33333333333333304 and with 1000 samples is 0.07699999999999996.
+
+
+>>>>>>>> np.random.shuffle
+
+# Shuffle the deck
+np.random.shuffle(deck_of_cards) 
+
+# Print out the top three cards
+card_choices_after_shuffle = deck_of_cards[0:3]
+print(card_choices_after_shuffle)
+
+>>>>>>> simulation basics
+
+simulations is a framework for modeling real-world events characterized by repeated random sampling.
+
+it is a very popular tool.  Simulations give us an approximation solution.
+
+Can help solve complex problems.
+
+Simulation steps
+1. define possible outcomes for random variables
+2. assign probabilities
+3. define relationship between multiple random variables
+4. get multiple outcomes by repeated random samples
+5. analyze the sample outcomes
+
+
+die a and die b
+
+if die a == die b then 1 else 0 outcome
+
+
+>>>>>> first simulation
+
+# Define die outcomes and probabilities
+die, probabilities, throws = [1,2,3,4,5,6], [1/6,1/6,1/6,1/6,1/6,1/6], 1
+
+# Use np.random.choice to throw the die once and record the outcome
+outcome = np.random.choice(die, size=throws, p=probabilities)
+print("Outcome of the throw: {}".format(outcome[0]))
+
+Outcome of the throw: 5
+
+>>> check outcomes
+
+# Initialize number of dice, simulate & record outcome
+die, probabilities, num_dice = [1,2,3,4,5,6], [1/6, 1/6, 1/6, 1/6, 1/6, 1/6], 2
+outcomes = np.random.choice(die, size=num_dice, p=probabilities) 
+
+# Win if the two dice show the same number
+if outcomes[0] == outcomes[1]: 
+    answer = 'win' 
+else:
+    answer = 'lose'
+
+print("The dice show {} and {}. You {}!".format(outcomes[0], outcomes[1], answer))
+
+The dice show 2 and 2. You win!
+
+>>> multiple outcomes
+
+# Initialize model parameters & simulate dice throw
+die, probabilities, num_dice = [1,2,3,4,5,6], [1/6, 1/6, 1/6, 1/6, 1/6, 1/6], 2
+sims, wins = 100, 0
+
+for i in range(sims):
+    outcomes = outcomes = np.random.choice(die, size=num_dice, p=probabilities)  
+    # Increment `wins` by 1 if the dice show same number
+    if outcomes[0] == outcomes[1]: 
+        wins = wins + 1 
+
+print("In {} games, you win {} times".format(sims, wins))
+
+
+>>>>>>>> simulation workflow
+
+random a, random b, constant c
+
+if 5a + 3b>C then 1 else 0 outcomes
+
+repeated random sampling
+
+
+>>>> probability of winning a lottery
+
+# Pre-defined constant variables
+lottery_ticket_cost, num_tickets, grand_prize = 10, 1000, 10000
+
+# Probability of winning
+chance_of_winning = 1/num_tickets
+
+# Simulate a single drawing of the lottery
+gains = [-lottery_ticket_cost, grand_prize-lottery_ticket_cost]
+probability = [1-chance_of_winning, chance_of_winning]
+outcome = np.random.choice(a=gains, size=1, p=probability, replace=True)
+
+print("Outcome of one drawing of the lottery is {}".format(outcome))
+
+
+>>>>>> multiple outcomes
+
+# Initialize size and simulate outcome
+lottery_ticket_cost, num_tickets, grand_prize = 10, 1000, 10000
+chance_of_winning = 1/num_tickets
+size = 2000
+payoffs = [-lottery_ticket_cost,grand_prize-lottery_ticket_cost]
+probs = [1-chance_of_winning,chance_of_winning]
+
+outcomes = np.random.choice(a=[-lottery_ticket_cost,grand_prize-lottery_ticket_cost], size=size, p=probs, replace=True)
+
+# Mean of outcomes.
+answer = np.mean(outcomes)
+print("Average payoff from {} simulations = {}".format(size, answer))
+
+
+>>>>> highest price that makes sense
+
+# Initialize simulations and cost of ticket
+sims, lottery_ticket_cost = 3000,0
+
+# Use a while loop to increment `lottery_ticket_cost` till average value of outcomes falls below zero
+while 1:
+    outcomes = np.random.choice([-lottery_ticket_cost, grand_prize-lottery_ticket_cost],
+                 size=sims, p=[1-chance_of_winning, chance_of_winning], replace=True)
+    if outcomes.mean() < 0:
+        break
+    else:
+        lottery_ticket_cost += 1
+answer = lottery_ticket_cost - 1
+
+print("The highest price at which it makes sense to buy the ticket is {}".format(answer))
+
+In the lottery example, we might want to know how expensive the ticket needs to be for it to not make sense to buy it. To understand this, we need to modify the ticket cost to see when the expected payoff is negative.
+
+>>>>>>>>>>>>> Probability basics
+
+a sample space is a set of all possible outcomes
+
+probability is the likelihood of an occurrence within the sample space
+
+0 <= P(A) <=1
+
+P(heads) + P(tails)=1
+
+P(A union B) = P(A) + P(B) - P(A intersect B)
+
+>>>> estimating probability
+
+1. construct the sample space or population
+2. determine how to simulate one random outcome
+3. determine rule for success
+4. sample repeatedly and count successes
+5. calculate frequency of successes as an estimate of probability
+
+
+>>> deck of cards
+
+deck_of_cards=[('Heart', 0), ('Heart', 1), ('Heart', 2), ('Heart', 3), ('Heart', 4), ('Heart', 5), ('Heart', 6), ('Heart', 7), ('Heart', 8), ('Heart', 9), ('Heart', 10), ('Heart', 11), ('Heart', 12), ('Club', 0), ('Club', 1), ('Club', 2), ('Club', 3), ('Club', 4), ('Club', 5), ('Club', 6), ('Club', 7), ('Club', 8), ('Club', 9), ('Club', 10), ('Club', 11), ('Club', 12), ('Spade', 0), ('Spade', 1), ('Spade', 2), ('Spade', 3), ('Spade', 4), ('Spade', 5), ('Spade', 6), ('Spade', 7), ('Spade', 8), ('Spade', 9), ('Spade', 10), ('Spade', 11), ('Spade', 12), ('Diamond', 0), ('Diamond', 1), ('Diamond', 2), ('Diamond', 3), ('Diamond', 4), ('Diamond', 5), ('Diamond', 6), ('Diamond', 7), ('Diamond', 8), ('Diamond', 9), ('Diamond', 10), ('Diamond', 11), ('Diamond', 12)]
+
+# Shuffle deck & count card occurrences in the hand
+n_sims, two_kind = 10000, 0
+print(deck_of_cards)
+for i in range(n_sims):
+    np.random.shuffle(deck_of_cards)
+    hand, cards_in_hand = deck_of_cards[0:5], {}
+    for [suite, numeric_value] in hand:
+        # Count occurrences of each numeric value
+        cards_in_hand[numeric_value] = cards_in_hand.get(numeric_value, 0) + 1
+    
+    # Condition for getting at least 2 of a kind
+    if max(cards_in_hand.values()) >=2: 
+        two_kind += 1
+
+print("Probability of seeing at least two of a kind = {} ".format(two_kind/n_sims))
+
+Probability of seeing at least two of a kind = 0.4945 
+
+>>>>> esimating probabilities 
+
+ You have a deck of 13 cards, each numbered from 1 through 13. Shuffle this deck and draw cards one by one. A coincidence is when the number on the card matches the order in which the card is drawn. For instance, if the 5th card you draw happens to be a 5, it's a coincidence. You win the game if you get through all the cards without any coincidences. Let's calculate the probability of winning at this game using simulation.
+
+
+# Pre-set constant variables
+deck, sims, coincidences = np.arange(1, 14), 10000, 0
+
+for i in range(sims):
+    # Draw all the cards without replacement to simulate one game
+    draw = np.random.choice(deck, size=13, replace=False)
+    # Check if there are any coincidences
+    coincidence = (draw == list(np.arange(1, 14))).any()
+    if coincidence == True: 
+        coincidences += 1
+
+# Calculate probability of winning
+prob_of_winning = 1-coincidences/10000
+print("Probability of winning = {}".format(prob_of_winning))
+
+>>>>>>>>>>>>more probability concepts
+
+condition probability
+
+p ( a given b) = p(a intersect b)/p(b)
+
+p ( b given a) = p(b intersect a)/p(a)
+p ( a intersect b) = p(b intersect a)
+
+bayes rule : P(a given b) = p(b given a) P(a)/p(b)
+
+Independent Events:
+p(a intersect b) = p(a)p(b)
+
+	so
+
+p(a given b) = p(a intersect b)/p(b) = p(a)p(b)/p(b)=p(a)
+
+
+p(solar) = p(solar intersect hybrid, ev) + p(solar intersect no hybrid, EV)
+=30/150+10/150 = 40/150
+
+
+		solar panels	no solar panels
+hybrid/ev	30/150		50/150			80/150
+no hybrid/ev	10/150		60/150			70/150
+		40/150		110/150			150/150
+
+
+P(Solar given Hybrid EV) = P( Solar intersect Hybrid, EV)/p(Hybrid,EV) 30/80 =0.375
+
+	
+>>>>>>
+We have an urn that contains 7 white and 6 black balls. Four balls are drawn at random. We'd like to know the probability that the first and third balls are white, while the second and the fourth balls are black.
+
+# Initialize success, sims and urn
+success, sims = 0, 5000
+urn = ['w','w','w','w','w','w','w','b','b','b','b','b','b']
+
+for i in range(sims):
+    # Draw 4 balls without replacement
+    draw = np.random.choice(urn, replace=False, size=4)
+    # Count the number of successes
+    if draw[0]=='w' and draw[2]=='w' and draw[1]=='b' and draw[3]=='b': 
+        success +=1
+
+print("Probability of success = {}".format(success/sims))
+
+>>>>>
+ How many people do you need in a room to ensure at least a 50% chance that two of them share the same birthday?
+
+# Draw a sample of birthdays & check if each birthday is unique
+days = np.arange(1,366)
+people = 2
+
+def birthday_sim(people):
+    sims, unique_birthdays = 2000, 0 
+    for _ in range(sims):
+        draw = np.random.choice(days, size=people, replace=True)
+        if len(draw) == len(set(draw)): 
+            unique_birthdays += 1
+    out = 1 - unique_birthdays / sims
+    return out
+
+# Break out of the loop if probability greater than 0.5
+while (people > 0):
+    prop_bds = birthday_sim(people)
+    if prop_bds > 0.5: 
+        break
+    people += 1
+
+print("With {} people, there's a 50% chance that two share a birthday.".format(people))
+
+With 24 people, there's a 50% chance that two share a birthday.
+
+>>>>>>>>>>>>>>>>>
+a full house is the probability of getting exactly three of a kind conditional on getting exactly two of a kind of another value.
+
+#Shuffle deck & count card occurrences in the hand
+n_sims, full_house, deck_of_cards = 50000, 0, deck.copy() 
+for i in range(n_sims):
+    np.random.shuffle(deck_of_cards)
+    hand, cards_in_hand = deck_of_cards[0:5], {}
+    for card in hand:
+        # Use .get() method to count occurrences of each card
+        cards_in_hand[card[1]] = cards_in_hand.get(card[1], 0) + 1
+        
+    # Condition for getting full house
+    condition = (max(cards_in_hand.values()) ==3) & (min(cards_in_hand.values())==2)
+    if condition: 
+        full_house +=1
+print("Probability of seeing a full house = {}".format(full_house/n_sims))
+
+
+Probability of seeing a full house = 0.00148
+
+print(deck_of_cards[0:5])
+[('Club', 2), ('Spade', 5), ('Diamond', 7), ('Heart', 6), ('Club', 11)]
+
+
+>>>>>>>>>> Data generating process
+
+Simulation steps
+
+1. define possible outcomes for random variables
+2. assign possibilities
+3. define relationships between random variables
+
+Data Generation Process
+1. relationship
+2. sources of uncertainty
+3. factors influencing data
+
+>>>>>>>  simple dgp model
+
+sims, outcomes, p_rain, p_pass = 1000, [], 0.40, {'sun':0.9, 'rain':0.3}
+
+def test_outcome(p_rain):
+    # Simulate whether it will rain or not
+    weather = np.random.choice(['rain', 'sun'], p=[p_rain, 1-p_rain])
+    # Simulate and return whether you will pass or fail
+    test_result = np.random.choice(['pass', 'fail'], p=[p_pass[weather], 1-p_pass[weather]])
+    return test_result
+
+for _ in range(sims):
+    outcomes.append(test_outcome(p_rain))
+
+# Calculate fraction of outcomes where you pass
+pass_outcomes_frac = len([x for x in outcomes if x=="pass"])/len(outcomes)
+print("Probability of Passing the driving test = {}".format(pass_outcomes_frac))
+
+Probability of Passing the driving test = 0.6642
+
+
+>>>> reds winning the election
+
+outcomes, sims, probs = [], 1000, p
+
+for _ in range(sims):
+    # Simulate elections in the 50 states
+    election = np.random.binomial(p=probs, n=1)
+    # Get average of Red wins and add to `outcomes`
+    outcomes.append(election.mean())
+
+# Calculate probability of Red winning in less than 45% of the states
+prob_red_wins = sum([(x < 0.45) for x in outcomes])/len(outcomes)
+print("Probability of Red winning in less than 45% of the states = {}".format(prob_red_wins))
+
+>>>>> probability of losing ` lb weight with 10k steps
+
+# Simulate steps & choose prob 
+for _ in range(sims):
+    w = []
+    for i in range(days):
+        lam = np.random.choice([5000, 15000], p=[0.6, 0.4], size=1)
+        steps = np.random.poisson(lam,1)
+        if steps > 10000: 
+            prob = [0.2,0.8]
+        elif steps < 8000: 
+            prob = [0.8,0.2]
+        else:
+            prob = [0.5, 0.5]
+        w.append(np.random.choice([1, -1], p=prob))
+    outcomes.append(sum(w))
+
+# Calculate fraction of outcomes where there was a weight loss
+weight_loss_outcomes_frac = sum(x<0 for x in outcomes )/len(outcomes)
+print("Probability of Weight Loss = {}".format(weight_loss_outcomes_frac))
+
+>>>>>>> ecommerce ad simulation
+RV= random variable
+
+ad impression -> click -> signup -> purchase
+
+ad impressions -> Poisson RV (assume a normal distribution)
+
+click -> Binomial RV
+signup -> Binomial RV
+purchase -> exponential RV
+
+
+# Initialize click-through rate and signup rate dictionaries
+ct_rate = {'low':0.01, 'high':np.random.uniform(low=0.01, high=1.2*0.01)}
+su_rate = {'low':0.2, 'high':np.random.uniform(low=0.2, high=1.2*0.2)}
+
+def get_signups(cost, ct_rate, su_rate, sims):
+    lam = np.random.normal(loc=100000, scale=2000, size=sims)
+    # Simulate impressions(poisson), clicks(binomial) and signups(binomial)
+    impressions = np.random.poisson(lam,1)
+    clicks = np.random.binomial(impressions, p=ct_rate[cost])
+    signups = np.random.binomial(clicks, p=su_rate[cost])
+    return signups
+
+print("Simulated Signups = {}".format(get_signups('high', ct_rate, su_rate, 1)))
+
+def get_revenue(signups):
+    rev = []
+    np.random.seed(123)
+    for s in signups:
+        # Model purchases as binomial, purchase_values as exponential
+        purchases = np.random.binomial(s, p=0.1)
+        purchase_values =  np.random.exponential(scale=1000, size=purchases)
+        
+        # Append to revenue the sum of all purchase values.
+        rev.append(purchase_values.sum())
+    return rev
+
+print("Simulated Revenue = ${}".format(get_revenue(get_signups('low', ct_rate, su_rate, 1))[0]))
+
+>>>>> probability of losing money
+
+this company has the option of spending extra money, let's say $3000, to redesign the ad. This could potentially get them higher clickthrough and signup rates, but this is not guaranteed. We would like to know whether or not to spend this extra $3000 by calculating the probability of losing money. In other words, the probability that the revenue from the high-cost option minus the revenue from the low-cost option is lesser than the cost
+
+# Initialize cost_diff
+sims, cost_diff = 10000, 3000
+
+# Get revenue when the cost is 'low' and when the cost is 'high'
+rev_low = get_revenue(get_signups('low', ct_rate, su_rate, sims))
+rev_high = get_revenue(get_signups('high', ct_rate, su_rate, sims))
+
+
+# calculate fraction of times rev_high - rev_low is less than cost_diff
+frac =sum([1 for i in np.arange(len(rev_high)) if (rev_high[i]-rev_low[i])<cost_diff])/sims
+print("Probability of losing money = {}".format(frac))
+
+
+Probability of losing money = 0.455
+
+
+>>>>>>>>>>>>>>>>>>>> Introduction to resampling methods
+
+1. original dataset -> resample -> new dataset -> data analysis -> estimator -> repeat.
+
+three types of resample methods: bootstrapping (sample with replacement), jackknife (leave out one or more data points),  and permutation testing (label switching)
+
+
+>>>>>>>
+
+Consider a bowl filled with colored candies - three blue, two green, and five yellow. Draw three candies, one at a time, with replacement and without replacement. You want to calculate the probability that all three candies are yellow.
+
+
+# Set up the bowl
+success_rep, success_no_rep, sims = 0, 0, 10000
+bowl = list("b"*3 + "g"*2 + "y"*5)
+
+
+for i in range(sims):
+    # Sample with and without replacement & increment success counters
+    sample_rep = np.random.choice(bowl, size=3, replace=True)
+    sample_no_rep = np.random.choice(bowl, size=3, replace=False)
+    if ('b' not in sample_rep) & ('g' not in sample_rep) : 
+        success_rep+=1
+    if ('b' not in sample_no_rep) & ('g' not in sample_no_rep) : 
+        success_no_rep+=1
+
+# Calculate probabilities
+prob_with_replacement = success_rep/sims
+prob_without_replacement = success_no_rep/sims
+print("Probability with replacement = {}, without replacement = {}".format(prob_with_replacement, prob_without_replacement))
+
+  Probability with replacement = 0.126, without replacement = 0.0809
+
+
+>>>>>>>> bootstrapping
+
+the most popular resampling method
+1. use the existing data set to simulate multiple datasets
+
+>>>> easter eggs
+4 that weight 20 grams
+3 that weight 70 grams
+1 that weight 50 grams
+1 that weight 90 grams
+1 that weight 80 grams
+
+
+mean of 51
+std 27
+std error 8.53
+
+std error * 1.97 to get the 95% confidence interval
+
+run 5 to 10k iterations
+expect on approximate answer
+consider bias correction
+
+
+>>>>> manufactured wrenches
+
+it's infeasible to measure the length of each wrench. However, you have access to a representative sample of 100 wrenches. Let's use bootstrapping to get the 95% confidence interval (CI) for the average lengths.
+
+
+# Draw some random sample with replacement and append mean to mean_lengths.
+mean_lengths, sims = [], 1000
+for i in range(sims):
+    temp_sample = np.random.choice(wrench_lengths, replace=True, size=len(wrench_lengths))
+    sample_mean = np.mean(temp_sample)
+    mean_lengths.append(sample_mean)
+    
+# Calculate bootstrapped mean and 95% confidence interval.
+boot_mean = np.mean(mean_lengths)
+boot_95_ci = np.percentile(mean_lengths, [2.5, 97.5])
+print("Bootstrapped Mean Length = {}, 95% CI = {}".format(boot_mean, boot_95_ci))
+
+
+Bootstrapped Mean Length = 10.027059690070363, 95% CI = [ 9.78662216 10.24854356]
+
+
+>>>>> student height
+
+You are given the height and weight of 1000 students and are interested in the median height as well as the correlation between height and weight and the associated 95% CI for these quantities. Let's use bootstrapping.
+
+
+# Sample with replacement and calculate quantities of interest
+sims, data_size, height_medians, hw_corr = 1000, df.shape[0], [], []
+for i in range(sims):
+    tmp_df = df.sample(n=data_size, replace=True)
+    height_medians.append(tmp_df['heights'].median())
+    hw_corr.append(tmp_df.weights.corr(tmp_df.heights))
+
+# Calculate confidence intervals
+height_median_ci = np.percentile(height_medians, [2.5, 97.5])
+height_weight_corr_ci = np.percentile(hw_corr, [2.5, 97.5])
+print("Height Median CI = {} \nHeight Weight Correlation CI = {}".format( height_median_ci, height_weight_corr_ci))
+
+Height Median CI = [5.24794083 5.57010164] 
+Height Weight Correlation CI = [0.93878546 0.95165668]
+
+heights  weights
+0    3.329   97.785
+1    7.495  276.504
+2    6.066  230.262
+3    2.487   62.075
+4    4.343  163.870
+
+>> bootstrapping improves the confidence interval
+
+When you run a simple least squares regression, you get a value for 
+. But let's see how can we get a 95% CI for 
+.
+
+rsquared_boot, coefs_boot, sims = [], [], 1000
+reg_fit = sm.OLS(df['y'], df.iloc[:,1:]).fit()
+print(np.percentile(reg_fit.rsquared, [2.5, 97.5]))
+
+# Run 1K iterations
+for i in range(sims):
+    # First create a bootstrap sample with replacement with n=df.shape[0]
+    bootstrap = df.sample(n=df.shape[0],replace=True)
+    # Fit the regression and append the r square to rsquared_boot
+    rsquared_boot.append(sm.OLS(bootstrap['y'],bootstrap.iloc[:,1:]).fit().rsquared)
+
+# Calculate 95% CI on rsquared_boot
+r_sq_95_ci =np.percentile(rsquared_boot, [2.5, 97.5])
+print("R Squared 95% CI = {}".format(r_sq_95_ci))
+
+>>>>>> Jackknife resampling
+
+a quick tool that can be applied to a number of problems
+you create multiple datasets from the original dataset
+
+eggs
+
+4x20g
+3x70g
+1x50g
+1x90g
+1x80g
+
+mean 51g
+std 27g
+std error 8.53
+95% confidence interval = 8.53 * 1.96 [33.36g,68.64g]
+
+bootstrap
+mean=50.8g
+95% CI=[35g,67.03g]
+
+
+
+>>>>> wrenches using jackknife
+
+# Leave one observation out from wrench_lengths to get the jackknife sample and store the mean length
+mean_lengths, n = [], len(wrench_lengths)
+index = np.arange(n)
+
+for i in range(n):
+    jk_sample = wrench_lengths[index != i]  #leaves out one sample
+    mean_lengths.append(np.mean(jk_sample))
+
+# The jackknife estimate is the mean of the mean lengths from each sample
+mean_lengths_jk = np.mean(np.array(mean_lengths))
+print("Jackknife estimate of the mean = {}".format(mean_lengths_jk))
+
+
+>>>> wrenches confidence interval
+
+# Leave one observation out to get the jackknife sample and store the median length
+median_lengths = []
+for i in range(n):
+    jk_sample = wrench_lengths[index != i]
+    median_lengths.append(np.median(jk_sample))
+
+median_lengths = np.array(median_lengths)
+
+# Calculate jackknife estimate and it's variance
+jk_median_length = np.mean(median_lengths)
+jk_var = (n-1)*np.var(median_lengths)
+
+# Assuming normality, calculate lower and upper 95% confidence intervals
+jk_lower_ci = jk_median_length - 1.96*np.sqrt(jk_var)
+jk_upper_ci = jk_median_length + 1.96*np.sqrt(jk_var)
+print("Jackknife 95% CI lower = {}, upper = {}".format(jk_lower_ci, jk_upper_ci))
+
+Jackknife 95% CI lower = 9.138592467547202, upper = 10.754868069037098
+
+
+>>>>> Permutation testing
+
+1. tries to obtain the distribution under the null without making any strong assumptions about the data
+2. non parameteric test
+
+steps
+1. determine the test statistic
+2. the observations are pool and a new dataset is generated
+3. we use a random sample of permutations
+
+if the test statistic falls within the confidence interval we can say there is no difference between groups a and b (rejecting the null hypothesis)
+
+
+>>>>>>> Donations for a website
+
+two designs - A and B. Suppose that you have been running both the versions for a few days and have generated 500 donations on A and 700 donations on B, stored in the variables donations_A and donations_B.
+
+
+# Concatenate the two arrays donations_A and donations_B into data
+len_A, len_B = len(donations_A), len(donations_B)
+data = np.concatenate([donations_A, donations_B])
+
+# Get a single permutation of the concatenated length
+perm = np.random.permutation(len(donations_A) + len(donations_B))
+
+# Calculate the permutated datasets and difference in means
+permuted_A = data[perm[:len(donations_A)]]
+permuted_B = data[perm[len(donations_A):]]
+diff_in_means = np.mean(permuted_A)-np.mean(permuted_B)
+print("Difference in the permuted mean values = {}.".format(diff_in_means))
+
+>> find the P-value
+
+# Generate permutations equal to the number of repetitions
+perm = np.array([np.random.permutation(len(donations_A) + len(donations_B)) for i in range(reps)])
+permuted_A_datasets = data[perm[:, :len(donations_A)]]
+permuted_B_datasets = data[perm[:, len(donations_A):]]
+
+# Calculate the difference in means for each of the datasets
+samples = np.mean(permuted_A_datasets, axis=1) - np.mean(permuted_B_datasets, axis=1)
+
+# Calculate the test statistic and p-value
+test_stat = np.mean(donations_A)-np.mean(donations_B)
+p_val = 2*np.sum(samples >= np.abs(test_stat))/reps
+print("p-value = {}".format(p_val))
+
+
+>>>> find a difference in the median
+
+# Calculate the difference in 80th percentile and median for each of the permuted datasets (A and B)
+samples_percentile = np.percentile(permuted_A_datasets, 80, axis=1) - np.percentile(permuted_B_datasets, 80, axis=1)
+samples_median = np.median(permuted_A_datasets, axis=1) - np.median(permuted_B_datasets, axis=1)
+
+
+# Calculate the test statistic from the original dataset and corresponding p-values
+test_stat_percentile = np.percentile(donations_A, 80) - np.percentile(donations_B, 80)
+test_stat_median = np.median(donations_A) - np.median(donations_B)
+p_val_percentile = 2*np.sum(samples_percentile >= np.abs(test_stat_percentile))/reps
+p_val_median = 2*np.sum(samples_median >= np.abs(test_stat_median))/reps
+
+print("80th Percentile: test statistic = {}, p-value = {}".format(test_stat_percentile, p_val_percentile))
+print("Median: test statistic = {}, p-value = {}".format(test_stat_median, p_val_median))
+
+80th Percentile: test statistic = 1.6951624543447839, p-value = 0.026
+Median: test statistic = 0.6434965714975927, p-value = 0.014
+
+>>>>>> Simulation for business planning
+
+1. simulation for business planning
+2. monte carlo integration
+3. simulation for power analysis
+4. portfolio simulation
+
+
+simulation is widely use for decision making.  it is very good for situations where there is uncertainty.
+
+identify the sources of uncertainty in your business
+
+rain (production of corn dependent on the amount of rainfall)
+corn supply
+cost
+price (external data)
+corn demand (external data)
+
+results in profitability
+
+>>>>> predict corn production
+
+ Rain is normally distributed with mean 50 and standard deviation 15. For now, let's fix cost at 5,000. Let's assume that corn produced in any season is a Poisson random variable and that the average corn production is governed by the equation:
+
+100*(cost**0.1)*(rain**0.2)
+
+
+# Initialize variables
+cost = 5000
+rain = np.random.normal(50,15)
+# Corn Production Model
+def corn_produced(rain, cost):
+  mean_corn = 100*(cost**0.1)*(rain**0.2)
+  corn = np.random.poisson(mean_corn)
+  return corn
+
+# Simulate and print corn production
+corn_result = corn_produced(rain, cost)
+print("Simulated Corn Production = {}".format(corn_result))
+
+
+>>>> simulate profits
+
+def profits(cost):
+    rain = np.random.normal(50, 15)
+    price = np.random.normal(40, 10)
+    supply = corn_produced(rain, cost)
+    demand = corn_demanded(price)
+    equil_short = supply <= demand
+    if equil_short == True:
+        tmp = supply*price - cost
+        return tmp
+    else:
+        tmp2 = demand*price - cost
+        return tmp2
+result = profits(cost)
+print("Simulated profit = {}".format(result))
+
+You are given a function corn_demanded(), which takes the price and determines the demand for corn. This is reasonable because demand is usually determined by the market and is not in your control.
+
+>>>>> optimizing cost
+
+Since you manage the small corn farm, you have the ability to choose your cost - from $100 to $5,000. You want to choose the cost that gives you the maximum average profit.
+
+# Initialize results and cost_levels variables
+sims, results = 1000, {}
+cost_levels = np.arange(100, 5100, 100)
+
+# For each cost level, simulate profits and store mean profit
+for cost in cost_levels:
+    tmp_profits = []
+    for i in range(sims):
+        tmp_profits.append(profits(cost))
+    results[cost] = np.mean(tmp_profits)
+    
+# Get the cost that maximizes average profit
+cost_max = [x for x in results.keys() if results[x] == max(results.values())][0]
+print("Average profit is maximized when cost = {}".format(cost_max))
+
+Average profit is maximized when cost = 1400
+
+def profits(cost):
+    
+    # Price is a normal random variable
+    rain = max(np.random.normal(50, 15), 10)
+    price = max(np.random.normal(40, 10), 10)
+    
+    # Call the appropriate functions for supply & demand
+    supply, demand = corn_produced(rain, cost), corn_demanded(price)
+    
+    # Return the correct profits for each case
+    if supply <= demand:
+        return supply*price - cost
+    else:
+        return demand*price - cost
+
+def corn_produced(rain, cost):
+  mean_corn = 100*(cost**0.1)*(rain**0.2)
+  corn = np.random.poisson(mean_corn)
+  return corn
+
+
+>>>>> monte carlo integration
+
+1. the method of choice as the variables become large
+
+f(x)=x**2
+
+1. calculate overall area
+2. randomly sample points in the area
+3. multiply the fraction of the points below the curve by overall area
+
+
+import inspect
+inspect.getsource(foo)
+
+# Define the sim_integrate function
+def sim_integrate(func, xmin, xmax, sims):
+    x = np.random.uniform(xmin, xmax, sims)
+    y = np.random.uniform(min(min(func(x)), 0), max(func(x)), sims)
+    area = (max(y) - min(y))*(xmax-xmin)
+    result = area * sum(abs(y) < abs(func(x)))/sims
+    return result
+
+# Call the sim_integrate function and print results
+result = sim_integrate(func = lambda x: x*np.exp(x), xmin = 0, xmax = 1, sims = 50)
+print("Simulated answer = {}, Actual Answer = 1".format(result))
+
+
+>>>>> estimating pi
+# Initialize sims and circle_points
+sims, circle_points = 100000, 0 
+
+radius=1.172
+for i in range(sims):
+    # Generate the two coordinates of a point
+    point = np.random.uniform(-1*radius,1*radius,size=2)
+    # if the point lies within the unit circle, increment counter
+    within_circle = point[0]**2 + point[1]**2 <= 1*radius
+    if within_circle == True:
+        circle_points +=1
+        
+# Estimate pi as 4 times the avg number of points in the circle.
+pi_sim = 4*radius*np.mean(circle_points)/sims
+print("Simulated value of pi = {}".format(pi_sim))
+
+>>>>> simulation for power analysis
+
+power = P(rejecting null | true alternative)
+
+probability of detecting an effect if it exists
+
+typically 80% power is recommended for alpha=0.05
+
+
+>>> News media website
+
+treatment: faster loading time
+effective size: 10%
+power: 80%
+sig level: 0.05
+
+# Initialize effect_size, control_mean, control_sd
+effect_size, sample_size, control_mean, control_sd = 0.05, 50, 1, 0.5
+
+# Simulate control_time_spent and treatment_time_spent, assuming equal variance
+control_time_spent = np.random.normal(loc=control_mean, scale=control_sd, size=sample_size)
+treatment_time_spent = np.random.normal(loc=control_mean*(1+effect_size), scale=control_sd, size=sample_size)
+
+# Run the t-test and get the p_value
+t_stat, p_value = st.ttest_ind(control_time_spent, treatment_time_spent)
+stat_sig = p_value < 0.05
+print("P-value: {}, Statistically Significant? {}".format(p_value, stat_sig))
+
+P-value: 0.5766409395002308, Statistically Significant? False
+
+
+>>>> determine sample size
+
+sample_size = 50
+
+# Keep incrementing sample size by 10 till we reach required power
+while 1:
+    control_time_spent = np.random.normal(loc=control_mean, scale=control_sd, size=(sample_size,sims))
+    treatment_time_spent = np.random.normal(loc=control_mean*(1+effect_size), scale=control_sd, size=(sample_size,sims))
+    t, p = st.ttest_ind(treatment_time_spent, control_time_spent)
+    
+    # Power is the fraction of times in the simulation when the p-value was less than 0.05
+    power = (p < 0.05).sum()/sims
+    if  power >= 0.8: 
+        break
+    else: 
+        sample_size += 10
+print("For 80% power, sample size required = {}".format(sample_size))
+
+For 80% power, sample size required = 400
+
+
+>>>>>>> applications in finance
+
+simulation is used in :
+1. option & instrument pricing
+2. project finance
+3. portfolio evaluation
+
+# rates is a Normal random variable and has size equal to number of years
+def portfolio_return(yrs, avg_return, sd_of_return, principal):
+    np.random.seed(123)
+    rates = np.random.normal(loc=avg_return, scale=sd_of_return, size=yrs)
+    # Calculate the return at the end of the period
+    end_return = principal
+    for x in rates:
+        end_return = end_return*(1+x)
+    return end_return
+
+result = portfolio_return(yrs = 5, avg_return = 0.07, sd_of_return = 0.15, principal = 1000)
+print("Portfolio return after 5 years = {}".format(result))
+
+>>> 1000 iterations
+
+# Run 1,000 iterations and store the results
+sims, rets = 1000, []
+
+for i in range(sims):
+    rets.append(portfolio_return(yrs = 10, avg_return = 0.07, 
+                                 volatility = 0.3, principal = 10000))
+
+Portfolio return after 5 years = 1021.4013412039292
+
+
+# Calculate the 95% CI
+lower_ci = np.percentile(rets,2.5)
+upper_ci = np.percentile(rets,97.5)
+print("95% CI of Returns: Lower = {}, Upper = {}".format(lower_ci, upper_ci))
+
+>>> compare
+
+for i in range(sims):
+    rets_stock.append(portfolio_return(yrs = 10, avg_return = 0.07, volatility = 0.3, principal = 10000))
+    rets_bond.append(portfolio_return(yrs = 10, avg_return = 0.04, volatility = 0.1, principal = 10000))
+
+# Calculate the 25th percentile of the distributions and the amount you'd lose or gain
+rets_stock_perc = np.percentile(rets_stock, 25)
+rets_bond_perc = np.percentile(rets_bond, 25)
+additional_returns = rets_stock_perc - rets_bond_perc
+print("Sticking to stocks gets you an additional return of {}".format(additional_returns))
+
+Sticking to stocks gets you an additional return of -5518.530403193416
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
