@@ -384,11 +384,11 @@ print(hpd)
 cured_expected = np.mean(drug_efficacy_posterior_draws) * 100000
 
 # Calculate the minimum number of people cured with 50% probability
-min_cured_50_perc = np.median(drug_efficacy_posterior_draws) * 100_000
+min_cured_50_perc = np.median(drug_efficacy_posterior_draws) * 100000
 print(min_cured_50_perc)
 
 # Calculate the minimum number of people cured with 90% probability
-min_cured_90_perc = np.percentile(drug_efficacy_posterior_draws,10) * 100_000
+min_cured_90_perc = np.percentile(drug_efficacy_posterior_draws,10) * 100000
 
 Based on the experiments carried out by ourselves and neighboring countries, 
     should we distribute the drug, we can expect 82777 infected people to be cured. 

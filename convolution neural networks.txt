@@ -1,0 +1,68 @@
+
+Convolution:
+mathematical operation describing how signals are transformed by passing through systems of different characteristics.
+
+inputs:
+1. input signal
+2. transfer function of the processing system
+
+
+we apply certain filters to the signal to extract particular features from it.
+
+The filters are called kernels
+
+Kernel=Filter("lens")
+
+edge detection is done by the Sobel Kernel
+
+
+-1 -2 -1
+0   0  0
+1  -2  1
+
+
+def make_deep_net(input_shape, n_output_classes, n_kernels=32, kernel_size=(3,3)):
+    # Initialize the sequential model
+    model = Sequential()	
+    # Add the convolutional layer (containing implicitly the input layer)
+    model.add(Conv2D(input_shape=input_shape, filters=n_kernels, kernel_size=kernel_size, activation='relu'))
+    # Add the flattening layer
+    model.add(Flatten())	
+    # Add the fully connected layer
+    model.add(Dense(n_output_classes, activation='softmax')) 
+    # Compile the model
+    model.compile(optimizer="adam", metrics=["accuracy"], loss='categorical_crossentropy')
+    
+    return model
+
+
+def evaluate_deep_net(model, x_test, y_test):
+    # Generate the test predictions and evaluate against the ground truth
+    score = model.evaluate(x=x_test, y=y_test)
+    # Print the evaluation results in a human readable form
+    print('Test loss: %.2f' % score[0])
+    print('Test accuracy: %.2f %%' % (100*score[1]))
+
+
+# Construct the Deep Neural Network
+deep_net = make_deep_net(input_shape=[28, 28, 1],
+                         n_output_classes=10)
+
+
+# Construct the Deep Neural Network
+deep_net = make_deep_net(input_shape=[28, 28, 1],
+                         n_output_classes=10)
+
+# Train the Deep Neural Network
+deep_net.fit(x=x_train, y=y_train,
+          	  validation_data=(x_test, y_test),
+          	  batch_size=128,
+          	  epochs=1)
+
+# Estimate the network performance
+evaluate_deep_net(deep_net, x=x_test, y=y_test)
+
+
+
+
+

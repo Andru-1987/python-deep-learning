@@ -1,0 +1,392 @@
+statistical definition  (mean and variance)
+
+1. abnormally different
+2. have significant different features
+3. the observer determines whether a datapoint is an outlier
+
+anomaly detection has applications in industries such as cyber security.
+
+detecting tumors or cancerous cells
+
+detecting fraud
+
+numbers=pd.Series([24,46,30,28,1289, 25,21,31,48,47])
+
+outlier detection: detects only in existing training data
+
+novelty detection: detect in new data
+
+big_mart = pd.read_csv('big_mart.csv')
+
+sales=big_mart['sales']
+
+sales.describe()
+
+n_bins=np.sqrt(len(sales))
+
+n_bins=int(n_bins)
+
+plt.figure(figsize=(8,4))
+plt.hist(sales, bins=n_bins, color='red')
+
+integers=range(len(sales))
+
+plt.scatter(integers,sales,c='red',alpha=0.5)
+
+
+
+
+>>>>>>>>>>>>>>>
+
+https://github.com/reisanar/datasets/blob/master/income.csv
+
+You can use isolateforest to find anomalies in the data.  A value of -1 indicates an anomaly has occurred.
+
+    data="""ID	EyeColor	HairColor	EducationLevel	Income
+    1	1	1	1	1
+    2	1	1	2	2
+    3	2	2	1	1"""
+    
+    df = pd.read_csv(io.StringIO(data), sep='\t')
+    print(df.head() )
+    clf=IsolationForest()
+    
+    X=df[["EyeColor","HairColor","EducationLevel"]]
+    y=df["Income"]
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33,  random_state=42)
+    
+    #n_estimators, max_samples, max_features
+    #-1 represents the outliers (according to the fitted model)
+    
+    clf = IsolationForest(max_samples=2,n_estimators=10, random_state=10)
+    clf.fit(X_train)
+    y_pred_test = clf.predict(X_test)
+    
+    cm=confusion_matrix(y_test, y_pred_test)
+    #sns.heatmap(cm)
+    
+    def plot_detected_anomalies(X, true_labels, predicted_anomalies):
+    	#y_pred_inliers = X[predicted_anomalies == -1, :]
+    	# PLOTTING RESULTS
+    	plt.figure(figsize=(12, 6))
+    	plt.subplot(121)
+    	plt.scatter(X[:, 0], X[:, 1], c=true_labels)
+    	plt.title('Clean data and added noise - TRUE')
+    	plt.xlim([-11, 11])
+    	plt.ylim([-11, 11])
+    	plt.subplot(122)
+    	plt.scatter(X[:, 0], X[:, 1], c=predicted_anomalies)
+    	plt.title('Noise detected via Isolation Forest')
+    	plt.xlim([-11, 11])
+    	plt.ylim([-11, 11])
+    	plt.show()
+    
+    plot_detected_anomalies(np.array(X_test[["EyeColor","EducationLevel"]]), y_test, y_pred_test) 
+
+>>>>>>>
+
+# Extract price
+prices = airbnb_df["price"]
+
+# Print 5-number summary
+print(prices.describe())
+
+count    10000.000
+mean       181.589
+std        371.086
+min          0.000
+25%         75.000
+50%        116.000
+75%        196.000
+max      10000.000
+
+# Find the square root of the length of prices
+n_bins = np.sqrt(len(prices))
+
+# Cast to an integer
+n_bins = int(n_bins)
+
+plt.figure(figsize=(8, 4))
+
+# Create a histogram
+plt.hist(prices, bins=n_bins, color='red')
+plt.show()
+
+Notice the low bars from 1500 to 1800 in the x-axis. Also, even though they are not visible, there must be some bars with almost 0 height to the far right of the histogram. Otherwise, it wouldn't be this wide.
+
+# Create a list of consecutive integers
+integers = np.arange(len(prices))
+
+plt.figure(figsize=(16, 8))
+
+# Plot a scatterplot
+plt.scatter(integers, prices, c='red', alpha=0.5)
+plt.show()
+
+
+>>>>>>>>>>>>>>>>> box plots and iqr
+
+
+the boxplot shows the 75% percentile and 25% percentile, median and outliers and lower and upper limits of the outliers
+
+iqr is the inter quartile range or the length on the whiskers
+
+iqr = q3 - q1
+
+factor=1.5
+
+the whisker = iqr * factor
+
+lower limit=  q1 - 1.5 * IQR
+upper iimit = q3 + 1.5 * IQR
+
+plt.boxplot(sales)
+plt.xlabel("Product Sales")
+
+we can change the factor
+
+factor=2.5
+plt.boxplot(sales, whis=factor)
+
+q1=sales.quantile(0.25)
+q3=sales.quantile(0.75)
+
+IQR=q3-q1
+factor=2.5
+
+lower_limit=q1-(IQR*factor)
+upper_limit=q3+(IQR*factor)
+
+is_lower=sales < lower_limit
+is_upper=sales > upper_limit
+
+outliers=sales[is_lower | is_upper]
+
+
+>>>>>>>  finding outliers with quartiles
+
+
+# Calculate the 25th and 75th percentiles
+q1 = prices.quantile(.25)
+q3 = prices.quantile(.75)
+
+# Find the IQR
+IQR = q3-q1
+factor = 2.5
+
+# Calculate the lower limit
+lower_limit = q1 - IQR*factor
+
+# Calculate the upper limit
+upper_limit = q3 + IQR*factor
+
+# Create a mask for values lower than lower_limit
+is_lower = prices < lower_limit
+
+# Create a mask for values higher than upper_limit
+is_higher = prices > upper_limit
+
+# Combine the masks to filter for outliers
+outliers = prices[is_lower | is_higher]
+
+# Count and print the number of outliers
+len(outliers)
+
+181
+
+>>>>>> finding outliers with z-scores
+
+the z-score tells you the number of standard deviations the sample is away from the mean
+
+mean=10
+std=3
+
+z 16.3 = (16.3 - 10)/3
+
+The empirical rule and outliers
+
+68% is within one std
+95% is within two std
+99.7 is within three std
+
+It is common to use a std of 3 to find outliers.
+outliers are outside 3 std
+they go to tails
+
+from scipy.stats import zscore
+
+scores=zscore(sales)
+is_over_3 = np.abs(scores) > 3
+
+outliers = sales[is_over_3]
+
+print(len(outliers))
+
+>>>>>> drawbacks of z-scores
+
+1. only works best with normally distributed data
+2. performance suffers from too many outliers as the mean and std are skewed
+
+Median absolute deviation (MAD)
+1. Measures dispersion variability
+2. More resilent to outliers
+3. Uses median at its core
+
+from scipy.stats import mean_abs_deviation
+
+mad_score = median_abs_deviation(sales)
+
+1. how many mad units are away from the median
+
+
+>>>>>>>>>>>>>>>>>>>PyOD  Python Outlier Detection library
+
+1. offers more than 40 algorithms
+2. all algorithms have sklearn-like syntax
+
+from pyod.models.mad import MAD
+
+mad=MAD(threshold=3.5)
+
+The estimator calculates the MAD score under the hood and will mark any points beyond 3
+
+
+sales_reshaped=sales.values.reshape(-1,1) # convert into a 2D numpy array
+
+labels = mad.fit_predict(sales_reshaped)
+print(labels.sum())
+
+>>>> prices
+
+# Import the zscores function
+from scipy.stats import zscore
+
+# Find the zscores of prices
+scores = zscore(prices)
+
+# Check if the absolute values of scores are over 3
+is_over_3 = np.abs(scores)>3
+
+# Use the mask to subset prices
+outliers = prices[is_over_3]
+
+print(len(outliers))
+
+
+>>>>> outliers using MAD
+
+# Initialize with a threshold of 3.5
+mad = MAD(threshold=3.5)
+
+# Reshape prices to make it 2D
+prices_reshaped = prices.values.reshape(-1, 1)
+
+# Fit and predict outlier labels on prices_reshaped
+labels = mad.fit_predict(prices_reshaped)
+
+# Filter for outliers
+outliers = prices[labels == 1]
+
+print(len(outliers))
+
+>>>>>>>>>>>>>>>>Isolated forest
+
+respondant
+1. 12 years old
+2. 160 cm tall
+3. weighs 190 pounds
+
+this is an example of a multivariant outlier
+
+Multivariate anomalies:
+1. have two or more attributes
+2. attributes are not necessarily anomalous
+3. on anomalous when all attributes are considered at the same time
+
+The nodes in which no further branching or splitting happens are called leaves
+
+Everytime a new split occurs a new depth level is added to the tree
+
+Isolation trees are randomized versions of decision trees.  Splitting or branching occurs randomly.  iTree selects a random feature of the data point and selects a random split between the minium and maximum values of that feature at each depth level
+
+since outliers leave a large gap between the inliers and outliers the outlier occurrence is more likely to occur in the gap.
+
+import pandas as pd
+
+airbnb_df=pd.read_csv("airbnb.csv")
+
+from pyod.models.iforest import IForest
+
+iforest=IForest()
+labels=iforest.fit_predict(airbnb_df)
+
+print(labels)
+
+outliers are marked with 1 whereas inliers are marked with 0
+
+>>>>>>>>>>
+
+# Import IForest from pyod
+from pyod.models.iforest import IForest
+
+# Initialize an instance with default parameters
+iforest = IForest()
+
+# Generate outlier labels
+labels = iforest.fit_predict(big_mart)
+
+# Filter big_mart for outliers
+outliers = big_mart[labels==1]
+
+print(outliers.shape)
+
+>>>> iforest parameters
+
+1. contamination
+a. a contamination percent of 10 means we are selecting the top 10 percent labeled as outliers by their scores
+b. contamination=0.05 with a max of .5
+
+2. n_estimators
+a. default is 100 for small datasets
+b. we use more trees for high dimensional datasets
+
+3. max_samples range[0-1]
+4. max_features range[0-1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+

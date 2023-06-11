@@ -1,0 +1,1892 @@
+import inspect
+source_code = inspect.getsource(roll_dice)
+print(source_code)
+
+simulations:
+
+variables, calculations, probability distributions, and important results like the law of large numbers
+
+from scipy.stats import bernoulli
+a bernoulli trial is one where the outcome is binary
+
+from scipy.stats import binom
+
+
+>>>>>>>>>>>
+
+
+# Import the bernoulli object from scipy.stats
+from scipy.stats import bernoulli
+
+# Set the random seed to reproduce the results
+np.random.seed(42)
+
+# Simulate ten coin flips and get the number of heads
+five_coin_flips = bernoulli.rvs(p=0.5, size=5)
+coin_flips_sum = sum(five_coin_flips)
+print(coin_flips_sum)
+
+
+>>>>>>>> binomial draws
+
+# Set the random seed to reproduce the results
+np.random.seed(42)
+
+#  simulate 20 trials of 10 coin flips with a 35% chance of getting heads 
+# n=coin flips size=# of trials
+draws = binom.rvs(n=10, p=0.35, size=20)
+print(draws)
+
+[ 6 11  8  7  5  5  4  9  8  8]
+
+
+>>>>>> Probability mass and distribution functions
+
+binomial.pmf(k,n,p)
+
+
+probability mass function allows you to get the probability of getting a particular outcome for a discrete random variable
+
+
+probability distribution function (cdf)
+1. get a range of probabilities rather than from a single event
+2. adds the probabilities in a series resulting in an cumulative probability
+
+
+binomial.cdf(k,n,p)
+
+# probability of 5 heads or less after 10 throws with a fair coin
+
+binom.cdf(k=1,n=10,p=0.5)
+
+
+the complement of cdf is sf
+
+
+>>>>
+
+# Probability of getting exactly 1 defective component
+prob_one_defect = binom.pmf(k=1, n=50, p=0.02)
+print(prob_one_defect)
+
+
+# Probability of not getting any defective components
+prob_no_defects = binom.pmf(k=0, n=50, p=0.02)
+print(prob_no_defects)
+
+# Probability of getting 2 or less defective components
+prob_two_or_less_defects = binom.cdf(k=2, n=50, p=0.02)
+print(prob_two_or_less_defects)
+
+Consider a survey about employment that contains the question "Are you employed?" It is known that 65% of respondents will answer "yes." Eight survey responses have been collected.
+
+# Calculate the probability of getting exactly 5 yes responses
+prob_five_yes = binom.pmf(k=5, n=8, p=0.65)
+print(prob_five_yes)
+
+# Calculate the probability of getting 3 or less no responses
+prob_three_or_less_no = 1-binom.cdf(k=3, n=8, p=0.65)
+print(prob_three_or_less_no)
+
+# Calculate the probability of getting more than 3 yes responses
+prob_more_than_three_yes = binom.sf(k=3, n=8, p=0.65)
+print(prob_more_than_three_yes)
+
+Imagine that in your town there are many crimes, including burglaries, but only 20% of them get solved. Last week, there were 9 burglaries. Answer the following questions.
+
+# What is the probability of solving 4 burglaries?
+four_solved = binom.pmf(k=4, n=9, p=0.20)
+print(four_solved)
+
+0.066060288
+
+# What is the probability of solving more than 3 burglaries?
+more_than_three_solved = binom.sf(k=3, n=9, p=0.20)
+print(more_than_three_solved)
+
+0.08564172800000006
+
+# What is the probability of solving 2 or 3 burglaries?
+two_or_three_solved = binom.pmf(k=2, n=9, p=0.20) + binom.pmf(k=3, n=9, p=0.20)
+print(two_or_three_solved)
+
+0.4781506560000002
+
+# What is the [probability of solving 1 or fewer] or [more than 7 burglaries]?
+tail_probabilities = binom.cdf(k=1, n=9, p=0.2) + binom.sf(k=7, n=9, p=0.2)
+print(tail_probabilities)
+
+0.4362265599999997
+
+>>>>>>>>>>>>>>>>>>>>>>expected value and mean and variance
+
+expected value: sum of the possible outcomes weighted by its probability
+
+mean: the sum of the values divided by the number of values
+
+variance measures dispersion of the numbers
+
+describe([0,1]).variance
+0.5
+
+var(X)=nxpx(1-p)
+
+n=number of flips
+p=probability
+1-p=probability of failure
+
+
+binom.stats(n=10,p=0.5) yielding the variance or nxpx(1-p)
+2.5
+
+>>>>>> 100 coin flips
+
+# Sample mean from a generated sample of 100 fair coin flips
+sample_of_100_flips = binom.rvs(n=1, p=0.50, size=100)
+sample_mean_100_flips = describe(sample_of_100_flips).mean
+print(sample_mean_100_flips)
+
+mean=.45
+
+# Sample mean from a generated sample of 1,000 fair coin flips
+sample_mean_1000_flips = describe(binom.rvs(n=1, p=0.50, size=1000)).mean
+print(sample_mean_1000_flips)
+
+mean=0.502
+
+# Sample mean from a generated sample of 2,000 fair coin flips
+sample_mean_2000_flips = describe(binom.rvs(n=1, p=0.50, size=2000)).mean
+print(sample_mean_2000_flips)
+
+mean=0.5065
+
+>>>> variance
+
+sample = binom.rvs(n=10, p=0.3, size=2000)
+
+# Calculate the sample mean and variance from the sample variable
+sample_describe = describe(sample)
+
+# Calculate the sample mean using the values of n and p
+mean = 10*0.3
+
+# Calculate the sample variance using the value of 1-p
+variance = mean*(1-0.3)
+
+# Calculate the sample mean and variance for 10 coin flips with p=0.3
+binom_stats = binom.stats(n=10, p=0.3)
+
+print(sample_describe.mean, sample_describe.variance, mean, variance, binom_stats)
+
+(array(3.), array(2.1))
+
+variance=2.1
+
+>>>>>>>
+for i in range(0, 1500):
+	# 10 draws of 10 coin flips with 25% probability of heads
+    sample = binom.rvs(n=10, p=0.25, size=10)
+	# Mean and variance of the values in the sample variable
+    averages.append(describe(sample).mean)
+    variances.append(describe(sample).variance)
+  
+# Calculate the mean of the averages variable
+print("Mean {}".format(describe(averages).mean))
+
+# Calculate the mean of the variances variable
+print("Variance {}".format(describe(variances).mean))
+
+
+
+Mean 2.485066666666667
+Variance 1.8856000000000004
+
+# Calculate the mean and variance
+print(binom.stats(n=10, p=0.25))
+
+(array(2.5), array(1.875))
+
+>>>>>>>>>>>>>>>>>>>> calculate the probabilities of two events
+
+Independence
+
+given that a and b are events in a random experiment, the conditions for independence of a and b are
+
+1. the order in which a and b occur does not affect their probabilities
+2. if a occurs, this does not affect the probability of b
+3. if b occurs, this does not affect the probability of a
+
+P(A and B)= P(A) * P(B)
+
+
+from scipy.stats import binom
+
+sample = binom.rvs(n=2, p=0.5, size=1000, random_state=1)
+
+from scipy.stats import find_repeats
+
+find_repeats(sample)
+
+repeatedResults(0,1,2), counts=array([249,497,254]))
+
+tails repeat 249 times in 1000 throws
+
+using a bias coin
+p(tails)=0.2
+p(heads)=0.8
+
+p(tails)*p(tails)=(0.2)(0.2)=0.04
+p(heads)*p(heads)=(0.8)*(0.8)=0.64
+
+
+>>>>> relative frequency
+
+The relative frequency is the number of favorable trials divided by the total trials
+
+from scipy.stats import relfreq
+relfreg(biased_sample, numbins=3).frequency
+
+numbins is 3 for the three possible outcomes of tails, one heads and one tails or two heads
+
+array([0.039,0.317,0.644)
+
+>>>> Engine and Gear box
+
+	
+	Engine		Gear Box
+Fails	0.01		0.005
+Works	0.99		0.995
+
+
+P_Eng_fail=0.01
+P_GearB_fail=0.005
+
+P(Engine Fails and Gear box fails)= P_Eng_fail * P_GearB_fail=0.00005
+
+>>>>> deck of cards
+
+P(A or B) with cards
+
+P_Jack=4/52
+P_Queen=4/52
+
+P(Jack or King)= P_Jack+P_Queen=8/52=2/13
+
+there is no overlap - no common elements in the event
+
+P(Jack or Heart) = 4/52 + 13/52 -1/52  (we subtract the overlap)=4/13  30% to get a jack or heart
+
+>>>>>
+
+From the provided samples in sample_of_two_coin_flips, get the probability of having 2 heads out of the 1,000 trials.
+
+# Count how many times you got 2 heads from the sample data
+count_2_heads = find_repeats(sample_of_two_coin_flips).counts[2]
+
+# Divide the number of heads by the total number of draws
+prob_2_heads = count_2_heads / len(sample_of_two_coin_flips)
+
+# Display the result
+print(prob_2_heads)
+
+
+>>>>>>
+
+# Get the relative frequency from sample_of_two_coin_flips
+# Set numbins as 3
+# Extract frequency
+rel_freq = relfreq(sample_of_two_coin_flips, numbins=3).frequency
+print(rel_freq)
+
+[0.269 0.488 0.243]
+
+>>>>>> probability mass function
+
+# Probability of getting 0, 1, or 2 from the distribution
+probabilities = binom.pmf([0,1,2], n=2, p=0.5)
+print(probabilities)
+
+[0.25 0.5  0.25]
+
+
+>>>> Probability of the gear and engine working
+
+# Individual probabilities
+P_Eng_works = 0.99
+P_GearB_works = 0.995
+
+# Joint probability calculation
+P_both_works = P_Eng_works*P_GearB_works
+
+print(P_both_works)
+
+0.98505
+
+>>>>>> Probability that one component fails the gear or the engine
+
+
+# Individual probabilities
+P_Eng_fails = 0.01
+P_Eng_works = 0.99
+P_GearB_fails = 0.005
+P_GearB_works = 0.995
+
+# Joint probability calculation
+P_only_GearB_fails = P_GearB_fails*P_Eng_works
+P_only_Eng_fails = P_Eng_fails*P_GearB_works
+
+# Calculate result
+P_one_fails = P_only_GearB_fails+P_only_Eng_fails
+
+print(P_one_fails)
+
+0.0149
+
+>>>>>>>>  Probability both will work or both will fail
+
+# Individual probabilities
+P_Eng_fails = 0.01
+P_Eng_works = 0.99
+P_GearB_fails = 0.005
+P_GearB_works = 0.995
+
+# Joint probability calculation
+P_EngW_GearBW = P_Eng_works * P_GearB_works
+P_EngF_GearBF = P_Eng_fails * P_GearB_fails
+
+# Calculate result
+P_fails_or_works = P_EngW_GearBW + P_EngF_GearBF
+
+print(P_fails_or_works)
+
+0.9851
+>>>>>>>>>>>>>>>>>>>>>>>>>>> Look at a deck of cards
+
+# Ace probability
+P_Ace = 4/52
+
+# Not Ace probability
+P_not_Ace = 1 - P_Ace
+
+print(P_not_Ace)
+
+0.9230769230769231
+
+about a 8 percent chance of holding an ace
+
+>>>>>>> Probability or hearts or diamonds
+
+# Figure probabilities
+P_Hearts = 13/52
+P_Diamonds = 13/52
+
+# Probability of red calculation
+P_Red = P_Hearts + P_Diamonds
+
+print(P_Red)
+
+0.5
+
+>>>>>>> Probability of a jack in a spade
+
+# Figure probabilities
+P_Jack = 4/52
+P_Spade = 13/52
+
+# Joint probability
+P_Jack_n_Spade = 1/52
+
+# Probability of Jack or spade
+P_Jack_or_Spade = P_Jack + P_Spade - P_Jack_n_Spade
+
+print(P_Jack_or_Spade)
+
+0.3076923076923077
+
+
+>>>>>> Probability of a King and Queen
+
+# Figure probabilities
+P_King = 4/52
+P_Queen = 4/52
+
+# Joint probability
+P_King_n_Queen = 0
+
+# Probability of King or Queen
+P_King_or_Queen = P_King + P_Queen - P_King_n_Queen
+
+print(P_King_or_Queen)
+
+0.15384615384615385
+
+
+>>>>>>>>>>>>>>>>>>Conditional probabilities
+
+dependent events and define conditional probability
+
+P(jack) = 4/52 or 7.69%
+
+if we remove a jack from the deck
+P(Jack less one) = 3/52 or 5.88%
+
+P(A and B) = P(A)P(B)
+
+P(B|A) = P(A and B)/ P(A)  ->Bayes theorm -> the probability of B given A
+
+>>>>
+
+What is the probability of a red card given a Jack
+
+P(Red|Jack) = P(Jack and Red)/P(Jack)
+
+P_Jack=4/52
+P_Jack_and_Red=2/52
+
+P(Red|Jack) = 2/52 *52/4=1/2 or .5 or 50%
+
+>>>>>
+
+What is the probability of getting a Jack given it is a red card
+
+P(Red|Jack) = P(Red and Jack)/P(Red)
+
+P_Red=26/52
+P_Red_and_Jack=2/52
+
+P(Red|Jack)=2/52 / 26/52 = 2/26 = 1/13 or 7%
+
+
+>>>>>> flight delays
+
+Delayed	On time	Total
+Tuesday	24	114	138
+Friday	11	127	138
+Total	35	241	276
+# Needed quantities
+On_time = 241
+Total_departures = 276
+
+# Probability calculation
+P_On_time = On_time / Total_departures
+
+0.8731884057971014
+
+# Probability calculation
+P_Delayed = 1 - P_On_time
+
+print(P_Delayed)
+
+0.12681159420289856
+
+# Needed quantities
+Delayed_on_Tuesday = 24
+On_Tuesday = 138
+
+# Probability calculation
+P_Delayed_g_Tuesday = Delayed_on_Tuesday / On_Tuesday
+
+print(P_Delayed_g_Tuesday)
+
+0.17391304347826086
+
+# Needed quantities
+Delayed_on_Friday = 11
+On_Friday = 138
+
+# Probability calculation
+P_Delayed_g_Friday = Delayed_on_Friday / On_Friday
+
+print(P_Delayed_g_Friday)
+
+0.07971014492753623
+
+
+
+print(P_On_time)
+
+>>>>> cards
+
+# Individual probabilities
+P_Red = 26/52
+P_Red_n_Ace = 2/52
+
+# Conditional probability calculation
+P_Ace_given_Red = P_Red_n_Ace/P_Red
+
+print(P_Ace_given_Red)
+
+0.07692307692307693
+
+of an ace given a red card
+
+
+# Individual probabilities
+P_Ace = 4/52
+P_Ace_n_Black = 2/52
+
+# Conditional probability calculation
+P_Black_given_Ace = P_Ace_n_Black/P_Ace
+
+print(P_Black_given_Ace)
+
+.5
+
+# Individual probabilities
+P_Black = 26/52
+P_Black_n_Non_ace = 24/52
+
+# Conditional probability calculation
+P_Non_ace_given_Black = P_Black_n_Non_ace/P_Black
+
+print(P_Non_ace_given_Black)
+
+0.9230769230769231
+
+# Individual probabilities
+P_Non_ace = 48/52
+P_Non_ace_n_Red = 24/52
+# Conditional probability calculation
+P_Red_given_Non_ace = P_Non_ace_n_Red/P_Non_ace
+
+print(P_Red_given_Non_ace)
+
+.5
+
+# Needed probabilities
+P_first_Jack = 4/52
+P_Jack_given_Jack = 3/51
+
+# Joint probability calculation
+P_two_Jacks = P_first_Jack * P_Jack_given_Jack
+
+print(P_two_Jacks)
+
+0.004524886877828055
+
+# Needed probabilities
+P_Spade = 13/52
+P_Spade_n_Ace = 1/52
+
+# Conditional probability calculation
+P_Ace_given_Spade = P_Spade_n_Ace / P_Spade
+
+print(P_Ace_given_Spade)
+
+0.07692307692307693
+
+# Needed probabilities
+P_Face_card = 12/52
+P_Face_card_n_Queen = 4/52
+
+# Conditional probability calculation
+P_Queen_given_Face_card = P_Face_card_n_Queen / P_Face_card 
+
+print(P_Queen_given_Face_card)
+
+0.3333333333333333
+
+give a face card you have a 33 percent chance of getting a queen
+
+
+
+>>>>>>>>>>>>>>>>>total probability law
+
+The total probability law allows you to calculate probabilities under such conditions
+
+P(Face Card) = P(Club and Face Card)+P(Spade and Face card)+P(Heart and Face card) +P(Diamond and face card)
+
+
+P_Club_n_FC=3/52
+P_Spade_n_FC=3/52
+P_Heart_n_FC=3/52
+P_Diamond_n_FC=3/52
+
+12/52
+
+the probability of getting a face card is 23 percent
+
+
+>>>>>>>>>>>>>>>>>vendors v1,v2,v3
+
+consider the damaged part we get from the vendors.  we can partition the parts according to the vendor that provided the parts.
+
+calculate the probability of getting the damaged part in non overlapping space
+
+P(D)=P(V1 and D)+P(V2 and D) and P(V3 and D)
+
+P(D)=P(V1)P(D|V1)+P(V2)P(D|V2)+P(V3)P(D|V3)
+
+
+half of the parts are produced by v1
+v2 and v3 produce 25% each
+
+probability of damage is 
+v1 1%
+v2 2%
+v3 3%
+
+
+P_V1=.50
+P_V2=.25
+P_V3=.25
+P_D_V1=.01
+P_D_V2=.02
+P_D_V3=.03
+
+P_D=P_V1*P_D_V1+P_V2*P_D_V2+P_V3*P_D_V3
+
+0.0175
+
+>>>>>>>>>>>>>>> engine reliability
+
+99% of the engines from factory A last more than 5,000 km.
+Factory B manufactures engines that last more than 5,000 km with 95% probability.
+70% of the engines are from manufacturer A, and the rest are produced by manufacturer B.
+
+What is the chance that an engine will last more than 5,000 km?
+
+# Needed probabilities
+# 99% engines from factory A will last more than 5000km 
+P_A = .70
+P_last5000_g_A = .99
+P_B = .30
+P_last5000_g_B = .95
+
+# Total probability calculation
+P_last_5000 = P_A*P_last5000_g_A + P_B*P_last5000_g_B
+
+print(P_last_5000)
+
+0.978
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>> voters
+
+three states for votes for john doe: X, Y, Z
+
+43% from X
+25% from Y
+32% from Z
+
+
+X_given_JohnDoe=53%
+Y_given_JohnDoe=67%
+Z_given_JohnDoe=32%
+
+# Individual probabilities
+P_X = .43
+
+# Conditional probabilities
+P_Support_g_X = .53
+
+# Total probability calculation
+P_X_n_Support = P_X * P_Support_g_X
+print(P_X_n_Support)
+
+0.22790000000000002
+
+What is the probability that the voter lives in state Z and does not support John Doe?
+
+# Individual probabilities
+P_Z = .32
+
+# Conditional probabilities
+P_Support_g_Z = 0.32
+P_NoSupport_g_Z = 1 - P_Support_g_Z
+
+# Total probability calculation
+P_Z_n_NoSupport = P_Z * P_NoSupport_g_Z
+print(P_Z_n_NoSupport)
+
+0.2176
+
+What is the total percentage of voters that support John Doe?
+
+# Individual probabilities
+P_X = .43
+P_Y = .25
+P_Z = .32
+
+# Conditional probabilities
+P_Support_g_X = .53
+P_Support_g_Y = .67
+P_Support_g_Z = .32
+
+# Total probability calculation
+P_Support = P_X * P_Support_g_X  + P_Y  * P_Support_g_Y + P_Z * P_Support_g_Z
+print(P_Support)
+
+0.4978
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>> Bayes rule
+
+we can calculate conditional probabilities
+
+For independent events:
+P(A and B)=P(A)*P(B)
+
+
+For dependent events:
+P(A and B) = P(A)* P(B|A)
+
+P(B and A) = P(B)* P(A|B)
+
+Equivalent probability:
+P(A)* P(B|A)= P(B)* P(A|B)
+
+Bayes Formula:
+P(A|B)=(P(A)*P(B|A)) / P(B)
+
+
+>>>>> factory probability for damaged parts
+
+P_D=P(V1)*P(D|V1)+P(V2)*P(D|V2_+P(V3)*P(D|V3)
+
+
+P(Vi|D) = (P(V1)P(D|Vi)) / P(D)
+
+
+P(V1|D)=P(V1)*P(D|V1)/ (P(V1)*P(D|V1)+P(V2)*P(D|V2_+P(V3)*P(D|V3))
+
+
+P(V1)=.50
+P(V2)=.25
+P(V3)=.25
+
+P(D|V1)=.01
+P(D|V2)=.02
+P(D|V3)=.03
+
+bayes reduces your conditional space with non-overlapping partitions
+
+P(V1|D) = .50*0.01 / (.01+.02+.03)
+
+0.285
+
+# Individual probabilities & conditional probabilities
+P_V1 = .50
+P_V2 = .25
+P_V3 = .25
+P_D_g_V1 = .01
+P_D_g_V2 = .02
+P_D_g_V3 = .03
+
+# Probability of Damaged
+P_Damaged = (P_V1 * P_D_g_V1) + (P_V2 * P_D_g_V2) + (P_V3 * P_D_g_V3)
+
+# Bayes' rule for P(V1|D)
+P_V1_g_D = (P_V1 * P_D_g_V1) / P_Damaged
+
+print(P_V1_g_D)
+
+0.2857142857142857
+
+# Individual probabilities & conditional probabilities
+P_V1 = 0.5
+P_V2 = 0.25
+P_V3 = 0.25
+P_D_g_V1 = 0.01
+P_D_g_V2 = 0.02
+P_D_g_V3 = 0.03
+
+# Probability of Damaged
+P_Damaged = (P_V1 * P_D_g_V1) + (P_V2 * P_D_g_V2) + (P_V3 * P_D_g_V3)
+
+# Bayes' rule for P(V2|D)
+P_V2_g_D = (P_V2 * P_D_g_V2) / P_Damaged
+
+print(P_V2_g_D)
+0.2857142857142857
+
+# Individual probabilities & conditional probabilities
+P_V1 = 0.5
+P_V2 = 0.25
+P_V3 = 0.25
+P_D_g_V1 = 0.01
+P_D_g_V2 = 0.02
+P_D_g_V3 = 0.03
+
+# Probability of Damaged
+P_Damaged = (P_V1 * P_D_g_V1) + (P_V2 * P_D_g_V2) + (P_V3 * P_D_g_V3)
+
+# Bayes' rule for P(V3|D)
+P_V3_g_D = (P_V3 * P_D_g_V3) / P_Damaged
+
+print(P_V3_g_D)
+
+0.4285714285714285
+
+>>>>>>>>>>>>>>>>>>>>> swine flu
+The doctor randomly selects you for a blood test for swine flu, which is suspected to affect 1 in 9,000 people in your city. The accuracy of the test is 99%, meaning that the probability of a false positive is 1%. The probability of a false negative is zero.
+
+# Probability of having Swine_flu
+P_Swine_flu = 1./9000
+# Probability of not having Swine_flu
+P_no_Swine_flu = 1 - P_Swine_flu
+# Probability of being positive given that you have Swine_flu
+P_Positive_g_Swine_flu = 1
+# Probability of being positive given that you do not have Swine_flu
+P_Positive_g_no_Swine_flu = 0.01
+
+# Probability of Positive
+P_Positive = (P_Swine_flu * P_Positive_g_Swine_flu) + (P_no_Swine_flu * P_Positive_g_no_Swine_flu)
+
+# Bayes' rule for P(Swine_flu|Positive)
+P_Swine_flu_g_Positive = (P_Swine_flu * P_Positive_g_Swine_flu) / P_Positive
+
+print(P_Swine_flu_g_Positive)
+
+0.010990218705352238
+
+
+#Miami and 1 in 350 people came back with swine flu
+# Individual probabilities & conditional probabilities
+P_Swine_flu = 1./350
+P_no_Swine_flu = 1 - P_Swine_flu
+P_Positive_g_Swine_flu = 1
+P_Positive_g_no_Swine_flu = 0.01
+
+# Probability of Positive
+P_Positive = (P_Swine_flu *P_Positive_g_Swine_flu) + (P_no_Swine_flu * P_Positive_g_no_Swine_flu)
+
+# Bayes' rule for P(Swine_flu|Positive)
+P_Swine_flu_g_Positive = (P_Swine_flu *P_Positive_g_Swine_flu) / P_Positive 
+
+print(P_Swine_flu_g_Positive)
+
+#If the probability of a false positive is 2%, what is the new probability that you have swine flu after your vacation?
+# Individual probabilities & conditional probabilities
+P_Swine_flu = 1./9000
+P_no_Swine_flu = 1 - P_Swine_flu
+P_Positive_g_Swine_flu = 1
+P_Positive_g_no_Swine_flu = 0.02
+
+# Probability of Positive
+P_Positive = P_Swine_flu * P_Positive_g_Swine_flu + P_no_Swine_flu * P_Positive_g_no_Swine_flu
+
+# Bayes' rule for P(Swine_flu|Positive)
+P_Swine_flu_g_Positive = (P_Swine_flu * P_Positive_g_Swine_flu) / P_Positive
+
+print(P_Swine_flu_g_Positive)
+
+0.22271714922048996
+
+#If the probability of a false positive is 2%, what is the new probability that you have swine flu after your vacation?  1 out 350 will get the flu
+
+# Individual probabilities & conditional probabilities
+P_Swine_flu = 1./350
+P_no_Swine_flu = 1 - P_Swine_flu
+P_Positive_g_Swine_flu = 1
+P_Positive_g_no_Swine_flu = 0.02
+
+# Probability of Positive
+P_Positive = P_Swine_flu * P_Positive_g_Swine_flu + P_no_Swine_flu * P_Positive_g_no_Swine_flu
+
+# Bayes' rule for P(Swine_flu|Positive)
+P_Swine_flu_g_Positive = (P_Swine_flu * P_Positive_g_Swine_flu) / P_Positive
+
+print(P_Swine_flu_g_Positive)
+
+0.12531328320802004
+
+>>>>>>>>>> normal distribution
+
+Probability density: relative likelihood to each possible outcome in the sample space
+
+
+the plot is dense and symmetry around the mean
+
+norm.cdf(0) - norm.cdf(-1)=0.34   we are finding the area under the curve between the two points on the curve
+
+the normal distribution area is symmetric
+
+the mean is the value of the highest probability density
+
+the standard deviation is the measure of how spreadout the probability density is.
+
+the lower the value of the standard deviation the more concentrated the probability density becomes
+
+1 std .68 area around the mean
+2 std .95 area around the mean
+3 std .9973 area around the mean
+
+from scipy.stats import norm
+
+sample = norm.rvs(loc=0, scale=1, size=10000, random_state=13)
+
+sns.displot(sample)
+
+you can plot any distribution knowing the mean and standard deviation
+
+>>>>>>>>>>>>>>>>>>>>> scores
+
+Suppose the scores on a given academic test are normally distributed, with a mean of 65 and standard deviation of 10.
+
+
+Generate a normal distribution sample with mean 3.15 and standard deviation 1.5.
+
+mean=3.15
+std=1.5
+
+# Import norm, matplotlib.pyplot, and seaborn
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Create the sample using norm.rvs()
+sample = norm.rvs(loc=mean, scale=std, size=10000, random_state=13)
+
+# Plot the sample
+sns.distplot(sample)
+plt.show()
+
+
+>>>>>>>>>>> height
+
+The heights of every employee in a company have been measured, and they are distributed normally with a mean of 168 cm and a standard deviation of 12 cm.
+
+
+>>>>>>>>>>>>>>>>>>>>>Normal probabilties
+
+
+scale is the standard deviation
+
+std=1
+norm.pdf(-1, loc=0, scale=std)
+
+the probability of less than -1 is the area below -1
+
+norm.cdf(-1)  -> 0.1586
+
+the probability of less than 1.5 is the area to the left of 1.5
+
+norm.cdf(1.5)=0.933
+
+The percent point function (ppf)
+
+norm.ppf(0.2)
+
+
+If we want to find the probability between two values we subtract the cdfs
+
+norm.cdf(1)-norm.cdf(-1)=0.68
+
+
+if we want to find the probability greater than a given value use sf (survive function the compliment of the cdf)
+
+norm.sf(1) = 0.1586
+
+
+a=-2
+b=2
+
+norm.cdf(a)+norm.sf(b)
+
+alpha=0.95
+norm.interval(alpha)
+
+norm.cdf(b)-norm.cdf(a)=0.95
+
+>>>>>>>> restaurant customer spending
+
+mean=3.15
+std=1.5
+
+# Probability of spending $3 or less
+spending = norm.cdf(3, loc=mean, scale=std)
+print(spending)
+
+0.460172162722971071
+
+# Probability of spending more than $5
+spending = norm.sf(5, loc=3.15, scale=1.5)
+print(spending)
+
+0.10872571321259111
+
+
+# Probability of spending more than $2.15 and $4.15 or less
+spending_4 = norm.cdf(4.15, loc=3.15, scale=1.5)
+spending_2 = norm.cdf(2.15, loc=3.15, scale=1.5)
+print(spending_4 - spending_2)
+
+0.4950149249061543
+
+
+# Probability of spending $2.15 or less or more than $4.15
+spending_2 = norm.cdf(2.15, loc=3.15, scale=1.5)
+spending_over_4 = norm.sf(4.15, loc=3.15, scale=1.5) 
+print(spending_2 + spending_over_4)
+
+0.5049850750938457
+
+>>>>>>>>>>>>>>>>>> battery life
+
+# Probability that battery will last less than 3 hours
+less_than_3h = norm.cdf(3, loc=5, scale=1.5)
+print(less_than_3h)
+
+0.09121121972586788
+
+# Probability that battery will last more than 3 hours
+more_than_3h = norm.sf(3, loc=5, scale=1.5)
+print(more_than_3h)
+
+0.9087887802741321
+
+# Probability that battery will last between 5 and 7 hours
+P_less_than_7h = norm.cdf(7, loc=5, scale=1.5)
+P_less_than_5h = norm.cdf(5, loc=5, scale=1.5)
+print(P_less_than_7h - P_less_than_5h)
+
+0.4087887802741321
+
+
+>>>>>>>>>>>>>>>>>>>>>> height male and female
+
+The heights of adults aged between 18 and 35 years are normally distributed. For males, the mean height is 70 inches with a standard deviation of 4. Adult females have a mean height of 65 inches with a standard deviation of 3.5. You can see how the heights are distributed in this plot:
+
+# Values one standard deviation from mean height for females
+interval = norm.interval(0.68, loc=65, scale=3.5)
+print(interval)
+
+ (61.51939740876586, 68.48060259123413)
+
+
+#value where the tallest males fall with 0.01 probability.
+# Value where the tallest males fall with 0.01 probability
+tallest = norm.ppf(0.99, loc=70, scale=4)
+print(tallest)
+
+79.30539149616337
+
+# Probability of being taller than 73 inches for males and females
+P_taller_male = norm.sf(73, loc=70, scale=4)
+P_taller_female = norm.sf(73, loc=65, scale=3.5)
+print(P_taller_male, P_taller_female)
+
+0.2266273523768682 0.011135489479616392
+
+
+# Probability of being shorter than 61 inches for males and females
+P_shorter_male = norm.cdf(61, loc=70, scale=4)
+P_shorter_female = norm.cdf(61, loc=65, scale=3.5)
+print(P_shorter_male, P_shorter_female)
+
+0.012224472655044696 0.12654895447355774
+
+>>>>>>>>>>>>>>>>>>>>>Poisson Distributions
+
+
+Poisson is used when an event occurs in a fixed interval of time.
+
+call center
+
+call interval mean is 2.2 minutes
+
+what is the probability of having any calls within 3 minutes
+
+outcomes can be classified as successes or failures
+
+call center: the number of successful events per unit is the number of calls per minute
+
+Imagine you have 2.2 calls per minute
+
+poisson.pmf(k,mu=2.2)
+
+
+>>>>>> Poisson atm
+
+Consider an ATM (automatic teller machine) at a very busy shopping mall. The bank wants to avoid making customers wait in line to use the ATM. It has been observed that the average number of customers making withdrawals between 10:00 a.m. and 10:05 a.m. on any given day is 1.
+
+#Calculate the probability of having more than one customer visiting the ATM in this 5-minute period.
+# Import poisson from scipy.stats
+from scipy.stats import poisson
+
+# Probability of more than 1 customer
+probability = poisson.sf(k=1, mu=1)
+
+# Print the result
+print(probability)
+
+>>>>>> poisson highway
+
+On a certain turn on a very busy highway, there are 2 accidents per day. Let's assume the number of accidents per day can be modeled as a Poisson random variable and is distributed as in the following plot:
+
+
+#Determine and print the probability of there being 5 accidents on any day.
+
+# Import the poisson object
+from scipy.stats import poisson
+
+# Probability of 5 accidents any day
+P_five_accidents = poisson.pmf(k=5, mu=2)
+
+# Print the result
+print(P_five_accidents)
+
+.036
+
+>>>>>>>>>
+
+#Determine and print the probability of having 4 or 5 accidents on any day.
+
+# Import the poisson object
+from scipy.stats import poisson
+
+# Probability of having 4 or 5 accidents on any day
+P_less_than_6 = poisson.cdf(k=5, mu=2)
+P_less_than_4 = poisson.cdf(k=3, mu=2)
+
+# Print the result
+print(P_less_than_6 - P_less_than_4)
+
+0.12631293102083851
+
+>>>>>>>>>
+
+#Determine and print the probability of having more than 3 accidents on any day.
+# Import the poisson object
+from scipy.stats import poisson
+
+# Probability of more than 3 accidents any day
+P_more_than_3 = poisson.sf(k=3, mu=2)
+
+# Print the result
+print(P_more_than_3)
+
+>>>>>>
+
+#Determine and print the number of accidents that is likely to happen with 0.75 probability.
+
+# Import the poisson object
+from scipy.stats import poisson
+
+# Number of accidents with 0.75 probability
+accidents = poisson.ppf(q=0.75, mu=2)
+
+# Print the result
+print(accidents)
+
+>>>>>> poisson distribution
+
+# Import poisson, matplotlib.pyplot, and seaborn
+from scipy.stats import poisson
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Create the sample
+sample = poisson.rvs(mu=2, size=10000, random_state=13)
+
+# Plot the sample
+sns.distplot(sample, kde=False)
+plt.show()
+
+>>>>>>>>>>>>>>>>>>>>>>>> Geometric distributions
+
+with geometric distributions we model a series of failed outcomes until we obtain a successful one
+
+geometric distributions helps determine the probability of success after k trial failures
+
+geom.pmf(k,p=0.3)
+
+from scipy.stats import geom
+
+#the probability of a bear catching a salmon after 30 tries
+
+geom.pmf(k=30, p=0.03333)
+
+0.2455510
+
+>>>>>>>
+
+# a basketball player scoring in four or fewer attempts (cumulative distribution function cdf)
+
+geom.cdf(k=4,p=0.3)=0.76
+
+
+>>>>
+
+# the probability the players will score in more than 2 free throws, use the survival function (sf)
+
+geom.sf(k=2,p=0.3) = 0.49
+
+>>>> percent point function (ppf)
+
+geom.ppf(q=0.6, p=0.3) =3
+
+probability to value
+
+in 3 attempts we accumulate the probabilty of 60 percent
+
+>>>>>> sample generation (rvs)
+
+
+sample=geom.rvs(p=0.3, size=10000, random_state=13)
+
+sns.distplot(sample, bins= np.linspace(0,20,21),kde=False)
+plt.show()
+
+>>>>>
+
+#probability of a bear catching a salmon in three attempts
+
+# Getting a salmon on the third attempt
+probability = geom.pmf(k=3, p=0.0333)
+
+# Print the result
+print(probability)
+
+
+0.031119146037000004
+
+>>>>>
+
+# Probability of getting a salmon in less than 5 attempts
+probability = geom.cdf(k=4, p=0.0333)
+
+# Print the result
+print(probability)
+0.12669313451096792
+
+>>>>>>
+
+# Probability of getting a salmon in less than 21 attempts
+probability = geom.cdf(k=20, p=0.0333)
+
+# Print the result
+print(probability)
+
+0.4920343187252892
+
+>>>>>>
+
+# Attempts for 0.9 probability of catching a salmon
+attempts = geom.ppf(q=0.9, p=0.0333)
+
+# Print the result
+print(attempts)
+
+68 attempts
+
+
+>>>>>> basketball
+
+#the probability of missing the first throw and scoring with the second
+
+# Import geom from scipy.stats
+from scipy.stats import geom
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Probability of missing first and scoring on second throw
+probability = geom.pmf(k=2, p=.3)
+
+# Print the result
+print(probability)
+
+0.21
+
+In 1 out of 5 cases the player will miss with the first throw and score with the second
+
+# Import geom, matplotlib.pyplot, and seaborn
+from scipy.stats import geom
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Create the sample
+sample = geom.rvs(p=0.3, size=10000, random_state=13)
+
+# Plot the sample
+sns.distplot(sample, bins = np.linspace(0,20,21), kde=False)
+plt.show()
+
+>>>>>>>> sample mean to population mean
+
+law of large numbers: the sample mean approaches the expected value as the sample size increases
+
+as the sample gets larger the sample mean gets closer to the population mean
+
+
+from scipy.stats import binom
+from scipy.stats import describe
+
+samples=binom.rvs(n=1,p=0.5, size=250, random_state=42)
+
+print(samples[0:100])
+
+#print the sample mean
+
+coin_flips, p , sample_size, averages =1,0.5,1000,[]
+
+print(describe(samples[0:10]).mean)
+
+for i in range(2,sample_size+1):
+	averages.append(describe(samples[0:i]).mean)
+
+print(averages[0:10])
+
+plt.axhline(binom.mean(n=coin_flips, p=p),color='red')
+plt.plot(averages,'-')
+plt.legend(("population mean","sample mean"),loc='upper right')
+plt.show()
+
+>>>>>>
+
+As a data scientist you are hired to simulate the sex of 250 newborn children, and you are told that on average 50.50% are males.
+
+# Import the binom object
+from scipy.stats import binom
+
+# Generate a sample of 250 newborn children
+sample = binom.rvs(n=1, p=.5050, size=250, random_state=42)
+
+# Print the sample mean of the first 10 samples
+print(describe(sample[0:10]).mean)
+
+0.4
+
+# Print the sample mean of the first 50 samples
+print(describe(sample[0:50]).mean)
+
+0.56
+
+# Print the sample mean of the first 250 samples
+print(describe(sample[0:250]).mean)
+
+0.504
+
+# Show the sample values
+print(sample)
+
+# Calculate sample mean and store it on averages array
+averages = []
+for i in range(2, 251):
+    averages.append(describe(sample[0:i]).mean)
+
+# Calculate sample mean and store it on averages array
+averages = []
+for i in range(2, 251):
+    averages.append(describe(sample[0:i]).mean)
+
+# Add population mean line and sample mean plot
+plt.axhline(binom.mean(n=1, p=0.505), color='red')
+plt.plot(averages, '-')
+
+# Add legend
+plt.legend(("Population mean","Sample mean"), loc='upper right')
+plt.show()
+
+>>>>> adding random variables
+
+The central limit theorm: The sum of random variables tends to a normal distribution as the number of them grows to infinity.
+
+1. the variables must have the same distribution
+2. the variables must be independent
+
+population= poisson.rvs(mu=2, size=1000, random_state=20)
+
+plt.hist(population, bins=range(9), widths=0.8)
+plt.show()
+
+#plot the sample means
+
+np.random.seed(42)
+
+sample_means=[]
+
+for _ in range(350):
+	sample=np.random.choice(population,10)
+	sample_means=append(describe(sample).mean)
+
+plt.xlabel("sample mean values")
+plt.ylabel("frequency")
+plt.title("sample means histogram")
+plt.hist(sample_means)
+plt.show()
+
+>>>>>>>>>>
+
+# Create list for sample means
+sample_means = []
+for _ in range(1500):
+	# Take 20 values from the population
+    sample = np.random.choice(population, 20)
+    # Calculate the sample mean
+    sample_means.append(describe(sample).mean)
+
+
+
+# Plot the histogram
+plt.hist(sample_means)
+plt.xlabel("Sample mean values")
+plt.ylabel("Frequency")
+plt.show()
+
+>>>> 3000 samples
+
+# Generate the population
+population = geom.rvs(p=0.5, size=1000)
+
+# Create list for sample means
+sample_means = []
+for _ in range(3000):
+	# Take 20 values from the population
+    sample = np.random.choice(population, 20)
+    # Calculate the sample mean
+    sample_means.append(describe(sample).mean)
+
+# Plot the histogram
+plt.hist(sample_means)
+plt.show()
+
+>>> normal distribution each time 
+
+# Generate the population
+population = poisson.rvs(mu=2, size=1000)
+
+# Create list for sample means
+sample_means = []
+for _ in range(1500):
+	# Take 20 values from the population
+    sample = np.random.choice(population, 20)
+    # Calculate the sample mean
+    sample_means.append(describe(sample).mean)
+
+# Plot the histogram
+plt.hist(sample_means)
+plt.show()
+
+def roll_dice(num_rolls):
+    """Generate dice roll simulations
+
+    Parameters
+    ----------
+    num_rolls : int
+        The number of dice rolls to simulate
+
+    Returns
+    -------
+    list
+        a list with num_rolls simulations of dice rolls
+    """
+    
+    sample = []
+    for i in range(num_rolls):
+        sample.append(random.randint(1,6))
+    return(sample)
+
+
+>>>>>>>
+
+# Configure random generator
+np.random.seed(42)
+
+# Generate two samples of 2000 dice rolls
+sample1 = roll_dice(2000)
+sample2 = roll_dice(2000)
+
+# Add the first two samples
+sum_of_1_and_2 = np.add(sample1, sample2)
+
+# Plot the sum
+plt.hist(sum_of_1_and_2 , bins=range(2, 14), width=0.9)
+plt.show()
+
+>>>>>>>
+
+# Configure random generator
+np.random.seed(42)
+
+# Generate the samples
+sample1 = roll_dice(2000)
+sample2 = roll_dice(2000)
+sample3 =roll_dice(2000)
+
+# Add the first two samples
+sum_of_1_and_2 = np.add(sample1, sample2)
+
+# Add the first two with the third sample
+sum_of_3_samples = np.add(sum_of_1_and_2, sample3)
+
+# Plot the result
+plt.hist(sum_of_3_samples, bins=range(3, 20), width=0.9)
+plt.show() 
+
+>>>>>>>> Linear regression
+
+y=slope*x + intercept
+
+the residual is the distance from the point to the model.  we want to minimize the total residual error
+
+from sklearn.linear_model import LinearRegression
+
+model=LinearRegression()
+model.fit(hours_of_study,scores)
+
+slope=model.coef_[0]
+intercept=model.intercept_
+
+1.50,52.44
+
+score= model.predict(np.array)[[15]]))
+
+print(score)
+
+# Get the predicted test score for 10 hours of study
+score = slope*10 + intercept
+print('score:', score)
+
+score: 65.42335979737958
+
+74
+
+
+plt.scatter(hours_of_study, scores)
+plt.plot(hours_of_study_values, model.predict(hours_of_study_values))
+plt.show()
+
+
+hours_of_study=[4, 8, 8, 12, 8, 9, 6, 11, 13, 13, 19, 16, 17, 17, 21, 21, 23, 27, 30, 24]
+scores=[52, 54, 61, 63, 63, 60, 61, 70, 75, 77, 76, 79, 81, 83, 85, 86, 88, 90, 95, 93]
+
+def linregress(x, y=None, alternative='two-sided'):
+    """
+    Calculate a linear least-squares regression for two sets of measurements.
+
+    Parameters
+    ----------
+    x, y : array_like
+        Two sets of measurements.  Both arrays should have the same length.  If
+        only `x` is given (and ``y=None``), then it must be a two-dimensional
+        array where one dimension has length 2.  The two sets of measurements
+        are then found by splitting the array along the length-2 dimension. In
+        the case where ``y=None`` and `x` is a 2x2 array, ``linregress(x)`` is
+        equivalent to ``linregress(x[0], x[1])``.
+    alternative : {'two-sided', 'less', 'greater'}, optional
+        Defines the alternative hypothesis. Default is 'two-sided'.
+        The following options are available:
+
+        * 'two-sided': the slope of the regression line is nonzero
+        * 'less': the slope of the regression line is less than zero
+        * 'greater':  the slope of the regression line is greater than zero
+
+        .. versionadded:: 1.7.0
+
+    Returns
+    -------
+    result : ``LinregressResult`` instance
+        The return value is an object with the following attributes:
+
+        slope : float
+            Slope of the regression line.
+        intercept : float
+            Intercept of the regression line.
+        rvalue : float
+            Correlation coefficient.
+        pvalue : float
+            The p-value for a hypothesis test whose null hypothesis is
+            that the slope is zero, using Wald Test with t-distribution of
+            the test statistic. See `alternative` above for alternative
+            hypotheses.
+        stderr : float
+            Standard error of the estimated slope (gradient), under the
+            assumption of residual normality.
+        intercept_stderr : float
+            Standard error of the estimated intercept, under the assumption
+            of residual normality.
+
+    See Also
+    --------
+    scipy.optimize.curve_fit :
+        Use non-linear least squares to fit a function to data.
+    scipy.optimize.leastsq :
+        Minimize the sum of squares of a set of equations.
+
+    Notes
+    -----
+    Missing values are considered pair-wise: if a value is missing in `x`,
+    the corresponding value in `y` is masked.
+
+    For compatibility with older versions of SciPy, the return value acts
+    like a ``namedtuple`` of length 5, with fields ``slope``, ``intercept``,
+    ``rvalue``, ``pvalue`` and ``stderr``, so one can continue to write::
+
+        slope, intercept, r, p, se = linregress(x, y)
+
+    With that style, however, the standard error of the intercept is not
+    available.  To have access to all the computed values, including the
+    standard error of the intercept, use the return value as an object
+    with attributes, e.g.::
+
+        result = linregress(x, y)
+        print(result.intercept, result.intercept_stderr)
+
+    Examples
+    --------
+    >>> import matplotlib.pyplot as plt
+    >>> from scipy import stats
+    >>> rng = np.random.default_rng()
+
+    Generate some data:
+
+    >>> x = rng.random(10)
+    >>> y = 1.6*x + rng.random(10)
+
+    Perform the linear regression:
+
+    >>> res = stats.linregress(x, y)
+
+    Coefficient of determination (R-squared):
+
+    >>> print(f"R-squared: {res.rvalue**2:.6f}")
+    R-squared: 0.717533
+
+    Plot the data along with the fitted line:
+
+    >>> plt.plot(x, y, 'o', label='original data')
+    >>> plt.plot(x, res.intercept + res.slope*x, 'r', label='fitted line')
+    >>> plt.legend()
+    >>> plt.show()
+
+    Calculate 95% confidence interval on slope and intercept:
+
+    >>> # Two-sided inverse Students t-distribution
+    >>> # p - probability, df - degrees of freedom
+    >>> from scipy.stats import t
+    >>> tinv = lambda p, df: abs(t.ppf(p/2, df))
+
+    >>> ts = tinv(0.05, len(x)-2)
+    >>> print(f"slope (95%): {res.slope:.6f} +/- {ts*res.stderr:.6f}")
+    slope (95%): 1.453392 +/- 0.743465
+    >>> print(f"intercept (95%): {res.intercept:.6f}"
+    ...       f" +/- {ts*res.intercept_stderr:.6f}")
+    intercept (95%): 0.616950 +/- 0.544475
+
+    """
+    TINY = 1.0e-20
+    if y is None:  # x is a (2, N) or (N, 2) shaped array_like
+        x = np.asarray(x)
+        if x.shape[0] == 2:
+            x, y = x
+        elif x.shape[1] == 2:
+            x, y = x.T
+        else:
+            raise ValueError("If only `x` is given as input, it has to "
+                             "be of shape (2, N) or (N, 2); provided shape "
+                             f"was {x.shape}.")
+    else:
+        x = np.asarray(x)
+        y = np.asarray(y)
+
+    if x.size == 0 or y.size == 0:
+        raise ValueError("Inputs must not be empty.")
+
+    n = len(x)
+    xmean = np.mean(x, None)
+    ymean = np.mean(y, None)
+
+    # Average sums of square differences from the mean
+    #   ssxm = mean( (x-mean(x))^2 )
+    #   ssxym = mean( (x-mean(x)) * (y-mean(y)) )
+    ssxm, ssxym, _, ssym = np.cov(x, y, bias=1).flat
+
+    # R-value
+    #   r = ssxym / sqrt( ssxm * ssym )
+    if ssxm == 0.0 or ssym == 0.0:
+        # If the denominator was going to be 0
+        r = 0.0
+    else:
+        r = ssxym / np.sqrt(ssxm * ssym)
+        # Test for numerical error propagation (make sure -1 < r < 1)
+        if r > 1.0:
+            r = 1.0
+        elif r < -1.0:
+            r = -1.0
+
+    slope = ssxym / ssxm
+    intercept = ymean - slope*xmean
+    if n == 2:
+        # handle case when only two points are passed in
+        if y[0] == y[1]:
+            prob = 1.0
+        else:
+            prob = 0.0
+        slope_stderr = 0.0
+        intercept_stderr = 0.0
+    else:
+        df = n - 2  # Number of degrees of freedom
+        # n-2 degrees of freedom because 2 has been used up
+        # to estimate the mean and standard deviation
+        t = r * np.sqrt(df / ((1.0 - r + TINY)*(1.0 + r + TINY)))
+        t, prob = scipy.stats.stats._ttest_finish(df, t, alternative)
+
+        slope_stderr = np.sqrt((1 - r**2) * ssym / ssxm / df)
+
+        # Also calculate the standard error of the intercept
+        # The following relationship is used:
+        #   ssxm = mean( (x-mean(x))^2 )
+        #        = ssx - sx*sx
+        #        = mean( x^2 ) - mean(x)^2
+        intercept_stderr = slope_stderr * np.sqrt(ssxm + xmean**2)
+
+    return LinregressResult(slope=slope, intercept=intercept, rvalue=r,
+                            pvalue=prob, stderr=slope_stderr,
+                            intercept_stderr=intercept_stderr)
+
+>>>>>
+
+# Scatterplot of hours of study and test scores
+plt.scatter(hours_of_study_A, test_scores_A)
+plt.show()
+
+# Plot of hours_of_study_values_A and predicted values
+plt.plot(hours_of_study_values_A, model_A.predict(hours_of_study_values_A))
+plt.title("Model A", fontsize=25)
+plt.show()
+
+
+>>>>>>
+
+# Scatterplot of hours of study and test scores
+plt.scatter(hours_of_study_B, test_scores_B)
+
+# Plot of hours_of_study_values_B and predicted values
+plt.plot(hours_of_study_values_B, model_B.predict(hours_of_study_values_B))
+plt.title("Model B", fontsize=25)
+plt.show()
+
+
+>>>>
+
+# Calculate the residuals
+residuals_A = model_A.predict(hours_of_study_A) - test_scores_A
+
+# Make a scatterplot of residuals of model_A
+plt.scatter( hours_of_study_A,residuals_A)
+
+# Add reference line and title and show plot
+plt.hlines(0, 0, 30, colors='r', linestyles='--')
+plt.title("Residuals plot of Model A", fontsize=25)
+plt.show()
+
+>>>>>>
+
+# Calculate the residuals
+residuals_B = model_B.predict(hours_of_study_B) - test_scores_B
+
+# Make a scatterplot of residuals of model_B
+plt.scatter(hours_of_study_B,residuals_B)
+
+# Add reference line and title and show plot
+plt.hlines(0, 0, 30, colors='r', linestyles='--')
+plt.title("Residuals plot of Model B", fontsize=25)
+plt.show()
+
+Well done! After fitting a linear model, the residuals should look as in model_A. They should not have a structure. model_B shows a non-constant variance, and therefore the residual distribution is not normal. In those cases a linear model should not be trusted; your model could make really bad predictions! This is an important topic; if you want to learn more, explore other materials on DataCamp.
+
+
+
+>>>>> Logistic regression
+
+how likely the student will pass the exam
+
+pass or fail
+
+get values from 0 to 1
+
+
+from sklearn.linear_model import LogisticRegression
+
+
+model= LogisticRegression(C=1e9)
+model.fit(hours_of_study, outcomes)
+
+beta1=model.coef_[0][0]
+beta0=model.intercept_[0]
+
+hours_of_study_test=[[10]]
+
+outcome=model.predict(hours_of_study_test)
+print(outcome)
+
+value=np.asarray(9).reshape(-1,1)
+print(model.predict_proba(value)[:,1])
+
+probability is 4%
+
+>>>>>>
+
+# Import LogisticRegression
+from sklearn.linear_model import LogisticRegression
+
+# sklearn logistic model
+model = LogisticRegression(C=1e9)
+model.fit(hours_of_study, outcomes)
+
+# Get parameters
+beta1 = model.coef_[0][0]
+beta0 = model.intercept_[0]
+
+# Print parameters
+print(beta1, beta0)
+
+# Specify values to predict
+hours_of_study_test = [[10], [11], [12], [13], [14]]
+
+# Pass values to predict
+predicted_outcomes = model.predict(hours_of_study_test)
+print(predicted_outcomes)
+
+# Set value in array
+value = np.asarray(11).reshape(-1,1)
+# Probability of passing the test with 11 hours of study
+print("Probability of passing test ", model.predict_proba(value)[:,1])
+
+[False False  True  True  True]
+Probability of passing test  [0.40793034]
+
+# Set value in array
+value_A = np.asarray(8.6).reshape(-1,1)
+# Probability of passing test A with 8.6 hours of study
+print("The probability of passing test A with 8.6 hours of study is ", model_A.predict_proba(value_A)[:,1])
+
+# Set value in array
+value_B = np.asarray(4.7).reshape(-1,1)
+# Probability of passing test B with 4.7 hours of study
+print("The probability of passing test B with 4.7 hours of study is ", model_B.predict_proba(value_B)[:,1])
+
+
+# Print the hours required to have 0.5 probability on model_A
+print("Minimum hours of study for test A are ", -model_A.intercept_/model_A.coef_)
+
+# Print the hours required to have 0.5 probability on model_B
+print("Minimum hours of study for test B are ", -model_B.intercept_/model_B.coef_)
+
+
+Minimum hours of study for test A are  [[8.52010652]]
+Minimum hours of study for test B are  [[4.5425737]]
+
+
+# Probability calculation for each value of study_hours
+prob_passing_A = model_A.predict_proba(study_hours_A.reshape(-1,1))[:,1]
+prob_passing_B = model_B.predict_proba(study_hours_B.reshape(-1,1))[:,1]
+
+# Calculate the probability of passing both tests
+prob_passing_A_and_B = prob_passing_A * prob_passing_B
+
+# Maximum probability value
+max_prob = max(prob_passing_A_and_B)
+
+# Position where we get the maximum value
+max_position = np.where(prob_passing_A_and_B == max_prob)[0][0]
+
+# Study hours for each test
+print("Study {:1.0f} hours for the first and {:1.0f} hours for the second test and you will pass both tests with {:01.2f} probability.".format(study_hours_A[max_position], study_hours_B[max_position], max_prob))
+
+Study 9 hours for the first and 5 hours for the second test and you will pass both tests with 1.00 probability.
+
+
+
+
+
