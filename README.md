@@ -1,6 +1,9 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
+* ARIMA IRM F BHP forecasting
+https://github.com/dnishimoto/python-deep-learning/blob/master/IRM%20F%20T.ipynb
+
 * ARIMA forecasting
 https://github.com/dnishimoto/python-deep-learning/blob/master/ARIMA%20EXR%20BHP%20ADSK.ipynb
 
