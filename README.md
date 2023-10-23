@@ -2,19 +2,19 @@
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
 * HTML to jsonl chat pipeline
-  
-https://github.com/dnishimoto/python-deep-learning/blob/master/ChatGptPipeline.ipynb
+
+* https://github.com/dnishimoto/python-deep-learning/blob/master/ChatGptPipeline.ipynb
   
 * ARIMA IRM F BHP forecasting
 
-https://github.com/dnishimoto/python-deep-learning/blob/master/IRM%20F%20T.ipynb
+* https://github.com/dnishimoto/python-deep-learning/blob/master/IRM%20F%20T.ipynb
 
 * ARIMA forecasting
- 
-https://github.com/dnishimoto/python-deep-learning/blob/master/ARIMA%20EXR%20BHP%20ADSK.ipynb
+
+* https://github.com/dnishimoto/python-deep-learning/blob/master/ARIMA%20EXR%20BHP%20ADSK.ipynb
 
 * lightLGBM for Yelp popular binary classification
-  
+
 https://github.com/dnishimoto/python-deep-learning/blob/master/Yelp%20Popular%20LightLGBM.ipynb
   
 * lightGMB classification of multi-class features for thyroid
