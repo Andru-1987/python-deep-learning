@@ -1,8 +1,8 @@
 # python-deep-learning
 python deep learning notebooks.  Open the juptyer projects in a new window to avoid the "something is wrong" error loading from github.
 
-HTML to jsonl chat pipeline
-* https://github.com/dnishimoto/python-deep-learning/blob/master/ChatGptPipeline.ipynb
+* HTML to jsonl chat pipeline
+https://github.com/dnishimoto/python-deep-learning/blob/master/ChatGptPipeline.ipynb
   
 * ARIMA IRM F BHP forecasting
 https://github.com/dnishimoto/python-deep-learning/blob/master/IRM%20F%20T.ipynb
